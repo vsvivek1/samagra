@@ -2,7 +2,10 @@ import 'dart:io';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'navigation_home_screen.dart';
+import 'package:samagra/screens/login_screen.dart';
+// import 'package:samagra/spalsh_screen.dart';
+// import 'navigation_home_screen.dart';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
@@ -14,6 +17,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final routes = <String, WidgetBuilder>{
+    '/login': (BuildContext context) => LoginScreen(),
+  };
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -27,13 +34,14 @@ class MyApp extends StatelessWidget {
     ));
     return MaterialApp(
       title: 'm-Samagra',
+      initialRoute: '/',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.iOS,
       ),
-      home: NavigationHomeScreen(),
+      home: LoginScreen(), //NavigationHomeScreen(), //SplashScreen(),
     );
   }
 }
