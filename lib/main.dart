@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/screens/login_screen.dart';
 // import 'package:samagra/spalsh_screen.dart';
 // import 'navigation_home_screen.dart';
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    InternetConnectivity.showInternetConnectivityToast(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.iOS,
       ),
-      home: LoginScreen(), //NavigationHomeScreen(), //SplashScreen(),
+      home: LoginScreen(), // //SplashScreen(),
     );
   }
 }

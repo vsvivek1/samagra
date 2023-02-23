@@ -6,6 +6,8 @@ import 'package:samagra/help_screen.dart';
 import 'package:samagra/home_screen.dart';
 import 'package:samagra/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/screens/phone_book.dart';
+import 'package:samagra/screens/work_selection.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override
@@ -56,6 +58,19 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
             screenView = const MyHomePage();
           });
           break;
+
+        case DrawerIndex.PhoneBook:
+          setState(() {
+            screenView = PhoneBook();
+          });
+          break;
+
+        case DrawerIndex.WorkSelection:
+          setState(() {
+            screenView = WorkSelection();
+          });
+          break;
+
         case DrawerIndex.Help:
           setState(() {
             screenView = HelpScreen();

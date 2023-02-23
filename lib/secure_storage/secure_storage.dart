@@ -37,9 +37,9 @@ class SecureStorage {
     return val;
   }
 
-  Future deleteAlllSecureStorageData(key) async {
+  Future deleteAlllSecureStorageData() async {
 // Read value
-    var val = await _storage.delete(key: key);
+    var val = await _storage.deleteAll();
 
     return val;
   }

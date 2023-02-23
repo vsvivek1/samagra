@@ -35,6 +35,11 @@ dependencies:
     intl: ^0.18.0
     animations: ^2.0.7
     flutter_secure_storage: ^7.0.1
+    image: ^4.0.10
+    url_launcher: ^6.1.9
+    get: ^4.6.5
+    fluttertoast: ^8.2.1
+    connectivity: ^3.0.6
 
 dev_dependencies:
     flutter_test:
@@ -59,7 +64,8 @@ flutter:
         - assets/design_course/
         - assets/fitness_app/
         - assets/hotel/
-        - assets/introduction_animation/
+        - assets/introduction_animation/ 
+        - assets/phone/cug.json
 
     # An image asset can refer to one or more resolution-specific "variants", see
     # https://flutter.dev/assets-and-images/#resolution-aware.

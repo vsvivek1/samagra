@@ -7,8 +7,6 @@ import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
 
-import '../internet_connectivity.dart';
-
 // import 'package:samagra/secure_storage/common_functions.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -96,7 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    InternetConnectivity.showInternetConnectivityToast(context);
     // print("this is is logging in $_isLoggingIn");
 
     if (_isLoggingIn == -2) {
@@ -223,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             // _password = value.toString();
                           },
                         ),
-                        SizedBox(height: 20),
+                        SizedBox(height: 8.0),
                         Visibility(
                           child: Column(
                             children: [
@@ -248,7 +245,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SizedBox(width: 8.0),
                             RawMaterialButton(
                               onPressed: () {
                                 showDialog(
@@ -285,10 +281,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
-                              fillColor: Colors.red[100],
+                              fillColor: Colors.red,
                               padding: EdgeInsets.all(10.0),
                             ),
-                            SizedBox(height: 30, width: 40),
                             Visibility(
                               visible: _showLoginButton,
                               child: _isLoggingIn == 1
@@ -320,8 +315,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                           // print(result["result_data"]["token"]
                                           //     ["access_token"]);
-
-                                          if (result["result_data"] == null) {}
 
                                           await _secureStorage
                                               .writeKeyValuePairToSecureStorage(
