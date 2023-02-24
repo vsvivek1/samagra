@@ -7,6 +7,8 @@ import 'package:samagra/internet_connectivity.dart';
 import '../secure_storage/secure_storage.dart';
 import 'package:samagra/secure_storage/common_functions.dart';
 
+import 'measurement_option.dart';
+
 class WorkSelection extends StatelessWidget {
   final storage = SecureStorage();
 
@@ -23,34 +25,39 @@ class WorkSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
-    return FutureBuilder(
-      future: _fetchWorkListList(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final workListList = snapshot.data;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Select an Work'),
+      ),
+      body: FutureBuilder(
+        future: _fetchWorkListList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final workListList = snapshot.data;
 
-          // p(WorkListList);
-          p(workListList.runtimeType);
+            // p(WorkListList);
+            p(workListList.runtimeType);
 
-          // return Text(WorkListList.toString());
+            // return Text(WorkListList.toString());
 
-          return SchGrpListWidget(workListList);
+            return SchGrpListWidget(workListList);
 
-          // return MaterialApp(
-          //   title: 'List of Works',
-          //   home: Scaffold(
-          //     appBar: AppBar(
-          //       title: Text('Square Tiles Demo'),
-          //     ),
-          //     body: WorkListListWidget(WorkListList),
-          //   ),
-          // );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
+            // return MaterialApp(
+            //   title: 'List of Works',
+            //   home: Scaffold(
+            //     appBar: AppBar(
+            //       title: Text('Square Tiles Demo'),
+            //     ),
+            //     body: WorkListListWidget(WorkListList),
+            //   ),
+            // );
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 
@@ -167,21 +174,60 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     final item = _filteredItems[index];
 
                     int sl = index + 1;
-                    return Container(
-                      padding: EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 2.0),
-                      ),
-                      child: GridTile(
-                        header: Text(sl.toString()),
-                        child: Container(
-                          color: Colors.grey[100],
-                          child: Center(
-                            child: Text(item['wrk_work_detail']['work_name']),
-                          ),
+
+                    Map workDetail = item['wrk_work_detail'];
+
+                    int workId = workDetail?['id'];
+                    final workName = workDetail['work_name'];
+
+                    if (workName == null || workId == -1) {
+                      final snackBar = SnackBar(
+                        content: Text(
+                            'Some error caused to load work id go back and try again'),
+                        action: SnackBarAction(
+                          label: 'Go Back',
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
                         ),
-                      ),
-                    );
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      print(
+                          'work_name key not found in map or its value is null');
+                    }
+
+                    ///temporary
+
+                    // p(item);
+
+                    //  'workId' : workId,
+                    //             'workName': workName,
+
+                    // return Text('hi');
+                    return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MeasurementOptionScreen(),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 2.0),
+                          ),
+                          child: GridTile(
+                            header: Text(sl.toString()),
+                            child: Container(
+                              color: Colors.grey[100],
+                              child: Center(
+                                child:
+                                    Text(item['wrk_work_detail']['work_name']),
+                              ),
+                            ),
+                          ),
+                        ));
                   },
                 ),
               ),
@@ -190,5 +236,34 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
         ),
       ),
     );
+  }
+}
+
+class OptionScreen extends StatelessWidget {
+  final int itemId;
+  final String itemName;
+
+  OptionScreen({required this.itemId, required this.itemName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text(itemName),
+        ),
+        body: Center(
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          ElevatedButton(
+            onPressed: () {
+              // Navigate to direct measuring screen
+            },
+            child: Text('Direct Measuring'),
+          ),
+          SizedBox(height: 16.0),
+          // ElevatedButton(
+          // onPressed: () {
+          //   // Navigate to pol
+        ])));
   }
 }
