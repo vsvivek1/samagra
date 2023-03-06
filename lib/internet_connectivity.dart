@@ -17,7 +17,14 @@ class InternetConnectivity {
   static Future<bool> checkServerConnectivity() async {
     try {
       //return true;
-      final response = await Dio().get('https://samagra.kseb.in');
+
+      final Map<String, String> data = {
+        "email": '1064767@kseberp.in',
+        "password": 'uat@123',
+      };
+
+      final response =
+          await Dio().post('http://erpuat.kseb.in/api/login', data: data);
       return response.statusCode == 200;
     } on DioError catch (e) {
       return false;
@@ -46,6 +53,15 @@ class InternetConnectivity {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+    } else if (isServerConnected) {
+      // Fluttertoast.showToast(
+      //     msg: "Server Connection Successfull",
+      //     toastLength: Toast.LENGTH_LONG,
+      //     gravity: ToastGravity.BOTTOM,
+      //     timeInSecForIosWeb: 1,
+      //     backgroundColor: Colors.red,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0);
     }
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../app_theme.dart';
+
 class PolVarScreen extends StatefulWidget {
   @override
   _PolVarScreenState createState() => _PolVarScreenState();
@@ -25,6 +27,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppTheme.grey.withOpacity(0.7),
         title: Text('Select Locations and Templates'),
       ),
       body: Column(
@@ -44,6 +47,34 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 });
               },
             ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'From Location',
+                    border: OutlineInputBorder(),
+                  ),
+                  child: TextField(),
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: InputDecorator(
+                  decoration: InputDecoration(
+                    labelText: 'To Location',
+                    border: OutlineInputBorder(),
+                  ),
+                  child: TextField(),
+                ),
+              ),
+              IconButton(
+                onPressed: saveFromAndTwoLocation,
+                icon: Icon(Icons.save),
+                color: Colors.grey,
+              )
+            ],
           ),
           Expanded(
             child: Row(
@@ -101,5 +132,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
         ],
       ),
     );
+  }
+
+  void saveFromAndTwoLocation() {
+    print('pressed');
   }
 }

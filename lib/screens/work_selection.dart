@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
 
 import '../secure_storage/secure_storage.dart';
@@ -27,36 +28,40 @@ class WorkSelection extends StatelessWidget {
     InternetConnectivity.showInternetConnectivityToast(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppTheme.grey.withOpacity(0.7),
         title: Text('Select an Work'),
       ),
-      body: FutureBuilder(
-        future: _fetchWorkListList(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final workListList = snapshot.data;
+      body: Theme(
+        data: ThemeData(buttonColor: AppTheme.grey.withOpacity(0.9)),
+        child: FutureBuilder(
+          future: _fetchWorkListList(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final workListList = snapshot.data;
 
-            // p(WorkListList);
-            p(workListList.runtimeType);
+              // p(WorkListList);
+              p(workListList.runtimeType);
 
-            // return Text(WorkListList.toString());
+              // return Text(WorkListList.toString());
 
-            return SchGrpListWidget(workListList);
+              return SchGrpListWidget(workListList);
 
-            // return MaterialApp(
-            //   title: 'List of Works',
-            //   home: Scaffold(
-            //     appBar: AppBar(
-            //       title: Text('Square Tiles Demo'),
-            //     ),
-            //     body: WorkListListWidget(WorkListList),
-            //   ),
-            // );
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return CircularProgressIndicator();
-          }
-        },
+              // return MaterialApp(
+              //   title: 'List of Works',
+              //   home: Scaffold(
+              //     appBar: AppBar(
+              //       title: Text('Square Tiles Demo'),
+              //     ),
+              //     body: WorkListListWidget(WorkListList),
+              //   ),
+              // );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return CircularProgressIndicator();
+            }
+          },
+        ),
       ),
     );
   }

@@ -1,10 +1,15 @@
 // import 'dart:html';
 
+// ignore_for_file: unrelated_type_equality_checks
+
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 // import 'package:samagra/home_screen.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/services.dart';
+import 'package:samagra/app_theme.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
@@ -31,16 +36,43 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = true;
   int _isLoggingIn = 0;
   String _loginError = ' ';
+  var _isValidUsername;
+  // TextEditingController _usernameController = new TextEditingController();
+
+  TextEditingController _usernameController = TextEditingController();
+
+  var username;
 
   // String access_token;
 
   bool _empCodeValidator = false;
+  String empCodeInitialValue = '';
+  String passwordInitialValue = '';
+
+  bool _showFirstTimePasswordFeild = false;
+
+  get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
+  //  bool _showFirstTimePasswordField;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (_showFirstTimePasswordFeild) {
+      // show the spinning icon for 2 seconds and then show the password field
+      Timer(Duration(seconds: 1), () {
+        setState(() {
+          _showFirstTimePasswordFeild = true;
+        });
+      });
+    }
+  }
 
   Future<Object> _getUserLoginDetails() async {
     var loginDetails1 =
         await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
-    ;
-    if (!loginDetails1?.isEmpty) {
+
+    if (!loginDetails1?.isEmpty && loginDetails1["loginDetails"] != null) {
       var ob = json.decode(loginDetails1["loginDetails"] ?? '');
 
       // ob["seat_details"] =
@@ -100,22 +132,6 @@ class _LoginScreenState extends State<LoginScreen> {
     // return _loginDetails1["storedLogin"]; //.toString();
   }
 
-  void _inittializeLoginCredentials(snapshot) {
-    String tmpLogin = snapshot.data != null && jsonDecode(snapshot.data) != null
-        ? (jsonDecode(snapshot.data)['login'] != null)
-            ? jsonDecode(snapshot.data)['login'].split(RegExp(r'@'))[0]
-            : ''
-        : '';
-
-    _empcode = tmpLogin;
-
-    _password = snapshot.data != null && jsonDecode(snapshot.data) != null
-        ? (jsonDecode(snapshot.data)["password"] != null)
-            ? jsonDecode(snapshot.data)["password"]
-            : ''
-        : '';
-  }
-
   @override
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
@@ -133,9 +149,34 @@ class _LoginScreenState extends State<LoginScreen> {
               child: FutureBuilder(
                   future: _getSavedUsernameAndPassword(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      // print(snapshot.data);
+                    print(snapshot.data);
 
+                    if (!(snapshot.hasData &&
+                        snapshot.data.runtimeType == 'String')) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 200, left: 20, right: 20),
+                          child: Column(children: [
+                            CircleAvatar(
+                              radius: 50,
+                              backgroundImage:
+                                  AssetImage('assets/images/kseb_emblem.jpeg'),
+                            ),
+                            SizedBox(height: 20, width: 20),
+                            showUserNameForm1(),
+                          ]),
+                        ),
+                      );
+                    } else {
+                      // if (snapshot.data.runtimeType != 'String') {
+                      //   return Text('na');
+                      // }
+                      var loginDetails = json.decode(snapshot.data);
+
+                      passwordInitialValue = loginDetails!['password'] ?? '';
+
+                      print(passwordInitialValue);
                       // _inittializeLoginCredentials(snapshot);
 
                       // if (snapshot.data != null &&
@@ -161,11 +202,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                         snapshot.data);
 
                                     var user = login["user"];
+
+                                    if (user == null) {
+                                      return Center(
+                                        child: CircleAvatar(
+                                          radius: 50,
+                                          backgroundImage: AssetImage(
+                                              'assets/images/kseb_emblem.jpeg'),
+                                        ),
+                                      );
+                                    }
+
                                     var dp = user['photo_image'];
 
                                     var username = user["name"];
 
                                     Uint8List bytes = base64.decode(dp);
+
+                                    empCodeInitialValue =
+                                        user["employee_code"].toString();
+
+                                    print(empCodeInitialValue);
 
                                     return Center(
                                       child: Column(
@@ -177,6 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             backgroundImage: MemoryImage(bytes),
                                           ),
                                           SizedBox(height: 16),
+                                          Text('Welcome Back '),
                                           Text(
                                             '$username ',
                                             style: TextStyle(
@@ -229,62 +287,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
-                                TextFormField(
-                                  initialValue: (snapshot.data?.isNotEmpty ==
-                                              true &&
-                                          jsonDecode(snapshot.data)?['login']
-                                                  ?.isNotEmpty ==
-                                              true)
-                                      ? jsonDecode(snapshot.data)['login']
-                                          .split('@')[0]
-                                      : '',
-                                  keyboardType: TextInputType.number,
-                                  onChanged: (text) {
-                                    if (text.length != 8) {
-                                      setState(() {
-                                        _empCodeValidator = false;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _empCodeValidator = true;
-                                      });
-                                    }
-
-                                    _empcode = text;
-
-                                    if (_empcode != '' && _password != '') {
-                                      setState(() {
-                                        _showLoginButton = true;
-                                      });
-                                    } else {
-                                      setState(() {
-                                        _showLoginButton = false;
-                                      });
-                                    }
-                                  },
-                                  decoration: InputDecoration(
-                                    suffixIcon: _empCodeValidator
-                                        ? Icon(Icons.check, color: Colors.green)
-                                        : Icon(Icons.warning,
-                                            color: Colors.red),
-                                  ),
-                                  validator: (value) {
-                                    value ??= '';
-                                    if (value.isEmpty) {
-                                      return 'Please enter your empcode';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) {
-                                    // print(value);
-                                    // value ??= '';
-                                    // _empcode = value;
-                                  },
-                                ),
+                                Visibility(
+                                    visible: empCodeInitialValue != '',
+                                    child: Text(
+                                      empCodeInitialValue,
+                                      style: TextStyle(
+                                          fontSize: 25,
+                                          color:
+                                              AppTheme.grey.withOpacity(0.7)),
+                                    )),
                                 SizedBox(height: 8.0),
                                 TextFormField(
                                   // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
-                                  initialValue: '',
+
+                                  initialValue: passwordInitialValue,
                                   onChanged: (t) {
                                     _password = t;
                                     if (_empcode != '' && _password != '') {
@@ -299,6 +315,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                                   decoration: InputDecoration(
                                       labelText: 'Password',
+                                      focusedErrorBorder: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.red),
+                                      ),
                                       suffixIcon: IconButton(
                                           icon: Icon(_obscureText
                                               ? Icons.visibility
@@ -319,12 +339,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return 'Please enter your password';
                                     }
                                     return null;
-                                  },
-                                  onSaved: (value) {
-                                    // print(value);
-                                    value ??= '';
-
-                                    // _password = value.toString();
                                   },
                                 ),
                                 SizedBox(height: 20),
@@ -397,7 +411,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         // perform some action
                                       },
-                                      child: Text('Clear Login '),
+                                      child: Text('Another User ?'),
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(20.0),
@@ -533,8 +547,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       );
-                    } else {
-                      return CircularProgressIndicator();
                     }
                   }), //
             ),
@@ -542,6 +554,104 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     }
+  }
+
+  showUserNameForm1() {
+    print(_usernameController.text.length);
+    _showFirstTimePasswordFeild =
+        _usernameController.text.length == 7 ? true : false;
+
+    print(_usernameController.text.length);
+
+    return Column(
+      children: [
+        TextField(
+            autofocus: true,
+            // onChanged: (value) {
+            //   setState(() {
+            //     _isValidUsername = RegExp(r'^\d{8}$').hasMatch(value);
+            //   });
+            // },
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.deny(RegExp('[,.]')),
+            ],
+            maxLength: 7,
+            controller: _usernameController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              labelText: 'User Name',
+              prefixIcon: Icon(Icons.person),
+              suffixIcon: _usernameController.text.length == 7
+                  ? Icon(Icons.check, color: Colors.green)
+                  : Icon(Icons.warning, color: Colors.red),
+              hintText: 'Enter your user name',
+              // errorText: isValidUsername ? null : 'Invalid input',
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(color: Colors.red),
+              ),
+            )),
+        SizedBox(
+          width: 20,
+          height: 20,
+        ),
+        _showFirstTimePasswordField
+            ? CircularProgressIndicator()
+            : TextField(
+                decoration: InputDecoration(
+                  labelText: 'Password ..',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                obscureText: true,
+              )
+      ],
+    );
+  }
+
+  TextFormField showUserNameForm() {
+    return TextFormField(
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        onChanged: (text) {
+          if (text.length != 8) {
+            setState(() {
+              _empCodeValidator = false;
+            });
+          } else {
+            setState(() {
+              _empCodeValidator = true;
+            });
+          }
+
+          _empcode = text;
+
+          if (_empcode != '' && _password != '') {
+            setState(() {
+              _showLoginButton = true;
+            });
+          } else {
+            setState(() {
+              _showLoginButton = false;
+            });
+          }
+        },
+        decoration: InputDecoration(
+          suffixIcon: _usernameController.text.length == 8
+              ? Icon(Icons.check, color: Colors.green)
+              : Icon(Icons.warning, color: Colors.red),
+        ),
+        validator: (value) {
+          value ??= '';
+          if (value.isEmpty) {
+            return 'Please enter your empcode';
+          }
+          return null;
+        });
   }
 
   Widget createLoadingSpinner() {
