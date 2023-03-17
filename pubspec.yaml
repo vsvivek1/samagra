@@ -41,6 +41,7 @@ dependencies:
     fluttertoast: ^8.2.1
     connectivity: ^3.0.6
     location: ^4.4.0
+    local_auth: ^2.1.6
 
 dev_dependencies:
     flutter_test:
