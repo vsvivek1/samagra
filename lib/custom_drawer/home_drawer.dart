@@ -84,6 +84,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
     var seats = loginDetails['user']!['seats'] ?? [];
 
+    if (seats == []) {
+      return {};
+    }
+
     Map<String, dynamic> selectedSeat = seats.firstWhere(
       (seat) => seat['mst_seat_id'] == currentSeatId,
       orElse: () => null,
