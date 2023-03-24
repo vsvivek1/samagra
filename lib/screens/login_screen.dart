@@ -148,286 +148,153 @@ class _LoginScreenState extends State<LoginScreen> {
       return Scaffold(
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: FutureBuilder(
-                    // future: _getSavedUsernameAndPassword(),
-                    future: _getUserLoginDetails(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      // print(snapshot.data.toString());
-                      // print(snapshot.data.runtimeType);
+          return Container(
+            height: 1000,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: FutureBuilder(
+                      // future: _getSavedUsernameAndPassword(),
+                      future: _getUserLoginDetails(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        // print(snapshot.data.toString());
+                        // print(snapshot.data.runtimeType);
 
-                      // return Text('hi');
+                        // return Text('hi');
 
-                      //  && snapshot.data.runtimeType == 'String'
-                      // print('sanpsh thas data below');
+                        //  && snapshot.data.runtimeType == 'String'
+                        // print('sanpsh thas data below');
 
-                      // print(snapshot.hasData);
+                        // print(snapshot.hasData);
 
-                      // print('sanpsh  data below');
+                        // print('sanpsh  data below');
 
-                      print(snapshot.data == '');
-                      if (!(snapshot.hasData) ||
-                          snapshot.data == '' ||
-                          snapshot.data['seat_details'] == -1) {
-                        return Center(
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 200, left: 20, right: 20),
-                            child: Column(children: [
-                              CircleAvatar(
-                                radius: 50,
-                                backgroundImage: AssetImage(
-                                    'assets/images/kseb_emblem.jpeg'),
-                              ),
-                              SizedBox(height: 20, width: 20),
-                              showUserNameForm1(),
-                            ]),
-                          ),
-                        );
-                      } else {
-                        // if (snapshot.data.runtimeType != 'String') {
-                        //   return Text('na');
-                        // }
+                        print(snapshot.data == '');
+                        if (!(snapshot.hasData) ||
+                            snapshot.data == '' ||
+                            snapshot.data['seat_details'] == -1) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 200, left: 20, right: 20),
+                              child: Column(children: [
+                                CircleAvatar(
+                                  radius: 50,
+                                  backgroundImage: AssetImage(
+                                      'assets/images/kseb_emblem.jpeg'),
+                                ),
+                                SizedBox(height: 20, width: 20),
+                                showUserNameForm1(),
+                              ]),
+                            ),
+                          );
+                        } else {
+                          // if (snapshot.data.runtimeType != 'String') {
+                          //   return Text('na');
+                          // }
 
-                        try {
-                          print('snapshot data prinint in else below');
-                          // print(snapshot.data);e
-                          var loginDetails;
-                          if (snapshot.data.runtimeType == 'String') {
-                            loginDetails = json.decode(snapshot.data);
-                          } else {
-                            loginDetails = snapshot.data;
+                          try {
+                            print('snapshot data prinint in else below');
+                            // print(snapshot.data);e
+                            var loginDetails;
+                            if (snapshot.data.runtimeType == 'String') {
+                              loginDetails = json.decode(snapshot.data);
+                            } else {
+                              loginDetails = snapshot.data;
+                            }
+
+                            passwordInitialValue =
+                                loginDetails!['password'] ?? '';
+                          } on Exception catch (e) {
+                            return Text('An error occurred: $e');
+
+                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            //   content: Text('An error occurred: $e'),
+                            //   duration: Duration(seconds: 3),
+                            // ));
                           }
 
-                          passwordInitialValue =
-                              loginDetails!['password'] ?? '';
-                        } on Exception catch (e) {
-                          return Text('An error occurred: $e');
+                          // print(passwordInitialValue);
 
-                          // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          //   content: Text('An error occurred: $e'),
-                          //   duration: Duration(seconds: 3),
-                          // ));
-                        }
+                          print(
+                              'jst above passwordInitial value is = $passwordInitialValue');
+                          // _inittializeLoginCredentials(snapshot);
 
-                        // print(passwordInitialValue);
+                          // if (snapshot.data != null &&
+                          //     jsonDecode(snapshot.data) != null) {
+                          //   if ((jsonDecode(snapshot.data)['login'] != null)) {
+                          //     _empcode = jsonDecode(snapshot.data)['login']
+                          //         .split(RegExp(r'@'))[0];
 
-                        print(
-                            'jst above passwordInitial value is = $passwordInitialValue');
-                        // _inittializeLoginCredentials(snapshot);
+                          //     // _password = jsonDecode(snapshot.data)["password"];
+                          //   }
+                          // }
 
-                        // if (snapshot.data != null &&
-                        //     jsonDecode(snapshot.data) != null) {
-                        //   if ((jsonDecode(snapshot.data)['login'] != null)) {
-                        //     _empcode = jsonDecode(snapshot.data)['login']
-                        //         .split(RegExp(r'@'))[0];
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 100),
+                                child: FutureBuilder(
+                                    future: _getUserLoginDetails(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot snapshot) {
+                                      if (snapshot.hasData) {
+                                        var login = Map<String, dynamic>.from(
+                                            snapshot.data);
 
-                        //     // _password = jsonDecode(snapshot.data)["password"];
-                        //   }
-                        // }
+                                        var user = login["user"];
 
-                        return Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 100),
-                              child: FutureBuilder(
-                                  future: _getUserLoginDetails(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot snapshot) {
-                                    if (snapshot.hasData) {
-                                      var login = Map<String, dynamic>.from(
-                                          snapshot.data);
+                                        // print(user);
 
-                                      var user = login["user"];
+                                        // if (user == null) {
+                                        //   return Center(
+                                        //     child: CircleAvatar(
+                                        //       radius: 50,
+                                        //       backgroundImage: AssetImage(
+                                        //           'assets/images/kseb_emblem.jpeg'),
+                                        //     ),
+                                        //   );
+                                        // }
 
-                                      // print(user);
+                                        var dp = user['photo_image'];
 
-                                      // if (user == null) {
-                                      //   return Center(
-                                      //     child: CircleAvatar(
-                                      //       radius: 50,
-                                      //       backgroundImage: AssetImage(
-                                      //           'assets/images/kseb_emblem.jpeg'),
-                                      //     ),
-                                      //   );
-                                      // }
+                                        var username = user["name"];
 
-                                      var dp = user['photo_image'];
+                                        _empcode =
+                                            user["employee_code"].toString();
 
-                                      var username = user["name"];
+                                        Uint8List bytes = base64.decode(dp);
 
-                                      _empcode =
-                                          user["employee_code"].toString();
+                                        empCodeInitialValue =
+                                            user["employee_code"].toString();
 
-                                      Uint8List bytes = base64.decode(dp);
+                                        // print(empCodeInitialValue);
 
-                                      empCodeInitialValue =
-                                          user["employee_code"].toString();
-
-                                      // print(empCodeInitialValue);
-
-                                      return Center(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            CircleAvatar(
-                                              radius: 100,
-                                              backgroundImage:
-                                                  MemoryImage(bytes),
-                                            ),
-                                            SizedBox(height: 16),
-                                            Text('Welcome Back '),
-                                            Text(
-                                              '$username ',
-                                              style: TextStyle(
-                                                  color: Colors.grey[500],
-                                                  fontSize: 24,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            SizedBox(height: 32),
-                                            Row(
-                                              children: [
-                                                ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                                Colors.grey),
-                                                  ),
-                                                  onPressed: () {
-                                                    _handleBiometricLogin(
-                                                        context);
-                                                    // Handle biometric login
-                                                  },
-                                                  child: Text(
-                                                      'Login with Biometric'),
-                                                ),
-                                                SizedBox(width: 30),
-                                                ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                                Colors.grey),
-                                                  ),
-                                                  onPressed: () {
-                                                    // Handle login with pin
-                                                  },
-                                                  child: Text('Login with Pin'),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                              width: 20,
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      return Container();
-                                    }
-                                  }),
-                            ),
-                            Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Visibility(
-                                      visible: empCodeInitialValue != '',
-                                      child: Text(
-                                        empCodeInitialValue,
-                                        style: TextStyle(
-                                            fontSize: 25,
-                                            color:
-                                                AppTheme.grey.withOpacity(0.7)),
-                                      )),
-                                  SizedBox(height: 8.0),
-                                  TextFormField(
-                                    // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
-
-                                    initialValue: passwordInitialValue,
-                                    onChanged: (t) {
-                                      _password = t;
-                                      if (_empcode != '' && _password != '') {
-                                        setState(() {
-                                          _showLoginButton = true;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          _showLoginButton = false;
-                                        });
-                                      }
-                                    },
-                                    decoration: InputDecoration(
-                                        labelText: 'Password',
-                                        focusedErrorBorder: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.red),
-                                        ),
-                                        suffixIcon: IconButton(
-                                            icon: Icon(_obscureText
-                                                ? Icons.visibility
-                                                : Icons.visibility_off),
-                                            onPressed: () {
-                                              setState(() {
-                                                _obscureText = !_obscureText;
-                                              });
-                                            })),
-                                    obscureText: _obscureText,
-                                    validator: (value) {
-                                      value ??= '';
-                                      if (value == '') {
-                                        setState(() {
-                                          _showLoginButton = false;
-                                        });
-
-                                        return 'Please enter your password';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: 20),
-                                  Visibility(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            ElevatedButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _isLoggingIn = 0;
-
-                                                    _loginError = '';
-                                                  });
-                                                },
-                                                child: Text('Reset Error')),
-                                          ],
-                                        ),
-                                        Text('Login Error $_loginError'),
-                                      ],
-                                    ),
-                                    visible: _isLoggingIn == -1,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(width: 8.0),
-                                      RawMaterialButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: Text('Confirm'),
-                                                content: Text(
-                                                    'Are you sure you want to perform this action?'),
-                                                actions: <Widget>[
+                                        return Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 100,
+                                                backgroundImage:
+                                                    MemoryImage(bytes),
+                                              ),
+                                              SizedBox(height: 16),
+                                              Text('Welcome Back '),
+                                              Text(
+                                                '$username ',
+                                                style: TextStyle(
+                                                    color: Colors.grey[500],
+                                                    fontSize: 24,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              SizedBox(height: 32),
+                                              Row(
+                                                children: [
                                                   ElevatedButton(
                                                     style: ButtonStyle(
                                                       backgroundColor:
@@ -435,12 +302,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                                               .all<Color>(
                                                                   Colors.grey),
                                                     ),
-                                                    child: Text('Cancel'),
                                                     onPressed: () {
-                                                      Navigator.of(context)
-                                                          .pop();
+                                                      _handleBiometricLogin(
+                                                          context);
+                                                      // Handle biometric login
                                                     },
+                                                    child: Text(
+                                                        'Login with Biometric'),
                                                   ),
+                                                  SizedBox(width: 30),
                                                   ElevatedButton(
                                                     style: ButtonStyle(
                                                       backgroundColor:
@@ -448,69 +318,209 @@ class _LoginScreenState extends State<LoginScreen> {
                                                               .all<Color>(
                                                                   Colors.grey),
                                                     ),
-                                                    child: Text('Yes'),
                                                     onPressed: () {
-                                                      // Perform the action here
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      _secureStorage
-                                                          .deleteAlllSecureStorageData();
+                                                      // Handle login with pin
                                                     },
+                                                    child:
+                                                        Text('Login with Pin'),
                                                   ),
                                                 ],
-                                              );
-                                            },
-                                          );
-
-                                          // perform some action
-                                        },
-                                        child: Text('Another User ?'),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0),
-                                        ),
-                                        fillColor:
-                                            Color.fromARGB(255, 196, 194, 194),
-                                        padding: EdgeInsets.all(10.0),
-                                      ),
-                                      SizedBox(height: 30, width: 40),
-                                      Visibility(
-                                        // visible: _showLoginButton,
-                                        visible: true,
-                                        child: _isLoggingIn == 1
-                                            ? CircularProgressIndicator()
-                                            : ElevatedButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<
-                                                          Color>(Colors.grey),
-                                                ),
-                                                onPressed: () async {
-                                                  await proceedForLogin(
-                                                      context, 'regular');
-                                                },
-                                                child: Text('Login'),
                                               ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 8.0),
-                                  CheckboxListTile(
-                                    value: _rememberMe,
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        _rememberMe = newValue ??= true;
-                                      });
-                                    },
-                                    title: Text('Remember me'),
-                                  )
-                                ],
+                                              SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return Container();
+                                      }
+                                    }),
                               ),
-                            ),
-                          ],
-                        );
-                      }
-                    }), //
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Visibility(
+                                        visible: empCodeInitialValue != '',
+                                        child: Text(
+                                          empCodeInitialValue,
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              color: AppTheme.grey
+                                                  .withOpacity(0.7)),
+                                        )),
+                                    SizedBox(height: 8.0),
+                                    TextFormField(
+                                      // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
+
+                                      initialValue: passwordInitialValue,
+                                      onChanged: (t) {
+                                        _password = t;
+                                        if (_empcode != '' && _password != '') {
+                                          setState(() {
+                                            _showLoginButton = true;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _showLoginButton = false;
+                                          });
+                                        }
+                                      },
+                                      decoration: InputDecoration(
+                                          labelText: 'Password',
+                                          focusedErrorBorder:
+                                              OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.red),
+                                          ),
+                                          suffixIcon: IconButton(
+                                              icon: Icon(_obscureText
+                                                  ? Icons.visibility
+                                                  : Icons.visibility_off),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _obscureText = !_obscureText;
+                                                });
+                                              })),
+                                      obscureText: _obscureText,
+                                      validator: (value) {
+                                        value ??= '';
+                                        if (value == '') {
+                                          setState(() {
+                                            _showLoginButton = false;
+                                          });
+
+                                          return 'Please enter your password';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(height: 20),
+                                    Visibility(
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _isLoggingIn = 0;
+
+                                                      _loginError = '';
+                                                    });
+                                                  },
+                                                  child: Text('Reset Error')),
+                                            ],
+                                          ),
+                                          Text('Login Error $_loginError'),
+                                        ],
+                                      ),
+                                      visible: _isLoggingIn == -1,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        SizedBox(width: 8.0),
+                                        RawMaterialButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text('Confirm'),
+                                                  content: Text(
+                                                      'Are you sure you want to perform this action?'),
+                                                  actions: <Widget>[
+                                                    ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    Colors
+                                                                        .grey),
+                                                      ),
+                                                      child: Text('Cancel'),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    ),
+                                                    ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    Colors
+                                                                        .grey),
+                                                      ),
+                                                      child: Text('Yes'),
+                                                      onPressed: () {
+                                                        // Perform the action here
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        _secureStorage
+                                                            .deleteAlllSecureStorageData();
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+
+                                            // perform some action
+                                          },
+                                          child: Text('Another User ?'),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                          fillColor: Color.fromARGB(
+                                              255, 196, 194, 194),
+                                          padding: EdgeInsets.all(10.0),
+                                        ),
+                                        SizedBox(height: 30, width: 40),
+                                        Visibility(
+                                          // visible: _showLoginButton,
+                                          visible: true,
+                                          child: _isLoggingIn == 1
+                                              ? CircularProgressIndicator()
+                                              : ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor:
+                                                        MaterialStateProperty
+                                                            .all<Color>(
+                                                                Colors.grey),
+                                                  ),
+                                                  onPressed: () async {
+                                                    await proceedForLogin(
+                                                        context, 'regular');
+                                                  },
+                                                  child: Text('Login'),
+                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 8.0),
+                                    CheckboxListTile(
+                                      value: _rememberMe,
+                                      onChanged: (newValue) {
+                                        setState(() {
+                                          _rememberMe = newValue ??= true;
+                                        });
+                                      },
+                                      title: Text('Remember me'),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      }), //
+                ),
               ),
             ),
           );

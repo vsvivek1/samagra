@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -8,8 +10,6 @@ class PolVarScreen extends StatefulWidget {
   @override
   final int workId;
 
-  final storage = SecureStorage();
-
   PolVarScreen({Key? key, required this.workId}) : super(key: key) {
     print("this is workid $workId");
   }
@@ -18,6 +18,7 @@ class PolVarScreen extends StatefulWidget {
 }
 
 class _PolVarScreenState extends State<PolVarScreen> {
+  final storage = SecureStorage();
   int _numberOfLocations = 1;
   List<String> _templates = [
     'Template 1',
@@ -32,6 +33,59 @@ class _PolVarScreenState extends State<PolVarScreen> {
     'Template 10',
   ];
   List<String> _selectedTemplates = [];
+
+  Iterable<Map> getStructuresByName(d) {
+    var e = [];
+
+    d.forEach((grp) {
+      var e1 = (grp as Map)['mst_task'];
+
+      if (!e.contains(e1)) {
+        e.add(e1);
+      }
+    });
+    var g2 = e.map((g) {
+      var a = {};
+
+      var ob =
+          d.where((element) => element['mst_task']['id'] == g['id']).toList();
+
+      a['task_name'] = g['task_name'];
+      a['structures'] = [];
+      ob.forEach((ob2) {
+        a['structures'].add(ob2['mst_structure']);
+      });
+
+      return a;
+    });
+
+    return g2;
+  }
+
+  @override
+  void initState() {
+    _fetchWorkDetails().then((workDetails) {
+      print(workDetails.runtimeType);
+
+      // print(workDetails);
+
+      // var ar = jsonDecode(workDetails as String);
+
+      // print(workDetails[0]['wrk_schedule_group_structures']);
+
+      List wrk_schedule_group_structures =
+          workDetails[0]['wrk_schedule_group_structures'];
+
+      var c = getStructuresByName(wrk_schedule_group_structures);
+
+      print(c);
+    });
+
+    // print(res);
+    // ignore: todo
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +198,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
- Future<List<dynamic>> _fetchWorkDetails() async {
+  Future<List<dynamic>> _fetchWorkDetails() async {
     final accessToken1 =
         await storage.getSecureAllStorageDataByKey("access_token");
 
@@ -157,30 +211,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // final officeCode = currentSeatDetails['office']['office_code'];
 
-
-
     // final officeId = currentSeatDetails['office_id'];
- 
-    // final url =
-    //     'http://erpuat.kseb.in/api/wrk/getScheduleListForNormalMeasurement/$officeId';
-    // final headers = {'Authorization': 'Bearer $accessToken'};
-    // final response = await Dio().get(url, options: Options(headers: headers));
 
+    final url =
+        'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/47777/0';
+    final headers = {'Authorization': 'Bearer $accessToken'};
+    final response = await Dio().get(url, options: Options(headers: headers));
 
-    // if (response.data != null &&
-    //     response.data['result_data'] != null &&
-    //     response.data['result_data']['schGrpList'] != null) {
-    //   var res = response.data['result_data']['schGrpList'];
+    if (response.data != null && response.data['result_data'] != null) {
+      var res = response.data['result_data'];
 
-
-    //   return res;
-
-    
+      return Future.value([res['data']]);
     } else {
-
-
-      print('some error');
-      return [];
+      return Future.value(['hi']);
     }
   }
 
@@ -188,6 +231,3 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print('pressed');
   }
 }
-
-
-
