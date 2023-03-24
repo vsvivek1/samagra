@@ -214,7 +214,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           // ));
                         }
 
-                        print(passwordInitialValue);
+                        // print(passwordInitialValue);
+
+                        print(
+                            'jst above passwordInitial value is = $passwordInitialValue');
                         // _inittializeLoginCredentials(snapshot);
 
                         // if (snapshot.data != null &&
@@ -545,8 +548,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await _setSavedUserNameAndPassword(email, _password);
 
-      print(email);
-      print(_password);
+      print("$email is email");
+      print("$_password is password");
 
       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
           content: Text('loggining in '), duration: Duration(seconds: 3))));
@@ -555,7 +558,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await api.login(email, _password, showPhoto);
 
       print('result oflogin request below');
-      print(result);
+      print("$result is the result");
 
       if (result == -1) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
