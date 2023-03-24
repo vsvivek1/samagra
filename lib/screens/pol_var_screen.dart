@@ -1,9 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
+import '../secure_storage/secure_storage.dart';
 
 class PolVarScreen extends StatefulWidget {
   @override
+  final int workId;
+
+  final storage = SecureStorage();
+
+  PolVarScreen({Key? key, required this.workId}) : super(key: key) {
+    print("this is workid $workId");
+  }
+
   _PolVarScreenState createState() => _PolVarScreenState();
 }
 
@@ -134,7 +144,50 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
+ Future<List<dynamic>> _fetchWorkDetails() async {
+    final accessToken1 =
+        await storage.getSecureAllStorageDataByKey("access_token");
+
+    final accessToken = accessToken1['access_token'];
+    final loginDetails1 =
+        await storage.getSecureAllStorageDataByKey('loginDetails');
+    final loginDetails = loginDetails1['loginDetails'];
+
+    // final currentSeatDetails = getCurrentSeatDetails(loginDetails);
+
+    // final officeCode = currentSeatDetails['office']['office_code'];
+
+
+
+    // final officeId = currentSeatDetails['office_id'];
+ 
+    // final url =
+    //     'http://erpuat.kseb.in/api/wrk/getScheduleListForNormalMeasurement/$officeId';
+    // final headers = {'Authorization': 'Bearer $accessToken'};
+    // final response = await Dio().get(url, options: Options(headers: headers));
+
+
+    // if (response.data != null &&
+    //     response.data['result_data'] != null &&
+    //     response.data['result_data']['schGrpList'] != null) {
+    //   var res = response.data['result_data']['schGrpList'];
+
+
+    //   return res;
+
+    
+    } else {
+
+
+      print('some error');
+      return [];
+    }
+  }
+
   void saveFromAndTwoLocation() {
     print('pressed');
   }
 }
+
+
+
