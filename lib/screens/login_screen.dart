@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         try {
                           print('snapshot data prinint in else below');
-                          // print(snapshot.data);
+                          // print(snapshot.data);e
                           var loginDetails;
                           if (snapshot.data.runtimeType == 'String') {
                             loginDetails = json.decode(snapshot.data);
@@ -653,6 +653,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   // show the spinning icon for 2 seconds and then show the password field
                   Timer(Duration(seconds: 1), () {
                     setState(() {
+                      _empcode = _usernameController.text;
                       _showFirstTimePasswordField =
                           _usernameController.text.length == 7 ? true : false;
                       if (_showFirstTimePasswordField) {
