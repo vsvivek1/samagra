@@ -40,7 +40,7 @@ class WorkSelection extends StatelessWidget {
               final workListList = snapshot.data;
 
               // p(WorkListList);
-              p(workListList.runtimeType);
+              // p(workListList.runtimeType);
 
               // return Text(WorkListList.toString());
 
@@ -86,14 +86,14 @@ class WorkSelection extends StatelessWidget {
     final response = await Dio().get(url, options: Options(headers: headers));
 
     //write code here to action for no work code error code -1 display error etc
-    p(response.data['result_data']);
+    // p(response.data['result_data']);
 
     if (response.data != null &&
         response.data['result_data'] != null &&
         response.data['result_data']['schGrpList'] != null) {
       var res = response.data['result_data']['schGrpList'];
 
-      p(res);
+      // p(res);
       return res;
     } else {
       p('some error');
@@ -102,7 +102,6 @@ class WorkSelection extends StatelessWidget {
   }
 
   ///SchGrp is WorkList for readability
-
 }
 
 class SchGrpListWidget extends StatefulWidget {
@@ -203,14 +202,15 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                     ///temporary
 
-                    // p(item);
-
                     //  'workId' : workId,
                     //             'workName': workName,
 
                     // return Text('hi');
                     return GestureDetector(
                         onTap: () {
+                          p('below');
+                          p(item);
+                          print('above');
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => MeasurementOptionScreen(),
