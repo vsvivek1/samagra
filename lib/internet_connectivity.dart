@@ -20,7 +20,7 @@ class InternetConnectivity {
 
       final Map<String, String> data = {
         "email": '1064767@kseberp.in',
-        "password": 'uat@123',
+        "password": 'uat123',
       };
 
       final response =
