@@ -162,7 +162,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   child: GridView.builder(
                     itemCount: _templates.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
+                      crossAxisCount: 1,
                       childAspectRatio: 1.0,
                     ),
                     itemBuilder: (BuildContext context, int index) {
