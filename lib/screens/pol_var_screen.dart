@@ -20,7 +20,9 @@ class PolVarScreen extends StatefulWidget {
 class _PolVarScreenState extends State<PolVarScreen> {
   final storage = SecureStorage();
   int _numberOfLocations = 1;
-  List<String> _templates = [
+  // List<String> _templates = [
+
+  List<dynamic> _templates = [
     'Template 1',
     'Template 2',
     'Template 3',
@@ -78,7 +80,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       var c = getStructuresByName(wrk_schedule_group_structures);
 
-      print(c);
+      // print(c);
+
+      setState(() {
+        _templates = c
+            .map((c1) {
+              return c1["task_name"];
+            })
+            .toSet()
+            .toList();
+      });
+
+      print('hi');
     });
 
     // print(res);
