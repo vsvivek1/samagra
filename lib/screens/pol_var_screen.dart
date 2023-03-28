@@ -85,10 +85,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
       setState(() {
         _templates = c
             .map((c1) {
-              return c1["task_name"];
+              c1['isExpanded'] = false;
+              var s = c1.toString();
+              print("$s is c1");
+
+              return c1;
+              // return c1["task_name"];
             })
             .toSet()
             .toList();
+
+        print(_templates);
+        print('te,mplatesabove');
       });
 
       print('hi');
@@ -166,17 +174,42 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       childAspectRatio: 1.0,
                     ),
                     itemBuilder: (BuildContext context, int index) {
+                      bool isExpanded = true; //_templates[index]['isExpanded'];
+                      // List<Map<String, dynamic>> tasks = _templates[index];
+                      //['tasks'];
+
+                      // 919656264570
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                            _selectedTemplates.add(_templates[index]);
+                            _templates[index]['isExpanded'] = !isExpanded;
+
+                            print(
+                                "this is expanded $_templates[index]['isExpanded']");
+
+                            // _selectedTemplates.add(_templates[index]);
                           });
                         },
                         child: Container(
                           margin: EdgeInsets.all(8.0),
                           color: Colors.grey[300],
                           child: Center(
-                            child: Text(_templates[index]),
+                            child: Column(
+                              children: [
+                                Text(_templates[index]),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _templates[index]['isExpanded'] =
+                                          !isExpanded;
+                                    });
+                                  },
+                                  child: Text(
+                                    isExpanded ? 'Hide tasks' : 'Show tasks',
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
