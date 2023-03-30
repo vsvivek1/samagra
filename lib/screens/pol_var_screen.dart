@@ -85,6 +85,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       a['task_name'] = g['task_name'];
       a['structures'] = [];
+
+      a["isExpanded"] = false;
       ob.forEach((ob2) {
         a['structures'].add(ob2['mst_structure']);
       });
@@ -103,6 +105,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Future _sheduleBuilder() async {
     var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
 
+    if (workDetails.length == 1 && workDetails[0] == -1) {
+      return Future.value(-1);
+    }
     List wrkScheduleGroupStructures =
         workDetails[0]['wrk_schedule_group_structures'];
 
@@ -124,9 +129,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return FutureBuilder(
         future: _sheduleBuilder(),
         builder: (context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return Center();
+          }
+
           var ar = snapshot.data;
+
+          int ln = ar.length;
+          print("this is len $ln");
           print(ar.runtimeType);
-          // print(snapshot.data);
+          print('snapsho data below');
+          print(snapshot.data);
 
           return Scaffold(
             appBar: AppBar(
@@ -186,7 +199,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       Expanded(
                         flex: 1,
                         child: GridView.builder(
-                          itemCount: ar.length,
+                          itemCount: ln,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 1,
@@ -221,7 +234,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 child: Center(
                                   child: ListView(
                                     children: [
-                                      Text(ar[index]),
+                                      Text('text'),
                                       IconButton(
                                         icon: Icon(Icons.expand_less, size: 30),
                                         onPressed: () {
@@ -272,31 +285,39 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<List<dynamic>> _fetchWorkDetails() async {
-    final accessToken1 =
-        await storage.getSecureAllStorageDataByKey("access_token");
+    try {
+      final accessToken1 =
+          await storage.getSecureAllStorageDataByKey("access_token");
 
-    final accessToken = accessToken1['access_token'];
-    final loginDetails1 =
-        await storage.getSecureAllStorageDataByKey('loginDetails');
-    final loginDetails = loginDetails1['loginDetails'];
+      final accessToken = accessToken1['access_token'];
+      final loginDetails1 =
+          await storage.getSecureAllStorageDataByKey('loginDetails');
+      final loginDetails = loginDetails1['loginDetails'];
 
-    // final currentSeatDetails = getCurrentSeatDetails(loginDetails);
+      // final currentSeatDetails = getCurrentSeatDetails(loginDetails);
 
-    // final officeCode = currentSeatDetails['office']['office_code'];
+      // final officeCode = currentSeatDetails['office']['office_code'];
 
-    // final officeId = currentSeatDetails['office_id'];
+      // final officeId = currentSeatDetails['office_id'];
 
-    final url =
-        'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/47777/0';
-    final headers = {'Authorization': 'Bearer $accessToken'};
-    final response = await Dio().get(url, options: Options(headers: headers));
+      final url =
+          'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/47777/0';
+      final headers = {'Authorization': 'Bearer $accessToken'};
+      final response = await Dio().get(url, options: Options(headers: headers));
 
-    if (response.data != null && response.data['result_data'] != null) {
-      var res = response.data['result_data'];
+      if (response.data != null && response.data['result_data'] != null) {
+        var res = response.data['result_data'];
 
-      return Future.value([res['data']]);
-    } else {
-      return Future.value(['hi']);
+        return Future.value([res['data']]);
+      } else {
+        return Future.value([-1]);
+      }
+    } on Exception catch (e) {
+      print("$e  is the error in _fetchWorkDetails()");
+
+      return Future.value([-1]);
+
+      // TODO
     }
   }
 
