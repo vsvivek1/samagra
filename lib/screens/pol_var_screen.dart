@@ -56,16 +56,28 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Iterable<Map> getStructuresByName(d) {
     var e = [];
+    var ids = [];
+
+    print(d);
+    print('d above');
 
     d.forEach((grp) {
       var e1 = (grp as Map)['mst_task'];
 
-      if (!e.contains(e1['task_name'])) {
-        e.add(e1['task_name']);
+      if (!e.contains(e1)) {
+        e.add(e1);
       }
     });
 
+    // if (!ids.contains(ids)) {
+    //       e.add(ids['id']);
+    //     }
+    //   });
+
     var g2 = e.map((g) {
+      // print(g);
+      // print('g above');
+
       var a = {};
 
       var ob =
@@ -80,6 +92,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return a;
     });
 
+    print('g2 below');
     print(g2);
 
     print('g2 above');
@@ -87,66 +100,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return g2;
   }
 
-  Future _sheduleBuilder() {
-    _fetchWorkDetails().then((workDetails) {
-      print(workDetails.runtimeType);
+  Future _sheduleBuilder() async {
+    var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
 
-      // print(workDetails);
+    List wrkScheduleGroupStructures =
+        workDetails[0]['wrk_schedule_group_structures'];
 
-      // var ar = jsonDecode(workDetails as String);
+    var c = getStructuresByName(wrkScheduleGroupStructures).toList();
 
-      // print(workDetails[0]['wrk_schedule_group_structures']);
-
-      List wrkScheduleGroupStructures =
-          workDetails[0]['wrk_schedule_group_structures'];
-
-      print(wrkScheduleGroupStructures);
-      print('wrkScheduleGroupStructures');
-      var c;
-      try {
-        c = getStructuresByName(wrkScheduleGroupStructures).toList();
-
-        // var clen = c.length;
-        // print(c);
-
-        // for (int i = 0; i < c.length; i++) {
-        //   var a = c[i];
-
-        //   print(i);
-        //   print(a);
-        // }
-
-        return Future.value(c.toList());
-      } on Exception catch (e) {
-        c = [];
-
-        print(e);
-
-        return Future.value(c.toList());
-
-        // TODO
-      }
-
-      // print("this is c len $clen");
-      // setState(() {
-      //   _templates = c .toList();
-
-      //       // .map((c1) {
-      //       //   c1['isExpanded'] = false;
-      //       //   // var s = c1.toString();
-      //       //   // print("$s is c1");
-
-      //       //   return c1;
-      //       //   // return c1["task_name"];
-      //       // })
-      //       // .toSet()
-
-      //   // print(_templates.length);
-      //   // print('te,mplatesabove');
-      // });
-
-      // print('hi');
-    });
+    return Future.value(c.toList());
   }
 
   @override
@@ -162,7 +124,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return FutureBuilder(
         future: _sheduleBuilder(),
         builder: (context, AsyncSnapshot snapshot) {
-          print(snapshot.data);
+          var ar = snapshot.data;
+          print(ar.runtimeType);
+          // print(snapshot.data);
 
           return Scaffold(
             appBar: AppBar(
@@ -222,7 +186,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       Expanded(
                         flex: 1,
                         child: GridView.builder(
-                          itemCount: _templates.length,
+                          itemCount: ar.length,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 1,
@@ -257,7 +221,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 child: Center(
                                   child: ListView(
                                     children: [
-                                      Text('task'),
+                                      Text(ar[index]),
                                       IconButton(
                                         icon: Icon(Icons.expand_less, size: 30),
                                         onPressed: () {

@@ -151,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
           return Container(
             height: 1000,
             child: SingleChildScrollView(
-              child: Padding(
+              child: Container(
                 padding: EdgeInsets.all(16.0),
                 child: Form(
                   key: _formKey,
@@ -176,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             snapshot.data == '' ||
                             snapshot.data['seat_details'] == -1) {
                           return Center(
-                            child: Padding(
+                            child: Container(
                               padding: const EdgeInsets.only(
                                   top: 200, left: 20, right: 20),
                               child: Column(children: [
@@ -234,7 +234,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           return Column(
                             children: [
-                              Padding(
+                              Container(
                                 padding: const EdgeInsets.only(top: 100),
                                 child: FutureBuilder(
                                     future: _getUserLoginDetails(),
