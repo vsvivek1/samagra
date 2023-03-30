@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../app_theme.dart';
 import '../secure_storage/secure_storage.dart';
+import 'package:collection/collection.dart';
 
 class PolVarScreen extends StatefulWidget {
   @override
@@ -54,53 +55,155 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   List<String> _selectedTemplates = [];
 
-  Iterable<Map> getStructuresByName(d) {
-    var e = [];
-    var ids = [];
+  List getStructuresByName(d) {
+    List<dynamic> tasks = d;
 
-    print(d);
-    print('d above');
+    // print(tasks);
 
-    d.forEach((grp) {
-      var e1 = (grp as Map)['mst_task'];
+    List res = [];
 
-      if (!e.contains(e1)) {
-        e.add(e1);
+    var allTasks =
+        tasks.map((t) => t['mst_task']['task_name']).toSet().toList();
+
+    for (int z = 0; z < allTasks.length; z++) {
+      var ta = allTasks[z];
+      var t2 = tasks
+          .where((t) => t['mst_task']['task_name'] == ta)
+          .map((t3) => t3['mst_structure']);
+
+      var ob = {};
+      ob['task_name'] = ta;
+      ob['tasks'] = t2;
+
+      res.add(ob);
+
+      // print(t2);
+
+      // var x = t2.map((a) => a.mst_structure);
+
+      // print(x);
+
+      // print('t2 above');
+    }
+
+    return res;
+    print(res);
+    print('  resall taks above');
+
+    List<Map<String, dynamic>> tasks1 = [
+      {
+        'task_name': 'Task 1',
+        'id': 1,
+        'structures': ['Structure 1', 'Structure 2', 'Structure 3']
+      },
+      {
+        'task_name': 'Task 2',
+        'id': 2,
+        'structures': ['Structure 4', 'Structure 5']
+      },
+      {
+        'task_name': 'Task 1',
+        'id': 3,
+        'structures': ['Structure 6', 'Structure 7']
+      }
+    ];
+
+    return tasks1;
+
+    Map<String, List<Map<String, dynamic>>> groupedTasks = {};
+
+    tasks.forEach((task) {
+      String taskName = task['task_name'];
+
+      if (groupedTasks.containsKey(taskName)) {
+        groupedTasks[taskName]!.add(task);
+      } else {
+        groupedTasks[taskName] = [task];
       }
     });
 
-    // if (!ids.contains(ids)) {
-    //       e.add(ids['id']);
-    //     }
-    //   });
+    List<Map<String, dynamic>> result = [];
 
-    var g2 = e.map((g) {
-      // print(g);
-      // print('g above');
+    groupedTasks.forEach((taskName, tasks) {
+      List<dynamic> structures = [];
+      int id = -1;
 
-      var a = {};
-
-      var ob =
-          d.where((element) => element['mst_task']['id'] == g['id']).toList();
-
-      a['task_name'] = g['task_name'];
-      a['structures'] = [];
-
-      a["isExpanded"] = false;
-      ob.forEach((ob2) {
-        a['structures'].add(ob2['mst_structure']);
+      tasks.forEach((task) {
+        structures.addAll(task['structures']);
+        id = task['id'];
       });
 
-      return a;
+      result.add({'task_name': taskName, 'id': id, 'structures': structures});
     });
 
-    print('g2 below');
-    print(g2);
+    print(result);
 
-    print('g2 above');
-
-    return g2;
+    return result;
   }
+
+  // Iterable<Map> getStructuresByName1(d) {
+  //   var e = Set();
+  //   var ids = [];
+
+  //   // print(d);
+  //   // print('d above');
+
+  //   var groupedTasks = groupBy(d, (task) => task);
+
+  //   List<Map<String, dynamic>> result = [];
+
+  //   // var tasks = d;
+
+  //   groupedTasks.forEach((taskName, tasks) {
+  //     List<dynamic> structures = [];
+  //     int id;
+  //     tasks.forEach((task) {
+  //       structures.addAll(task!.structures);
+  //       id = task.id;
+  //     });
+
+  //     result.add({'task_name': taskName, 'id': id, 'structures': structures});
+  //   });
+
+  //   d.forEach((grp) {
+  //     var e1 = (grp as Map)['mst_task'];
+
+  //     bool containsTaskName = e.length != 0 &&
+  //         e.any((element) => element.task_name == e1.task_name);
+
+  //     print('this is $containsTaskName');
+  //     // if (!containsTaskName) {
+  //     //   e.add(e1);
+  //     // }
+  //   });
+
+  //   var g2 = e.map((g) {
+  //     // print(g);
+  //     // print('g above');
+
+  //     var a = {};
+
+  //     var ob =
+  //         d.where((element) => element['mst_task']['id'] == g['id']).toList();
+
+  //     a['task_name'] = g['task_name'];
+  //     a['structures'] = [];
+
+  //     a["isExpanded"] = false;
+  //     ob.forEach((ob2) {
+  //       a['structures'].add(ob2['mst_structure']);
+  //     });
+
+  //     return a;
+  //   });
+
+  //   print('g2 below');
+  //   print(g2);
+
+  //   print('g2 above');
+
+  //   return g2;
+  // }
 
   Future _sheduleBuilder() async {
     var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
@@ -129,17 +232,39 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return FutureBuilder(
         future: _sheduleBuilder(),
         builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) {
-            return Center();
+          if (!snapshot.hasData && snapshot.data == -1) {
+            return Center(
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
 
           var ar = snapshot.data;
 
+          if (ar == null) {
+            return Center(
+              child: SizedBox(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
           int ln = ar.length;
           print("this is len $ln");
           print(ar.runtimeType);
+
+          print(ar[0]);
           print('snapsho data below');
-          print(snapshot.data);
+          // print(snapshot.data);
+
+          // print(ar[24]);
+
+          // print('24 above');
 
           return Scaffold(
             appBar: AppBar(
@@ -234,7 +359,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 child: Center(
                                   child: ListView(
                                     children: [
-                                      Text('text'),
+                                      Text(ar[index]['task_name'].toString()),
                                       IconButton(
                                         icon: Icon(Icons.expand_less, size: 30),
                                         onPressed: () {
