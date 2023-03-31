@@ -85,6 +85,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       // print('t2 above');
     }
+
+    return res;
   }
 
   Future _sheduleBuilder() async {
@@ -227,13 +229,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             // print('task above');
                             return GestureDetector(
                               onTap: () {
-                                setState(() {
-                                  // _templates[index]['isExpanded'] = !isExpanded;
-
-                                  // print("this is expanded $task ");
-
-                                  // _selectedTemplates.add(_templates[index]);
-                                });
+                                setState(() {});
                               },
                               child: Container(
                                 margin: EdgeInsets.all(8.0),
