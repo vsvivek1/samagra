@@ -77,8 +77,21 @@ class _LoginScreenState extends State<LoginScreen> {
     var loginDetails1 =
         await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
 
+// storedLogin
+
+    var slogin =
+        await _secureStorage.getSecureAllStorageDataByKey('storedLogin');
+
+    // print(slogin['storedLogin']);
+
+    // print(slogin.runtimeType);
+
+    // print('slogin above');
+
     if (!loginDetails1?.isEmpty && loginDetails1["loginDetails"] != null) {
       var ob = json.decode(loginDetails1["loginDetails"] ?? '');
+
+      ob['storedLogin'] = slogin['storedLogin'];
 
       // ob["seat_details"] =
       //     this.getCurrentSeatDetails(_loginDetails1["loginDetails"]);
@@ -171,10 +184,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         // print('sanpsh  data below');
 
-                        print(snapshot.data == '');
+                        // print(snapshot.data == '');
+
                         if (!(snapshot.hasData) ||
                             snapshot.data == '' ||
                             snapshot.data['seat_details'] == -1) {
+                          ;
+
                           return Center(
                             child: Container(
                               padding: const EdgeInsets.only(
@@ -205,6 +221,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               loginDetails = snapshot.data;
                             }
 
+                            print(loginDetails);
+
+                            print('login details above');
                             passwordInitialValue =
                                 loginDetails!['password'] ?? '';
                           } on Exception catch (e) {
@@ -246,17 +265,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         var user = login["user"];
 
-                                        // print(user);
+                                        print(snapshot.data['storedLogin']);
 
-                                        // if (user == null) {
-                                        //   return Center(
-                                        //     child: CircleAvatar(
-                                        //       radius: 50,
-                                        //       backgroundImage: AssetImage(
-                                        //           'assets/images/kseb_emblem.jpeg'),
-                                        //     ),
-                                        //   );
-                                        // }
+                                        // print(snapshot
+                                        //     .data['storedLogin'].runtimeType);
+                                        var storedLogin = json.decode(
+                                            snapshot.data['storedLogin']);
+
+                                        var storedPassword =
+                                            storedLogin['password'];
+
+                                        _password = storedPassword;
+
+                                        passwordInitialValue = _password;
+
+                                        print(storedLogin['password']);
+
+                                        print(
+                                            'snapshotdata from is loggin -1 above  112');
 
                                         var dp = user['photo_image'];
 
@@ -271,6 +297,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             user["employee_code"].toString();
 
                                         // print(empCodeInitialValue);
+
+                                        print('$passwordInitialValue here');
 
                                         return Center(
                                           child: Column(
@@ -558,19 +586,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await _setSavedUserNameAndPassword(email, _password);
 
-      print("$email is email");
-      print("$_password is password");
+      // print("$email is email");
+      // print("$_password is password");
 
       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
           content: Text('loggining in '), duration: Duration(seconds: 3))));
 
-      Map<String, dynamic> result =
-          await api.login(email, _password, showPhoto);
+      print("$email is email and password is $_password");
+      var result = await api.login(email, _password, showPhoto);
+
+      print(result);
+
+      print(result.runtimeType);
+
+      return;
 
       print('result oflogin request below');
       print("$result is the result");
 
-      if (result == -1) {
+      if (result['result_flag'] == -1) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
             content: Text('Invalid Credentials'),
             duration: Duration(seconds: 3))));
