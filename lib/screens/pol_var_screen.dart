@@ -128,6 +128,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           var ar = snapshot.data;
 
+          print(ar);
+
+          print('ar above');
+
           if (ar == null) {
             return Center(
               child: SizedBox(
@@ -237,7 +241,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 child: Center(
                                   child: ListView(
                                     children: [
-                                      Text(ar[index]['task_name'].toString()),
+                                      Text(ar[index]['task_name'].toString() +
+                                          'hi'),
                                       IconButton(
                                         icon: Icon(Icons.expand_less, size: 30),
                                         onPressed: () {
@@ -306,8 +311,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
       final url =
           'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/47777/0';
       final headers = {'Authorization': 'Bearer $accessToken'};
-      final response = await Dio().get(url, options: Options(headers: headers));
+      Response response =
+          await Dio().get(url, options: Options(headers: headers));
 
+      if (response.statusCode != 200) {
+        return Future.value([-1]);
+      }
+
+      print(response.statusCode);
+
+      print('dio respose above');
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
@@ -316,6 +329,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return Future.value([-1]);
       }
     } on Exception catch (e) {
+      print(e);
       print("$e  is the error in _fetchWorkDetails()");
 
       return Future.value([-1]);

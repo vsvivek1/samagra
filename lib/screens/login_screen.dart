@@ -3,10 +3,7 @@
 // ignore_for_file: unrelated_type_equality_checks
 
 import 'dart:async';
-import 'dart:ffi';
-import 'dart:typed_data';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:samagra/home_screen.dart';
 import 'package:dio/dio.dart';
@@ -29,8 +26,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final Dio _dio = Dio();
-
   final SecureStorage _secureStorage = SecureStorage();
   String _empcode = '', _password = '';
   bool _obscureText = true;
@@ -45,7 +40,6 @@ class _LoginScreenState extends State<LoginScreen> {
       -1; //-1 init state, 0 spinning, 1 spin stop and load new //-2 error
 
   bool _showpassWordSpinner = false;
-  // TextEditingController _usernameController = new TextEditingController();
 
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _firstTimeUserNameController = TextEditingController();
@@ -153,7 +147,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
-    // print("this is is logging in $_isLoggingIn");
 
     if (_isLoggingIn == -2) {
       return createLoadingSpinner();
@@ -172,48 +165,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       // future: _getSavedUsernameAndPassword(),
                       future: _getUserLoginDetails(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        // print(snapshot.data.toString());
-                        // print(snapshot.data.runtimeType);
-
-                        // return Text('hi');
-
-                        //  && snapshot.data.runtimeType == 'String'
-                        // print('sanpsh thas data below');
-
-                        // print(snapshot.hasData);
-
-                        // print('sanpsh  data below');
-
-                        // print(snapshot.data == '');
-
                         if (!(snapshot.hasData) ||
                             snapshot.data == '' ||
                             snapshot.data['seat_details'] == -1) {
-                          ;
-
-                          return Center(
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                  top: 200, left: 20, right: 20),
-                              child: Column(children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundImage: AssetImage(
-                                      'assets/images/kseb_emblem.jpeg'),
-                                ),
-                                SizedBox(height: 20, width: 20),
-                                showUserNameForm1(),
-                              ]),
-                            ),
-                          );
+                          print('no stored login details');
+                          // no stored data or stored data is null or seat details -1
+                          /// show fist time login screen
+                          return noStoredLoginDetailsSoFirstLoginScreen();
                         } else {
-                          // if (snapshot.data.runtimeType != 'String') {
-                          //   return Text('na');
-                          // }
-
                           try {
                             print('snapshot data prinint in else below');
-                            // print(snapshot.data);e
+
                             var loginDetails;
                             if (snapshot.data.runtimeType == 'String') {
                               loginDetails = json.decode(snapshot.data);
@@ -221,35 +183,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               loginDetails = snapshot.data;
                             }
 
-                            print(loginDetails);
-
-                            print('login details above');
                             passwordInitialValue =
                                 loginDetails!['password'] ?? '';
                           } on Exception catch (e) {
-                            return Text('An error occurred: $e');
-
-                            // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            //   content: Text('An error occurred: $e'),
-                            //   duration: Duration(seconds: 3),
-                            // ));
+                            return Text('An error occurred @190: $e');
                           }
-
-                          // print(passwordInitialValue);
-
-                          print(
-                              'jst above passwordInitial value is = $passwordInitialValue');
-                          // _inittializeLoginCredentials(snapshot);
-
-                          // if (snapshot.data != null &&
-                          //     jsonDecode(snapshot.data) != null) {
-                          //   if ((jsonDecode(snapshot.data)['login'] != null)) {
-                          //     _empcode = jsonDecode(snapshot.data)['login']
-                          //         .split(RegExp(r'@'))[0];
-
-                          //     // _password = jsonDecode(snapshot.data)["password"];
-                          //   }
-                          // }
 
                           return Column(
                             children: [
@@ -299,6 +237,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         // print(empCodeInitialValue);
 
                                         print('$passwordInitialValue here');
+
+                                        return Text('text');
 
                                         return Center(
                                           child: Column(
@@ -557,6 +497,22 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Center noStoredLoginDetailsSoFirstLoginScreen() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.only(top: 200, left: 20, right: 20),
+        child: Column(children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: AssetImage('assets/images/kseb_emblem.jpeg'),
+          ),
+          SizedBox(height: 20, width: 20),
+          showUserNameForm1(),
+        ]),
+      ),
+    );
+  }
+
   Future<void> proceedForLogin(BuildContext context, occation) async {
     try {
       MyAPI api = new MyAPI();
@@ -586,20 +542,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await _setSavedUserNameAndPassword(email, _password);
 
-      // print("$email is email");
-      // print("$_password is password");
-
       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
           content: Text('loggining in '), duration: Duration(seconds: 3))));
 
-      print("$email is email and password is $_password");
-      var result = await api.login(email, _password, showPhoto);
+      print(
+          "$email is email and password is $_password from proceed for login function");
+      var result = await api.login(email, _password, showPhoto, context);
 
       print(result);
 
       print(result.runtimeType);
 
-      return;
+      // return;
 
       print('result oflogin request below');
       print("$result is the result");
@@ -868,7 +822,7 @@ class MyAPI {
   final Dio _dio = Dio();
   final String _url = "http://erpuat.kseb.in/api/login";
 
-  Future login(String email, String password, String showPhoto) async {
+  Future login(String email, String password, String showPhoto, context) async {
     print(email);
     print(password);
     final Map<String, String> data = {
@@ -878,23 +832,30 @@ class MyAPI {
     };
 
     try {
-      final Response response = await _dio.post(_url, data: data);
+      Response response = await _dio.post(_url, data: data);
 
-      print(response);
+      // print(response.statusCode);
 
-      print('response above');
+      // print('dio response above');
 
-      print(response.data['result_flag'].runtimeType);
+      if (response.statusCode != 200) {
+        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+            content: Text('Too many requests and Load /server busy'),
+            duration: Duration(seconds: 3))));
 
-      // response.data['result_flag']
+        var result;
 
-      if (response.data['result_flag'] == -1) {
+        return Future(() => result);
+      }
+
+      if (response.statusCode != 200 || response.data['result_flag'] == -1) {
         return -1;
       }
       return response.data;
     } on DioError catch (e) {
       if (e.response != null) {
-        print(e.response);
+        print(
+            '\n          Thee is some errot in loggin in , response is below $e.response \n');
 
         // print(e.response.headers);
         // print(e.response.request);

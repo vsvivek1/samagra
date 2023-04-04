@@ -126,112 +126,108 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Expanded(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {
-                          _filteredItems = List.from(widget.schGrpList);
-                        });
-                      },
-                    ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {
+                        _filteredItems = List.from(widget.schGrpList);
+                      });
+                    },
                   ),
-                  onChanged: (value) {
-                    List<dynamic> schGrpList = List.from(widget.schGrpList);
-                    setState(() {
-                      _filteredItems = schGrpList
-                          .where((item) => item['wrk_work_detail']['work_name']
-                              .toLowerCase()
-                              .contains(value.toLowerCase()))
-                          .toList();
-                    });
-                  },
                 ),
-              ),
-            ),
-            Expanded(
-              child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1,
-                ),
-                itemCount: _filteredItems.length,
-                itemBuilder: (context, index) {
-                  final item = _filteredItems[index];
-
-                  int sl = index + 1;
-
-                  Map workDetail = item['wrk_work_detail'];
-
-                  int workId = workDetail?['id'];
-                  final workName = workDetail['work_name'];
-
-                  if (workName == null || workId == -1) {
-                    final snackBar = SnackBar(
-                      content: Text(
-                          'Some error caused to load work id go back and try again'),
-                      action: SnackBarAction(
-                        label: 'Go Back',
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    print(
-                        'work_name key not found in map or its value is null');
-                  }
-
-                  ///temporary
-
-                  //  'workId' : workId,
-                  //             'workName': workName,
-
-                  // return Text('hi');
-                  return GestureDetector(
-                      onTap: () {
-                        p('below');
-                        p(item);
-                        print('above');
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                MeasurementOptionScreen(workId),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 2.0),
-                        ),
-                        child: GridTile(
-                          header: Text(sl.toString()),
-                          child: Container(
-                            color: Colors.grey[100],
-                            child: Center(
-                              child: Text(item['wrk_work_detail']['work_name']),
-                            ),
-                          ),
-                        ),
-                      ));
+                onChanged: (value) {
+                  List<dynamic> schGrpList = List.from(widget.schGrpList);
+                  setState(() {
+                    _filteredItems = schGrpList
+                        .where((item) => item['wrk_work_detail']['work_name']
+                            .toLowerCase()
+                            .contains(value.toLowerCase()))
+                        .toList();
+                  });
                 },
               ),
             ),
-          ],
-        ),
+          ),
+          Expanded(
+            child: GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1,
+              ),
+              itemCount: _filteredItems.length,
+              itemBuilder: (context, index) {
+                final item = _filteredItems[index];
+
+                int sl = index + 1;
+
+                Map workDetail = item['wrk_work_detail'];
+
+                int workId = workDetail?['id'];
+                final workName = workDetail['work_name'];
+
+                if (workName == null || workId == -1) {
+                  final snackBar = SnackBar(
+                    content: Text(
+                        'Some error caused to load work id go back and try again'),
+                    action: SnackBarAction(
+                      label: 'Go Back',
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  print('work_name key not found in map or its value is null');
+                }
+
+                ///temporary
+
+                //  'workId' : workId,
+                //             'workName': workName,
+
+                // return Text('hi');
+                return GestureDetector(
+                    onTap: () {
+                      p('below');
+                      p(item);
+                      print('above');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MeasurementOptionScreen(workId),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey, width: 2.0),
+                      ),
+                      child: GridTile(
+                        header: Text(sl.toString()),
+                        child: Container(
+                          color: Colors.grey[100],
+                          child: Center(
+                            child: Text(item['wrk_work_detail']['work_name']),
+                          ),
+                        ),
+                      ),
+                    ));
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
