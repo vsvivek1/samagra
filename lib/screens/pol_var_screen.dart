@@ -73,6 +73,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       var ob = {};
       ob['task_name'] = ta;
+      ob['isExpanded'] = false;
       ob['tasks'] = t2;
 
       res.add(ob);
@@ -128,11 +129,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           var ar = snapshot.data;
 
-          print(ar);
-
-          print('ar above');
-
-          if (ar == null) {
+          // ignore: unrelated_type_equality_checks
+          if (ar == null || ar == -1) {
             return Center(
               child: SizedBox(
                 width: 50,
@@ -219,18 +217,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             childAspectRatio: 1.0,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            bool isExpanded =
-                                true; //_templates[index]['isExpanded'];
-                            // List<Map<String, dynamic>> tasks = _templates[index];
-                            //['tasks'];
+                            // bool isExpanded = ar[index]['isExpanded'];
 
-                            // 919656264570
-
-                            // var cur = _templates[index];
-                            // var task = cur['task_name'];
-
-                            // print(task);
-                            // print('task above');
                             return GestureDetector(
                               onTap: () {
                                 setState(() {});
@@ -239,25 +227,55 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 margin: EdgeInsets.all(8.0),
                                 color: Colors.grey[300],
                                 child: Center(
-                                  child: ListView(
-                                    children: [
-                                      Text(ar[index]['task_name'].toString() +
-                                          'hi'),
-                                      IconButton(
-                                        icon: Icon(Icons.expand_less, size: 30),
-                                        onPressed: () {
-                                          setState(() {
-                                            // _templates[index]['isExpanded'] =
-                                            //     !isExpanded;
-                                          });
-                                        },
-                                        // icon: isExpanded
-                                        //     ? Icon(Icons.expand_less, size: 30)
-                                        //     : Icon(Icons.expand_more, size: 30),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                    child: ListView(
+                                  children: [
+                                    ExpansionPanelList(
+                                      expansionCallback:
+                                          (int panelIndex, bool isExpanded) {
+                                        setState(() {
+                                          ar[index]['isExpanded'] =
+                                              !ar[index]['isExpanded'];
+                                        });
+                                      },
+                                      children: [
+                                        ExpansionPanel(
+                                          headerBuilder: (BuildContext context,
+                                              bool isExpanded) {
+                                            return ListTile(
+                                              title: Text('TASK NAME'),
+                                            );
+                                          },
+                                          body: ListTile(
+                                            title: Text(ar[index]['task_name']
+                                                .toString()),
+                                          ),
+                                          isExpanded: ar[index]['isExpanded'],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                )
+
+                                    // ListView(
+                                    //   children: [
+                                    //     Text(ar[index]['task_name'].toString() +
+                                    //         'hi'),
+                                    //     IconButton(
+                                    //       icon: Icon(Icons.expand_less, size: 30),
+                                    //       onPressed: () {
+                                    //         setState(() {
+                                    //           // _templates[index]['isExpanded'] =
+                                    //           //     !isExpanded;
+                                    //         });
+                                    //       },
+                                    //       // icon: isExpanded
+                                    //       //     ? Icon(Icons.expand_less, size: 30)
+                                    //       //     : Icon(Icons.expand_more, size: 30),
+                                    //     ),
+                                    //   ],
+                                    // ),
+
+                                    ),
                               ),
                             );
                           },

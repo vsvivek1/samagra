@@ -83,21 +83,28 @@ class WorkSelection extends StatelessWidget {
     final url =
         'http://erpuat.kseb.in/api/wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
-    final response = await Dio().get(url, options: Options(headers: headers));
 
-    //write code here to action for no work code error code -1 display error etc
-    // p(response.data['result_data']);
+    try {
+      Response response =
+          await Dio().get(url, options: Options(headers: headers));
 
-    if (response.data != null &&
-        response.data['result_data'] != null &&
-        response.data['result_data']['schGrpList'] != null) {
-      var res = response.data['result_data']['schGrpList'];
+      //write code here to action for no work code error code -1 display error etc
+      // p(response.data['result_data']);
 
-      // p(res);
-      return res;
-    } else {
-      p('some error');
-      return [];
+      if (response.data != null &&
+          response.data['result_data'] != null &&
+          response.data['result_data']['schGrpList'] != null) {
+        var res = response.data['result_data']['schGrpList'];
+
+        // p(res);
+        return res;
+      } else {
+        p('some error');
+        return [];
+      }
+    } on Exception catch (e) {
+      return Future.value(['hi']);
+      print(e); // TODO
     }
   }
 
