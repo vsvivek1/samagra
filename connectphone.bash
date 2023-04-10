@@ -25,7 +25,7 @@ else
   echo "IP address of device with MAC address 22:d0:46:f7:88:68 is: $ip_address"
 fi
 
-
+$ip_address=192.168.1.199
 adb connect $ip_address:5555
 
 device_status=$(adb devices | grep $ip_address | awk '{print $2}')

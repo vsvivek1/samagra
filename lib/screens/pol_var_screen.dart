@@ -144,7 +144,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           print("this is len $ln");
           print(ar.runtimeType);
 
-          print(ar[0]);
+          print(ar);
           print('snapsho data below');
           // print(snapshot.data);
 
@@ -174,6 +174,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       });
                     },
                   ),
+                ),
+                Divider(
+                  height: 20,
+                  thickness: 2,
+                  color: Colors.blueAccent,
                 ),
                 Row(
                   children: [
@@ -208,7 +213,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        flex: 1,
+                        flex: 4,
                         child: GridView.builder(
                           itemCount: ln,
                           gridDelegate:
@@ -224,65 +229,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 setState(() {});
                               },
                               child: Container(
-                                margin: EdgeInsets.all(8.0),
+                                // margin: EdgeInsets.all(1.0),
                                 color: Colors.grey[300],
                                 child: Center(
                                     child: ListView(
-                                  children: [
-                                    ExpansionPanelList(
-                                      expansionCallback:
-                                          (int panelIndex, bool isExpanded) {
-                                        setState(() {
-                                          ar[index]['isExpanded'] =
-                                              !ar[index]['isExpanded'];
-                                        });
-                                      },
-                                      children: [
-                                        ExpansionPanel(
-                                          headerBuilder: (BuildContext context,
-                                              bool isExpanded) {
-                                            return ListTile(
-                                              title: Text('TASK NAME'),
-                                            );
-                                          },
-                                          body: ListTile(
-                                            title: Text(ar[index]['task_name']
-                                                .toString()),
-                                          ),
-                                          isExpanded: ar[index]['isExpanded'],
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                )
-
-                                    // ListView(
-                                    //   children: [
-                                    //     Text(ar[index]['task_name'].toString() +
-                                    //         'hi'),
-                                    //     IconButton(
-                                    //       icon: Icon(Icons.expand_less, size: 30),
-                                    //       onPressed: () {
-                                    //         setState(() {
-                                    //           // _templates[index]['isExpanded'] =
-                                    //           //     !isExpanded;
-                                    //         });
-                                    //       },
-                                    //       // icon: isExpanded
-                                    //       //     ? Icon(Icons.expand_less, size: 30)
-                                    //       //     : Icon(Icons.expand_more, size: 30),
-                                    //     ),
-                                    //   ],
-                                    // ),
-
-                                    ),
+                                  children: [TasksList(ar, index)],
+                                )),
                               ),
                             );
                           },
                         ),
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 1,
                         child: ListView.builder(
                           itemCount: _numberOfLocations,
                           itemBuilder: (BuildContext context, int index) {
@@ -308,6 +267,131 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ),
           );
         });
+  }
+
+  ExpansionPanelList TasksList(ar, int index) {
+    print(ar[index]['isExpanded']);
+
+    print('is expanded above');
+    print(ar[index]['tasks'].runtimeType);
+
+    var tasks = ar[index]['tasks'].toList();
+
+    // return Text('hi');
+    return ExpansionPanelList(
+      expansionCallback: (int panelIndex, bool isExpanded) {
+        setState(() {
+          ar[index]['isExpanded'] = true;
+
+          // !ar[index]['isExpanded'];
+        });
+      },
+      children: [
+        ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text(ar[index]['task_name'].toString()),
+            );
+          },
+          body: Column(children: getTasksItems(tasks)),
+          isExpanded: ar[index]['isExpanded'],
+        ),
+      ],
+    );
+  }
+
+  List<Widget> getTasksItems(List tasks) {
+    if (tasks == null || tasks.isEmpty) {
+      return [Text('No tasks found.')];
+    }
+
+    return tasks.map<Widget>((t) {
+      var str = t['structure_name'] as String;
+
+      if (str == null) {
+        return Text('Invalid task.');
+      }
+
+      return Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(str),
+            Row(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () {
+                    // Decrement task quantity
+                  },
+                ),
+                Text('2'), // Display task quantity
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    // Increment task quantity
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+  List<Widget> getTasksItems1(tasks) {
+    if (tasks == null || tasks.isEmpty) {
+      return [Text('error')];
+    }
+
+    var a = tasks.map((t) {
+      var str = t['structure_name'] as String; // cast to String
+
+      print("this is str $str");
+
+      if (str == null) {
+        return Text('hi');
+      }
+
+      // ignore: unnecessary_cast
+      return Card(
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(str),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.remove),
+                onPressed: () {
+                  setState(() {
+                    // item.quantity--;
+                  });
+                },
+              ),
+              // Text(item.quantity.toString()),
+              Text('2'),
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  setState(() {
+                    // item.quantity++;
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
+      )) as Widget;
+
+      // return Container(child: Text(str));
+    }).toList();
+
+    print(a);
+
+    return a;
+    // return [Text('1'), Text('2')];
   }
 
   Future<List<dynamic>> _fetchWorkDetails() async {
