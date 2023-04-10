@@ -219,18 +219,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 1,
-                            childAspectRatio: 1.0,
+                            // childAspectRatio: 1.0,
                           ),
                           itemBuilder: (BuildContext context, int index) {
                             // bool isExpanded = ar[index]['isExpanded'];
 
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {});
-                              },
-                              child: ListView(
-                                children: [TasksList(ar, index)],
-                              ),
+                            return ListView(
+                              // children: [TasksList(ar, index)],
+                              children: [
+                                Text('hi'),
+                                Text('hi hi '),
+                              ],
                             );
                           },
                         ),
@@ -278,9 +277,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return ExpansionPanelList(
       expansionCallback: (int panelIndex, bool isExpanded) {
         setState(() {
-          ar[index]['isExpanded'] = true;
+          ar[index]['isExpanded'] = !ar[index]['isExpanded'];
 
-          // !ar[index]['isExpanded'];
+          //
         });
       },
       children: [
