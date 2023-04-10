@@ -558,7 +558,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print('result oflogin request below');
       print("$result is the result");
 
-      if (result['result_flag'] == -1) {
+      if (result == -1 || result['result_flag'] == -1) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
             content: Text('Invalid Credentials'),
             duration: Duration(seconds: 3))));
