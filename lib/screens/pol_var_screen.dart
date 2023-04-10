@@ -12,7 +12,7 @@ class PolVarScreen extends StatefulWidget {
   final int workId;
 
   PolVarScreen({Key? key, required this.workId}) : super(key: key) {
-    print("this is workid $workId");
+    // print("this is workid $workId");
   }
 
   _PolVarScreenState createState() => _PolVarScreenState();
@@ -141,11 +141,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
 
           int ln = ar.length;
-          print("this is len $ln");
-          print(ar.runtimeType);
+          // print("this is len $ln");
+          // print(ar.runtimeType);
 
-          print(ar);
-          print('snapsho data below');
+          // print(ar);
+          // print('snapsho data below');
           // print(snapshot.data);
 
           // print(ar[24]);
@@ -228,14 +228,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               onTap: () {
                                 setState(() {});
                               },
-                              child: Container(
-                                // margin: EdgeInsets.all(1.0),
-                                color: Colors.grey[300],
-                                child: Center(
-                                    child: ListView(
-                                  children: [TasksList(ar, index)],
-                                )),
-                              ),
+                              child: Center(
+                                  child: ListView(
+                                children: [TasksList(ar, index)],
+                              )),
                             );
                           },
                         ),
@@ -273,7 +269,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print(ar[index]['isExpanded']);
 
     print('is expanded above');
-    print(ar[index]['tasks'].runtimeType);
+
+    print('is expanded above');
+    // print(ar[index]['tasks'].runtimeType);
 
     var tasks = ar[index]['tasks'].toList();
 
@@ -290,7 +288,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
         ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
-              title: Text(ar[index]['task_name'].toString()),
+              title: Text(
+                ar[index]['task_name'].toString(),
+              ),
             );
           },
           body: Column(children: getTasksItems(tasks)),
@@ -316,7 +316,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(str),
+            FittedBox(fit: BoxFit.scaleDown, child: Text(str)),
             Row(
               children: [
                 IconButton(
@@ -348,7 +348,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     var a = tasks.map((t) {
       var str = t['structure_name'] as String; // cast to String
 
-      print("this is str $str");
+      // print("this is str $str");
 
       if (str == null) {
         return Text('hi');
@@ -388,7 +388,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // return Container(child: Text(str));
     }).toList();
 
-    print(a);
+    // print(a);
 
     return a;
     // return [Text('1'), Text('2')];
@@ -417,12 +417,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
           await Dio().get(url, options: Options(headers: headers));
 
       if (response.statusCode != 200) {
+        // print(response);
+        print('error response above');
+
         return Future.value([-1]);
       }
 
-      print(response.statusCode);
+      // print(response.statusCode);
 
-      print('dio respose above');
+      // print('dio respose above');
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 

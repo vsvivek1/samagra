@@ -76,12 +76,6 @@ class _LoginScreenState extends State<LoginScreen> {
     var slogin =
         await _secureStorage.getSecureAllStorageDataByKey('storedLogin');
 
-    // print(slogin['storedLogin']);
-
-    // print(slogin.runtimeType);
-
-    // print('slogin above');
-
     if (!loginDetails1?.isEmpty && loginDetails1["loginDetails"] != null) {
       var ob = json.decode(loginDetails1["loginDetails"] ?? '');
 
@@ -110,8 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
       String empcode = empCodeObj["login"].split(RegExp(r'@'))[0];
 
       String password = jsonDecode(_loginDetails1["storedLogin"])["password"];
-
-      // print(empcode);
 
       _empcode = empcode;
       _password = password;
@@ -174,8 +166,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           return noStoredLoginDetailsSoFirstLoginScreen();
                         } else {
                           try {
-                            print('snapshot data prinint in else below');
-
                             var loginDetails;
                             if (snapshot.data.runtimeType == 'String') {
                               loginDetails = json.decode(snapshot.data);
@@ -203,8 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         var user = login["user"];
 
-                                        print(snapshot.data['storedLogin']);
-
                                         // print(snapshot
                                         //     .data['storedLogin'].runtimeType);
                                         var storedLogin = json.decode(
@@ -216,11 +204,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         _password = storedPassword;
 
                                         passwordInitialValue = _password;
-
-                                        print(storedLogin['password']);
-
-                                        print(
-                                            'snapshotdata from is loggin -1 above  112');
 
                                         var dp = user['photo_image'];
 
@@ -235,8 +218,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                             user["employee_code"].toString();
 
                                         // print(empCodeInitialValue);
-
-                                        print('$passwordInitialValue here');
 
                                         return Text('text');
 
@@ -517,10 +498,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       MyAPI api = new MyAPI();
 
-      print('proceed for login');
-
-      print("empcode is $_empcode");
-
       String ext = "@kseberp.in";
 
       if (occation == 'regular') {
@@ -549,14 +526,9 @@ class _LoginScreenState extends State<LoginScreen> {
           "$email is email and password is $_password from proceed for login function");
       var result = await api.login(email, _password, showPhoto, context);
 
-      print(result);
-
-      print(result.runtimeType);
-
       // return;
 
       print('result oflogin request below');
-      print("$result is the result");
 
       if (result == -1 || result['result_flag'] == -1) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
@@ -634,10 +606,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   showUserNameForm1() {
-    print(_usernameController.text.length);
-
-    print(_usernameController.text.length);
-
     return Column(
       children: [
         TextField(
@@ -823,8 +791,6 @@ class MyAPI {
   final String _url = "http://erpuat.kseb.in/api/login";
 
   Future login(String email, String password, String showPhoto, context) async {
-    print(email);
-    print(password);
     final Map<String, String> data = {
       "email": email,
       "password": password,
@@ -849,6 +815,7 @@ class MyAPI {
       }
 
       if (response.statusCode != 200 || response.data['result_flag'] == -1) {
+        print(response);
         return -1;
       }
       return response.data;
