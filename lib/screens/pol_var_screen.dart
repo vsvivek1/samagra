@@ -213,27 +213,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                        flex: 4,
-                        child: GridView.builder(
-                          itemCount: ln,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1,
-                            // childAspectRatio: 1.0,
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            // bool isExpanded = ar[index]['isExpanded'];
+                          flex: 4,
+                          child: ListView.separated(
+                            itemCount: ar.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return TasksList(ar, index);
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return Divider();
+                            },
+                          )
+                          // GridView.builder(
+                          //   itemCount: ln,
+                          //   gridDelegate:
+                          //       SliverGridDelegateWithFixedCrossAxisCount(
+                          //     crossAxisCount: 1,
+                          //     childAspectRatio: 1.0,
+                          //   ),
+                          //   itemBuilder: (BuildContext context, int index) {
+                          //     // bool isExpanded = ar[index]['isExpanded'];
 
-                            return ListView(
-                              // children: [TasksList(ar, index)],
-                              children: [
-                                Text('hi'),
-                                Text('hi hi '),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
+                          //     return ListView(
+                          //       children: [TasksList(ar, index)],
+                          //     );
+                          //   },
+                          // ),
+                          ),
                       Expanded(
                         flex: 1,
                         child: ListView.builder(
@@ -277,7 +283,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return ExpansionPanelList(
       expansionCallback: (int panelIndex, bool isExpanded) {
         setState(() {
-          ar[index]['isExpanded'] = !ar[index]['isExpanded'];
+          ar[panelIndex]['isExpanded'] = !ar[panelIndex]['isExpanded'];
 
           //
         });

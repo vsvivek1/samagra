@@ -223,11 +223,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                       ),
                       child: GridTile(
                         header: Text(sl.toString()),
-                        child: Container(
-                          color: Colors.grey[100],
-                          child: Center(
-                            child: Text(item['wrk_work_detail']['work_name']),
-                          ),
+                        child: Center(
+                          child: Text(item['wrk_work_detail']['work_name']),
                         ),
                       ),
                     ));
