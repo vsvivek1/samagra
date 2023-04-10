@@ -228,10 +228,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               onTap: () {
                                 setState(() {});
                               },
-                              child: Center(
-                                  child: ListView(
+                              child: ListView(
                                 children: [TasksList(ar, index)],
-                              )),
+                              ),
                             );
                           },
                         ),
