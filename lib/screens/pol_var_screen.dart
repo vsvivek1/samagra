@@ -291,6 +291,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       children: [
         ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
+            print(ar[index]['isExpanded']);
+            print('is expanded above for index $index');
             return ListTile(
               title: Text(
                 ar[index]['task_name'].toString(),
@@ -320,7 +322,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            FittedBox(fit: BoxFit.scaleDown, child: Text(str)),
+            FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Wrap(
+                  children: [
+                    Text(str),
+                  ],
+                )),
             Row(
               children: [
                 IconButton(
