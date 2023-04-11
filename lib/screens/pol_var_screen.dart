@@ -21,6 +21,10 @@ class PolVarScreen extends StatefulWidget {
 class _PolVarScreenState extends State<PolVarScreen> {
   final storage = SecureStorage();
   int _numberOfLocations = 1;
+
+  bool _enableEntryOfLocationDetails = true;
+
+  /// save this if this is present
   // List<String> _templates = [
 
   List<dynamic> _templates = [
@@ -73,7 +77,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       var ob = {};
       ob['task_name'] = ta;
-      ob['isExpanded'] = false;
+      ob['isExpanded'] = true;
       ob['tasks'] = t2;
 
       res.add(ob);
@@ -201,66 +205,128 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         child: TextField(),
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
                     IconButton(
                       onPressed: saveFromAndTwoLocation,
                       icon: Icon(Icons.save),
-                      color: Colors.grey,
-                    )
+                      color: Colors.grey[900],
+                      tooltip: 'Save Location Details',
+                    ),
                   ],
                 ),
-                Expanded(
-                  child: Row(
+                Visibility(
+                  visible: _enableEntryOfLocationDetails,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
-                          flex: 4,
-                          child: ListView.separated(
-                            itemCount: ar.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return TasksList(ar, index);
-                            },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return Divider();
-                            },
-                          )
-                          // GridView.builder(
-                          //   itemCount: ln,
-                          //   gridDelegate:
-                          //       SliverGridDelegateWithFixedCrossAxisCount(
-                          //     crossAxisCount: 1,
-                          //     childAspectRatio: 1.0,
-                          //   ),
-                          //   itemBuilder: (BuildContext context, int index) {
-                          //     // bool isExpanded = ar[index]['isExpanded'];
-
-                          //     return ListView(
-                          //       children: [TasksList(ar, index)],
-                          //     );
-                          //   },
-                          // ),
-                          ),
-                      Expanded(
-                        flex: 1,
-                        child: ListView.builder(
-                          itemCount: _numberOfLocations,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              margin: EdgeInsets.all(8.0),
-                              height: 50.0,
-                              color: Colors.grey[300],
-                              child: Center(
-                                child: Text('hi'
-                                    // _selectedTemplates.length > index
-                                    //     ? _selectedTemplates[index]
-                                    //     : 'Select a template',
-                                    ),
+                        child: Container(
+                          color: Colors.blue,
+                          child: Center(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Enter Text Here',
                               ),
-                            );
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                color: Colors.red,
+                                child: Center(
+                                  child: Text('Bottom Text Box 1'),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                color: Colors.green,
+                                child: Center(
+                                  child: Text('Bottom Text Box 2'),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        color: Colors.yellow,
+                        child: IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            // do something
                           },
                         ),
                       ),
                     ],
+                  ),
+                ),
+                Visibility(
+                  visible: !_enableEntryOfLocationDetails,
+                  child: Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                            flex: 4,
+                            child: ListView.separated(
+                              itemCount: ar.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return TasksList(ar, index);
+                              },
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return Divider();
+                              },
+                            )
+                            // GridView.builder(
+                            //   itemCount: ln,
+                            //   gridDelegate:
+                            //       SliverGridDelegateWithFixedCrossAxisCount(
+                            //     crossAxisCount: 1,
+                            //     childAspectRatio: 1.0,
+                            //   ),
+                            //   itemBuilder: (BuildContext context, int index) {
+                            //     // bool isExpanded = ar[index]['isExpanded'];
+
+                            //     return ListView(
+                            //       children: [TasksList(ar, index)],
+                            //     );
+                            //   },
+                            // ),
+                            ),
+                        Expanded(
+                          flex: 1,
+                          child: ListView.builder(
+                            itemCount: _numberOfLocations,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.all(8.0),
+                                height: 50.0,
+                                color: Colors.grey[300],
+                                child: Center(
+                                  child: Text('hi'
+                                      // _selectedTemplates.length > index
+                                      //     ? _selectedTemplates[index]
+                                      //     : 'Select a template',
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -283,7 +349,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return ExpansionPanelList(
       expansionCallback: (int panelIndex, bool isExpanded) {
         setState(() {
-          ar[panelIndex]['isExpanded'] = !ar[panelIndex]['isExpanded'];
+          ar[panelIndex]['isExpanded'] = !isExpanded;
 
           //
         });
@@ -326,7 +392,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 fit: BoxFit.scaleDown,
                 child: Wrap(
                   children: [
-                    Text(str),
+                    Text(
+                      str,
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blueAccent),
+                    ),
                   ],
                 )),
             Row(
