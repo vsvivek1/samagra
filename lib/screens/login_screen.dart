@@ -821,9 +821,13 @@ class MyAPI {
       return response.data;
     } on DioError catch (e) {
       if (e.response != null) {
-        print(
-            '\n          Thee is some errot in loggin in , response is below $e.response \n');
+        // print('\n          Thee is some errot in loggin in , response is below $e.response \n');
 
+        print(e.response!.statusCode);
+        print(e.response!.data);
+        print(e.response!.headers);
+
+        print('error above');
         // print(e.response.headers);
         // print(e.response.request);
       } else {
