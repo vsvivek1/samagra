@@ -2,7 +2,7 @@
 
 #echo "Enter the IP address of the phone: "
 #read ip_address
-
+adb devices
 adb tcpip 5555
 
 
