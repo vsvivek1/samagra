@@ -24,6 +24,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   bool _enableEntryOfLocationDetails = true;
 
+  String _fromLocation = '';
+  String _toLocation = '';
+
   /// save this if this is present
   // List<String> _templates = [
 
@@ -156,183 +159,301 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           // print('24 above');
 
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: AppTheme.grey.withOpacity(0.7),
-              title: Text('Select Locations and Templates'),
-            ),
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Number of Locations',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        _numberOfLocations = int.tryParse(value) ?? 1;
-                      });
-                    },
-                  ),
-                ),
-                Divider(
-                  height: 20,
-                  thickness: 2,
-                  color: Colors.blueAccent,
-                ),
-                Row(
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: AppTheme.grey.withOpacity(0.7),
+                title: Text('Select Locations and Templates'),
+              ),
+              body: Container(
+                margin: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'From Location',
-                          border: OutlineInputBorder(),
-                        ),
-                        child: TextField(),
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'To Location',
-                          border: OutlineInputBorder(),
-                        ),
-                        child: TextField(),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: saveFromAndTwoLocation,
-                      icon: Icon(Icons.save),
-                      color: Colors.grey[900],
-                      tooltip: 'Save Location Details',
-                    ),
-                  ],
-                ),
-                Visibility(
-                  visible: _enableEntryOfLocationDetails,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          color: Colors.blue,
-                          child: Center(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Enter Text Here',
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: Container(
-                                color: Colors.red,
-                                child: Center(
-                                  child: Text('Bottom Text Box 1'),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                color: Colors.green,
-                                child: Center(
-                                  child: Text('Bottom Text Box 2'),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        color: Colors.yellow,
-                        child: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            // do something
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Visibility(
-                  visible: !_enableEntryOfLocationDetails,
-                  child: Expanded(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                    enterLocationDetails(),
+                    viewLocationDetails(),
+                    Row(
                       children: [
                         Expanded(
-                            flex: 4,
-                            child: ListView.separated(
-                              itemCount: ar.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return TasksList(ar, index);
-                              },
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return Divider();
-                              },
-                            )
-                            // GridView.builder(
-                            //   itemCount: ln,
-                            //   gridDelegate:
-                            //       SliverGridDelegateWithFixedCrossAxisCount(
-                            //     crossAxisCount: 1,
-                            //     childAspectRatio: 1.0,
-                            //   ),
-                            //   itemBuilder: (BuildContext context, int index) {
-                            //     // bool isExpanded = ar[index]['isExpanded'];
-
-                            //     return ListView(
-                            //       children: [TasksList(ar, index)],
-                            //     );
-                            //   },
-                            // ),
-                            ),
-                        Expanded(
-                          flex: 1,
-                          child: ListView.builder(
-                            itemCount: _numberOfLocations,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                margin: EdgeInsets.all(8.0),
-                                height: 50.0,
-                                color: Colors.grey[300],
-                                child: Center(
-                                  child: Text('hi'
-                                      // _selectedTemplates.length > index
-                                      //     ? _selectedTemplates[index]
-                                      //     : 'Select a template',
-                                      ),
+                          child: Wrap(
+                              alignment: WrapAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  'Your are Progressing with  the Pol Var measurement of  work workName',
+                                  style: TextStyle(fontSize: 20),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                                Divider(
+                                  color: Colors.grey,
+                                  height: 20,
+                                  thickness: 15,
+                                )
+                              ]),
+                        )
                       ],
+                    ),
+                    viewLocationList(ar),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+  }
+
+  AnimatedOpacity enterLocationDetails() {
+    return AnimatedOpacity(
+      opacity: _enableEntryOfLocationDetails ? 1.0 : 0.0,
+      duration: Duration(milliseconds: 3000),
+      child: Visibility(
+        visible: _enableEntryOfLocationDetails,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  labelText: 'Number of Locations',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  setState(() {
+                    _numberOfLocations = int.tryParse(value) ?? 1;
+                  });
+                },
+              ),
+            ),
+            Divider(
+              height: 20,
+              thickness: 2,
+              color: Colors.blueAccent,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'From Location',
+                      border: OutlineInputBorder(),
+                    ),
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          _fromLocation = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: 'To Location',
+                      border: OutlineInputBorder(),
+                    ),
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          _toLocation = value;
+                        });
+                      },
                     ),
                   ),
                 ),
               ],
             ),
-          );
-        });
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: saveFromAndTwoLocation,
+                  icon: Icon(Icons.save),
+                  color: Colors.grey[900],
+                  tooltip: 'Save Location Details',
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AnimatedOpacity viewLocationDetails() {
+    return AnimatedOpacity(
+      opacity: !_enableEntryOfLocationDetails ? 1.0 : 0.0,
+      duration: Duration(milliseconds: 3000),
+      child: Visibility(
+        visible: !_enableEntryOfLocationDetails,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                  'Number of Locations : ' + _numberOfLocations.toString()),
+            ),
+            Divider(
+              height: 20,
+              thickness: 2,
+              color: Colors.blueAccent,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text('From : ' + _fromLocation),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: Text('To  : ' + _toLocation),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: saveFromAndTwoLocation,
+                  icon: Icon(Icons.edit),
+                  color: Color.fromARGB(255, 4, 181, 235),
+                  tooltip: 'Edit ',
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Visibility viewLocationList(ar) {
+    return Visibility(
+      visible: !_enableEntryOfLocationDetails,
+      child: Expanded(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+                flex: 4,
+                child: ListView.separated(
+                  itemCount: ar.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return TasksList(ar, index);
+                  },
+                  separatorBuilder: (BuildContext context, int index) {
+                    return Divider();
+                  },
+                )
+                // GridView.builder(
+                //   itemCount: ln,
+                //   gridDelegate:
+                //       SliverGridDelegateWithFixedCrossAxisCount(
+                //     crossAxisCount: 1,
+                //     childAspectRatio: 1.0,
+                //   ),
+                //   itemBuilder: (BuildContext context, int index) {
+                //     // bool isExpanded = ar[index]['isExpanded'];
+
+                //     return ListView(
+                //       children: [TasksList(ar, index)],
+                //     );
+                //   },
+                // ),
+                ),
+            Expanded(
+              flex: 1,
+              child: ListView.builder(
+                itemCount: _numberOfLocations,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.all(8.0),
+                    height: 50.0,
+                    color: Colors.grey[300],
+                    child: Center(
+                      child: Text(
+                        'L : ' + (index + 1).toString(),
+
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                          decoration: TextDecoration.underline,
+                        ),
+                        // _selectedTemplates.length > index
+                        //     ? _selectedTemplates[index]
+                        //     : 'Select a template',
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Visibility viewLocationDetailsX() {
+    return Visibility(
+        visible: _enableEntryOfLocationDetails,
+        child: Text('View111111111111111111111111111111'));
+
+    return Visibility(
+      visible: _enableEntryOfLocationDetails,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: Container(
+              color: Colors.blue,
+              child: Center(
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Enter Text Here',
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Container(
+                    color: Colors.red,
+                    child: Center(
+                      child: Text('Bottom Text Box 1'),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.green,
+                    child: Center(
+                      child: Text('Bottom Text Box 2'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            color: Colors.yellow,
+            child: IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                // do something
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   ExpansionPanelList TasksList(ar, int index) {
@@ -500,8 +621,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
 
+      print(response);
       if (response.statusCode != 200) {
-        // print(response);
+        print(response);
         print('error response above');
 
         return Future.value([-1]);
@@ -528,6 +650,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   void saveFromAndTwoLocation() {
+    setState(() {
+      _enableEntryOfLocationDetails = !_enableEntryOfLocationDetails;
+    });
     print('pressed');
   }
 }
