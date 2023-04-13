@@ -212,7 +212,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                       print('above');
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => MeasurementOptionScreen(workId),
+                          builder: (context) =>
+                              MeasurementOptionScreen(workId, workName),
                         ),
                       );
                     },

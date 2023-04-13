@@ -10,8 +10,10 @@ import 'package:collection/collection.dart';
 class PolVarScreen extends StatefulWidget {
   @override
   final int workId;
+  final String workName;
 
-  PolVarScreen({Key? key, required this.workId}) : super(key: key) {
+  PolVarScreen({Key? key, required this.workId, required this.workName})
+      : super(key: key) {
     // print("this is workid $workId");
   }
 
@@ -61,6 +63,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   ];
 
   List<String> _selectedTemplates = [];
+
+  // get workName => this.workName;
 
   List getStructuresByName(d) {
     List<dynamic> tasks = d;
@@ -168,6 +172,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               body: Container(
                 margin: EdgeInsets.all(16.0),
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     enterLocationDetails(),
@@ -178,10 +183,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           child: Wrap(
                               alignment: WrapAlignment.spaceEvenly,
                               children: [
-                                Text(
-                                  'Your are Progressing with  the Pol Var measurement of  work workName',
-                                  style: TextStyle(fontSize: 20),
-                                ),
+                                WorkNameWidget(workName: widget.workName),
+                                // Text(
+                                //   'Your are Progressing with  the Pol Var measurement of  work ${widget.workName}',
+                                //   style: TextStyle(fontSize: 20),
+                                // ),
                                 Divider(
                                   color: Colors.grey,
                                   height: 20,
@@ -302,7 +308,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
             Row(
               children: [
                 Expanded(
-                  child: Text('From : ' + _fromLocation),
+                  child: WorkNameWidget(
+                      workName: 'From :  $_fromLocation',
+                      color: Color(0xFF000080)),
+
+                  // Text('From : ' + _fromLocation),
                 ),
                 SizedBox(width: 16),
                 Expanded(
@@ -654,5 +664,38 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _enableEntryOfLocationDetails = !_enableEntryOfLocationDetails;
     });
     print('pressed');
+  }
+}
+
+class WorkNameWidget extends StatelessWidget {
+  final String workName;
+  final Color color;
+
+  const WorkNameWidget(
+      {Key? key, required this.workName, this.color = const Color(0xFF800000)})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 20, top: 20),
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blueAccent.withOpacity(0.9),
+            blurRadius: 5.0,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Text(
+        'Name of Work : ' + workName,
+        style: TextStyle(
+            fontSize: 18.0, fontWeight: FontWeight.bold, color: color),
+      ),
+    );
   }
 }

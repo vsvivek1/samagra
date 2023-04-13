@@ -6,10 +6,9 @@ import 'direct_measurement.dart';
 
 class MeasurementOptionScreen extends StatelessWidget {
   final int workId;
+  final String workName;
 
-  MeasurementOptionScreen(
-    this.workId,
-  ) {
+  MeasurementOptionScreen(this.workId, this.workName) {
     print(this.workId);
     print('workid above');
   }
@@ -56,8 +55,8 @@ class MeasurementOptionScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            PolVarScreen(workId: this.workId)),
+                        builder: (context) => PolVarScreen(
+                            workId: this.workId, workName: this.workName)),
                   );
                 },
                 child: Text('measure with a Pol Var'),

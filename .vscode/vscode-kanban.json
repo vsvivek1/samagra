@@ -1,0 +1,72 @@
+{
+  "todo": [
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:36:50.241Z",
+      "id": "5",
+      "references": [],
+      "title": "array generator for work"
+    },
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:37:06.871Z",
+      "id": "6",
+      "references": [],
+      "title": "card details of each work on click"
+    },
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:37:18.325Z",
+      "id": "7",
+      "references": [],
+      "title": "enter details of each location modal"
+    },
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:36:08.444Z",
+      "id": "4",
+      "references": [],
+      "title": "feature to capture location details geo co-ordinates"
+    },
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:35:48.661Z",
+      "id": "3",
+      "references": [],
+      "title": "generate location array for work"
+    }
+  ],
+  "in-progress": [
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:35:35.170Z",
+      "id": "2",
+      "references": [],
+      "title": "store work location in secure stoage and retreive"
+    }
+  ],
+  "testing": [],
+  "done": [
+    {
+      "assignedTo": {
+        "name": "vivek"
+      },
+      "creation_time": "2023-04-13T05:35:17.707Z",
+      "id": "1",
+      "references": [],
+      "title": "show work name in location screen"
+    }
+  ]
+}
