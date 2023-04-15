@@ -172,62 +172,75 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 backgroundColor: AppTheme.grey.withOpacity(0.7),
                 title: Text('Select Locations and Templates'),
               ),
-              body: Container(
-                margin: EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    enterLocationDetails(),
-                    viewLocationDetails(),
-                    Divider(
-                      height: 5,
-                      thickness: 2,
-                      color: Colors.blueAccent,
-                    ),
-                    Row(
+              body: Scrollbar(
+                thumbVisibility: true,
+                trackVisibility: true,
+                thickness: 10,
+                child: SingleChildScrollView(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 5,
+                    margin: EdgeInsets.all(16.0),
+                    child: Wrap(
+                      // mainAxisSize: MainAxisSize.min,
+                      // crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: Wrap(
-                              alignment: WrapAlignment.spaceEvenly,
-                              children: [
-                                WorkNameWidget(
-                                  workName: widget.workName,
-                                  color: Colors.blue,
-                                ),
-                                // Text(
-                                //   'Your are Progressing with  the Pol Var measurement of  work ${widget.workName}',
-                                //   style: TextStyle(fontSize: 20),
-                                // ),
-                                Divider(
-                                  color: Colors.grey,
-                                  height: 20,
-                                  thickness: 15,
-                                ),
+                        enterLocationDetails(),
+                        viewLocationDetails(),
+                        Divider(
+                          height: 5,
+                          thickness: 2,
+                          color: Colors.blueAccent,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Wrap(
+                                  alignment: WrapAlignment.spaceEvenly,
+                                  children: [
+                                    WorkNameWidget(
+                                      workName: widget.workName,
+                                      color: Colors.blue,
+                                    ),
+                                    // Text(
+                                    //   'Your are Progressing with  the Pol Var measurement of  work ${widget.workName}',
+                                    //   style: TextStyle(fontSize: 20),
+                                    // ),
+                                    Divider(
+                                      color: Colors.grey,
+                                      height: 20,
+                                      thickness: 15,
+                                    ),
 
-                                Visibility(
-                                  visible: _selectedLocationIndex != -1
-
-                                  //  &&
-                                  //     _enableEntryOfLocationDetails
-                                  ,
-                                  child: LocationDetailsWidget(
-                                    locationNo:
-                                        _selectedLocationIndex.toString(),
-                                    locationName: 'Central Park',
-                                    measurements: [
-                                      'Item1 Qty: 10',
-                                      'Item2 Qty: 20',
-                                      'Item3 Qty: 30'
-                                    ],
-                                  ),
-                                )
-                              ]),
-                        )
+                                    SizedBox(
+                                      height: 20,
+                                      child: ListView.builder(
+                                          // itemCount: _numberOfLocations,
+                                          itemCount: 1,
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return LocationDetailsWidget(
+                                              locationNo: _selectedLocationIndex
+                                                  .toString(),
+                                              locationName: 'Central Park',
+                                              measurements: [
+                                                'Item1 Qty: 10',
+                                                'Item2 Qty: 20',
+                                                'Item3 Qty: 30'
+                                              ],
+                                            );
+                                          }),
+                                    )
+                                  ]),
+                            )
+                          ],
+                        ),
+                        Divider(color: Colors.amber, thickness: 10),
+                        SizedBox(height: 50),
+                        viewLocationList(ar),
+                        SizedBox(height: 2000),
                       ],
                     ),
-                    viewLocationList(ar),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -373,12 +386,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Visibility viewLocationList(ar) {
     return Visibility(
       visible: !_enableEntryOfLocationDetails,
-      child: Expanded(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-                flex: 4,
+      child: Row(
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+              flex: 4,
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * .8,
                 child: ListView.separated(
                   itemCount: ar.length,
                   itemBuilder: (BuildContext context, int index) {
@@ -387,27 +401,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   separatorBuilder: (BuildContext context, int index) {
                     return Divider();
                   },
-                )
-                // GridView.builder(
-                //   itemCount: ln,
-                //   gridDelegate:
-                //       SliverGridDelegateWithFixedCrossAxisCount(
-                //     crossAxisCount: 1,
-                //     childAspectRatio: 1.0,
-                //   ),
-                //   itemBuilder: (BuildContext context, int index) {
-                //     // bool isExpanded = ar[index]['isExpanded'];
-
-                //     return ListView(
-                //       children: [TasksList(ar, index)],
-                //     );
-                //   },
-                // ),
                 ),
-            Expanded(
-              flex: 1,
+              )),
+          Expanded(
+            flex: 1,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * .8,
               child: ListView.builder(
                 itemCount: _numberOfLocations,
+                // itemCount: 1,
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () => _viewLocationDetail(index),
@@ -438,8 +440,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 },
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
