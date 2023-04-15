@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/screens/location_details_widget.dart';
 
 import '../app_theme.dart';
 import '../secure_storage/secure_storage.dart';
@@ -23,6 +24,8 @@ class PolVarScreen extends StatefulWidget {
 class _PolVarScreenState extends State<PolVarScreen> {
   final storage = SecureStorage();
   int _numberOfLocations = 1;
+  int _selectedLocationIndex = -1;
+  int _previoslySelectedIndex = -1;
 
   bool _enableEntryOfLocationDetails = true;
 
@@ -177,13 +180,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   children: [
                     enterLocationDetails(),
                     viewLocationDetails(),
+                    Divider(
+                      height: 5,
+                      thickness: 2,
+                      color: Colors.blueAccent,
+                    ),
                     Row(
                       children: [
                         Expanded(
                           child: Wrap(
                               alignment: WrapAlignment.spaceEvenly,
                               children: [
-                                WorkNameWidget(workName: widget.workName),
+                                WorkNameWidget(
+                                  workName: widget.workName,
+                                  color: Colors.blue,
+                                ),
                                 // Text(
                                 //   'Your are Progressing with  the Pol Var measurement of  work ${widget.workName}',
                                 //   style: TextStyle(fontSize: 20),
@@ -192,6 +203,24 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   color: Colors.grey,
                                   height: 20,
                                   thickness: 15,
+                                ),
+
+                                Visibility(
+                                  visible: _selectedLocationIndex != -1
+
+                                  //  &&
+                                  //     _enableEntryOfLocationDetails
+                                  ,
+                                  child: LocationDetailsWidget(
+                                    locationNo:
+                                        _selectedLocationIndex.toString(),
+                                    locationName: 'Central Park',
+                                    measurements: [
+                                      'Item1 Qty: 10',
+                                      'Item2 Qty: 20',
+                                      'Item3 Qty: 30'
+                                    ],
+                                  ),
                                 )
                               ]),
                         )
@@ -296,12 +325,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                  'Number of Locations : ' + _numberOfLocations.toString()),
+              padding: const EdgeInsets.all(8.0),
+              child: WorkNameWidget(
+                  workName:
+                      'Number of Locations : ' + _numberOfLocations.toString()),
             ),
             Divider(
-              height: 20,
+              height: 5,
               thickness: 2,
               color: Colors.blueAccent,
             ),
@@ -316,7 +346,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 ),
                 SizedBox(width: 16),
                 Expanded(
-                  child: Text('To  : ' + _toLocation),
+                  child: WorkNameWidget(
+                      workName: 'To  : ' + _toLocation,
+                      color: Color(0xFF0080800)),
                 ),
               ],
             ),
@@ -377,24 +409,29 @@ class _PolVarScreenState extends State<PolVarScreen> {
               child: ListView.builder(
                 itemCount: _numberOfLocations,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: EdgeInsets.all(8.0),
-                    height: 50.0,
-                    color: Colors.grey[300],
-                    child: Center(
-                      child: Text(
-                        'L : ' + (index + 1).toString(),
+                  return GestureDetector(
+                    onTap: () => _viewLocationDetail(index),
+                    // onDoubleTap: _viewLocationDetail(index),
+                    // onDoubleTap: _enterLocationDetails(index),
+                    child: Container(
+                      margin: EdgeInsets.all(8.0),
+                      height: 50.0,
+                      color: Colors.grey[300],
+                      child: Center(
+                        child: Text(
+                          'L : ' + (index + 1).toString(),
 
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
-                          decoration: TextDecoration.underline,
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange,
+                            decoration: TextDecoration.underline,
+                          ),
+                          // _selectedTemplates.length > index
+                          //     ? _selectedTemplates[index]
+                          //     : 'Select a template',
                         ),
-                        // _selectedTemplates.length > index
-                        //     ? _selectedTemplates[index]
-                        //     : 'Select a template',
                       ),
                     ),
                   );
@@ -659,6 +696,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
   }
 
+  _viewLocationDetail(int index) {
+    print("this is new index of locations $index");
+    setState(() {
+      _previoslySelectedIndex = _selectedLocationIndex;
+      _selectedLocationIndex = index;
+    });
+  }
+
   void saveFromAndTwoLocation() {
     setState(() {
       _enableEntryOfLocationDetails = !_enableEntryOfLocationDetails;
@@ -667,12 +712,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 }
 
+_enterLocationDetails(int index) {
+  var _selectedLocationIndex = index;
+}
+
 class WorkNameWidget extends StatelessWidget {
   final String workName;
   final Color color;
+  final String label;
 
   const WorkNameWidget(
-      {Key? key, required this.workName, this.color = const Color(0xFF800000)})
+      {Key? key,
+      required this.workName,
+      this.color = const Color(0xFF800000),
+      this.label = ""})
       : super(key: key);
 
   @override
@@ -692,9 +745,13 @@ class WorkNameWidget extends StatelessWidget {
         ],
       ),
       child: Text(
-        'Name of Work : ' + workName,
+        label + workName,
         style: TextStyle(
-            fontSize: 18.0, fontWeight: FontWeight.bold, color: color),
+            fontStyle: FontStyle.italic,
+            fontFamily: 'Verdana',
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
+            color: color),
       ),
     );
   }
