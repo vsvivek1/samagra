@@ -30,6 +30,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   String _fromLocation = '';
   String _toLocation = '';
+  int _tappedIndex = -1;
 
   /// save this if this is present
   // List<String> _templates = [
@@ -473,7 +474,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     child: Container(
                       margin: EdgeInsets.all(8.0),
                       height: 50.0,
-                      color: Colors.grey[300],
+                      color: (index == _tappedIndex)
+                          ? Colors.green
+                          : Colors.grey[300],
                       child: Center(
                         child: Text(
                           'L : ' + (index + 1).toString(),
@@ -737,6 +740,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
     setState(() {
       _previoslySelectedIndex = _selectedLocationIndex;
       _selectedLocationIndex = index;
+
+      _tappedIndex = index;
     });
   }
 
