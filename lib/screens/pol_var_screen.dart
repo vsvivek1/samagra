@@ -209,6 +209,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       // mainAxisSize: MainAxisSize.min,
                       // crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        WorkNameWidget(
+                          workName: widget.workName,
+                          color: Colors.blue,
+                        ),
                         enterLocationDetails(),
                         viewLocationDetails(),
                         Divider(
@@ -222,10 +226,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               child: Wrap(
                                   alignment: WrapAlignment.spaceEvenly,
                                   children: [
-                                    WorkNameWidget(
-                                      workName: widget.workName,
-                                      color: Colors.blue,
-                                    ),
                                     // Text(
                                     //   'Your are Progressing with  the Pol Var measurement of  work ${widget.workName}',
                                     //   style: TextStyle(fontSize: 20),
