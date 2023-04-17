@@ -35,6 +35,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
     curve: Curves.easeInOut,
   ));
 
+  bool editMode = false;
   @override
   void initState() {
     super.initState();
@@ -52,6 +53,34 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              RichText(
+                text: TextSpan(
+                  text: 'Location No ',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: widget.locationNo,
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 24.0,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    TextSpan(
+                      text: ' World!',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Text('Location No: ${widget.locationNo}',
                   style: TextStyle(
                     fontSize: 30,

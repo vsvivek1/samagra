@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/screens/location_details_widget.dart';
 
 import '../app_theme.dart';
@@ -14,9 +15,7 @@ class PolVarScreen extends StatefulWidget {
   final String workName;
 
   PolVarScreen({Key? key, required this.workId, required this.workName})
-      : super(key: key) {
-    // print("this is workid $workId");
-  }
+      : super(key: key) {}
 
   _PolVarScreenState createState() => _PolVarScreenState();
 }
@@ -72,8 +71,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
   List getStructuresByName(d) {
     List<dynamic> tasks = d;
 
-    // print(tasks);
-
     List res = [];
 
     var allTasks =
@@ -91,17 +88,56 @@ class _PolVarScreenState extends State<PolVarScreen> {
       ob['tasks'] = t2;
 
       res.add(ob);
-
-      // print(t2);
-
-      // var x = t2.map((a) => a.mst_structure);
-
-      // print(x);
-
-      // print('t2 above');
     }
 
     return res;
+  }
+
+  Future<Map<String, String?>?> getWorkDetails(String workId) async {
+    final storage = FlutterSecureStorage();
+    // Get existing work details from secure storage, if any
+    final existingDetails = await storage.read(key: 'workDetails') ?? '{}';
+    final workDetails = Map<String, dynamic>.from(json.decode(existingDetails));
+
+    // Return work details for the given workId, if present
+    final workData = workDetails[workId];
+    if (workData != null) {
+      return Map<String, String?>.from(workData);
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> saveWorkDetails({
+    required String workId,
+    String? longitude,
+    String? latitude,
+    String? locationName,
+    String? fromLocation,
+    String? toLocation,
+    String? measurementDetails,
+    String? noOfLocations,
+  }) async {
+    // Get existing work details from secure storage, if any
+
+    final storage = FlutterSecureStorage();
+    final existingDetails = await storage.read(key: 'workDetails') ?? '{}';
+    final workDetails = Map<String, dynamic>.from(json.decode(existingDetails));
+
+    // Update work details with new data, if any
+    final workData = <String, String?>{
+      if (longitude != null) 'longitude': longitude,
+      if (latitude != null) 'latitude': latitude,
+      if (locationName != null) 'locationName': locationName,
+      if (measurementDetails != null) 'measurementDetails': measurementDetails,
+      if (fromLocation != null) 'fromLocation': fromLocation,
+      if (toLocation != null) 'toLocation': toLocation,
+      if (noOfLocations != null) 'noOfLocations': noOfLocations,
+    };
+    workDetails[workId] = workData;
+
+    // Store updated work details securely
+    await storage.write(key: 'workDetails', value: json.encode(workDetails));
   }
 
   Future _sheduleBuilder() async {
@@ -120,7 +156,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   @override
   void initState() {
-    // print(res);
     // ignore: todo
     // TODO: implement initState
     super.initState();
@@ -155,16 +190,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
 
           int ln = ar.length;
-          // print("this is len $ln");
-          // print(ar.runtimeType);
-
-          // print(ar);
-          // print('snapsho data below');
-          // print(snapshot.data);
-
-          // print(ar[24]);
-
-          // print('24 above');
 
           return SafeArea(
             child: Scaffold(
@@ -212,7 +237,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     ),
 
                                     SizedBox(
-                                      height: 20,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .25,
                                       child: ListView.builder(
                                           // itemCount: _numberOfLocations,
                                           itemCount: 1,
@@ -254,77 +281,105 @@ class _PolVarScreenState extends State<PolVarScreen> {
       duration: Duration(milliseconds: 3000),
       child: Visibility(
         visible: _enableEntryOfLocationDetails,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Number of Locations',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  setState(() {
-                    _numberOfLocations = int.tryParse(value) ?? 1;
-                  });
-                },
-              ),
-            ),
-            Divider(
-              height: 20,
-              thickness: 2,
-              color: Colors.blueAccent,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: InputDecorator(
-                    decoration: InputDecoration(
-                      labelText: 'From Location',
-                      border: OutlineInputBorder(),
-                    ),
+        child: FutureBuilder(
+            future: getWorkDetails(widget.workId.toString()),
+            builder: (context, AsyncSnapshot snapshot) {
+              // print(snapshot);
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData &&
+                  snapshot.data['fromLocation'] != null &&
+                  snapshot.data['toLocation'] != null &&
+                  snapshot.data['noOfLocations'] != null) {
+                _fromLocation = snapshot.data['fromLocation'] ?? '';
+                _toLocation = snapshot.data['toLocation'] ?? '';
+
+                _numberOfLocations =
+                    int.parse(snapshot.data['noOfLocations'] ?? -1);
+
+                _enableEntryOfLocationDetails = false;
+
+                print(snapshot);
+                print('snapshot above');
+              }
+
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: TextField(
+                      controller: TextEditingController(
+                          text: _numberOfLocations.toString()),
+                      decoration: InputDecoration(
+                        labelText: 'Number of Locations',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
                       onChanged: (value) {
                         setState(() {
-                          _fromLocation = value;
+                          _numberOfLocations = int.tryParse(value) ?? 1;
                         });
                       },
                     ),
                   ),
-                ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: InputDecorator(
-                    decoration: InputDecoration(
-                      labelText: 'To Location',
-                      border: OutlineInputBorder(),
-                    ),
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          _toLocation = value;
-                        });
-                      },
-                    ),
+                  Divider(
+                    height: 20,
+                    thickness: 2,
+                    color: Colors.blueAccent,
                   ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: saveFromAndTwoLocation,
-                  icon: Icon(Icons.save),
-                  color: Colors.grey[900],
-                  tooltip: 'Save Location Details',
-                ),
-              ],
-            ),
-          ],
-        ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'From Location',
+                            border: OutlineInputBorder(),
+                          ),
+                          child: TextField(
+                            controller:
+                                TextEditingController(text: _toLocation),
+                            onChanged: (value) {
+                              setState(() {
+                                _fromLocation = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'To Location',
+                            border: OutlineInputBorder(),
+                          ),
+                          child: TextField(
+                            controller: TextEditingController(
+                                text: _toLocation.toString()),
+                            onChanged: (value) {
+                              setState(() {
+                                _toLocation = value;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: saveFromAndTwoLocation,
+                        icon: Icon(Icons.save),
+                        color: Colors.grey[900],
+                        tooltip: 'Save Location Details',
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            }),
       ),
     );
   }
@@ -506,13 +561,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   ExpansionPanelList TasksList(ar, int index) {
-    print(ar[index]['isExpanded']);
-
-    print('is expanded above');
-
-    print('is expanded above');
-    // print(ar[index]['tasks'].runtimeType);
-
     var tasks = ar[index]['tasks'].toList();
 
     // return Text('hi');
@@ -527,8 +575,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       children: [
         ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
-            print(ar[index]['isExpanded']);
-            print('is expanded above for index $index');
             return ListTile(
               title: Text(
                 ar[index]['task_name'].toString(),
@@ -602,8 +648,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
     var a = tasks.map((t) {
       var str = t['structure_name'] as String; // cast to String
 
-      // print("this is str $str");
-
       if (str == null) {
         return Text('hi');
       }
@@ -642,8 +686,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // return Container(child: Text(str));
     }).toList();
 
-    // print(a);
-
     return a;
     // return [Text('1'), Text('2')];
   }
@@ -670,17 +712,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
 
-      print(response);
       if (response.statusCode != 200) {
-        print(response);
-        print('error response above');
-
         return Future.value([-1]);
       }
 
-      // print(response.statusCode);
-
-      // print('dio respose above');
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
@@ -689,7 +724,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return Future.value([-1]);
       }
     } on Exception catch (e) {
-      print(e);
       print("$e  is the error in _fetchWorkDetails()");
 
       return Future.value([-1]);
@@ -709,8 +743,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void saveFromAndTwoLocation() {
     setState(() {
       _enableEntryOfLocationDetails = !_enableEntryOfLocationDetails;
+
+      this.saveWorkDetails(
+          workId: widget.workId.toString(),
+          fromLocation: _fromLocation,
+          toLocation: _toLocation,
+          noOfLocations: _numberOfLocations.toString());
     });
-    print('pressed');
   }
 }
 

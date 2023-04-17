@@ -207,9 +207,6 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 // return Text('hi');
                 return GestureDetector(
                     onTap: () {
-                      p('below');
-                      p(item);
-                      print('above');
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) =>
