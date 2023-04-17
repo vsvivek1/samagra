@@ -118,6 +118,13 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                       ),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    IconButton(onPressed: () => {}, icon: Icon(Icons.edit))
+                  ],
+                )
               ],
             ],
           ),
