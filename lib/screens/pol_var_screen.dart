@@ -240,7 +240,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              .25,
+                                              .4,
                                       child: ListView.builder(
                                           // itemCount: _numberOfLocations,
                                           itemCount: 1,
@@ -249,7 +249,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                             return LocationDetailsWidget(
                                               locationNo: _selectedLocationIndex
                                                   .toString(),
-                                              locationName: 'Central Park',
                                               measurements: [
                                                 'Item1 Qty: 10',
                                                 'Item2 Qty: 20',

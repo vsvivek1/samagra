@@ -9,12 +9,11 @@ class LocationDetailsWidget extends StatefulWidget {
   double? longitude;
   List<String>? measurements;
 
+  TextEditingController locationNameController = new TextEditingController();
+
   LocationDetailsWidget({
     Key? key,
     required this.locationNo,
-    this.locationName,
-    this.latitude,
-    this.longitude,
     this.measurements,
   }) : super(key: key);
 
@@ -38,8 +37,13 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
   ));
 
   bool editMode = false;
+
+  late String locationName = '';
+  late String latitude = '0';
+  late String longitude = '0';
   @override
   void initState() {
+    // widget.locationNameController.text = widget.locationName!;
     super.initState();
     _controller.forward();
   }
@@ -48,92 +52,117 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
   Widget build(BuildContext context) {
     return SlideTransition(
       position: _offsetAnimation,
-      child: Card(
-        elevation: 5.0,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LocationButton(onLocationSelected: onLocationSelected),
-              RichText(
-                text: TextSpan(
-                  text: 'Location No ',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: widget.locationNo,
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontSize: 24.0,
-                        fontStyle: FontStyle.italic,
+      child: (widget.locationNo == '-1')
+          ? Card(
+              color: Colors.redAccent[100],
+              child: Text("Select a Location to View details"))
+          : Card(
+              elevation: 5.0,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (this.editMode) ...[
+                      LocationButton(onLocationSelected: onLocationSelected),
+                    ],
+                    RichText(
+                      text: TextSpan(
+                        text: 'Location No ',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: widget.locationNo,
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 24.0,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    TextSpan(
-                      text: ' World!',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
+                    Text('Location No: ${widget.locationNo}',
+                        style: TextStyle(
+                          fontSize: 30,
+                          backgroundColor: Color.fromARGB(255, 229, 231, 235),
+                        )),
+                    SizedBox(height: 8.0),
+                    if (this.locationName != null) ...[
+                      Text(
+                        'Location Name: ${this.locationName}',
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
-                    ),
+                      SizedBox(height: 8.0),
+                    ],
+                    if (editMode) ...[
+                      TextFormField(
+                          onChanged: ((value) => updateLocationText(value)),
+                          // controller: widget.locationNameController,
+                          decoration: InputDecoration(
+                            labelText: 'Location Name',
+                            hintText: 'Enter location name',
+                          ))
+                    ],
+                    if (widget.latitude != null &&
+                        widget.longitude != null) ...[
+                      Text(
+                        'Latitude: ${widget.latitude}, Longitude: ${widget.longitude}',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      SizedBox(height: 16.0),
+                    ],
+                    if (widget.measurements != null &&
+                        widget.measurements!.isNotEmpty) ...[
+                      Text(
+                        'Measurements:',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      SizedBox(height: 8.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (var measurement in widget.measurements!)
+                            Text(
+                              '- $measurement',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          !editMode
+                              ? IconButton(
+                                  color: Colors.yellow,
+                                  onPressed: () => _saveLocationDetails(),
+                                  icon: Icon(Icons.edit))
+                              : IconButton(
+                                  onPressed: () => _saveLocationDetails(),
+                                  icon: Icon(Icons.save))
+                        ],
+                      )
+                    ],
                   ],
                 ),
               ),
-              Text('Location No: ${widget.locationNo}',
-                  style: TextStyle(
-                    fontSize: 30,
-                    backgroundColor: Color.fromARGB(255, 229, 231, 235),
-                  )),
-              SizedBox(height: 8.0),
-              if (widget.locationName != null) ...[
-                Text(
-                  'Location Name: ${widget.locationName}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                SizedBox(height: 8.0),
-              ],
-              if (widget.latitude != null && widget.longitude != null) ...[
-                Text(
-                  'Latitude: ${widget.latitude}, Longitude: ${widget.longitude}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                SizedBox(height: 16.0),
-              ],
-              if (widget.measurements != null &&
-                  widget.measurements!.isNotEmpty) ...[
-                Text(
-                  'Measurements:',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                SizedBox(height: 8.0),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (var measurement in widget.measurements!)
-                      Text(
-                        '- $measurement',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    IconButton(onPressed: () => {}, icon: Icon(Icons.edit))
-                  ],
-                )
-              ],
-            ],
-          ),
-        ),
-      ),
+            ),
     );
+  }
+
+  Set<String> updateLocationText(String value) {
+    setState(() {
+      this.locationName = value;
+
+      print(value);
+    });
+
+    return {value};
   }
 
   @override
@@ -165,5 +194,17 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
     // print(widget.latitude);
     // print(widget.longitude);
     //  print('abo');
+  }
+
+  void _saveLocationDetails() {
+    setState(() {
+      editMode = !editMode;
+
+      // if (editMode) {
+      //   // this.locationName = widget.locationNameController.text;
+      // }
+
+      print(widget.locationName);
+    });
   }
 }
