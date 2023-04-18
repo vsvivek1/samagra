@@ -299,8 +299,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                 _enableEntryOfLocationDetails = false;
 
-                print(snapshot);
-                print('snapshot above');
+                // print(snapshot);
+                // print('snapshot above');
               }
 
               return Column(

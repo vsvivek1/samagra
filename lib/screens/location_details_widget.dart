@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/screens/location_button.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LocationDetailsWidget extends StatefulWidget {
-  final String locationNo;
-  final String? locationName;
-  final double? latitude;
-  final double? longitude;
-  final List<String>? measurements;
+  String locationNo;
+  String? locationName;
+  double? latitude;
+  double? longitude;
+  List<String>? measurements;
 
-  const LocationDetailsWidget({
+  LocationDetailsWidget({
     Key? key,
     required this.locationNo,
     this.locationName,
@@ -53,6 +55,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              LocationButton(onLocationSelected: onLocationSelected),
               RichText(
                 text: TextSpan(
                   text: 'Location No ',
@@ -137,5 +140,30 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+// Check and request location permission
+  Future<void> checkAndRequestLocationPermission() async {
+    PermissionStatus permissionStatus = await Permission.location.status;
+
+    if (permissionStatus == PermissionStatus.denied) {
+      permissionStatus = await Permission.location.request();
+
+      if (permissionStatus != PermissionStatus.granted) {
+        throw Exception('Location permission denied.');
+      }
+    }
+  }
+
+  onLocationSelected(double p1, double p2) {
+    setState(() {
+      widget.latitude = p1;
+      widget.longitude = p2;
+    });
+
+    // print('selected');
+    // print(widget.latitude);
+    // print(widget.longitude);
+    //  print('abo');
   }
 }
