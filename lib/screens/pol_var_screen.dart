@@ -32,6 +32,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   String _toLocation = '';
   int _tappedIndex = -1;
 
+  Map<String, String?>? _workDetails;
+
   /// save this if this is present
   // List<String> _templates = [
 
@@ -160,7 +162,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // ignore: todo
     // TODO: implement initState
     super.initState();
+
+    _updateWorkDetailsOnLoading();
   }
+
+  Future<void> _updateWorkDetailsOnLoading() async {
+    final data = await getWorkDetails(widget.workId.toString());
+    setState(() {
+      _workDetails = data;
+
+      print(_workDetails);
+
+      print('work details abobve');
+    });
+  }
+
+  //
 
   @override
   Widget build(BuildContext context) {
@@ -247,6 +264,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                           itemBuilder: (BuildContext context,
                                               int index) {
                                             return LocationDetailsWidget(
+                                              locationDetails: {},
+                                              updateLocationDetailsArray:
+                                                  _updateLocationDetailsArray,
                                               locationNo: _selectedLocationIndex
                                                   .toString(),
                                               measurements: [
@@ -275,6 +295,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         });
   }
 
+  _updateLocationDetailsArray() {}
   AnimatedOpacity enterLocationDetails() {
     return AnimatedOpacity(
       opacity: _enableEntryOfLocationDetails ? 1.0 : 0.0,
@@ -602,41 +623,44 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return Text('Invalid task.');
       }
 
-      return Card(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Wrap(
-                  children: [
-                    Text(
-                      str,
-                      style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent),
-                    ),
-                  ],
-                )),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    // Decrement task quantity
-                  },
-                ),
-                Text('2'), // Display task quantity
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    // Increment task quantity
-                  },
-                ),
-              ],
-            ),
-          ],
+      return GestureDetector(
+        onDoubleTap: () => _showBottomSheet(context),
+        child: Card(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Wrap(
+                    children: [
+                      Text(
+                        str,
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent),
+                      ),
+                    ],
+                  )),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: () {
+                      // Decrement task quantity
+                    },
+                  ),
+                  Text('2'), // Display task quantity
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      // Increment task quantity
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       );
     }).toList();
@@ -690,6 +714,42 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     return a;
     // return [Text('1'), Text('2')];
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.share),
+                title: Text('Share'),
+                onTap: () {
+                  // do something when Share is tapped
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Edit'),
+                onTap: () {
+                  // do something when Edit is tapped
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Delete'),
+                onTap: () {
+                  // do something when Delete is tapped
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<List<dynamic>> _fetchWorkDetails() async {

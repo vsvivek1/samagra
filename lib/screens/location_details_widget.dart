@@ -8,6 +8,9 @@ class LocationDetailsWidget extends StatefulWidget {
   double? latitude;
   double? longitude;
   List<String>? measurements;
+  Map<String, String> locationDetails;
+
+  final Function updateLocationDetailsArray;
 
   TextEditingController locationNameController = new TextEditingController();
 
@@ -15,6 +18,10 @@ class LocationDetailsWidget extends StatefulWidget {
     Key? key,
     required this.locationNo,
     this.measurements,
+    required this.updateLocationDetailsArray,
+
+    // ignore: non_constant_identifier_names
+    required this.locationDetails,
   }) : super(key: key);
 
   @override
