@@ -169,11 +169,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Future<void> _updateWorkDetailsOnLoading() async {
     final data = await getWorkDetails(widget.workId.toString());
     setState(() {
-      _workDetails = data;
+      if (data != null &&
+          data['fromLocation'] != null &&
+          data['toLocation'] != null &&
+          data['noOfLocations'] != null) _workDetails = data;
+      _fromLocation = data!['fromLocation']!;
+      _toLocation = data['toLocation']!;
+      _numberOfLocations = int.parse(data['noOfLocations']!);
 
       print(_workDetails);
 
-      print('work details abobve');
+      print('work details abobve $_numberOfLocations');
+      _enableEntryOfLocationDetails = false;
     });
   }
 
