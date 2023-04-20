@@ -32,40 +32,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
   String _toLocation = '';
   int _tappedIndex = -1;
 
-  Map<String, String?>? _workDetails;
+  Map<String, dynamic> _selectedLocationDetails = {};
+
+  List _selectedMeasurements = [];
+
+  Map<dynamic, dynamic>? _workDetails;
 
   /// save this if this is present
   // List<String> _templates = [
-
-  List<dynamic> _templates = [
-    {
-      "task_name":
-          "ReconductoringLT OH 5 wire line with LT three phase ABC(CIRCUIT KM)",
-      "structures": [
-        {"id": 3862, "structure_name": "COIL EARTH", "structure_code": 1113},
-        {
-          "id": 3870,
-          "structure_name": "ADD TRANSPORT TRIP",
-          "structure_code": 7207
-        }
-      ]
-    },
-    {
-      "task_name": "Another Task",
-      "structures": [
-        {
-          "id": 1234,
-          "structure_name": "Some Structure",
-          "structure_code": 5678
-        },
-        {
-          "id": 5678,
-          "structure_name": "Another Structure",
-          "structure_code": 9101
-        }
-      ]
-    }
-  ];
 
   List<String> _selectedTemplates = [];
 
@@ -168,19 +142,34 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<void> _updateWorkDetailsOnLoading() async {
     final data = await getWorkDetails(widget.workId.toString());
+
+    print(data);
+
+    print('data above');
+
+    // return;
+
     setState(() {
       if (data != null &&
           data['fromLocation'] != null &&
           data['toLocation'] != null &&
-          data['noOfLocations'] != null) _workDetails = data;
-      _fromLocation = data!['fromLocation']!;
-      _toLocation = data['toLocation']!;
-      _numberOfLocations = int.parse(data['noOfLocations']!);
+          data['noOfLocations'] != null) {
+        _workDetails = data;
+        _fromLocation = data['fromLocation']!;
+        _toLocation = data['toLocation']!;
+        _numberOfLocations = int.parse(data['noOfLocations']!) > 1000
+            ? 999
+            : int.parse(data['noOfLocations']!);
 
-      print(_workDetails);
+        if (_workDetails!['locations'] == null) {
+          _workDetails!['locations'] ??= {};
+        }
 
-      print('work details abobve $_numberOfLocations');
-      _enableEntryOfLocationDetails = false;
+        print(_workDetails);
+
+        print('work details abobve $_numberOfLocations');
+        _enableEntryOfLocationDetails = false;
+      }
     });
   }
 
@@ -276,11 +265,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                   _updateLocationDetailsArray,
                                               locationNo: _selectedLocationIndex
                                                   .toString(),
-                                              measurements: [
-                                                'Item1 Qty: 10',
-                                                'Item2 Qty: 20',
-                                                'Item3 Qty: 30'
-                                              ],
+                                              measurements: List<String>.from(
+                                                  _selectedMeasurements),
                                             );
                                           }),
                                     )
@@ -302,114 +288,100 @@ class _PolVarScreenState extends State<PolVarScreen> {
         });
   }
 
-  _updateLocationDetailsArray() {}
+  _updateLocationDetailsArray(arr) {
+    if (arr != null) {
+      this._workDetails!['locations'][this._selectedLocationIndex.toString()] =
+          arr;
+
+      print(this._workDetails);
+    }
+
+// this.
+  }
+
   AnimatedOpacity enterLocationDetails() {
     return AnimatedOpacity(
-      opacity: _enableEntryOfLocationDetails ? 1.0 : 0.0,
-      duration: Duration(milliseconds: 3000),
-      child: Visibility(
-        visible: _enableEntryOfLocationDetails,
-        child: FutureBuilder(
-            future: getWorkDetails(widget.workId.toString()),
-            builder: (context, AsyncSnapshot snapshot) {
-              // print(snapshot);
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData &&
-                  snapshot.data['fromLocation'] != null &&
-                  snapshot.data['toLocation'] != null &&
-                  snapshot.data['noOfLocations'] != null) {
-                _fromLocation = snapshot.data['fromLocation'] ?? '';
-                _toLocation = snapshot.data['toLocation'] ?? '';
-
-                _numberOfLocations =
-                    int.parse(snapshot.data['noOfLocations'] ?? -1);
-
-                _enableEntryOfLocationDetails = false;
-
-                // print(snapshot);
-                // print('snapshot above');
-              }
-
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextField(
-                      controller: TextEditingController(
-                          text: _numberOfLocations.toString()),
-                      decoration: InputDecoration(
-                        labelText: 'Number of Locations',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          _numberOfLocations = int.tryParse(value) ?? 1;
-                        });
-                      },
+        opacity: _enableEntryOfLocationDetails ? 1.0 : 0.0,
+        duration: Duration(milliseconds: 3000),
+        child: Visibility(
+            visible: _enableEntryOfLocationDetails,
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextFormField(
+                    maxLength: 3,
+                    initialValue: _numberOfLocations.toString(),
+                    // controller: TextEditingController(
+                    //     text: _numberOfLocations.toString()),
+                    decoration: InputDecoration(
+                      labelText: 'Number of Locations',
+                      border: OutlineInputBorder(),
                     ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        _numberOfLocations = int.tryParse(value) ?? 1;
+                      });
+                    },
                   ),
-                  Divider(
-                    height: 20,
-                    thickness: 2,
-                    color: Colors.blueAccent,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'From Location',
-                            border: OutlineInputBorder(),
-                          ),
-                          child: TextField(
-                            controller:
-                                TextEditingController(text: _toLocation),
-                            onChanged: (value) {
-                              setState(() {
-                                _fromLocation = value;
-                              });
-                            },
-                          ),
+                ),
+                Divider(
+                  height: 20,
+                  thickness: 2,
+                  color: Colors.blueAccent,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'From Location',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: TextFormField(
+                          initialValue: _toLocation,
+                          onChanged: (value) {
+                            setState(() {
+                              _fromLocation = value;
+                            });
+                          },
                         ),
                       ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'To Location',
-                            border: OutlineInputBorder(),
-                          ),
-                          child: TextField(
-                            controller: TextEditingController(
-                                text: _toLocation.toString()),
-                            onChanged: (value) {
-                              setState(() {
-                                _toLocation = value;
-                              });
-                            },
-                          ),
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'To Location',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: TextFormField(
+                          initialValue: _toLocation.toString(),
+                          onChanged: (value) {
+                            setState(() {
+                              _toLocation = value;
+                            });
+                          },
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: saveFromAndTwoLocation,
-                        icon: Icon(Icons.save),
-                        color: Colors.grey[900],
-                        tooltip: 'Save Location Details',
-                      ),
-                    ],
-                  ),
-                ],
-              );
-            }),
-      ),
-    );
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: saveFromAndTwoLocation,
+                      icon: Icon(Icons.save),
+                      color: Colors.grey[900],
+                      tooltip: 'Save Location Details',
+                    ),
+                  ],
+                ),
+              ],
+            )));
   }
 
   AnimatedOpacity viewLocationDetails() {
@@ -808,6 +780,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _selectedLocationIndex = index;
 
       _tappedIndex = index;
+
+      if (_workDetails != null &&
+          _workDetails!['locations'] != null &&
+          _workDetails!['locations']!.null) {
+        _selectedLocationDetails =
+            _workDetails!['locations']![_selectedLocationIndex]
+                as Map<dynamic, dynamic>;
+
+        _selectedMeasurements = _selectedLocationDetails['measurements'];
+      } else {
+        _selectedLocationDetails = {};
+
+        _selectedMeasurements = ['test1 ', 'Item2 Qty: 30', 'Item3 Qty: 30'];
+      }
     });
   }
 

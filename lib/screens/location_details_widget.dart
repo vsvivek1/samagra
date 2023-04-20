@@ -93,11 +93,11 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                         ],
                       ),
                     ),
-                    Text('Location No: ${widget.locationNo}',
-                        style: TextStyle(
-                          fontSize: 30,
-                          backgroundColor: Color.fromARGB(255, 229, 231, 235),
-                        )),
+                    // Text('Location No: ${widget.locationNo}',
+                    //     style: TextStyle(
+                    //       fontSize: 30,
+                    //       backgroundColor: Color.fromARGB(255, 229, 231, 235),
+                    //     )),
                     SizedBox(height: 8.0),
                     if (this.locationName != null) ...[
                       Text(
@@ -111,7 +111,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                           onChanged: ((value) => updateLocationText(value)),
                           // controller: widget.locationNameController,
                           decoration: InputDecoration(
-                            labelText: 'Location Name',
+                            labelText: 'Enter Location Name',
                             hintText: 'Enter location name',
                           ))
                     ],
@@ -164,6 +164,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
 
   Set<String> updateLocationText(String value) {
     setState(() {
+      widget.locationDetails['locationName'] = value;
       this.locationName = value;
 
       print(value);
@@ -195,6 +196,9 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
     setState(() {
       widget.latitude = p1;
       widget.longitude = p2;
+
+      widget.locationDetails['lattitude'] = p1.toString();
+      widget.locationDetails['longitude'] = p2.toString();
     });
 
     // print('selected');
@@ -206,6 +210,8 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
   void _saveLocationDetails() {
     setState(() {
       editMode = !editMode;
+
+      widget.updateLocationDetailsArray(widget.locationDetails);
 
       // if (editMode) {
       //   // this.locationName = widget.locationNameController.text;

@@ -14,6 +14,7 @@ class LocationButton extends StatefulWidget {
 
 class _LocationButtonState extends State<LocationButton> {
   Position? _currentPosition;
+  bool _loading = false;
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
 
@@ -30,6 +31,10 @@ class _LocationButtonState extends State<LocationButton> {
         return ElevatedButton.icon(
           onPressed: () async {
             if (_permissionStatus != PermissionStatus.granted) {
+              setState(() {
+                _loading = true;
+              });
+
               // Show a dialog to inform the user that location permission is required
               showDialog(
                 context: context,
@@ -42,6 +47,9 @@ class _LocationButtonState extends State<LocationButton> {
                       TextButton(
                         child: Text('OK'),
                         onPressed: () {
+                          setState(() {
+                            _loading = false;
+                          });
                           Navigator.of(context).pop();
                         },
                       ),
@@ -53,12 +61,17 @@ class _LocationButtonState extends State<LocationButton> {
             }
 
             _currentPosition = await Geolocator.getCurrentPosition();
+
+            setState(() {
+              _loading = false;
+            });
             widget.onLocationSelected(
               _currentPosition!.latitude,
               _currentPosition!.longitude,
             );
           },
-          icon: Icon(Icons.location_on),
+          icon:
+              _loading ? Icon(Icons.label_important) : Icon(Icons.location_on),
           label: Text('Get Location'),
         );
       },
