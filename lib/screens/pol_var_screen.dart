@@ -154,6 +154,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
           data['fromLocation'] != null &&
           data['toLocation'] != null &&
           data['noOfLocations'] != null) {
+        print(data.runtimeType);
+
+        print('data run type above');
         _workDetails = data;
         _fromLocation = data['fromLocation']!;
         _toLocation = data['toLocation']!;
@@ -161,8 +164,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ? 999
             : int.parse(data['noOfLocations']!);
 
-        if (_workDetails!['locations'] == null) {
-          _workDetails!['locations'] ??= {};
+        print(_workDetails);
+        print(_workDetails.runtimeType);
+
+        print('work details above');
+
+        print('above issue');
+
+        if (!(_workDetails!['locations'] is Map)) {
+          _workDetails!['locations'] ??= <String, dynamic>{
+            'key1': 'value1',
+            'key2': 123,
+            'key3': true
+          };
         }
 
         print(_workDetails);
@@ -290,6 +304,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   _updateLocationDetailsArray(arr) {
     if (arr != null) {
+      if (this._workDetails!['locations'] == null) {
+        this._workDetails!['locations'] = {};
+      }
       this._workDetails!['locations'][this._selectedLocationIndex.toString()] =
           arr;
 
@@ -783,12 +800,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       if (_workDetails != null &&
           _workDetails!['locations'] != null &&
-          _workDetails!['locations']!.null) {
-        _selectedLocationDetails =
-            _workDetails!['locations']![_selectedLocationIndex]
-                as Map<dynamic, dynamic>;
+          _workDetails!['locations'] != null) {
+        // _selectedLocationDetails =
+        //     _workDetails!['locations']![_selectedLocationIndex]
+        //         as Map<dynamic, dynamic>;
 
-        _selectedMeasurements = _selectedLocationDetails['measurements'];
+        // _selectedMeasurements = _selectedLocationDetails['measurements'];
       } else {
         _selectedLocationDetails = {};
 

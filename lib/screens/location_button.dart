@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:geocoding/geocoding.dart';
 
 class LocationButton extends StatefulWidget {
   final Function(double, double) onLocationSelected;
@@ -61,6 +62,16 @@ class _LocationButtonState extends State<LocationButton> {
             }
 
             _currentPosition = await Geolocator.getCurrentPosition();
+
+            List<Placemark> placemarks = await placemarkFromCoordinates(
+              _currentPosition!.latitude,
+              _currentPosition!.longitude,
+            );
+            Placemark placemark = placemarks[0];
+
+            print(placemark);
+
+            print('placemark above');
 
             setState(() {
               _loading = false;

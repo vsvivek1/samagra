@@ -44,6 +44,7 @@ dependencies:
     local_auth: ^2.1.6
     geolocator: ^9.0.2
     permission_handler: ^10.2.0
+    geocoding: ^2.1.0
 
 dev_dependencies:
     flutter_test:
