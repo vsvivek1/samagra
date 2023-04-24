@@ -157,7 +157,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
         print(data.runtimeType);
 
         print('data run type above');
-        _workDetails = data;
+
+        _workDetails = {};
+
+        data.forEach((key, value) {
+          _workDetails![key] =
+              value ?? ''; // set the value to an empty string if it's null
+        });
+
         _fromLocation = data['fromLocation']!;
         _toLocation = data['toLocation']!;
         _numberOfLocations = int.parse(data['noOfLocations']!) > 1000
@@ -171,13 +178,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         print('above issue');
 
-        if (!(_workDetails!['locations'] is Map)) {
-          _workDetails!['locations'] ??= <String, dynamic>{
+        print(_workDetails!['locations']);
+
+        print('_workDetails! above');
+
+        // if (!(_workDetails!['locations'] is Map)) {
+
+        if (_workDetails!['locations'] == null) {
+          // _workDetails!['locations'] = 'hi';
+          _workDetails!['locations'] ??= <dynamic, dynamic>{
             'key1': 'value1',
             'key2': 123,
             'key3': true
           };
         }
+
+        // }
 
         print(_workDetails);
 
@@ -303,7 +319,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   _updateLocationDetailsArray(arr) {
-    if (arr != null) {
+    if (arr != null && this._workDetails != null) {
       if (this._workDetails!['locations'] == null) {
         this._workDetails!['locations'] = {};
       }
@@ -613,7 +629,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
 
     return tasks.map<Widget>((t) {
+      // print(t);
       var str = t['structure_name'] as String;
+
+      var mstStructureId = t['structure_code'];
+
+      // print(mstStructureId);
 
       if (str == null) {
         return Text('Invalid task.');
@@ -649,7 +670,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   Text('2'), // Display task quantity
                   IconButton(
                     icon: Icon(Icons.add),
-                    onPressed: () {
+                    onPressed: () async {
+                      await this
+                          .getMasterEstimateForStructureItem(mstStructureId, 2);
+                      _showBottomSheet(context);
+
                       // Increment task quantity
                     },
                   ),
@@ -710,6 +735,35 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     return a;
     // return [Text('1'), Text('2')];
+  }
+
+  Future<String> getAccessToken() async {
+    final secureStorage = FlutterSecureStorage();
+    final accessToken = await secureStorage.read(key: 'access_token');
+    return Future.value(accessToken);
+  }
+
+  Future<void> getMasterEstimateForStructureItem(
+      mstStructureId, quantity) async {
+    final dio = Dio();
+
+    final url =
+        'http://erpuat.kseb.in/api/wrk/getMasterEstimateForStructureItem';
+    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+    final body = {
+      "strEstimates": {"mst_structure_id": 123, "quantity": 1}
+    };
+    final response = await dio.get(
+      url,
+      options: Options(headers: headers),
+      queryParameters: body,
+    );
+
+    print(response);
+
+    print('response aboive');
+    // final secureStorage = FlutterSecureStorage();
+    // await secureStorage.write(key: 'response_data', value: response.data);
   }
 
   void _showBottomSheet(BuildContext context) {
