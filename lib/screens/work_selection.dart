@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
 
@@ -66,6 +67,92 @@ class WorkSelection extends StatelessWidget {
     );
   }
 
+  Future<String> getAccessToken() async {
+    final secureStorage = FlutterSecureStorage();
+    final accessToken = await secureStorage.read(key: 'access_token');
+    return Future.value(accessToken);
+  }
+
+  Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
+    final dio = Dio();
+    final url = 'http://erpuat.kseb.in/api/wrk/getLabourMaster/0';
+    final url2 = 'http://erpuat.kseb.in/api/wrk/getMaterialMaster/2/0';
+
+    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+    final response = await dio.get(url, options: Options(headers: headers));
+
+    print('lab  called');
+    final responseMaterial =
+        await dio.get(url2, options: Options(headers: headers));
+
+    print('mat called');
+
+    try {
+      var inp = response.data['result_data']['labourMaster'];
+
+      var mat = responseMaterial.data['result_data']['materialMaster'];
+
+      print('mat called');
+
+      var store = inp
+          .map((a) => {
+                // print(a)
+
+                // ignore: unnecessary_statements
+                'id': a['id'],
+                'key': a['code'],
+                'code': a['code'],
+                'uom': a['mst_uom']['uom_code'],
+                'rate': a['rate'],
+
+                'name': a['name'], 'mst_uom_id': a['mst_uom_id']
+
+                // {a.id, a.code, a.name, a.uom}
+              })
+          .toList();
+
+      var mapStore = mat
+          .map((a) => {
+                // print(a)
+
+                // ignore: unnecessary_statements
+                'id': a['id'],
+                'key': a['material_code'],
+                'code': a['material_code'],
+                'uom': a['mst_stock_uom']['uom_code'],
+                'rate': a['mst_material_rates']['rate'],
+
+                'name': a['name'], 'mst_uom_id': a['mst_uom_id'],
+
+                // {a.id, a.code, a.name, a.uom}
+              })
+          .toList();
+
+      // print(store);
+
+      // print('response data');
+
+      final secureStorage = FlutterSecureStorage();
+      await secureStorage.write(
+          key: 'getLabourGroupMaster', value: json.encode(store));
+
+      await secureStorage.write(
+          key: 'getMaterialGroupmaster', value: json.encode(mapStore));
+
+      var a1 = await secureStorage.read(key: 'getLabourGroupMaster');
+
+      print(a1);
+
+      print('a1');
+    } catch (e) {
+      print(e);
+
+      print('error');
+    }
+
+    return;
+  }
+
   Future<List<dynamic>> _fetchWorkListList() async {
     final accessToken1 =
         await storage.getSecureAllStorageDataByKey("access_token");
@@ -96,7 +183,8 @@ class WorkSelection extends StatelessWidget {
           response.data['result_data']['schGrpList'] != null) {
         var res = response.data['result_data']['schGrpList'];
 
-        // p(res);
+        this.callApiAndSaveLabourGroupMasterInSecureStorage();
+
         return res;
       } else {
         p('some error');

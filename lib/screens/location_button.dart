@@ -4,7 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:geocoding/geocoding.dart';
 
 class LocationButton extends StatefulWidget {
-  final Function(double, double) onLocationSelected;
+  final Function(double, double, String) onLocationSelected;
 
   const LocationButton({Key? key, required this.onLocationSelected})
       : super(key: key);
@@ -63,23 +63,37 @@ class _LocationButtonState extends State<LocationButton> {
 
             _currentPosition = await Geolocator.getCurrentPosition();
 
-            List<Placemark> placemarks = await placemarkFromCoordinates(
+            List<Placemark> placemarks1 = await placemarkFromCoordinates(
               _currentPosition!.latitude,
               _currentPosition!.longitude,
             );
-            Placemark placemark = placemarks[0];
+            // Placemark placemark = placemarks[0];
 
-            print(placemark);
+            List<Placemark> placemarks =
+                placemarks1; // list of Placemark objects
+
+            List<Map<String, dynamic>> placemarkArray =
+                placemarks.map((placemark) {
+              return {
+                'name': placemark.name,
+                'thoroughfare': placemark.thoroughfare,
+                // add more properties as needed
+              };
+            }).toList();
+
+            // print(placemarks.runtimeType);
+
+            print(placemarks[0]);
 
             print('placemark above');
+
+            String? name = placemarks[0].name ?? '';
 
             setState(() {
               _loading = false;
             });
             widget.onLocationSelected(
-              _currentPosition!.latitude,
-              _currentPosition!.longitude,
-            );
+                _currentPosition!.latitude, _currentPosition!.longitude, name);
           },
           icon:
               _loading ? Icon(Icons.label_important) : Icon(Icons.location_on),

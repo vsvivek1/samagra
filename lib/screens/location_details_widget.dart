@@ -43,7 +43,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
     curve: Curves.easeInOut,
   ));
 
-  bool editMode = false;
+  bool editMode = true;
 
   late String locationName = '';
   late String latitude = '0';
@@ -192,13 +192,16 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
     }
   }
 
-  onLocationSelected(double p1, double p2) {
+  onLocationSelected(double p1, double p2, String name) {
     setState(() {
       widget.latitude = p1;
       widget.longitude = p2;
+      widget.locationName = name;
 
       widget.locationDetails['lattitude'] = p1.toString();
       widget.locationDetails['longitude'] = p2.toString();
+      widget.locationDetails['name'] = name.toString();
+      // widget.locationDetails['name'] = name.toString();
     });
 
     // print('selected');
@@ -209,7 +212,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
 
   void _saveLocationDetails() {
     setState(() {
-      editMode = !editMode;
+      // editMode = !editMode;
 
       widget.updateLocationDetailsArray(widget.locationDetails);
 
