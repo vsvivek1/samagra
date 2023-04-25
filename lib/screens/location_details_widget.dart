@@ -22,7 +22,10 @@ class LocationDetailsWidget extends StatefulWidget {
 
     // ignore: non_constant_identifier_names
     required this.locationDetails,
-  }) : super(key: key);
+  }) : super(key: key) {
+    print(this.measurements);
+    print('this.measurementsabove');
+  }
 
   @override
   _LocationDetailsWidgetState createState() => _LocationDetailsWidgetState();
@@ -51,6 +54,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
   @override
   void initState() {
     // widget.locationNameController.text = widget.locationName!;
+
     super.initState();
     _controller.forward();
   }
@@ -108,6 +112,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                     ],
                     if (editMode) ...[
                       TextFormField(
+                          initialValue: locationName,
                           onChanged: ((value) => updateLocationText(value)),
                           // controller: widget.locationNameController,
                           decoration: InputDecoration(

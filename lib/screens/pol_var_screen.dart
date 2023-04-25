@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:samagra/screens/editable_table.dart';
 import 'package:samagra/screens/location_details_widget.dart';
 
 import '../app_theme.dart';
@@ -35,6 +36,37 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Map<String, dynamic> _selectedLocationDetails = {};
 
   List _selectedMeasurements = [];
+  List<Map<String, dynamic>> _masterMaterialEstimate = [];
+  List<Map<String, dynamic>> _masterLabEstimateItems = [];
+
+  List measurementDetails = [
+    {
+      'location no': 1,
+      'locationName': 'my location',
+      'geoCordinates': {'lattitude': '0', 'longitude': 0, 'name': 0},
+      'measurement': {
+        "tasks": [
+          {
+            'taskId': 1,
+            'taskName': 'sample',
+            'taskQty': 1,
+            'Structures': [
+              {
+                'Structurename': 'pole',
+                "Structureid": 1,
+                'materials': [
+                  {'itemname': 'itemname', "quantity": "1"}
+                ],
+                'labour': [
+                  {'itemname': 'labour1', "quantity": "2"}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ];
 
   Map<dynamic, dynamic>? _workDetails;
 
@@ -751,7 +783,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         'http://erpuat.kseb.in/api/wrk/getMasterEstimateForStructureItem';
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
     final body = {
-      "strEstimates": {"mst_structure_id": 123, "quantity": 1}
+      "strEstimates": {"mst_structure_id": mstStructureId, "quantity": 2}
     };
     final response = await dio.get(
       url,
@@ -759,43 +791,98 @@ class _PolVarScreenState extends State<PolVarScreen> {
       queryParameters: body,
     );
 
-    print(response);
+// if (response.statusCode == 200) {
+//     final jsonResponse = json.decode(response.body);
+//     return jsonResponse['result_data'];
+//   } else {
+//     throw Exception('Failed to fetch result data');
+//   }
+    // print(response.headers);
 
-    print('response aboive');
+    var re = response.data['result_data'];
+
+    // _masterMaterialEstimate = re['masterMaterialEstimate'];
+    // _masterLabEstimateItems = re['masterLabEstimateItems'];
+
+    // _masterMaterialEstimate =
+    //     List<Map<String, dynamic>>.from(re['masterMaterialEstimate']);
+
+    // _masterLabEstimateItems =
+    //     List<Map<String, dynamic>>.from(re['masterLabEstimateItems']);
+
+    // print(_masterMaterialEstimate['']);
+
+    // print(_masterLabEstimateItems);
+    // print(re.keys);
+
+    print(re['masterMaterialEstimate'].length);
+    print("re['masterMaterialEstimate'].length");
+
+    for (final mat in re['masterMaterialEstimate']) {
+      Map<String, dynamic> ob = {};
+      ob['quantity'] = mat['quantity'];
+      ob['material_name'] = mat['mst_material']['material_name'];
+      ob['material_code'] = mat['mst_material']['material_code'];
+
+      _masterLabEstimateItems.add(ob);
+
+      // print(mat);
+    }
+
+    print(_masterLabEstimateItems);
+    // print(response.data['result_data']);
+
+    // print(response.runtimeType);
+
+    // var tmp = Map.from(response);
+
+    // _measurementsObject = tmp['result_data'];
+
     // final secureStorage = FlutterSecureStorage();
     // await secureStorage.write(key: 'response_data', value: response.data);
   }
 
+  final employees = [
+    {'id': 1, 'name': 'John Doe', 'position': 'Manager'},
+    {'id': 2, 'name': 'Jane Smith', 'position': 'Developer'},
+    {'id': 3, 'name': 'Bob Johnson', 'position': 'Designer'},
+  ];
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
-          height: 200,
-          child: Column(
-            children: [
-              ListTile(
-                leading: Icon(Icons.share),
-                title: Text('Share'),
-                onTap: () {
-                  // do something when Share is tapped
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.edit),
-                title: Text('Edit'),
-                onTap: () {
-                  // do something when Edit is tapped
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.delete),
-                title: Text('Delete'),
-                onTap: () {
-                  // do something when Delete is tapped
-                },
-              ),
-            ],
+          height: 400,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                EditableTable<Map<String, dynamic>>(
+                  data: _masterLabEstimateItems,
+                  headers: ['material_name', 'quantity', 'material_code'],
+                ),
+                ListTile(
+                  leading: Icon(Icons.share),
+                  title: Text('Share'),
+                  onTap: () {
+                    // do something when Share is tapped
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Edit'),
+                  onTap: () {
+                    // do something when Edit is tapped
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.delete),
+                  title: Text('Delete'),
+                  onTap: () {
+                    // do something when Delete is tapped
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
