@@ -10,6 +10,10 @@ import '../app_theme.dart';
 import '../secure_storage/secure_storage.dart';
 import 'package:collection/collection.dart';
 
+import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
+
+import 'measurement_display_widget.dart';
+
 class PolVarScreen extends StatefulWidget {
   @override
   final int workId;
@@ -321,14 +325,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                           itemCount: 1,
                                           itemBuilder: (BuildContext context,
                                               int index) {
-                                            return LocationDetailsWidget(
-                                              locationDetails: {},
-                                              updateLocationDetailsArray:
-                                                  _updateLocationDetailsArray,
-                                              locationNo: _selectedLocationIndex
-                                                  .toString(),
-                                              measurements: List<String>.from(
-                                                  _selectedMeasurements),
+                                            return Column(
+                                              children: [
+                                                LocationDetailsWidget(
+                                                  locationDetails: {},
+                                                  updateLocationDetailsArray:
+                                                      _updateLocationDetailsArray,
+                                                  locationNo:
+                                                      _selectedLocationIndex
+                                                          .toString(),
+                                                  measurements: List<
+                                                          String>.from(
+                                                      _selectedMeasurements),
+                                                ),
+                                                MeasurementDisplayWidget(
+                                                    measurementDetails)
+                                              ],
                                             );
                                           }),
                                     )
@@ -349,6 +361,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
           );
         });
   }
+
+  // ignore: non_constant_identifier_names
 
   _updateLocationDetailsArray(arr) {
     if (arr != null && this._workDetails != null) {
