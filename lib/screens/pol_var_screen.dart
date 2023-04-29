@@ -43,7 +43,32 @@ class _PolVarScreenState extends State<PolVarScreen> {
   List<Map<String, dynamic>> _masterMaterialEstimate = [];
   List<Map<String, dynamic>> _masterLabEstimateItems = [];
 
-  List measurementDetails = [
+  Future<Map<String, dynamic>> getMeasurementDetails(
+      String workId, int locationNumber) async {
+    final storage = new FlutterSecureStorage();
+    String? jsonDetails = await storage.read(key: 'measurementDetails');
+    if (jsonDetails != null) {
+      List<dynamic> details = jsonDecode(jsonDetails);
+      Map<String, dynamic> matchingDetail = details.firstWhere(
+          (detail) =>
+              detail['workId'] == workId &&
+              detail['locationNumber'] == locationNumber,
+          orElse: () => {});
+      return {'matchingDetail': matchingDetail, 'detailsList': details};
+    }
+    return {'matchingDetail': {}, 'detailsList': []};
+  }
+
+  Future<void> storeMeasurementDetails(
+      List<Map<String, dynamic>> measurementDetails) async {
+    final storage = new FlutterSecureStorage();
+    String jsonDetails = jsonEncode(measurementDetails);
+    await storage.write(key: 'measurementDetails', value: jsonDetails);
+  }
+
+  bool loadingLocationDetails = false;
+
+  List<Map<String, dynamic>> measurementDetails = [
     {
       'location no': 1,
       'locationName': 'my location',
@@ -945,13 +970,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
   }
 
-  _viewLocationDetail(int index) {
+  _viewLocationDetail(int index) async {
     print("this is new index of locations $index");
-    setState(() {
+    setState(() async {
       _previoslySelectedIndex = _selectedLocationIndex;
       _selectedLocationIndex = index;
 
       _tappedIndex = index;
+
+      if (_selectedLocationIndex != -1) {
+        /// if a user selectts a location after selecting any other location saving the current datat to storage
+
+        storeMeasurementDetails(measurementDetails);
+
+        print('storeing location details');
+      }
 
       if (_workDetails != null &&
           _workDetails!['locations'] != null &&
@@ -966,6 +999,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         _selectedMeasurements = ['test1 ', 'Item2 Qty: 30', 'Item3 Qty: 30'];
       }
+
+      var s = await getMeasurementDetails(
+          widget.workId.toString(), _selectedLocationIndex);
+
+      print(s);
+      print('s aprinted above');
     });
   }
 
