@@ -46,6 +46,7 @@ dependencies:
     permission_handler: ^10.2.0
     geocoding: ^2.1.0
     flutter_simple_treeview: ^3.0.2
+    step_progress_indicator: ^1.0.2
 
 dev_dependencies:
     flutter_test:

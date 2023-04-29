@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../secure_storage/secure_storage.dart';
 import 'package:samagra/secure_storage/common_functions.dart';
+import 'dart:math' as math;
 
 import 'measurement_option.dart';
 
@@ -59,7 +61,22 @@ class WorkSelection extends StatelessWidget {
             } else if (snapshot.hasError) {
               return Text('Error: ${snapshot.error}');
             } else {
-              return CircularProgressIndicator();
+              return Center(
+                  child: CircularStepProgressIndicator(
+                totalSteps: 20,
+                currentStep: 12,
+                stepSize: 20,
+                selectedColor: Colors.red,
+                unselectedColor: Colors.purple[400],
+                padding: math.pi / 80,
+                width: 150,
+                height: 150,
+                startingAngle: -math.pi * 2 / 3,
+                arcSize: math.pi * 2 / 3 * 2,
+                gradientColor: LinearGradient(
+                  colors: [Colors.red, Colors.purple],
+                ),
+              ));
             }
           },
         ),
