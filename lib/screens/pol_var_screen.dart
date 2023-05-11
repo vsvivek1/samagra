@@ -49,7 +49,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     String? jsonDetails = await storage.read(key: 'measurementDetails');
     if (jsonDetails != null) {
       List<dynamic> details = jsonDecode(jsonDetails);
-      Map<String, dynamic> matchingDetail = details.firstWhere(
+      Map<dynamic, dynamic> matchingDetail = details.firstWhere(
           (detail) =>
               detail['workId'] == workId &&
               detail['locationNumber'] == locationNumber,
@@ -972,36 +972,36 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   _viewLocationDetail(int index) async {
     print("this is new index of locations $index");
-    setState(() async {
+
+    if (index != -1) {
+      /// if a user selectts a location after selecting any other location saving the current datat to storage
+
+      storeMeasurementDetails(measurementDetails);
+
+      print('storeing location details');
+    }
+
+    if (_workDetails != null &&
+        _workDetails!['locations'] != null &&
+        _workDetails!['locations'] != null) {
+      // _selectedLocationDetails =
+      //     _workDetails!['locations']![_selectedLocationIndex]
+      //         as Map<dynamic, dynamic>;
+
+      // _selectedMeasurements = _selectedLocationDetails['measurements'];
+    } else {
+      _selectedLocationDetails = {};
+
+      _selectedMeasurements = ['test1 ', 'Item2 Qty: 30', 'Item3 Qty: 30'];
+    }
+    var s = await getMeasurementDetails(
+        widget.workId.toString(), _selectedLocationIndex);
+
+    setState(() {
       _previoslySelectedIndex = _selectedLocationIndex;
       _selectedLocationIndex = index;
 
       _tappedIndex = index;
-
-      if (_selectedLocationIndex != -1) {
-        /// if a user selectts a location after selecting any other location saving the current datat to storage
-
-        storeMeasurementDetails(measurementDetails);
-
-        print('storeing location details');
-      }
-
-      if (_workDetails != null &&
-          _workDetails!['locations'] != null &&
-          _workDetails!['locations'] != null) {
-        // _selectedLocationDetails =
-        //     _workDetails!['locations']![_selectedLocationIndex]
-        //         as Map<dynamic, dynamic>;
-
-        // _selectedMeasurements = _selectedLocationDetails['measurements'];
-      } else {
-        _selectedLocationDetails = {};
-
-        _selectedMeasurements = ['test1 ', 'Item2 Qty: 30', 'Item3 Qty: 30'];
-      }
-
-      var s = await getMeasurementDetails(
-          widget.workId.toString(), _selectedLocationIndex);
 
       print(s);
       print('s aprinted above');
