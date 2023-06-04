@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class LocationButton extends StatefulWidget {
   final Function(double, double, String) onLocationSelected;
@@ -16,11 +17,13 @@ class LocationButton extends StatefulWidget {
 class _LocationButtonState extends State<LocationButton> {
   Position? _currentPosition;
   bool _loading = false;
+  late AudioCache audioCache;
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
 
   @override
   void initState() {
+    audioCache = AudioCache(prefix: 'assets/audio/');
     super.initState();
     checkAndRequestLocationPermission();
   }
@@ -91,7 +94,13 @@ class _LocationButtonState extends State<LocationButton> {
 
             setState(() {
               _loading = false;
+
+              audioCache.play('press_save_location_button.wav');
+
+              //  this.userDirections =
+              // 'Now Select any Location to Starting with  L, Ensure correct location ';
             });
+
             widget.onLocationSelected(
                 _currentPosition!.latitude, _currentPosition!.longitude, name);
           },
@@ -106,6 +115,13 @@ class _LocationButtonState extends State<LocationButton> {
   // Check and request location permission
   Future<void> checkAndRequestLocationPermission() async {
     _permissionStatus = await Permission.location.status;
+    if (_permissionStatus != PermissionStatus.granted) {
+      audioCache.play('provide_permision.wav');
+    }
+
+    if (_permissionStatus == PermissionStatus.granted) {
+      audioCache.play('press_get_location.wav');
+    }
 
     if (_permissionStatus == PermissionStatus.denied) {
       _permissionStatus = await Permission.location.request();

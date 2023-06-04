@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         passwordInitialValue = _password;
 
-                                        var dp = user['photo_image'];
+                                        var dp = user['photo_image'] ?? '';
 
                                         var username = user["name"];
 

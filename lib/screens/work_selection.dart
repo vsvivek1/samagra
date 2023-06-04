@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -228,11 +229,16 @@ class SchGrpListWidget extends StatefulWidget {
 class _SchGrpListWidgetState extends State<SchGrpListWidget> {
   final _searchController = TextEditingController();
   List<dynamic> _filteredItems = [];
+  late AudioCache audioCache;
 
   @override
   void initState() {
+    audioCache = AudioCache(prefix: 'assets/audio/');
     _filteredItems = List.from(widget.schGrpList);
+
     super.initState();
+
+    audioCache.play('select_work.wav');
   }
 
   @override

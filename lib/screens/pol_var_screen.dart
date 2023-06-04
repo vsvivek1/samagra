@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -27,9 +28,14 @@ class PolVarScreen extends StatefulWidget {
 
 class _PolVarScreenState extends State<PolVarScreen> {
   final storage = SecureStorage();
-  int _numberOfLocations = 1;
+  int _numberOfLocations = 0;
   int _selectedLocationIndex = -1;
   int _previoslySelectedIndex = -1;
+  late AudioCache audioCache;
+
+  bool viewStructures = false;
+
+  String userDirections = 'Watch here to Know what to do next';
 
   bool _enableEntryOfLocationDetails = true;
 
@@ -37,11 +43,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
   String _toLocation = '';
   int _tappedIndex = -1;
 
+  int steps = 0;
+
   Map<String, dynamic> _selectedLocationDetails = {};
 
   List _selectedMeasurements = [];
   List<Map<String, dynamic>> _masterMaterialEstimate = [];
   List<Map<String, dynamic>> _masterLabEstimateItems = [];
+
+  List _tasks = [];
 
   Future<Map<String, dynamic>> getMeasurementDetails(
       String workId, int locationNumber) async {
@@ -67,33 +77,32 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   bool loadingLocationDetails = false;
+  List<Map<String, dynamic>> measurementDetails = [];
 
-  List<Map<String, dynamic>> measurementDetails = [
+  List<Map<String, dynamic>> measurementDetails1 = [
     {
-      'location no': 1,
+      'locationNo': 1,
       'locationName': 'my location',
       'geoCordinates': {'lattitude': '0', 'longitude': 0, 'name': 0},
-      'measurement': {
-        "tasks": [
-          {
-            'taskId': 1,
-            'taskName': 'sample',
-            'taskQty': 1,
-            'Structures': [
-              {
-                'Structurename': 'pole',
-                "Structureid": 1,
-                'materials': [
-                  {'itemname': 'itemname', "quantity": "1"}
-                ],
-                'labour': [
-                  {'itemname': 'labour1', "quantity": "2"}
-                ]
-              }
-            ]
-          }
-        ]
-      }
+      "tasks": [
+        {
+          'taskId': 1,
+          'taskName': 'sample',
+          'taskQty': 1,
+          'Structures': [
+            {
+              'Structurename': 'pole',
+              "Structureid": 1,
+              'materials': [
+                {'itemname': 'itemname', "quantity": "1"}
+              ],
+              'labour': [
+                {'itemname': 'labour1', "quantity": "2"}
+              ]
+            }
+          ]
+        }
+      ]
     }
   ];
 
@@ -114,13 +123,28 @@ class _PolVarScreenState extends State<PolVarScreen> {
     var allTasks =
         tasks.map((t) => t['mst_task']['task_name']).toSet().toList();
 
+    var allTasksIds = tasks.map((t) => t['mst_task']['id']).toSet().toList();
+
     for (int z = 0; z < allTasks.length; z++) {
       var ta = allTasks[z];
+
+      var taskId = allTasksIds[z];
+
+      // print('$taskId is task id');
+
+      // print('tasks above');
+
       var t2 = tasks
           .where((t) => t['mst_task']['task_name'] == ta)
           .map((t3) => t3['mst_structure']);
 
+      var mstTaskId =
+          tasks.where((t) => t['id'] == taskId).map((t3) => t3['id']);
+
+      // print('mst_structure_id avbvove');
+
       var ob = {};
+      ob['taskId'] = taskId;
       ob['task_name'] = ta;
       ob['isExpanded'] = true;
       ob['tasks'] = t2;
@@ -189,16 +213,64 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var c = getStructuresByName(wrkScheduleGroupStructures).toList();
 
+    _tasks = c;
+    print(c);
+
+    print('see abobe 215');
+
     return Future.value(c.toList());
+  }
+
+  Future<void> initialSetup() async {
+    await _updateWorkDetailsOnLoading();
+    audioCache = AudioCache(prefix: 'assets/audio/');
+
+    print('$_numberOfLocations is numberof locations at 230');
+
+    if (_enableEntryOfLocationDetails) {
+      setState(() {
+        this.steps = this.steps++;
+        if (_numberOfLocations == 0) {
+          this.userDirections = 'Enter Number of Locations';
+          audioCache.play('no_of_loc.mp3');
+        } else if (!(_numberOfLocations > 0) && _fromLocation == '' ||
+            _toLocation == '') {
+          this.userDirections = 'Please Enter From and To Locations';
+          audioCache.play('enter_from_to_location_name.wav');
+        } else if (_fromLocation != '' &&
+            _toLocation != '' &&
+            _numberOfLocations != 0) {
+          this.userDirections = 'Select a Location';
+          audioCache.play('select_location.wav');
+        }
+
+// else {
+//   this.userDirections = 'Invalid Number of Locations';
+//   audioCache.play('invalid_loc.mp3');
+// }
+      });
+    } else {
+      setState(() {
+        if (_numberOfLocations > 0 &&
+            _fromLocation != '' &&
+            _toLocation != '') {
+          this.userDirections =
+              'Now Select any Location to Starting with  L, Ensure correct location ';
+          audioCache.play('select_location.wav');
+        }
+
+        this.steps = 0;
+        this.userDirections = 'Enter location details';
+      });
+    }
   }
 
   @override
   void initState() {
+    super.initState();
+    initialSetup();
     // ignore: todo
     // TODO: implement initState
-    super.initState();
-
-    _updateWorkDetailsOnLoading();
   }
 
   Future<void> _updateWorkDetailsOnLoading() async {
@@ -206,7 +278,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     print(data);
 
-    print('data above');
+    print('data above 277');
 
     // return;
 
@@ -215,10 +287,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
           data['fromLocation'] != null &&
           data['toLocation'] != null &&
           data['noOfLocations'] != null) {
-        print(data.runtimeType);
-
-        print('data run type above');
-
         _workDetails = {};
 
         data.forEach((key, value) {
@@ -241,7 +309,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         print(_workDetails!['locations']);
 
-        print('_workDetails! above');
+        print('_workDetails! above 304');
 
         // if (!(_workDetails!['locations'] is Map)) {
 
@@ -256,12 +324,88 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // }
 
-        print(_workDetails);
+        // print(_workDetails);
 
         print('work details abobve $_numberOfLocations');
+
         _enableEntryOfLocationDetails = false;
       }
     });
+  }
+
+  _handleEmitLocDetailsToPolVarWidget(Map locDetails) async {
+    setState(() {
+      if (measurementDetails != null) {
+        Map existingMeasurementDetails = measurementDetails.firstWhere(
+            (element) => element['locationNo'] == _selectedLocationIndex,
+            orElse: () => {});
+
+        if (existingMeasurementDetails != {}) {
+          print(existingMeasurementDetails);
+          print('existng param above');
+
+          print(locDetails);
+
+          print('locDetais new above');
+
+          existingMeasurementDetails = {
+            ...existingMeasurementDetails,
+            ...locDetails
+          };
+
+          print(existingMeasurementDetails);
+
+          print('new exiasting details above');
+
+          int indexToUpdate = measurementDetails.indexWhere(
+              (details) => details['locationNo'] == _selectedLocationIndex);
+
+          if (indexToUpdate != -1) {
+            measurementDetails[indexToUpdate] =
+                Map<String, dynamic>.from(existingMeasurementDetails);
+          } else {
+            print('adding new');
+
+            setState(() {
+              measurementDetails
+                  .add(Map<String, dynamic>.from(existingMeasurementDetails));
+            });
+
+            int ln = measurementDetails.length;
+
+            print('measurement details length ${ln}');
+          }
+        }
+
+        print(existingMeasurementDetails);
+        print('existing mesr detaiks above');
+      }
+
+      print('from parent location details just above as map');
+
+      // widget.latitude = p1;
+      // widget.longitude = p2;
+      // widget.locationName = name;
+
+      // widget.locationDetails['lattitude'] = p1.toString();
+      // widget.locationDetails['longitude'] = p2.toString();
+      // widget.locationDetails['name'] = name.toString();
+      // // widget.locationDetails['name'] = name.toString();
+    });
+
+    // print(measurementDetails[2]);
+    await Future.delayed(Duration(seconds: 2));
+
+    setState(() {
+      viewStructures = true;
+    });
+
+    this.userDirections =
+        'NOW Select Task and then correct structure inside it ';
+    audioCache.play('select_structure.wav');
+    // print(this._workDetails);
+
+    print(' measurementDetails above');
   }
 
   //
@@ -300,7 +444,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: AppTheme.grey.withOpacity(0.7),
-                title: Text('Select Locations and Templates'),
+                title: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 500),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                  child: Text(
+                    userDirections,
+                    key: ValueKey<String>(userDirections),
+                    style: TextStyle(fontSize: 11, color: Colors.red),
+                  ),
+                ),
               ),
               body: Scrollbar(
                 thumbVisibility: true,
@@ -320,63 +478,52 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         ),
                         enterLocationDetails(),
                         viewLocationDetails(),
-                        Divider(
-                          height: 5,
-                          thickness: 2,
-                          color: Colors.blueAccent,
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Wrap(
-                                  alignment: WrapAlignment.spaceEvenly,
+                        if ((!_enableEntryOfLocationDetails &&
+                            _numberOfLocations > 0 &&
+                            _numberOfLocations < 999 &&
+                            _fromLocation != '' &&
+                            _toLocation != '')) ...[
+                          Divider(
+                            height: 5,
+                            thickness: 2,
+                            color: Colors.blueAccent,
+                          ),
+                          Visibility(
+                            visible: _selectedLocationIndex != -1,
+                            child: SizedBox(
+                              height: 300,
+                              width: 500,
+                              child: Row(children: [
+                                Column(
                                   children: [
-                                    // Text(
-                                    //   'Your are Progressing with  the Pol Var measurement of  work ${widget.workName}',
-                                    //   style: TextStyle(fontSize: 20),
-                                    // ),
-                                    Divider(
-                                      color: Colors.grey,
-                                      height: 20,
-                                      thickness: 15,
-                                    ),
+                                    LocationDetailsWidget(
+                                        locationDetails: {},
+                                        updateLocationDetailsArray:
+                                            _updateLocationDetailsArray,
+                                        locationNo:
+                                            _selectedLocationIndex.toString(),
+                                        measurements: List<String>.from(
+                                          _selectedMeasurements,
+                                        ),
+                                        emitLocDetailsToPolVarWidget:
+                                            _handleEmitLocDetailsToPolVarWidget)
+                                    // ,
+                                    // Expanded(
+                                    //     child: MeasurementDisplayWidget(
+                                    //         measurementDetails))
 
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .4,
-                                      child: ListView.builder(
-                                          // itemCount: _numberOfLocations,
-                                          itemCount: 1,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Column(
-                                              children: [
-                                                LocationDetailsWidget(
-                                                  locationDetails: {},
-                                                  updateLocationDetailsArray:
-                                                      _updateLocationDetailsArray,
-                                                  locationNo:
-                                                      _selectedLocationIndex
-                                                          .toString(),
-                                                  measurements: List<
-                                                          String>.from(
-                                                      _selectedMeasurements),
-                                                ),
-                                                MeasurementDisplayWidget(
-                                                    measurementDetails)
-                                              ],
-                                            );
-                                          }),
-                                    )
-                                  ]),
-                            )
-                          ],
-                        ),
-                        Divider(color: Colors.amber, thickness: 10),
-                        SizedBox(height: 50),
-                        viewLocationList(ar),
-                        SizedBox(height: 2000),
+                                    // // viewAllLocationDetails(context),
+                                    // ,
+                                  ],
+                                )
+                              ]),
+                            ),
+                          ),
+                          // Divider(color: Colors.white10, thickness: 10),
+                          // SizedBox(height: 50),
+                          viewLocationList(ar),
+                          SizedBox(height: 2000),
+                        ],
                       ],
                     ),
                   ),
@@ -387,9 +534,41 @@ class _PolVarScreenState extends State<PolVarScreen> {
         });
   }
 
+  SizedBox viewAllLocationDetails(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * .4,
+      child: ListView.builder(
+          // itemCount: _numberOfLocations,
+          itemCount: 1,
+          itemBuilder: (BuildContext context, int index) {
+            return Column(
+              children: [
+                LocationDetailsWidget(
+                    locationDetails: {},
+                    updateLocationDetailsArray: _updateLocationDetailsArray,
+                    locationNo: _selectedLocationIndex.toString(),
+                    measurements: List<String>.from(
+                      _selectedMeasurements,
+                    ),
+                    emitLocDetailsToPolVarWidget:
+                        _handleEmitLocDetailsToPolVarWidget),
+                SizedBox(
+                  height: 300,
+                  // child: Text('hi'),
+
+                  child: MeasurementDisplayWidget(measurementDetails),
+                )
+              ],
+            );
+          }),
+    );
+  }
+
   // ignore: non_constant_identifier_names
 
-  _updateLocationDetailsArray(arr) {
+  _updateLocationDetailsArray(arr) async {
+    print('$arr @ 556');
+
     if (arr != null && this._workDetails != null) {
       if (this._workDetails!['locations'] == null) {
         this._workDetails!['locations'] = {};
@@ -397,7 +576,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
       this._workDetails!['locations'][this._selectedLocationIndex.toString()] =
           arr;
 
-      print(this._workDetails);
+      // await Future.delayed(Duration(seconds: 10));
+
+      // setState(() {
+      //   viewStructures = true;
+      // });
+
+      // this.userDirections =
+      //     'NOW Select Task and then correct structure inside it ';
+      // audioCache.play('select_structure.wav');
+
+      // print(this._workDetails);
     }
 
 // this.
@@ -413,21 +602,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: TextFormField(
-                    maxLength: 3,
-                    initialValue: _numberOfLocations.toString(),
-                    // controller: TextEditingController(
-                    //     text: _numberOfLocations.toString()),
-                    decoration: InputDecoration(
-                      labelText: 'Number of Locations',
-                      border: OutlineInputBorder(),
+                  child: SizedBox(
+                    height: 20,
+                    child: TextFormField(
+                      maxLength: 3,
+                      initialValue: _numberOfLocations.toString(),
+                      // controller: TextEditingController(
+                      //     text: _numberOfLocations.toString()),
+                      decoration: InputDecoration(
+                        labelText: 'Number of Locations',
+                        border: OutlineInputBorder(),
+                      ),
+                      keyboardType: TextInputType.number,
+
+                      onEditingComplete: () {},
+                      onChanged: (value) {
+                        setState(() {
+                          _numberOfLocations = int.tryParse(value) ?? 0;
+
+                          if (_numberOfLocations > 0) {
+                            this.userDirections =
+                                'NOW ENTER FROM AND TO LOCATIONS';
+                            audioCache.play('enter_from_to_location_name.wav');
+                          }
+                          this.steps = this.steps++;
+                        });
+                      },
                     ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        _numberOfLocations = int.tryParse(value) ?? 1;
-                      });
-                    },
                   ),
                 ),
                 Divider(
@@ -435,54 +636,86 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   thickness: 2,
                   color: Colors.blueAccent,
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'From Location',
-                          border: OutlineInputBorder(),
-                        ),
-                        child: TextFormField(
-                          initialValue: _toLocation,
-                          onChanged: (value) {
-                            setState(() {
-                              _fromLocation = value;
-                            });
-                          },
+                Visibility(
+                  visible: _numberOfLocations > 0 && _numberOfLocations < 999,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'From Location',
+                            border: OutlineInputBorder(),
+                          ),
+                          child: TextFormField(
+                            initialValue: _toLocation,
+                            onChanged: (value) async {
+                              String from = ' _fromLocation';
+                              String to = '_toLocation';
+
+                              if (_fromLocation != '' && _toLocation != '') {
+                                await Future.delayed(Duration(seconds: 3));
+
+                                if (from == _fromLocation &&
+                                    to == _toLocation) {
+                                  this.userDirections = 'Now Press save ';
+
+                                  audioCache.play('press_save_button.mp3');
+                                } else {
+                                  from = _fromLocation;
+                                  to = _toLocation;
+                                }
+                              }
+
+                              setState(() {
+                                _fromLocation = value;
+                              });
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: InputDecorator(
-                        decoration: InputDecoration(
-                          labelText: 'To Location',
-                          border: OutlineInputBorder(),
-                        ),
-                        child: TextFormField(
-                          initialValue: _toLocation.toString(),
-                          onChanged: (value) {
-                            setState(() {
-                              _toLocation = value;
-                            });
-                          },
+                      SizedBox(width: 16),
+                      Expanded(
+                        child: InputDecorator(
+                          decoration: InputDecoration(
+                            labelText: 'To Location',
+                            border: OutlineInputBorder(),
+                          ),
+                          child: TextFormField(
+                            initialValue: _toLocation.toString(),
+                            onChanged: (value) {
+                              setState(() {
+                                _toLocation = value;
+
+                                if (_fromLocation != '' && _toLocation != '') {
+                                  this.userDirections = 'Now Press save ';
+                                  audioCache.play('press_save_button.mp3');
+                                  this.steps = this.steps++; //3
+                                }
+                              });
+                            },
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: saveFromAndTwoLocation,
-                      icon: Icon(Icons.save),
-                      color: Colors.grey[900],
-                      tooltip: 'Save Location Details',
-                    ),
-                  ],
+                Visibility(
+                  visible: (_numberOfLocations > 0 &&
+                      _numberOfLocations < 999 &&
+                      _fromLocation != '' &&
+                      _toLocation != ''),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: saveFromAndTwoLocation,
+                        icon: Icon(Icons.save),
+                        color: Color.fromARGB(255, 33, 33, 33),
+                        tooltip: 'Save Location Details',
+                      ),
+                    ],
+                  ),
                 ),
               ],
             )));
@@ -548,20 +781,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
       child: Row(
         // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-              flex: 4,
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height * .8,
-                child: ListView.separated(
-                  itemCount: ar.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return TasksList(ar, index);
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
-                  },
-                ),
-              )),
+          Visibility(
+            visible: viewStructures,
+            child: Expanded(
+                flex: 4,
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * .8,
+                  child: ListView.separated(
+                    itemCount: ar.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return TasksList(ar, index);
+                    },
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Divider();
+                    },
+                  ),
+                )),
+          ),
           Expanded(
             flex: 1,
             child: SizedBox(
@@ -669,6 +905,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
   ExpansionPanelList TasksList(ar, int index) {
     var tasks = ar[index]['tasks'].toList();
 
+    // print(ar[index]);
+    print('ar[index] @ 892');
+
     // return Text('hi');
     return ExpansionPanelList(
       expansionCallback: (int panelIndex, bool isExpanded) {
@@ -699,11 +938,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return [Text('No tasks found.')];
     }
 
-    return tasks.map<Widget>((t) {
+    return tasks.map<Widget>((task) {
       // print(t);
-      var str = t['structure_name'] as String;
 
-      var mstStructureId = t['structure_code'];
+      var currentItem = measurementDetails.firstWhere(
+        (element) => element['locationNo'] == _selectedLocationIndex + 1,
+        orElse: () => {},
+      );
+
+      /// find structure using structure code for currentItem
+      /// find structure using structure code for currentItem
+
+      var str = task['structure_name'] as String;
+
+      // int taskCount=
+
+      var mstStructureId = task['structure_code'];
 
       // print(mstStructureId);
 
@@ -742,9 +992,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () async {
-                      await this
-                          .getMasterEstimateForStructureItem(mstStructureId, 2);
-                      _showBottomSheet(context);
+                      await this.getMasterEstimateForStructureItem(
+                          mstStructureId, 2, task);
+                      // _showBottomSheet(context);
 
                       // Increment task quantity
                     },
@@ -815,11 +1065,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<void> getMasterEstimateForStructureItem(
-      mstStructureId, quantity) async {
+      mstStructureId, quantity, task) async {
     final dio = Dio();
 
     final url =
         'http://erpuat.kseb.in/api/wrk/getMasterEstimateForStructureItem';
+
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
     final body = {
       "strEstimates": {"mst_structure_id": mstStructureId, "quantity": 2}
@@ -829,6 +1080,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       options: Options(headers: headers),
       queryParameters: body,
     );
+
+    print(task);
+
+    print('taska above');
+
+    // return;
 
 // if (response.statusCode == 200) {
 //     final jsonResponse = json.decode(response.body);
@@ -840,16 +1097,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var re = response.data['result_data'];
 
-    // _masterMaterialEstimate = re['masterMaterialEstimate'];
-    // _masterLabEstimateItems = re['masterLabEstimateItems'];
+    // print(re);
+    // print('estimate above');
+    if (re == null) {
+      print('re below of null  ie no details in master');
 
-    // _masterMaterialEstimate =
-    //     List<Map<String, dynamic>>.from(re['masterMaterialEstimate']);
+      return;
+    }
+
+    _masterMaterialEstimate =
+        List<Map<String, dynamic>>.from(re['masterMaterialEstimate']);
 
     // _masterLabEstimateItems =
     //     List<Map<String, dynamic>>.from(re['masterLabEstimateItems']);
 
-    // print(_masterMaterialEstimate['']);
+    print(_masterMaterialEstimate);
+
+    print('master labour estimate above');
 
     // print(_masterLabEstimateItems);
     // print(re.keys);
@@ -869,6 +1133,53 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
 
     print(_masterLabEstimateItems);
+
+    print('_master labout estimate  above @1123');
+
+    print(_tasks);
+
+    print('tasks above');
+
+    return;
+
+    // task['tasks'] = _masterLabEstimateItems;
+
+// _tasks.findWhere(i=>i.taskId==task.id)
+
+    var out = measurementDetails.firstWhere(
+      (element) => element['locationNo'] == _selectedLocationIndex + 1,
+      orElse: () => {}, // Return null as the default value
+    );
+
+    print(_selectedLocationIndex + 1);
+    print('locationNo abobe @1134');
+
+    print(out);
+
+    print('out above @ 1128 polvar');
+
+    if (out == {}) {
+      measurementDetails.add(task);
+    } else {
+      // print(measurementDetails[_selectedLocationIndex]);
+
+      setState(() {
+        measurementDetails = List.from(measurementDetails.map((item) {
+          if (item['locationNo'] == _selectedLocationIndex) {
+            // Create a copy of the original item with specified fields replaced
+            return {...item, ...out};
+          } else {
+            return item;
+          }
+        }).toList());
+      });
+    }
+
+    print(measurementDetails);
+    print('updated measurement details above polvar 1148');
+
+    // measurementDetails[_selectedLocationIndex][]
+
     // print(response.data['result_data']);
 
     // print(response.runtimeType);
@@ -957,6 +1268,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
+        print(res['wrk_schedule_group_structures']);
+        print('RES ABOVE');
+        print('RES ABOVE');
+
         return Future.value([res['data']]);
       } else {
         return Future.value([-1]);
@@ -1011,6 +1326,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void saveFromAndTwoLocation() {
     setState(() {
       _enableEntryOfLocationDetails = !_enableEntryOfLocationDetails;
+
+      this.userDirections =
+          'Now Select any Location to Starting with  L, Ensure correct location ';
+      audioCache.play('select_location.wav');
 
       this.saveWorkDetails(
           workId: widget.workId.toString(),
