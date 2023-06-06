@@ -18,6 +18,7 @@ class _LocationButtonState extends State<LocationButton> {
   Position? _currentPosition;
   bool _loading = false;
   late AudioCache audioCache;
+  bool enableLocatiopnButton = false;
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
 
@@ -26,88 +27,106 @@ class _LocationButtonState extends State<LocationButton> {
     audioCache = AudioCache(prefix: 'assets/audio/');
     super.initState();
     checkAndRequestLocationPermission();
+    enableLocatiopnButton = true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        return ElevatedButton.icon(
-          onPressed: () async {
-            if (_permissionStatus != PermissionStatus.granted) {
-              setState(() {
-                _loading = true;
-              });
+        return Row(children: [
+          Visibility(
+            visible: enableLocatiopnButton,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                if (_permissionStatus != PermissionStatus.granted) {
+                  setState(() {
+                    _loading = true;
+                  });
 
-              // Show a dialog to inform the user that location permission is required
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Location Permission Required'),
-                    content: Text(
-                        'Please grant location permission to use this feature.'),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          setState(() {
-                            _loading = false;
-                          });
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
+                  // Show a dialog to inform the user that location permission is required
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Location Permission Required'),
+                        content: Text(
+                            'Please grant location permission to use this feature.'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('OK'),
+                            onPressed: () {
+                              setState(() {
+                                _loading = false;
+                              });
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
-                },
-              );
-              return;
-            }
+                  return;
+                }
 
-            _currentPosition = await Geolocator.getCurrentPosition();
+                _currentPosition = await Geolocator.getCurrentPosition();
 
-            List<Placemark> placemarks1 = await placemarkFromCoordinates(
-              _currentPosition!.latitude,
-              _currentPosition!.longitude,
-            );
-            // Placemark placemark = placemarks[0];
+                List<Placemark> placemarks1 = await placemarkFromCoordinates(
+                  _currentPosition!.latitude,
+                  _currentPosition!.longitude,
+                );
+                // Placemark placemark = placemarks[0];
 
-            List<Placemark> placemarks =
-                placemarks1; // list of Placemark objects
+                List<Placemark> placemarks =
+                    placemarks1; // list of Placemark objects
 
-            List<Map<String, dynamic>> placemarkArray =
-                placemarks.map((placemark) {
-              return {
-                'name': placemark.name,
-                'thoroughfare': placemark.thoroughfare,
-                // add more properties as needed
-              };
-            }).toList();
+                List<Map<String, dynamic>> placemarkArray =
+                    placemarks.map((placemark) {
+                  return {
+                    'name': placemark.name,
+                    'thoroughfare': placemark.thoroughfare,
+                    // add more properties as needed
+                  };
+                }).toList();
 
-            // print(placemarks.runtimeType);
+                // print(placemarks.runtimeType);
 
-            print(placemarks[0]);
+                print(placemarks[0]);
 
-            print('placemark above');
+                print('placemark above');
 
-            String? name = placemarks[0].name ?? '';
+                String? name = placemarks[0].name ?? '';
 
-            setState(() {
-              _loading = false;
+                setState(() {
+                  _loading = false;
 
-              audioCache.play('press_save_location_button.wav');
+                  audioCache.play('press_save_location_button.wav');
 
-              //  this.userDirections =
-              // 'Now Select any Location to Starting with  L, Ensure correct location ';
-            });
+                  enableLocatiopnButton = false;
 
-            widget.onLocationSelected(
-                _currentPosition!.latitude, _currentPosition!.longitude, name);
-          },
-          icon:
-              _loading ? Icon(Icons.label_important) : Icon(Icons.location_on),
-          label: Text('Get Location'),
-        );
+                  //  this.userDirections =
+                  // 'Now Select any Location to Starting with  L, Ensure correct location ';
+                });
+
+                widget.onLocationSelected(_currentPosition!.latitude,
+                    _currentPosition!.longitude, name);
+              },
+              icon: _loading
+                  ? Icon(Icons.label_important)
+                  : Icon(Icons.location_on),
+              label: Text('Get Location'),
+            ),
+          ),
+          Visibility(
+            visible: !enableLocatiopnButton,
+            child: ElevatedButton(
+              child: Text('Edit'),
+              onPressed: () {
+                enableLocatiopnButton = true;
+              },
+            ),
+          )
+        ]);
       },
     );
   }

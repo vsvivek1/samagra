@@ -292,7 +292,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                 Map workDetail = item['wrk_work_detail'];
 
-                int workId = workDetail?['id'];
+                // int workId = workDetail?['id'];
+                int workId = item?['id'];
                 final workName = workDetail['work_name'];
 
                 if (workName == null || workId == -1) {
@@ -333,7 +334,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                       child: GridTile(
                         header: Text(sl.toString()),
                         child: Center(
-                          child: Text(item['wrk_work_detail']['work_name']),
+                          child: Text(item['wrk_work_detail']['work_name'] +
+                              '\n\n' 'WorkId :$workId'),
                         ),
                       ),
                     ));

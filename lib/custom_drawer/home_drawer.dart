@@ -231,7 +231,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
                             // p(seatDetails);
 
+                            // p('saeat details abobve');
+
                             String userName = user["name"];
+
+                            String officeId =
+                                seatDetails['office_id'].toString();
 
                             int employeeCode = user["employee_code"];
 
@@ -315,7 +320,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                   ],
                                 ),
                                 Text(
-                                  user["lien_office"]["disp_name"],
+                                  user["lien_office"]["disp_name"] +
+                                      ' ' +
+                                      officeId,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w100,
                                     color: isLightMode
@@ -439,7 +446,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       Map accessToken1 =
           await _secureStorage.getSecureAllStorageDataByKey("access_token");
 
-      p(seatId);
+      // p(seatId);
 
       String accessToken = accessToken1['access_token'];
       print(accessToken);
@@ -452,12 +459,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
       final result = response.data;
 
-      p(result.toString());
+      // p(result.toString());
 
       return Future.value(data);
 
-      p(result["result_data"]["access_token"]);
-      p(result["result_data"]);
+      // p(result["result_data"]["access_token"]);
+      // p(result["result_data"]);
 
       // Store the data in secure storage
       await _secureStorage.writeKeyValuePairToSecureStorage(
@@ -474,7 +481,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   String getInitials(String name) {
     try {
-      p(name);
+      // p(name);
       if (name.isEmpty) {
         return '';
       }

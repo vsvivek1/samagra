@@ -53,6 +53,29 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   List _tasks = [];
 
+  List _taskList = [];
+
+  bool isPlaying = false;
+  bool isMuted = false;
+
+  void togglePlay() {
+    setState(() {
+      isPlaying = !isPlaying;
+    });
+  }
+
+  void stop() {
+    setState(() {
+      isPlaying = false;
+    });
+  }
+
+  void toggleMute() {
+    setState(() {
+      isMuted = !isMuted;
+    });
+  }
+
   Future<Map<String, dynamic>> getMeasurementDetails(
       String workId, int locationNumber) async {
     final storage = new FlutterSecureStorage();
@@ -116,6 +139,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
   // get workName => this.workName;
 
   List getStructuresByName(d) {
+    print(d);
+
+    print('dabove 144');
+    // return;
     List<dynamic> tasks = d;
 
     List res = [];
@@ -125,12 +152,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var allTasksIds = tasks.map((t) => t['mst_task']['id']).toSet().toList();
 
+    print(allTasksIds);
+
+    print('all task id above @157n pol var');
+
     for (int z = 0; z < allTasks.length; z++) {
       var ta = allTasks[z];
 
       var taskId = allTasksIds[z];
-
-      // print('$taskId is task id');
 
       // print('tasks above');
 
@@ -146,9 +175,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       var ob = {};
       ob['taskId'] = taskId;
       ob['task_name'] = ta;
-      ob['isExpanded'] = true;
+      ob['isExpanded'] = false;
       ob['tasks'] = t2;
 
+      print('$ta  $taskId is task id');
       res.add(ob);
     }
 
@@ -211,12 +241,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
     List wrkScheduleGroupStructures =
         workDetails[0]['wrk_schedule_group_structures'];
 
+    // print(workDetails);
+    // print('workDetails above');
+
     var c = getStructuresByName(wrkScheduleGroupStructures).toList();
+    // var c = getStructuresByName(workDetails).toList();
 
     _tasks = c;
     print(c);
 
-    print('see abobe 215');
+    var taskln = c.length;
+
+    print(' $taskln TASK LENGTH task list structure s see abobe 215');
 
     return Future.value(c.toList());
   }
@@ -415,7 +451,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return FutureBuilder(
         future: _sheduleBuilder(),
         builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData && snapshot.data == -1) {
+          if (!snapshot.hasData &&
+              snapshot.data == -1 &&
+              snapshot.data == null) {
             return Center(
               child: SizedBox(
                 width: 50,
@@ -425,10 +463,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
             );
           }
 
-          var ar = snapshot.data;
+          var tasklist1 = snapshot.data;
 
           // ignore: unrelated_type_equality_checks
-          if (ar == null || ar == -1) {
+          if (tasklist1 == null || tasklist1 == -1) {
             return Center(
               child: SizedBox(
                 width: 50,
@@ -438,7 +476,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
             );
           }
 
-          int ln = ar.length;
+          int ln = tasklist1.length;
+
+          _taskList = tasklist1;
 
           return SafeArea(
             child: Scaffold(
@@ -453,10 +493,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       child: child,
                     );
                   },
-                  child: Text(
-                    userDirections,
-                    key: ValueKey<String>(userDirections),
-                    style: TextStyle(fontSize: 11, color: Colors.red),
+                  child: Column(
+                    children: [
+                      Text(
+                        userDirections,
+                        key: ValueKey<String>(userDirections),
+                        style: TextStyle(fontSize: 11, color: Colors.red),
+                      ),
+                      // VoiceControl(),
+                    ],
                   ),
                 ),
               ),
@@ -473,7 +518,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       // crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         WorkNameWidget(
-                          workName: widget.workName,
+                          workName: widget.workName +
+                              '\n\nWork Id : ${widget.workId}',
                           color: Colors.blue,
                         ),
                         enterLocationDetails(),
@@ -521,7 +567,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           ),
                           // Divider(color: Colors.white10, thickness: 10),
                           // SizedBox(height: 50),
-                          viewLocationList(ar),
+                          viewLocationList(tasklist1),
+                          // viewLocationList(tasklist1),
                           SizedBox(height: 2000),
                         ],
                       ],
@@ -532,6 +579,40 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ),
           );
         });
+  }
+
+  Row VoiceControl() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: Icon(
+            isPlaying ? Icons.pause : Icons.play_arrow,
+            size: 50,
+          ),
+          onPressed: togglePlay,
+        ),
+        IconButton(
+          icon: Icon(
+            isMuted ? Icons.volume_off : Icons.volume_up,
+            size: 50,
+          ),
+          onPressed: toggleMute,
+        ),
+        ElevatedButton(
+          child: Text('Play Again'),
+          onPressed: () {
+            setState(() {
+              isPlaying = true;
+            });
+          },
+        ),
+        ElevatedButton(
+          child: Text('Stop'),
+          onPressed: stop,
+        ),
+      ],
+    );
   }
 
   SizedBox viewAllLocationDetails(BuildContext context) {
@@ -775,29 +856,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
-  Visibility viewLocationList(ar) {
+  Visibility viewLocationList(tasklist1) {
+    // return Visibility(child: Text('hi'));
+
     return Visibility(
       visible: !_enableEntryOfLocationDetails,
       child: Row(
         // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Visibility(
-            visible: viewStructures,
-            child: Expanded(
-                flex: 4,
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * .8,
-                  child: ListView.separated(
-                    itemCount: ar.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return TasksList(ar, index);
-                    },
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
-                    },
-                  ),
-                )),
-          ),
+          viewTasksAndStructures(tasklist1),
           Expanded(
             flex: 1,
             child: SizedBox(
@@ -840,6 +907,32 @@ class _PolVarScreenState extends State<PolVarScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Visibility viewTasksAndStructures(tasklist1) {
+    print(tasklist1);
+    print('taskList abobve  polvar911');
+    return Visibility(
+      visible: viewStructures,
+      child: Expanded(
+          flex: 4,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * .8,
+            child: expansionPanelOfTask(tasklist1),
+
+            // ListView.separated(
+            //   itemCount: tasklist1.length,
+            //   itemBuilder: (BuildContext context, int index) {
+            //     // return Text(tasklist1.toString());
+
+            //     expansionPanelOfTask(tasklist1, index);
+            //   },
+            //   separatorBuilder: (BuildContext context, int index) {
+            //     return Divider();
+            //   },
+            // ),
+          )),
     );
   }
 
@@ -902,43 +995,44 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
-  ExpansionPanelList TasksList(ar, int index) {
-    var tasks = ar[index]['tasks'].toList();
+  ExpansionPanelList expansionPanelOfTask(tasklist1, {int index = 0}) {
+    var structures = tasklist1[index]['tasks'].toList();
 
-    // print(ar[index]);
-    print('ar[index] @ 892');
+    print(tasklist1);
+    print('$tasklist1[index] ar[index] @ 892');
 
     // return Text('hi');
     return ExpansionPanelList(
+      key: GlobalKey(),
       expansionCallback: (int panelIndex, bool isExpanded) {
+        print(
+            'expansion panel index $panelIndex  and isExpanded is $isExpanded');
         setState(() {
-          ar[panelIndex]['isExpanded'] = !isExpanded;
-
-          //
+          tasklist1[panelIndex]['isExpanded'] = !isExpanded;
         });
       },
       children: [
-        ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              title: Text(
-                ar[index]['task_name'].toString(),
-              ),
-            );
-          },
-          body: Column(children: getTasksItems(tasks)),
-          isExpanded: ar[index]['isExpanded'],
-        ),
+        // ExpansionPanel(
+        //   headerBuilder: (BuildContext context, bool isExpanded) {
+        //     return ListTile(
+        //       title: Text(
+        //         tasklist1[index]['task_name'].toString(),
+        //       ),
+        //     );
+        //   },
+        //   body: Column(children: getStructuresOfTask(structures)),
+        //   isExpanded: tasklist1[index]['isExpanded'],
+        // ),
       ],
     );
   }
 
-  List<Widget> getTasksItems(List tasks) {
+  List<Widget> getStructuresOfTask(List tasks) {
     if (tasks == null || tasks.isEmpty) {
       return [Text('No tasks found.')];
     }
 
-    return tasks.map<Widget>((task) {
+    return tasks.map<Widget>((struct) {
       // print(t);
 
       var currentItem = measurementDetails.firstWhere(
@@ -949,11 +1043,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
       /// find structure using structure code for currentItem
       /// find structure using structure code for currentItem
 
-      var str = task['structure_name'] as String;
+      var str = struct['structure_name'] as String;
 
       // int taskCount=
 
-      var mstStructureId = task['structure_code'];
+      var mstStructureId = struct['structure_code'];
 
       // print(mstStructureId);
 
@@ -993,7 +1087,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     icon: Icon(Icons.add),
                     onPressed: () async {
                       await this.getMasterEstimateForStructureItem(
-                          mstStructureId, 2, task);
+                          mstStructureId, 2, struct);
                       // _showBottomSheet(context);
 
                       // Increment task quantity
@@ -1008,7 +1102,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }).toList();
   }
 
-  List<Widget> getTasksItems1(tasks) {
+  List<Widget> getStructuresOfTask1(tasks) {
     if (tasks == null || tasks.isEmpty) {
       return [Text('error')];
     }
@@ -1065,7 +1159,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<void> getMasterEstimateForStructureItem(
-      mstStructureId, quantity, task) async {
+      mstStructureId, quantity, struct) async {
     final dio = Dio();
 
     final url =
@@ -1081,9 +1175,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
       queryParameters: body,
     );
 
-    print(task);
+    // print(_taskList);
+    print(struct);
 
-    print('taska above');
+    return;
+
+    var t1 =
+        _taskList.firstWhere((t) => t['id'] == struct['id'], orElse: () => {});
+    print(t1);
+
+    return;
+
+    print(struct);
+
+    print('selectedstructure above');
 
     // return;
 
@@ -1132,6 +1237,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // print(mat);
     }
 
+    // Map newtask=_tasks.filter
+
     print(_masterLabEstimateItems);
 
     print('_master labout estimate  above @1123');
@@ -1140,7 +1247,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     print('tasks above');
 
-    return;
+    // return;
 
     // task['tasks'] = _masterLabEstimateItems;
 
@@ -1159,7 +1266,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print('out above @ 1128 polvar');
 
     if (out == {}) {
-      measurementDetails.add(task);
+      measurementDetails.add(struct);
     } else {
       // print(measurementDetails[_selectedLocationIndex]);
 
@@ -1252,11 +1359,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // final currentSeatDetails = getCurrentSeatDetails(loginDetails);
 
       // final officeCode = currentSeatDetails['office']['office_code'];
-
       // final officeId = currentSeatDetails['office_id'];
 
       final url =
-          'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/47777/0';
+          'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workId}/0';
+
+      // print(url);
       final headers = {'Authorization': 'Bearer $accessToken'};
       Response response =
           await Dio().get(url, options: Options(headers: headers));
@@ -1268,9 +1376,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
-        print(res['wrk_schedule_group_structures']);
-        print('RES ABOVE');
-        print('RES ABOVE');
+        // print(res['wrk_schedule_group_structures']);
+        // print('RES ABOVE');
+        // print('RES ABOVE');
 
         return Future.value([res['data']]);
       } else {
