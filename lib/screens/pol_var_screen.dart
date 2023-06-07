@@ -55,6 +55,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   List _taskList = [];
 
+  List allTasks = [];
+
+  List _taskByName = [];
+
+  List _fetchingWorkResData = [];
+
   bool isPlaying = false;
   bool isMuted = false;
 
@@ -138,10 +144,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   // get workName => this.workName;
 
-  List getStructuresByName(d) {
-    print(d);
+  List getTasksByName(d) {
+    if (this.allTasks.length > 0) {
+      return this.allTasks;
+    }
 
-    print('dabove 144');
+    print('getTasksByName CALLED');
+    // print(d);
+
+    // print('dabove 144');
     // return;
     List<dynamic> tasks = d;
 
@@ -152,9 +163,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var allTasksIds = tasks.map((t) => t['mst_task']['id']).toSet().toList();
 
-    print(allTasksIds);
+    // print(allTasksIds);
 
-    print('all task id above @157n pol var');
+    // print('all task id above @157n pol var');
 
     for (int z = 0; z < allTasks.length; z++) {
       var ta = allTasks[z];
@@ -176,11 +187,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
       ob['taskId'] = taskId;
       ob['task_name'] = ta;
       ob['isExpanded'] = false;
-      ob['tasks'] = t2;
+      ob['structures'] = t2;
 
       print('$ta  $taskId is task id');
       res.add(ob);
     }
+
+    allTasks = res;
 
     return res;
   }
@@ -233,6 +246,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future _sheduleBuilder() async {
+    if (_taskByName.length > 0) {
+      return _taskByName;
+    }
+
+    print(_taskByName);
+    print('sheduleBuilder CALLED');
     var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
 
     if (workDetails.length == 1 && workDetails[0] == -1) {
@@ -244,17 +263,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // print(workDetails);
     // print('workDetails above');
 
-    var c = getStructuresByName(wrkScheduleGroupStructures).toList();
-    // var c = getStructuresByName(workDetails).toList();
+    _taskByName = getTasksByName(wrkScheduleGroupStructures).toList();
 
-    _tasks = c;
-    print(c);
+    // var c = getTasksByName(workDetails).toList();
 
-    var taskln = c.length;
+    _tasks = _taskByName;
+    // print(c);
 
-    print(' $taskln TASK LENGTH task list structure s see abobe 215');
+    var taskln = _taskByName.length;
 
-    return Future.value(c.toList());
+    // print(' $taskln TASK LENGTH task list structure s see abobe 215');
+
+    return Future.value(_taskByName.toList());
   }
 
   Future<void> initialSetup() async {
@@ -911,28 +931,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Visibility viewTasksAndStructures(tasklist1) {
-    print(tasklist1);
-    print('taskList abobve  polvar911');
+    // print(tasklist1);
+    // print('taskList abobve  polvar911');
     return Visibility(
       visible: viewStructures,
-      child: Expanded(
-          flex: 4,
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * .8,
-            child: expansionPanelOfTask(tasklist1),
-
-            // ListView.separated(
-            //   itemCount: tasklist1.length,
-            //   itemBuilder: (BuildContext context, int index) {
-            //     // return Text(tasklist1.toString());
-
-            //     expansionPanelOfTask(tasklist1, index);
-            //   },
-            //   separatorBuilder: (BuildContext context, int index) {
-            //     return Divider();
-            //   },
-            // ),
-          )),
+      child: Expanded(flex: 4, child: expansionPanelOfTask(tasklist1)),
     );
   }
 
@@ -996,41 +999,118 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   ExpansionPanelList expansionPanelOfTask(tasklist1, {int index = 0}) {
-    var structures = tasklist1[index]['tasks'].toList();
+//  var structures = tasklist1[index]['tasks'].toList();
 
-    print(tasklist1);
-    print('$tasklist1[index] ar[index] @ 892');
-
-    // return Text('hi');
+    int counter = 0;
     return ExpansionPanelList(
-      key: GlobalKey(),
-      expansionCallback: (int panelIndex, bool isExpanded) {
-        print(
-            'expansion panel index $panelIndex  and isExpanded is $isExpanded');
-        setState(() {
-          tasklist1[panelIndex]['isExpanded'] = !isExpanded;
-        });
-      },
-      children: [
-        // ExpansionPanel(
-        //   headerBuilder: (BuildContext context, bool isExpanded) {
-        //     return ListTile(
-        //       title: Text(
-        //         tasklist1[index]['task_name'].toString(),
-        //       ),
-        //     );
-        //   },
-        //   body: Column(children: getStructuresOfTask(structures)),
-        //   isExpanded: tasklist1[index]['isExpanded'],
-        // ),
-      ],
-    );
+        key: GlobalKey(),
+        expansionCallback: (int panelIndex, bool isExpanded) {
+          print(
+              'expansion panel index $panelIndex  and isExpanded is $isExpanded && ${tasklist1[panelIndex]['isExpanded']}');
+          setState(() {
+            for (int i = 0; i < tasklist1.length; i++) {
+              tasklist1[i]['isExpanded'] = false;
+            }
+
+            tasklist1[panelIndex]['isExpanded'] = !isExpanded;
+            //
+          });
+        },
+        children: tasklist1.map<ExpansionPanel>((t) {
+          // print('$ind is ind');
+
+          var structures = t['structures'];
+          // print(t);
+          // print('tabove');
+
+          print('is expanded ${t['isExpanded']}');
+
+          counter++;
+          return ExpansionPanel(
+            // canTapOnHeader: true,
+            // isExpanded: true,
+
+            isExpanded: t['isExpanded'],
+            headerBuilder: (BuildContext context, bool isExpanded) {
+              return ListTile(
+                title: Text(
+                  t['task_name'].toString(),
+                ),
+              );
+            },
+            body: Column(
+                children: structures.map<Widget>((st) {
+              return GestureDetector(
+                onDoubleTap: () => _showBottomSheet(context),
+                child: Card(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Wrap(
+                            children: [
+                              Text(
+                                st["structure_name"],
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueAccent),
+                              ),
+                            ],
+                          )),
+                      Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            onPressed: () {
+                              // Decrement task quantity
+                            },
+                          ),
+                          Text((st['qty'] ?? 0)
+                              .toString()), // Display task quantity
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () async {
+                              // await this.getMasterEstimateForStructureItem(
+                              //     st["id"], st['qty'] ?? 0, st);
+                              // _showBottomSheet(context);
+
+                              // Increment task quantity
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              );
+
+              // Text(st["structure_name"]);
+            }).toList()
+
+                //  [Text(counter.toString(), Text('2')]
+
+                //  tasklist1[ind]['tasks']
+                //     .map((structure) => {Text(structure['structure_name'])})
+                //     .toList()
+
+                // children: getStructuresOfTask(tasklist1[ind]['tasks']),
+                ),
+          );
+        }).toList());
   }
 
   List<Widget> getStructuresOfTask(List tasks) {
     if (tasks == null || tasks.isEmpty) {
       return [Text('No tasks found.')];
     }
+
+    print(tasks);
+
+    print('tasks above from panel  childern inside');
+
+    return [Text('t1'), Text('t2')];
 
     return tasks.map<Widget>((struct) {
       // print(t);
@@ -1348,6 +1428,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<List<dynamic>> _fetchWorkDetails() async {
     try {
+      print('FETCHING WORK DETAILS CALLED');
       final accessToken1 =
           await storage.getSecureAllStorageDataByKey("access_token");
 

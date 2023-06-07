@@ -10,6 +10,11 @@ import 'package:samagra/screens/login_screen.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
+  ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+    return Text(
+        errorDetails.toString()); // Replace with your custom error widget
+  };
+
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
