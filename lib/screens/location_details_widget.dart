@@ -76,12 +76,16 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (this.editMode) ...[
-                    LocationButton(onLocationSelected: onLocationSelected),
+                    LocationButton(
+                        onLocationSelected: onLocationSelected,
+                        editMode: this.editMode &&
+                            _gotLocation &&
+                            locationName != ''),
                     Visibility(
                       visible: _gotLocation && locationName != '',
                       child: ElevatedButton(
                           onPressed: () => saveLocDetailsToPolVarWidget(),
-                          child: Text('save ${_gotLocation.toString()}')),
+                          child: Text('save ')),
                     )
                   ],
                   RichText(

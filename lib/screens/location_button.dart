@@ -7,7 +7,10 @@ import 'package:audioplayers/audioplayers.dart';
 class LocationButton extends StatefulWidget {
   final Function(double, double, String) onLocationSelected;
 
-  const LocationButton({Key? key, required this.onLocationSelected})
+  final bool editMode;
+
+  const LocationButton(
+      {Key? key, required this.onLocationSelected, required this.editMode})
       : super(key: key);
 
   @override
@@ -18,7 +21,7 @@ class _LocationButtonState extends State<LocationButton> {
   Position? _currentPosition;
   bool _loading = false;
   late AudioCache audioCache;
-  bool enableLocatiopnButton = false;
+  bool enableLocationButton = false;
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
 
@@ -27,7 +30,7 @@ class _LocationButtonState extends State<LocationButton> {
     audioCache = AudioCache(prefix: 'assets/audio/');
     super.initState();
     checkAndRequestLocationPermission();
-    enableLocatiopnButton = true;
+    enableLocationButton = true;
   }
 
   @override
@@ -36,7 +39,7 @@ class _LocationButtonState extends State<LocationButton> {
       builder: (context) {
         return Row(children: [
           Visibility(
-            visible: enableLocatiopnButton,
+            visible: enableLocationButton,
             child: ElevatedButton.icon(
               onPressed: () async {
                 if (_permissionStatus != PermissionStatus.granted) {
@@ -102,7 +105,7 @@ class _LocationButtonState extends State<LocationButton> {
 
                   audioCache.play('press_save_location_button.wav');
 
-                  enableLocatiopnButton = false;
+                  enableLocationButton = false;
 
                   //  this.userDirections =
                   // 'Now Select any Location to Starting with  L, Ensure correct location ';
@@ -118,11 +121,11 @@ class _LocationButtonState extends State<LocationButton> {
             ),
           ),
           Visibility(
-            visible: !enableLocatiopnButton,
+            visible: !enableLocationButton,
             child: ElevatedButton(
               child: Text('Edit'),
               onPressed: () {
-                enableLocatiopnButton = true;
+                enableLocationButton = true;
               },
             ),
           )

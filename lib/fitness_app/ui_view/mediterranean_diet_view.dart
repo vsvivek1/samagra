@@ -76,7 +76,7 @@ class MediterranesnDietView extends StatelessWidget {
                                               padding: const EdgeInsets.only(
                                                   left: 4, bottom: 2),
                                               child: Text(
-                                                'Eaten',
+                                                'Consumers LT',
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   fontFamily:
@@ -345,6 +345,7 @@ class MediterranesnDietView extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Text('No of Consumers'),
                     Padding(
                       padding: const EdgeInsets.only(
                           left: 24, right: 24, top: 8, bottom: 16),
@@ -352,64 +353,85 @@ class MediterranesnDietView extends StatelessWidget {
                         children: <Widget>[
                           Expanded(
                             child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  'Carbs',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontFamily: FitnessAppTheme.fontName,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16,
-                                    letterSpacing: -0.2,
-                                    color: FitnessAppTheme.darkText,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Container(
-                                    height: 4,
-                                    width: 70,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          HexColor('#87A0E5').withOpacity(0.2),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(4.0)),
+                              children: [
+                                Row(
+
+                                    // children: [Text('No of Consumers')],
                                     ),
-                                    child: Row(
+                                Row(
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Container(
-                                          width:
-                                              ((70 / 1.2) * animation!.value),
-                                          height: 4,
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(colors: [
-                                              HexColor('#87A0E5'),
-                                              HexColor('#87A0E5')
-                                                  .withOpacity(0.5),
-                                            ]),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(4.0)),
+                                        Text(
+                                          'LT',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontFamily:
+                                                FitnessAppTheme.fontName,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            letterSpacing: -0.2,
+                                            color: FitnessAppTheme.darkText,
                                           ),
-                                        )
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 4),
+                                          child: Container(
+                                            height: 4,
+                                            width: 70,
+                                            decoration: BoxDecoration(
+                                              color: HexColor('#87A0E5')
+                                                  .withOpacity(0.2),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4.0)),
+                                            ),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Container(
+                                                  width: ((70 / 1.2) *
+                                                      animation!.value),
+                                                  height: 4,
+                                                  decoration: BoxDecoration(
+                                                    gradient:
+                                                        LinearGradient(colors: [
+                                                      HexColor('#87A0E5'),
+                                                      HexColor('#87A0E5')
+                                                          .withOpacity(0.5),
+                                                    ]),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                4.0)),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 6),
+                                          child: Text(
+                                            '12g left',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              fontFamily:
+                                                  FitnessAppTheme.fontName,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 12,
+                                              color: FitnessAppTheme.grey
+                                                  .withOpacity(0.5),
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 6),
-                                  child: Text(
-                                    '12g left',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontFamily: FitnessAppTheme.fontName,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 12,
-                                      color:
-                                          FitnessAppTheme.grey.withOpacity(0.5),
-                                    ),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -424,7 +446,7 @@ class MediterranesnDietView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      'Protein',
+                                      'HT',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontFamily: FitnessAppTheme.fontName,
@@ -495,7 +517,7 @@ class MediterranesnDietView extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      'Fat',
+                                      'EHT',
                                       style: TextStyle(
                                         fontFamily: FitnessAppTheme.fontName,
                                         fontWeight: FontWeight.w500,

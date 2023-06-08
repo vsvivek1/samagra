@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:samagra/fitness_app/ui_view/body_measurement.dart';
 import 'package:samagra/fitness_app/ui_view/glass_view.dart';
 import 'package:samagra/fitness_app/ui_view/mediterranean_diet_view.dart';
@@ -6,6 +9,8 @@ import 'package:samagra/fitness_app/fitness_app_theme.dart';
 import 'package:samagra/fitness_app/my_diary/meals_list_view.dart';
 import 'package:samagra/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
+
+import 'package:samagra/common.dart';
 
 class MyDiaryScreen extends StatefulWidget {
   const MyDiaryScreen({Key? key, this.animationController}) : super(key: key);
@@ -22,6 +27,46 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   List<Widget> listViews = <Widget>[];
   final ScrollController scrollController = ScrollController();
   double topBarOpacity = 0.0;
+
+  Map _dashBoardData = {};
+
+  Map _loginDetails = {};
+
+  String _officeName = '';
+
+  Future<void> getDashBoard() async {
+    final _loginDetails = await getUserLoginDetails();
+
+    Map<dynamic, dynamic> loginDetailsMap =
+        _loginDetails as Map<dynamic, dynamic>;
+
+    // print()
+    _officeName = loginDetailsMap['seat_details']['office']['disp_name'];
+
+    print(_officeName);
+    final dio = Dio();
+
+    final url = 'http://erpuat.kseb.in/api/loadOrumaTotalDetails';
+
+    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+    final body = {"selectkey": "HT", " mainmen": "consumercount"};
+
+    var res = await dio.get(
+      url,
+      options: Options(headers: headers),
+      queryParameters: body,
+    );
+
+    Map<dynamic, dynamic> response = res.data;
+
+    print(response.runtimeType);
+
+    if (response['result_flag'] == 1) {
+      _dashBoardData = response['result_data']['RevenueDatas']['0'];
+
+      print(_dashBoardData);
+    }
+  }
 
   @override
   void initState() {
@@ -53,6 +98,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         }
       }
     });
+
+    getDashBoard();
+
     super.initState();
   }
 
@@ -61,8 +109,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     listViews.add(
       TitleView(
-        titleTxt: 'Mediterranean diet',
-        subTxt: 'Details',
+        titleTxt: this._officeName,
+        // subTxt: 'Details',
         animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
             parent: widget.animationController!,
             curve:
@@ -250,12 +298,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  'My Diary',
+                                  _officeName,
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                     fontFamily: FitnessAppTheme.fontName,
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 22 + 6 - 6 * topBarOpacity,
+                                    fontSize: 9 + 6 - 6 * topBarOpacity,
                                     letterSpacing: 1.2,
                                     color: FitnessAppTheme.darkerText,
                                   ),
@@ -271,11 +319,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                     Radius.circular(32.0)),
                                 onTap: () {},
                                 child: Center(
-                                  child: Icon(
-                                    Icons.keyboard_arrow_left,
-                                    color: FitnessAppTheme.grey,
-                                  ),
-                                ),
+                                    // child: Icon(
+                                    //   Icons.keyboard_arrow_left,
+                                    //   color: FitnessAppTheme.grey,
+                                    // ),
+                                    ),
                               ),
                             ),
                             Padding(
@@ -287,14 +335,14 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                 children: <Widget>[
                                   Padding(
                                     padding: const EdgeInsets.only(right: 8),
-                                    child: Icon(
-                                      Icons.calendar_today,
-                                      color: FitnessAppTheme.grey,
-                                      size: 18,
-                                    ),
+                                    // child: Icon(
+                                    //   Icons.calendar_today,
+                                    //   color: FitnessAppTheme.grey,
+                                    //   size: 18,
+                                    // ),
                                   ),
                                   Text(
-                                    '15 May',
+                                    getDateAndWeek(),
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                       fontFamily: FitnessAppTheme.fontName,
@@ -316,11 +364,11 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
                                     Radius.circular(32.0)),
                                 onTap: () {},
                                 child: Center(
-                                  child: Icon(
-                                    Icons.keyboard_arrow_right,
-                                    color: FitnessAppTheme.grey,
-                                  ),
-                                ),
+                                    // child: Icon(
+                                    //   Icons.keyboard_arrow_right,
+                                    //   color: FitnessAppTheme.grey,
+                                    // ),
+                                    ),
                               ),
                             ),
                           ],
