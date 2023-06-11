@@ -22,6 +22,21 @@ class MyDiaryScreen extends StatefulWidget {
 
 class _MyDiaryScreenState extends State<MyDiaryScreen>
     with TickerProviderStateMixin {
+  late String consumercount_lt;
+  late String consumption_lt;
+  late String demand_lt;
+  late String tot_coll_count_lt;
+  late String tot_coll_amt_lt;
+  late String consumercount_ht;
+  late String consumption_ht;
+  late String demand_ht;
+  late String tot_coll_count_ht;
+  late String tot_coll_amt_ht;
+  late String consumercount_eht;
+  late String consumption_eht;
+  late String demand_eht;
+  late String tot_coll_count_eht;
+  late String tot_coll_amt_eht;
   Animation<double>? topBarAnimation;
 
   List<Widget> listViews = <Widget>[];
@@ -34,6 +49,67 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
   String _officeName = '';
 
+  // String tot_coll_count_lt;
+  // late String tot_coll_amt_lt;
+  // late String consumercount_ht;
+  // late String consumption_ht;
+  // late String demand_ht;
+  // late String tot_coll_count_ht;
+  // late String tot_coll_amt_ht;
+  // late String consumercount_eht;
+  // late String consumption_eht;
+  // late String demand_eht;
+  // late String tot_coll_count_eht;
+  // late String tot_coll_amt_eht;
+
+  void assignValues(Map<String, dynamic> response) {
+    consumercount_lt = response['consumercount_lt'] != null
+        ? response['consumercount_lt'].toString()
+        : 'No data';
+    consumption_lt = response['consumption_lt'] != null
+        ? response['consumption_lt'].toString()
+        : 'No data';
+    demand_lt = response['demand_lt'] != null
+        ? response['demand_lt'].toString()
+        : 'No data';
+    tot_coll_count_lt = response['tot_coll_count_lt'] != null
+        ? response['tot_coll_count_lt'].toString()
+        : 'No data';
+    tot_coll_amt_lt = response['tot_coll_amt_lt'] != null
+        ? response['tot_coll_amt_lt'].toString()
+        : 'No data';
+    consumercount_ht = response['consumercount_ht'] != null
+        ? response['consumercount_ht'].toString()
+        : 'No data';
+    consumption_ht = response['consumption_ht'] != null
+        ? response['consumption_ht'].toString()
+        : 'No data';
+    demand_ht = response['demand_ht'] != null
+        ? response['demand_ht'].toString()
+        : 'No data';
+    tot_coll_count_ht = response['tot_coll_count_ht'] != null
+        ? response['tot_coll_count_ht'].toString()
+        : 'No data';
+    tot_coll_amt_ht = response['tot_coll_amt_ht'] != null
+        ? response['tot_coll_amt_ht'].toString()
+        : 'No data';
+    consumercount_eht = response['consumercount_eht'] != null
+        ? response['consumercount_eht'].toString()
+        : 'No data';
+    consumption_eht = response['consumption_eht'] != null
+        ? response['consumption_eht'].toString()
+        : 'No data';
+    demand_eht = response['demand_eht'] != null
+        ? response['demand_eht'].toString()
+        : 'No data';
+    tot_coll_count_eht = response['tot_coll_count_eht'] != null
+        ? response['tot_coll_count_eht'].toString()
+        : 'No data';
+    tot_coll_amt_eht = response['tot_coll_amt_eht'] != null
+        ? response['tot_coll_amt_eht'].toString()
+        : 'No data';
+  }
+
   Future<void> getDashBoard() async {
     final _loginDetails = await getUserLoginDetails();
 
@@ -43,7 +119,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     // print()
     _officeName = loginDetailsMap['seat_details']['office']['disp_name'];
 
-    print(_officeName);
+    // print(_officeName);
     final dio = Dio();
 
     final url = 'http://erpuat.kseb.in/api/loadOrumaTotalDetails';
@@ -57,14 +133,15 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       queryParameters: body,
     );
 
-    Map<dynamic, dynamic> response = res.data;
+    Map<String, dynamic> response = res.data;
 
     print(response.runtimeType);
 
     if (response['result_flag'] == 1) {
       _dashBoardData = response['result_data']['RevenueDatas']['0'];
+      // print(_dashBoardData);
 
-      print(_dashBoardData);
+      return Future.value(_dashBoardData);
     }
   }
 
@@ -74,7 +151,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         CurvedAnimation(
             parent: widget.animationController!,
             curve: Interval(0, 0.5, curve: Curves.fastOutSlowIn)));
-    addAllListData();
+
+    // await getDashBoard();
+
+    // print(_dashBoardData);
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -98,9 +178,6 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         }
       }
     });
-
-    getDashBoard();
-
     super.initState();
   }
 
@@ -118,14 +195,19 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
         animationController: widget.animationController!,
       ),
     );
+
+    print(_dashBoardData);
+
+    print('dashboard before list vieq');
     listViews.add(
       MediterranesnDietView(
-        animation: Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-            parent: widget.animationController!,
-            curve:
-                Interval((1 / count) * 1, 1.0, curve: Curves.fastOutSlowIn))),
-        animationController: widget.animationController!,
-      ),
+          animation: Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                  parent: widget.animationController!,
+                  curve: Interval((1 / count) * 1, 1.0,
+                      curve: Curves.fastOutSlowIn))),
+          animationController: widget.animationController!,
+          dashBoardData: _dashBoardData),
     );
     listViews.add(
       TitleView(
@@ -215,15 +297,28 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       color: FitnessAppTheme.background,
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: Stack(
-          children: <Widget>[
-            getMainListViewUI(),
-            getAppBarUI(),
-            SizedBox(
-              height: MediaQuery.of(context).padding.bottom,
-            )
-          ],
-        ),
+        body: FutureBuilder(
+            future: getDashBoard(),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              _dashBoardData = snapshot.data;
+              // print(snapshot.data);
+              assignValues(Map<String, dynamic>.from(snapshot.data));
+
+              addAllListData();
+              return Stack(
+                children: <Widget>[
+                  getMainListViewUI(),
+                  getAppBarUI(),
+                  SizedBox(
+                    height: MediaQuery.of(context).padding.bottom,
+                  )
+                ],
+              );
+            }),
       ),
     );
   }

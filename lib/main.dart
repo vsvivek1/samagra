@@ -11,8 +11,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 void main() async {
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-    return Text(
-        errorDetails.toString()); // Replace with your custom error widget
+    return SizedBox(
+      height: 1000,
+      child: Text(errorDetails.toString()),
+    ); // Replace with your custom error widget
   };
 
   WidgetsFlutterBinding.ensureInitialized();
