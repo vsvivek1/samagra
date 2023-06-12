@@ -64,6 +64,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   bool isPlaying = false;
   bool isMuted = false;
 
+  var _wrk_schedule_group_id;
+
   void togglePlay() {
     setState(() {
       isPlaying = !isPlaying;
@@ -144,17 +146,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   // get workName => this.workName;
 
-  List getTasksByName(d) {
+  List getTasksByName(wrkScheduleGroupStructures) {
     if (this.allTasks.length > 0) {
       return this.allTasks;
     }
 
     print('getTasksByName CALLED');
-    // print(d);
+    // print(wrk_schedule_group_structures);
 
     // print('dabove 144');
     // return;
-    List<dynamic> tasks = d;
+    List<dynamic> tasks = wrkScheduleGroupStructures;
 
     List res = [];
 
@@ -179,11 +181,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
           .map((t3) => t3['mst_structure']);
 
       var mstTaskId =
-          tasks.where((t) => t['id'] == taskId).map((t3) => t3['id']);
+          tasks.where((t) => t['mst_task_id'] == taskId).map((t3) => t3['id']);
 
+// var wrkScheduleGroupStructureId= tasks.where((t) => t['id'] == taskId).map((t3) => t3['id']);
       // print('mst_structure_id avbvove');
 
       var ob = {};
+      // ob['wrkScheduleGroupStructureId'] = wrkScheduleGroupStructureId;
       ob['taskId'] = taskId;
       ob['task_name'] = ta;
       ob['isExpanded'] = false;
@@ -1072,8 +1076,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           IconButton(
                             icon: Icon(Icons.add),
                             onPressed: () async {
-                              // await this.getMasterEstimateForStructureItem(
-                              //     st["id"], st['qty'] ?? 0, st);
+                              await this.getMasterEstimateForStructureItem(
+                                  widget.workId, t, st);
+
+                              // st["id"], st['qty'] ?? 0, st);
+
                               // _showBottomSheet(context);
 
                               // Increment task quantity
@@ -1239,131 +1246,164 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<void> getMasterEstimateForStructureItem(
-      mstStructureId, quantity, struct) async {
-    final dio = Dio();
+    workId,
+    task,
+    strcuture,
+    // mstStructureId, quantity, struct
+  ) async {
+    try {
+      final dio = Dio();
 
-    final url =
-        'http://erpuat.kseb.in/api/wrk/getMasterEstimateForStructureItem';
+      ;
 
-    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
-    final body = {
-      "strEstimates": {"mst_structure_id": mstStructureId, "quantity": 2}
-    };
-    final response = await dio.get(
-      url,
-      options: Options(headers: headers),
-      queryParameters: body,
-    );
+      int mstStructureId = strcuture['id'];
 
-    // print(_taskList);
-    print(struct);
+      String taskId = task['taskId'].toString();
+      // return;
+      final url =
+          "http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
 
-    return;
+      print(url);
 
-    var t1 =
-        _taskList.firstWhere((t) => t['id'] == struct['id'], orElse: () => {});
-    print(t1);
+      final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
-    return;
+      final response = await dio.get(
+        url,
+        options: Options(headers: headers),
+        // queryParameters: body,
+      );
 
-    print(struct);
+      // print(response);
 
-    print('selectedstructure above');
+      // {
+      //             "wrk_execution_material_schedule_id": 838955,
+      //             "wrk_material_allocation_item_id": 594557,
+      //             "mst_material_id": 2286,
+      //             "material_name": "Pipe GI 40 mm dia -2.5 m Length( Earth Pipe)",
+      //             "material_code": "095404000000000",
+      //             "mst_material_status_id": 1,
+      //             "mst_material_status": "New",
+      //             "mst_uom_id": 16,
+      //             "uom_code": "E",
+      //             "supply_mode": "KSEB",
+      //             "batch_id": 258002,
+      //             "rate": "721.99",
+      //             "quantity": "2.0000"
+      //         }
 
-    // return;
+      // return;
 
-// if (response.statusCode == 200) {
-//     final jsonResponse = json.decode(response.body);
-//     return jsonResponse['result_data'];
-//   } else {
-//     throw Exception('Failed to fetch result data');
-//   }
-    // print(response.headers);
+      if (response.data != null && response.data['result_data'] != null) {
+        var re = response.data['result_data'];
 
-    var re = response.data['result_data'];
+        var totalIssuedMaterialDetails = response.data['result_data']['issues'];
 
-    // print(re);
-    // print('estimate above');
-    if (re == null) {
-      print('re below of null  ie no details in master');
+        var totalLabourDetails =
+            response.data['result_data']['labour_schedule'];
+        var master = response.data['result_data']['unit_master'];
 
-      return;
-    }
+        var out = measurementDetails.firstWhere(
+          (element) => element['locationNo'] == _selectedLocationIndex + 1,
+          orElse: () => {}, // Return null as the default value
+        );
 
-    _masterMaterialEstimate =
-        List<Map<String, dynamic>>.from(re['masterMaterialEstimate']);
+        // return;
 
-    // _masterLabEstimateItems =
-    //     List<Map<String, dynamic>>.from(re['masterLabEstimateItems']);
+        // var existingTasks = out['tasks'];
 
-    print(_masterMaterialEstimate);
-
-    print('master labour estimate above');
-
-    // print(_masterLabEstimateItems);
-    // print(re.keys);
-
-    print(re['masterMaterialEstimate'].length);
-    print("re['masterMaterialEstimate'].length");
-
-    for (final mat in re['masterMaterialEstimate']) {
-      Map<String, dynamic> ob = {};
-      ob['quantity'] = mat['quantity'];
-      ob['material_name'] = mat['mst_material']['material_name'];
-      ob['material_code'] = mat['mst_material']['material_code'];
-
-      _masterLabEstimateItems.add(ob);
-
-      // print(mat);
-    }
-
-    // Map newtask=_tasks.filter
-
-    print(_masterLabEstimateItems);
-
-    print('_master labout estimate  above @1123');
-
-    print(_tasks);
-
-    print('tasks above');
-
-    // return;
-
-    // task['tasks'] = _masterLabEstimateItems;
-
-// _tasks.findWhere(i=>i.taskId==task.id)
-
-    var out = measurementDetails.firstWhere(
-      (element) => element['locationNo'] == _selectedLocationIndex + 1,
-      orElse: () => {}, // Return null as the default value
-    );
-
-    print(_selectedLocationIndex + 1);
-    print('locationNo abobe @1134');
-
-    print(out);
-
-    print('out above @ 1128 polvar');
-
-    if (out == {}) {
-      measurementDetails.add(struct);
-    } else {
-      // print(measurementDetails[_selectedLocationIndex]);
-
-      setState(() {
-        measurementDetails = List.from(measurementDetails.map((item) {
-          if (item['locationNo'] == _selectedLocationIndex) {
+        measurementDetails = List.from(measurementDetails.map((location) {
+          // print(location);
+          if (location['locationNo'] == (_selectedLocationIndex + 1)) {
+            print('location inside');
             // Create a copy of the original item with specified fields replaced
-            return {...item, ...out};
+
+            if (location['tasks'] == null) {
+              //  print('NO EXITING TASK');
+
+              location['tasks'] = [];
+              var task = {};
+              task['id'] = taskId;
+              var structure = {};
+
+              structure['id'] = mstStructureId;
+              structure['materials'] = [];
+              structure['labour'] = [];
+
+              structure['materials'].add(totalIssuedMaterialDetails[0]);
+              structure['labour'].add(totalLabourDetails[0]);
+
+              task['structures'] = [];
+
+              task['structures'].add(structure);
+
+              location['tasks'].add(task);
+
+              return location;
+            } else if (location['tasks'] != null &&
+                location['tasks'].any((task) => task['taskId'] == taskId)) {
+              print('this is else');
+              final taskToUpdate = location['tasks']
+                  .firstWhere((task) => task['taskId'] == taskId);
+
+              print(taskToUpdate);
+              print('taskToUpdate');
+              final isStructurePresent = taskToUpdate['structures']
+                  .any((structure) => strcuture['id'] == mstStructureId);
+
+              print('this is else $isStructurePresent');
+              var structure;
+              if (isStructurePresent) {
+                structure = taskToUpdate['structures'].firstWhere(
+                    (structure) => strcuture['id'] == mstStructureId);
+
+                structure['materials'].add(totalIssuedMaterialDetails[0]);
+                structure['labour'].add(totalLabourDetails[0]);
+              } else {
+                var str = {};
+                str['id'] = mstStructureId;
+                str['materials'] = [];
+                str['materials'].add(totalIssuedMaterialDetails[0]);
+                structure['labour'] = [];
+                structure['labour'].add(totalLabourDetails[0]);
+              }
+
+              return location;
+            }
+
+            // return {...item, ...out};
           } else {
-            return item;
+            print('final else wtf');
+            return location;
           }
         }).toList());
-      });
-    }
 
-    print(measurementDetails);
-    print('updated measurement details above polvar 1148');
+        print(measurementDetails);
+
+        print('emasurement details above');
+
+        //task id// strucure/material & lab & taken back
+
+        // print(_selectedLocationIndex + 1);
+        // print('locationNo abobe @1134');
+
+        // print(out);
+
+        // print(totalIssuedMaterialDetails);
+
+        // print('---------');
+        // print(master);
+
+        print('out above @ 1128 polvar');
+
+        print(measurementDetails);
+        print('updated measurement details above polvar 1148');
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+      print('error above at 1374');
+
+      // TODO
+    }
 
     // measurementDetails[_selectedLocationIndex][]
 
@@ -1442,6 +1482,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // final officeCode = currentSeatDetails['office']['office_code'];
       // final officeId = currentSeatDetails['office_id'];
 
+// http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
       final url =
           'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workId}/0';
 
@@ -1456,6 +1497,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
+
+        // print('res above 1488');
+
+        _wrk_schedule_group_id = res['data']['id'];
+
+        // print('$_wrk_schedule_group_id res above 1488');
+
+        // print('RES ABOVE WORK ID BELOW----------');
+
+        // print(widget.workId);
 
         // print(res['wrk_schedule_group_structures']);
         // print('RES ABOVE');

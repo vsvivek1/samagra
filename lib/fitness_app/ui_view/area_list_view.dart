@@ -38,6 +38,10 @@ class _AreaListViewState extends State<AreaListView>
 
   @override
   Widget build(BuildContext context) {
+    return animatedTiles();
+  }
+
+  AnimatedBuilder animatedTiles() {
     return AnimatedBuilder(
       animation: widget.mainScreenAnimationController!,
       builder: (BuildContext context, Widget? child) {
