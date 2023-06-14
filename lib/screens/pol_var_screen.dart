@@ -66,6 +66,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   var _wrk_schedule_group_id;
 
+  late bool _fetchingMasterEstimate = false;
+
   void togglePlay() {
     setState(() {
       isPlaying = !isPlaying;
@@ -188,7 +190,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       var ob = {};
       // ob['wrkScheduleGroupStructureId'] = wrkScheduleGroupStructureId;
-      ob['taskId'] = taskId;
+      ob['id'] = taskId;
       ob['task_name'] = ta;
       ob['isExpanded'] = false;
       ob['structures'] = t2;
@@ -475,9 +477,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return FutureBuilder(
         future: _sheduleBuilder(),
         builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData &&
+          if ((!snapshot.hasData &&
               snapshot.data == -1 &&
-              snapshot.data == null) {
+              snapshot.data == null)) {
             return Center(
               child: SizedBox(
                 width: 50,
@@ -578,9 +580,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                         emitLocDetailsToPolVarWidget:
                                             _handleEmitLocDetailsToPolVarWidget)
                                     // ,
-                                    // Expanded(
-                                    //     child: MeasurementDisplayWidget(
-                                    //         measurementDetails))
+
+                                    ,
+                                    // SizedBox(
+                                    //   height:
+                                    //       MediaQuery.of(context).size.height *
+                                    //           8,
+                                    //   width:
+                                    //       MediaQuery.of(context).size.width * 8,
+                                    //   child: MeasurementDisplayWidget(
+                                    //       measurementDetails),
+                                    // )
 
                                     // // viewAllLocationDetails(context),
                                     // ,
@@ -591,6 +601,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           ),
                           // Divider(color: Colors.white10, thickness: 10),
                           // SizedBox(height: 50),
+
+                          SizedBox(
+                              width: 300,
+                              height: 300,
+                              child:
+                                  MeasurementDisplayWidget(measurementDetails)),
                           viewLocationList(tasklist1),
                           // viewLocationList(tasklist1),
                           SizedBox(height: 2000),
@@ -888,48 +904,66 @@ class _PolVarScreenState extends State<PolVarScreen> {
       child: Row(
         // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          viewTasksAndStructures(tasklist1),
-          Expanded(
-            flex: 1,
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * .8,
-              child: ListView.builder(
-                itemCount: _numberOfLocations,
-                // itemCount: 1,
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    onTap: () => _viewLocationDetail(index),
-                    // onDoubleTap: _viewLocationDetail(index),
-                    // onDoubleTap: _enterLocationDetails(index),
-                    child: Container(
-                      margin: EdgeInsets.all(8.0),
-                      height: 50.0,
-                      color: (index == _tappedIndex)
-                          ? Colors.green
-                          : Colors.grey[300],
-                      child: Center(
-                        child: Text(
-                          'L : ' + (index + 1).toString(),
+          _fetchingMasterEstimate
+              ? Center(
+                  child: SizedBox(
+                  width: MediaQuery.of(context).size.width * .8,
+                  child: LinearProgressIndicator(
+                    minHeight: 10,
+                    semanticsValue: AutofillHints.photo,
+                    semanticsLabel: 'Please wait',
+                  ),
+                ))
+              : viewTasksAndStructures(tasklist1),
+          Text(_selectedLocationIndex.toString()),
+          if (_selectedLocationIndex == -1) ...[
+            showLocationButtons()
 
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                            decoration: TextDecoration.underline,
-                          ),
-                          // _selectedTemplates.length > index
-                          //     ? _selectedTemplates[index]
-                          //     : 'Select a template',
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
+            // for showing loading issued material
+          ],
         ],
+      ),
+    );
+  }
+
+  Expanded showLocationButtons() {
+    return Expanded(
+      flex: 1,
+      child: SizedBox(
+        height: MediaQuery.of(context).size.height * .8,
+        child: ListView.builder(
+          itemCount: _numberOfLocations,
+          // itemCount: 1,
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () => _viewLocationDetail(index),
+              // onDoubleTap: _viewLocationDetail(index),
+              // onDoubleTap: _enterLocationDetails(index),
+              child: Container(
+                margin: EdgeInsets.all(8.0),
+                height: 50.0,
+                color:
+                    (index == _tappedIndex) ? Colors.green : Colors.grey[300],
+                child: Center(
+                  child: Text(
+                    'L : ' + (index + 1).toString(),
+
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                      decoration: TextDecoration.underline,
+                    ),
+                    // _selectedTemplates.length > index
+                    //     ? _selectedTemplates[index]
+                    //     : 'Select a template',
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -1055,7 +1089,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           child: Wrap(
                             children: [
                               Text(
-                                st["structure_name"],
+                                st["structure_name"] ?? 'ERROR',
                                 style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
@@ -1071,7 +1105,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               // Decrement task quantity
                             },
                           ),
-                          Text((st['qty'] ?? 0)
+                          Text((st['quantity'] ?? 0)
                               .toString()), // Display task quantity
                           IconButton(
                             icon: Icon(Icons.add),
@@ -1252,13 +1286,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // mstStructureId, quantity, struct
   ) async {
     try {
+      setState(() {
+        _fetchingMasterEstimate = true;
+      });
+
       final dio = Dio();
 
-      ;
-
       int mstStructureId = strcuture['id'];
+      String structure_name =
+          strcuture['structure_name'] ?? 'BUG in struc name';
 
-      String taskId = task['taskId'].toString();
+      String taskId = task['id'].toString();
       // return;
       final url =
           "http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
@@ -1300,6 +1338,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         var totalLabourDetails =
             response.data['result_data']['labour_schedule'];
+
         var master = response.data['result_data']['unit_master'];
 
         var out = measurementDetails.firstWhere(
@@ -1311,14 +1350,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // var existingTasks = out['tasks'];
 
-        measurementDetails = List.from(measurementDetails.map((location) {
+        // measurementDetails =
+
+        // var x
+        var x = List.from(measurementDetails.map((location) {
           // print(location);
           if (location['locationNo'] == (_selectedLocationIndex + 1)) {
             print('location inside');
             // Create a copy of the original item with specified fields replaced
 
             if (location['tasks'] == null) {
-              //  print('NO EXITING TASK');
+              print('NO EXITING TASKS');
 
               location['tasks'] = [];
               var task = {};
@@ -1326,11 +1368,28 @@ class _PolVarScreenState extends State<PolVarScreen> {
               var structure = {};
 
               structure['id'] = mstStructureId;
+
+              strcuture['structure_name'] = structure_name;
               structure['materials'] = [];
               structure['labour'] = [];
+              structure['quantity'] = 1;
 
-              structure['materials'].add(totalIssuedMaterialDetails[0]);
-              structure['labour'].add(totalLabourDetails[0]);
+              setState(() {
+                var t = _taskList.firstWhere(
+                    (element) => element['id'] == int.parse(taskId));
+
+                var s = t['structures']
+                    .firstWhere((ele) => ele['id'] == mstStructureId);
+                s['quantity'] = structure['quantity'];
+              });
+
+              if (totalIssuedMaterialDetails.length != 0) {
+                structure['materials'].add(totalIssuedMaterialDetails[0]);
+              }
+
+              if (totalLabourDetails.length != 0) {
+                structure['labour'].add(totalLabourDetails[0]);
+              }
 
               task['structures'] = [];
 
@@ -1339,47 +1398,164 @@ class _PolVarScreenState extends State<PolVarScreen> {
               location['tasks'].add(task);
 
               return location;
-            } else if (location['tasks'] != null &&
-                location['tasks'].any((task) => task['taskId'] == taskId)) {
-              print('this is else');
-              final taskToUpdate = location['tasks']
-                  .firstWhere((task) => task['taskId'] == taskId);
+            } else if (location['tasks'] != null) {
+              print(location['tasks']);
+              print("some tasks are presnt and out task id is $taskId");
+// have task of our given task id
 
-              print(taskToUpdate);
-              print('taskToUpdate');
-              final isStructurePresent = taskToUpdate['structures']
-                  .any((structure) => strcuture['id'] == mstStructureId);
+              if (location['tasks'].any((task) => task['id'] == taskId)) {
+                final taskToUpdate = location['tasks']
+                    .firstWhere((task) => task['id'] == taskId);
 
-              print('this is else $isStructurePresent');
-              var structure;
-              if (isStructurePresent) {
-                structure = taskToUpdate['structures'].firstWhere(
-                    (structure) => strcuture['id'] == mstStructureId);
+                print("TASK IS PRESNT");
+                print('taskToUpdate');
+                final isStructurePresent = taskToUpdate['structures']
+                    .any((structure) => strcuture['id'] == mstStructureId);
 
-                structure['materials'].add(totalIssuedMaterialDetails[0]);
-                structure['labour'].add(totalLabourDetails[0]);
+                /// structue present
+                ///
+                ///
+                ///
+                print('STRUCTRE ALRADY PRESENTe $isStructurePresent');
+                var structure;
+
+                if (isStructurePresent) {
+                  structure = taskToUpdate['structures'].firstWhere(
+                      (structure) => strcuture['id'] == mstStructureId);
+
+                  // if (totalIssuedMaterialDetails.length != 0) {
+                  //   structure['materials'].add(totalIssuedMaterialDetails[0]);
+                  // }
+
+                  // if (totalLabourDetails.length != 0) {
+                  //   structure['labour'].add(totalLabourDetails[0]);
+                  // }
+
+                  /// we are changing only quantity
+                  print(
+                      'str quantity before updating is ${structure['quantity']}');
+
+                  setState(() {
+                    structure['quantity'] = (structure['quantity'] ?? 0) + 1;
+                    print(_taskList);
+                    print('this is task id $taskId');
+
+                    var t = _taskList.firstWhere(
+                        (element) =>
+                            element['id'].toString() == taskId.toString(),
+                        orElse: () => {});
+
+                    print(t);
+
+                    print('T ABOVE');
+
+                    var s = t['structures'].firstWhere((ele) =>
+                        ele['id'].toString() == mstStructureId.toString());
+
+                    s['quantity'] = structure['quantity'];
+                  });
+
+                  print(
+                      'str quantity after updating is ${structure['quantity']}');
+
+                  return location;
+                } else {
+                  print('STRUCTRE  NOT  PRESENTe $isStructurePresent');
+
+                  /// strcuture not present
+                  var str = {};
+
+                  str['id'] = mstStructureId;
+                  strcuture['structure_name'] = structure_name;
+                  str['materials'] = [];
+                  if (totalIssuedMaterialDetails.length != 0) {
+                    structure['materials'].add(totalIssuedMaterialDetails[0]);
+                  }
+
+                  structure['labour'] = [];
+                  if (totalLabourDetails.length != 0) {
+                    structure['labour'].add(totalLabourDetails[0]);
+                  }
+                  structure['quantity'] = 1;
+
+                  setState(() {
+                    var t = _taskList
+                        .firstWhere((element) => element['id'] == taskId);
+
+                    var s = t.firstWhere((ele) => ele['id'] == mstStructureId);
+                    s['quantity'] = structure['quantity'];
+
+                    print(s);
+
+                    print('strcuture above');
+                  });
+
+                  return location;
+                }
+
+                ///
+                ///
               } else {
-                var str = {};
-                str['id'] = mstStructureId;
-                str['materials'] = [];
-                str['materials'].add(totalIssuedMaterialDetails[0]);
-                structure['labour'] = [];
-                structure['labour'].add(totalLabourDetails[0]);
-              }
+                print('our task id not present');
 
-              return location;
+                /// our task id not present
+                ///
+                ///  var task = {};
+                task['id'] = taskId;
+                var structure = {};
+
+                structure['id'] = mstStructureId;
+                strcuture['structure_name'] = structure_name;
+                structure['materials'] = [];
+                structure['labour'] = [];
+
+                structure['quantity'] = 1;
+
+                setState(() {
+                  print(_taskList);
+
+                  print('tasklist above');
+                  var t = _taskList
+                      .firstWhere((element) => element['id'] == taskId);
+
+                  var s = t['structures']
+                      .firstWhere((ele) => ele['id'] == mstStructureId);
+                  s['quantity'] = structure['quantity'];
+                });
+
+                if (totalIssuedMaterialDetails.length != 0) {
+                  structure['materials'].add(totalIssuedMaterialDetails[0]);
+                }
+
+                if (totalLabourDetails.length != 0) {
+                  structure['labour'].add(totalLabourDetails[0]);
+                }
+
+                task['structures'] = [];
+
+                task['structures'].add(structure);
+
+                location['tasks'].add(task);
+
+                return location;
+              }
             }
 
-            // return {...item, ...out};
-          } else {
-            print('final else wtf');
             return location;
           }
+
+          // return {...item, ...out};
         }).toList());
 
-        print(measurementDetails);
+        setState(() {
+          measurementDetails = List.from(x);
 
-        print('emasurement details above');
+          _fetchingMasterEstimate = false;
+        });
+
+        // print(x);
+
+        // print('emasurement details above');
 
         //task id// strucure/material & lab & taken back
 
@@ -1393,10 +1569,25 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // print('---------');
         // print(master);
 
-        print('out above @ 1128 polvar');
+        // print('out above @ 1128 polvar');
 
-        print(measurementDetails);
-        print('updated measurement details above polvar 1148');
+        var out1 = measurementDetails.firstWhere(
+          (element) => element['locationNo'] == _selectedLocationIndex + 1,
+          orElse: () => {}, // Return null as the default value
+        );
+
+        var t = out1['tasks']
+            .firstWhere((element) => element['id'] == taskId, orElse: () => {});
+
+        var st1 = t['structures'].firstWhere(
+            (element) => element['id'] == mstStructureId,
+            orElse: () => {});
+        // .toList();
+
+        print(st1['quantity'] ?? 'NIL');
+        // print(st1);
+
+        print('${st1['quantity']}  st1 ln 1142');
       }
     } on Exception catch (e) {
       print(e.toString());
