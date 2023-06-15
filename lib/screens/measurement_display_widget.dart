@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_treeview/flutter_simple_treeview.dart';
 
-getTaskNodes(measurementDetails) {
-  return measurementDetails.map((mdtl) => {
-        Card(
-          elevation: 10,
-// ListTile()
-        )
-      });
+getTaskNodes(tasks) {
+  return tasks?.map<TreeNode>((task) {
+    return TreeNode(content: Text('hi'));
+  }).toList();
 }
 
 // ignore: non_constant_identifier_names
@@ -22,58 +19,72 @@ ListView MeasurementDisplayWidget(measurementDetails) {
 
       final locationName = measurement['locationName'];
       final tasks = measurement?['tasks'];
-
-      final taskNodes = tasks?.map<TreeNode>((task) {
-        final taskName = task['taskName'];
-        final structures = task['Structures'];
-
-        final structureNodes = structures?.map<TreeNode>((structure) {
-          final structureName = structure['Structurename'];
-          final materials = structure['materials'];
-          final labour = structure['labour'];
-
-          final materialNodes = materials?.map<TreeNode>((material) {
-            return TreeNode(
-              children: [],
-              content: Text(material.toString()),
-            );
-          }).toList();
-
-          final labourNodes = labour?.map<TreeNode>((labourItem) {
-            return TreeNode(
-              children: [],
-              content: Text(labourItem.toString()),
-            );
-          }).toList();
-
-          return TreeNode(
-            children: [
-              if (materialNodes != null)
-                TreeNode(
-                  children: materialNodes,
-                  content: Text('Materials'),
-                ),
-              if (labourNodes != null)
-                TreeNode(
-                  children: labourNodes,
-                  content: Text('Labour'),
-                ),
-            ],
-            content: Text(structureName ?? ''),
-          );
-        }).toList();
-
-        return TreeNode(
-          children: structureNodes,
-          content: Text(taskName ?? ''),
-        );
-      }).toList();
-
       return TreeView(
         nodes: [
           TreeNode(
-            content: Text(locationName ?? ''),
-            children: taskNodes ?? [],
+            content: Flexible(
+              child: Text(
+                '${index + 1}. $locationName',
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            children: tasks == null
+                ? [TreeNode(content: Text('No tasks'))]
+                : tasks
+                    .map<TreeNode>((task) => TreeNode(
+                          content: Flexible(
+                            child: Text(
+                              task['task_name'] ?? 'No task Name',
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          children: task['structures'] == null
+                              ? [TreeNode(content: Text('No Structures'))]
+                              : task['structures']
+                                  .map<TreeNode>((str) => TreeNode(
+                                        content: Flexible(
+                                          child: Text(
+                                            str['structure_name'] ??
+                                                'No Structure',
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        children: [
+                                          if (str['materials'] != null)
+                                            ...str['materials']
+                                                .map<TreeNode>(
+                                                    (mat) => TreeNode(
+                                                          content: Flexible(
+                                                            child: Text(
+                                                              mat['material_name'] ??
+                                                                  'No Material',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ))
+                                                .toList(),
+                                          if (str['labour'] != null)
+                                            ...str['labour']
+                                                .map<TreeNode>(
+                                                    (lab) => TreeNode(
+                                                          content: Flexible(
+                                                            child: Text(
+                                                              lab['labour_name'] ??
+                                                                  'No Labour',
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ))
+                                                .toList(),
+                                        ],
+                                      ))
+                                  .toList(),
+                        ))
+                    .toList(),
           ),
         ],
       );

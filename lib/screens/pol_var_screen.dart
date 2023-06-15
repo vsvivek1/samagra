@@ -467,7 +467,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     audioCache.play('select_structure.wav');
     // print(this._workDetails);
 
-    print(' measurementDetails above');
+    // print(' measurementDetails above');
   }
 
   //
@@ -1293,8 +1293,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       final dio = Dio();
 
       int mstStructureId = strcuture['id'];
-      String structure_name =
-          strcuture['structure_name'] ?? 'BUG in struc name';
+      String structureName = strcuture['structure_name'] ?? 'BUG in struc name';
+
+      print(strcuture);
+      print('$structureName  is h the STR33');
 
       String taskId = task['id'].toString();
       // return;
@@ -1353,6 +1355,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // measurementDetails =
 
         // var x
+
+        print(_tasks);
+        print('NO EXITING TASKS tasks above');
+
         var x = List.from(measurementDetails.map((location) {
           // print(location);
           if (location['locationNo'] == (_selectedLocationIndex + 1)) {
@@ -1360,16 +1366,36 @@ class _PolVarScreenState extends State<PolVarScreen> {
             // Create a copy of the original item with specified fields replaced
 
             if (location['tasks'] == null) {
-              print('NO EXITING TASKS');
+              var selectedTask = _tasks.firstWhere(
+                (element) => element['id'].toString() == taskId.toString(),
+                orElse: () {},
+              );
 
               location['tasks'] = [];
               var task = {};
               task['id'] = taskId;
+
+              if (selectedTask != null && selectedTask['task_name'] != null) {
+                task['task_name'] = selectedTask['task_name'];
+
+                var str1 = selectedTask['structures'].firstWhere(
+                  (element) =>
+                      element['id'].toString() == mstStructureId.toString(),
+                  orElse: () {},
+                );
+
+                structureName = str1['structure_name'];
+
+                print('---------------------------$structureName');
+              } else {
+                task['task_name'] = 'No avail';
+              }
+
               var structure = {};
 
               structure['id'] = mstStructureId;
 
-              strcuture['structure_name'] = structure_name;
+              strcuture['structure_name'] = structureName;
               structure['materials'] = [];
               structure['labour'] = [];
               structure['quantity'] = 1;
@@ -1466,7 +1492,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   var str = {};
 
                   str['id'] = mstStructureId;
-                  strcuture['structure_name'] = structure_name;
+                  strcuture['structure_name'] = structureName;
                   str['materials'] = [];
                   if (totalIssuedMaterialDetails.length != 0) {
                     structure['materials'].add(totalIssuedMaterialDetails[0]);
@@ -1505,7 +1531,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 var structure = {};
 
                 structure['id'] = mstStructureId;
-                strcuture['structure_name'] = structure_name;
+                strcuture['structure_name'] = structureName;
                 structure['materials'] = [];
                 structure['labour'] = [];
 
