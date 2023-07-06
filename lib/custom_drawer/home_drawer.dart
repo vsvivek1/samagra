@@ -49,7 +49,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _loginDetails1 =
         await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
 
-    if (_loginDetails1 != null && isJson(_loginDetails1["loginDetails"])) {
+    // print(_loginDetails1);
+    // print('_loginDetails1 above');
+
+    if (_loginDetails1 != null &&
+        _loginDetails1["loginDetails"] != null &&
+        isJson(_loginDetails1["loginDetails"])) {
       // var ob = _loginDetails1["loginDetails"];
       var ob = json.decode(_loginDetails1["loginDetails"]);
 

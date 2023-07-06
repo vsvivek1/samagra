@@ -1181,13 +1181,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
           var geoCordinates;
 
           if (status['geoCordinates'] != null) {
-            geoCordinates = status['geoCordinates'] as Map<String, dynamic>;
+            geoCordinates = status['geoCordinates'] as Map<dynamic, dynamic>;
           }
 
           var geoCordinatesEnd;
           if (status['geoCordinatesEnd'] != null) {
             geoCordinatesEnd =
-                status['geoCordinatesEnd'] as Map<String, dynamic>;
+                status['geoCordinatesEnd'] as Map<dynamic, dynamic>;
           }
 
           print(
@@ -1231,18 +1231,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   child: Center(
                     child: Column(
                       children: [
-                        Text(
-                          'L : ${(index + 1)}',
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
+                        CircleAvatar(child: Text('L  ${(index + 1)}')),
+
                         Container(
-                            width: MediaQuery.of(context).size.width / 3,
+                            width: MediaQuery.of(context).size.width / 3.5,
                             child: Flexible(
                                 child: Text(
                               status['text'].toString(),
@@ -1667,8 +1659,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         var totalLabourDetails =
             response.data['result_data']['labour_schedule'];
 
-        print(totalLabourDetails);
-        print('totalLabourDetails above');
+        // print(totalLabourDetails);
+        // print('totalLabourDetails above');
 
         var takenBacks = response.data['result_data']['takenbacks'];
 
@@ -1708,6 +1700,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             // Create a copy of the original item with specified fields replaced
 
             if (location['tasks'] == null) {
+              // there is no taks in the selected location
+
               var selectedTask = _tasks.firstWhere(
                 (element) => element['id'].toString() == taskId.toString(),
                 orElse: () {},
@@ -1732,7 +1726,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                 print('---------------------------$structureName');
               } else {
-                print('some issue with selectedTask $selectedTask');
+                print('some issue with selectedTask name $selectedTask');
                 task['task_name'] = 'No avail';
               }
 
@@ -1740,21 +1734,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
               structure['id'] = mstStructureId;
 
-              strcuture['structure_name'] = structureName;
+              // strcuture['structure_name'] = structureName;
 
-              print("str1['structure_name'] from here $structureName");
+              print("strcuture['structure_name'] from here $structureName");
               structure['materials'] = [];
               structure['labour'] = [];
               structure['takenBack'] = [];
               structure['quantity'] = 1;
 
+              structure['strcuture_name'] = structureName ?? 'Name Not Found';
+
               setState(() {
+                // this is for updating the quantity feild
                 var t = _taskList.firstWhere(
                     (element) => element['id'].toString() == taskId.toString());
 
                 var s = t['structures'].firstWhere(
                     (ele) => ele['id'].toString() == mstStructureId.toString());
-                s['quantity'] = structure['quantity'];
+                s['quantity'] = -100;
+
+                // structure['quantity'];
 
                 _showSaveMeasurementDetailsButton = true;
               });
@@ -2024,7 +2023,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         print(t);
 
-        print('tabove at 1911');
+        print('tabove at 2030');
 
         var st1 = t['structures'].firstWhere(
             (element) => element['id'] == mstStructureId,
@@ -2391,6 +2390,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _selectedLocationIndex = -1;
       _showAnotherLocationButton = true;
       _showSaveMeasurementDetailsButton = true;
+      viewStructures = false;
+
+      _selectedLocationTasks = [];
+      _selectedLocationDetails['tasks'] = [];
+      _selectedLocationDetails = {};
     });
   }
 }

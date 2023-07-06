@@ -15,13 +15,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.grey,
-        title: Text(
-          'Location Measurement View',
-          // style: TextStyle(backgroundColor: Colors.yellowAccent)
-        ),
-      ),
       body: ListView.builder(
         itemCount: widget.tasks.length,
         itemBuilder: (context, index) {
@@ -34,69 +27,87 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
           return Column(
             children: [
-              Center(
-                child: WhatsAppButton(
-                  phoneNumber:
-                      '+919847599946', // Enter the phone number you want to send the message to
-                  message:
-                      'Hello from my app!', // Enter the message you want to pre-fill
-                ),
-              ),
+              // Center(
+              //   child: WhatsAppButton(
+              //     phoneNumber:
+              //         '+919847599946', // Enter the phone number you want to send the message to
+              //     message:
+              //         'Hello from my app!', // Enter the message you want to pre-fill
+              //   ),
+              // ),
               ListTile(
-                title: Container(
-                  padding: EdgeInsets.all(16.0),
+                leading: CircleAvatar(
+                  maxRadius: 14,
                   child: Text(
-                    'Task: ${task['task_name']}',
+                    'T' + (index + 1).toString(),
+                    textScaleFactor: .5,
+                  ),
+                ),
+                title: Container(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                    ' ${task['task_name']}',
                     style: TextStyle(
                       color: Colors.grey[700],
-                      fontSize: 20.0,
+                      fontSize: 15.0,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 // subtitle:
                 //     Text("Task ID: ${task['id']}  ${structureList.length}, "),
+
+                subtitle: ListView.builder(
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemCount: structureList.length,
+                  itemBuilder: (context, structureIndex) {
+                    final structure = structureList[structureIndex];
+
+                    // print(structure);
+
+                    print('structure above at 53');
+                    return Column(
+                      children: [
+                        ListTile(
+                          leading: CircleAvatar(
+                              maxRadius: 13,
+                              backgroundColor: Colors.blue[100],
+                              child:
+                                  Text('S' + (structureIndex + 1).toString())),
+                          title: structure['strcuture_name'] != null
+                              ? Text(
+                                  '${structure['strcuture_name']}',
+                                  style: TextStyle(
+                                      color: Colors.blueGrey,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500),
+                                )
+                              : Text('Structure No: ${structureIndex + 1}'),
+                        ),
+                        Column(
+                          children: [
+                            MaterialsView(structure, structureIndex, index),
+                            Divider(color: Colors.grey[100]),
+                            LabourView(structure, structureIndex, index),
+                            Divider(color: Colors.grey[100]),
+                            TakenBackView(structure, structureIndex, index),
+                            Divider(color: Colors.grey[100])
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
               //  print();
 
               // if (false)
-              ListView.builder(
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemCount: structureList.length,
-                itemBuilder: (context, structureIndex) {
-                  final structure = structureList[structureIndex];
-
-                  // print(structure);
-
-                  print('structure above at 53');
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: structure['structure_name'] != null
-                            ? Text(
-                                'Structure Name: ${structure['structure_name']}')
-                            : Text('Structure No: ${structureIndex + 1}'),
-                      ),
-                      Column(
-                        children: [
-                          MaterialsView(structure, structureIndex, index),
-                          Divider(color: Colors.grey[100]),
-                          LabourView(structure, structureIndex, index),
-                          Divider(color: Colors.grey[100]),
-                          TakenBackView(structure, structureIndex, index),
-                          Divider(color: Colors.grey[100])
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
 
               Divider(
                 color:
                     Colors.black, // Customize the color of the line if needed
-                thickness: 1, // Adjust the thickness of the line if needed
+                thickness: 2, // Adjust the thickness of the line if needed
                 height:
                     0, // Set the height to 0 to make it invisible (only the line will be shown)
               ),
@@ -113,15 +124,12 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     return Builder(builder: (context) {
       return Column(
         children: [
-          Text(structure.containsKey('materials') == false
-              ? "No Material"
-              : "structure['structure_name']"),
           if (structure.containsKey('materials'))
             if (structure != null && structure.containsKey('materials'))
               Column(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(5.0),
                     child: Text(
                       'Materials',
                       style: TextStyle(
@@ -179,7 +187,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       return Column(
         children: [
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(5.0),
             child: Text(
               'Labour',
               style: TextStyle(
@@ -250,7 +258,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   return Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(5.0),
                         child: Text(
                           'Materials',
                           style: TextStyle(
