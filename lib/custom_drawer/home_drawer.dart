@@ -49,8 +49,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _loginDetails1 =
         await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
 
-    if (!_loginDetails1?.isEmpty) {
-      var ob = json.decode(_loginDetails1["loginDetails"] ?? '');
+    if (_loginDetails1 != null && isJson(_loginDetails1["loginDetails"])) {
+      // var ob = _loginDetails1["loginDetails"];
+      var ob = json.decode(_loginDetails1["loginDetails"]);
 
       ob["seat_details"] =
           this.getCurrentSeatDetails(_loginDetails1["loginDetails"]);
@@ -110,8 +111,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
         imageName: 'assets/images/supportIcon.png',
       ),
       DrawerList(
-        index: DrawerIndex.WorkSelection,
-        labelName: 'Work Selection',
+        index: DrawerIndex.WorkMeasurement,
+        labelName: 'Work Measurement',
         isAssetsImage: true,
         imageName: 'assets/images/supportIcon.png',
       ),
@@ -122,9 +123,12 @@ class _HomeDrawerState extends State<HomeDrawer> {
         imageName: 'assets/images/supportIcon.png',
       ),
       DrawerList(
-        index: DrawerIndex.FeedBack,
-        labelName: 'FeedBack',
-        icon: Icon(Icons.help),
+        index: DrawerIndex.TreeCuttingCompensation,
+        labelName: 'TreeCuttingCompensation',
+        icon: Icon(
+          Icons.forest,
+          color: Color.fromARGB(255, 2, 56, 30),
+        ),
       ),
       DrawerList(
         index: DrawerIndex.Invite,
@@ -197,7 +201,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                   future: _getUserLoginDetails(),
                                   builder: (BuildContext context,
                                       AsyncSnapshot snapshot) {
-                                    if (snapshot.hasData) {
+                                    if (snapshot.hasData &&
+                                        snapshot.data['user'] != null) {
                                       var login = Map<String, dynamic>.from(
                                           snapshot.data);
 
@@ -222,11 +227,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
                         future: _getUserLoginDetails(),
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
+                          if (snapshot.hasData &&
+                              snapshot.data['user'] != null &&
+                              snapshot.data['user']['seat_details'] != '') {
                             var login =
                                 Map<String, dynamic>.from(snapshot.data);
 
                             var user = login["user"];
+
                             Map seatDetails = login['seat_details'];
 
                             // p(seatDetails);
@@ -669,8 +677,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
 enum DrawerIndex {
   HOME,
-  WorkSelection,
-  FeedBack,
+  WorkMeasurement,
+  TreeCuttingCompensation,
   Help,
   Share,
   About,

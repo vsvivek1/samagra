@@ -11,6 +11,7 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 import '../secure_storage/secure_storage.dart';
 import 'package:samagra/secure_storage/common_functions.dart';
 import 'dart:math' as math;
+// import 'package:samagra/common.dart';
 
 import 'measurement_option.dart';
 
@@ -291,6 +292,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 int sl = index + 1;
 
                 Map workDetail = item['wrk_work_detail'];
+
+                // int hasTakenback=
 
                 // int workId = workDetail?['id'];
                 int workId = item?['id'];

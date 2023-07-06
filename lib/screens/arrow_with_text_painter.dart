@@ -1,0 +1,51 @@
+import 'package:flutter/material.dart';
+
+class ArrowWithTextPainter extends CustomPainter {
+  final String text;
+  final double arrowSize = 10.0;
+
+  ArrowWithTextPainter(this.text);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final startPoint = Offset(0, size.height / 2);
+    final endPoint = Offset(size.width, size.height / 2);
+
+    // Draw the line
+    final linePaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 2.0;
+    canvas.drawLine(startPoint, endPoint, linePaint);
+
+    // Draw the arrow
+    final arrowPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.fill;
+    final arrowPath = Path();
+    arrowPath.moveTo(endPoint.dx - arrowSize, endPoint.dy - arrowSize);
+    arrowPath.lineTo(endPoint.dx, endPoint.dy);
+    arrowPath.lineTo(endPoint.dx - arrowSize, endPoint.dy + arrowSize);
+    arrowPath.close();
+    canvas.drawPath(arrowPath, arrowPaint);
+
+    // Draw the text
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(color: Colors.black, fontSize: 16.0),
+      ),
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    final textOffset = Offset(endPoint.dx - textPainter.width / 2,
+        endPoint.dy - textPainter.height / 2);
+    textPainter.paint(canvas, textOffset);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}

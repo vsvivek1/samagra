@@ -14,6 +14,8 @@ class LocationDetailsWidget extends StatefulWidget {
 
   final Function emitLocDetailsToPolVarWidget;
 
+  bool hasLocationDetailsInStorage;
+
   LocationDetailsWidget(
       {Key? key,
       required this.locationNo,
@@ -22,10 +24,11 @@ class LocationDetailsWidget extends StatefulWidget {
 
       // ignore: non_constant_identifier_names
       required this.locationDetails,
-      required this.emitLocDetailsToPolVarWidget})
+      required this.emitLocDetailsToPolVarWidget,
+      required this.hasLocationDetailsInStorage})
       : super(key: key) {
-    print(this.measurements);
-    print('this.measurementsabove  loc det widget line 28');
+    // print(this.measurements);
+    // print('this.measurementsabove  loc det widget line 28');
   }
 
   @override
@@ -75,7 +78,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (this.editMode) ...[
+                  if (this.editMode && !widget.hasLocationDetailsInStorage) ...[
                     LocationButton(
                         onLocationSelected: onLocationSelected,
                         editMode: this.editMode &&
@@ -98,7 +101,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: widget.locationNo,
+                          text: (int.parse(widget.locationNo) + 1).toString(),
                           style: TextStyle(
                             color: Colors.blue,
                             fontSize: 24.0,
@@ -189,7 +192,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
 
     locationDetails['locationName'] = this.locationName;
 
-    print('this is location name here ${locationDetails['name']}');
+    // print('this is location name here ${locationDetails['name']}');
 
     locationDetails['geoCordinates'] = {};
     locationDetails['geoCordinates']['lattitude'] = widget.latitude;
@@ -201,6 +204,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
 
     setState(() {
       _gotLocation = false;
+      editMode = false;
     });
   }
 
@@ -271,7 +275,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       //   // this.locationName = this.locationNameController.text;
       // }
 
-      print(widget.locationName);
+      // print(widget.locationName);
     });
   }
 }

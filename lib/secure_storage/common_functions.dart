@@ -3,6 +3,15 @@ import 'dart:convert';
 
 var _secureStorage = SecureStorage();
 
+bool isJson(String str) {
+  try {
+    jsonDecode(str);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 Future<String> _getUserLoginDetails() async {
   var _loginDetails1 =
       await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
@@ -18,6 +27,9 @@ void p(msg) {
 }
 
 Map getCurrentSeatDetails(loginDeatails1) {
+  if (loginDeatails1 == null) {
+    return {};
+  }
   Map loginDetails = json.decode(loginDeatails1);
 
   int currentSeatId = loginDetails['user']!['current_seat_id'] ?? -1;

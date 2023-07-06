@@ -219,7 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         // print(empCodeInitialValue);
 
-                                        return Text('text');
+                                        // return Text('text');
 
                                         return Center(
                                           child: Column(
@@ -410,8 +410,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         // Perform the action here
                                                         Navigator.of(context)
                                                             .pop();
+
                                                         _secureStorage
                                                             .deleteAlllSecureStorageData();
+
+                                                        setState(() {});
                                                       },
                                                     ),
                                                   ],

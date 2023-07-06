@@ -7,6 +7,7 @@ import 'package:samagra/home_screen.dart';
 import 'package:samagra/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/phone_book.dart';
+import 'package:samagra/screens/tree_cutting_compensation.dart';
 import 'package:samagra/screens/work_selection.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
@@ -65,22 +66,24 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           });
           break;
 
-        case DrawerIndex.WorkSelection:
+        case DrawerIndex.WorkMeasurement:
           setState(() {
             screenView = WorkSelection();
           });
           break;
 
-        case DrawerIndex.Help:
+        case DrawerIndex.TreeCuttingCompensation:
           setState(() {
-            screenView = HelpScreen();
+            screenView = TreeCuttingCompensation();
           });
           break;
-        case DrawerIndex.FeedBack:
-          setState(() {
-            screenView = FeedbackScreen();
-          });
-          break;
+
+        // case DrawerIndex.FeedBack:
+        //   setState(() {
+        //     screenView = FeedbackScreen();
+        //   });
+        //   break;
+
         case DrawerIndex.Invite:
           setState(() {
             screenView = InviteFriend();
