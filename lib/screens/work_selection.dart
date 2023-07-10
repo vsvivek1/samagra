@@ -103,8 +103,8 @@ class WorkSelection extends StatelessWidget {
     print('lab  called');
     final responseMaterial =
         await dio.get(url2, options: Options(headers: headers));
-
-    print('mat called');
+//
+    print('materail master called');
 
     try {
       var inp = response.data['result_data']['labourMaster'];
@@ -232,6 +232,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
   List<dynamic> _filteredItems = [];
   late AudioCache audioCache;
 
+  String workCode = '';
+
   @override
   void initState() {
     audioCache = AudioCache(prefix: 'assets/audio/');
@@ -298,6 +300,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 // int workId = workDetail?['id'];
                 int workId = item?['id'];
                 final workName = workDetail['work_name'];
+                final workCode = workDetail['work_code'];
 
                 if (workName == null || workId == -1) {
                   final snackBar = SnackBar(
@@ -324,8 +327,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) =>
-                              MeasurementOptionScreen(workId, workName),
+                          builder: (context) => MeasurementOptionScreen(
+                              workId, workName, workCode),
                         ),
                       );
                     },

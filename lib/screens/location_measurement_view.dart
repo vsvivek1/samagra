@@ -183,52 +183,57 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   }
 
   Builder LabourView(structure, int structureIndex, int index) {
-    return Builder(builder: (context) {
-      return Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(5.0),
-            child: Text(
-              'Labour',
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
+    if (structure != null && structure.containsKey('labour')) {
+      final labour1 = structure['labour'];
+      return Builder(builder: (context) {
+        return Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(5.0),
+              child: Text(
+                'Labour',
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          if (structure.containsKey('labour'))
-            if (structure != null && structure.containsKey('labour'))
-              ListView.builder(
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemCount: structure['labour'].length,
-                itemBuilder: (context, labourIndex) {
-                  // final material = structure['materials'][labourIndex];
+            ListView.builder(
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+              itemCount: labour1.length,
+              itemBuilder: (context, labourIndex) {
+                // final material = structure['materials'][labourIndex];
 
-                  final labour = structure['labour'][labourIndex];
+                final labour = labour1[labourIndex];
 
-                  return Column(
-                    children: [
-                      ListTile(
-                        title: Text(
-                            '${labourIndex + 1}: ${labour['labour_name']}'),
-                        subtitle: Text('Quantity: ${labour['quantity']}'),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            _editLabourQuantity(
-                                labourIndex, structureIndex, index);
-                          },
-                        ),
+                return Column(
+                  children: [
+                    ListTile(
+                      title:
+                          Text('${labourIndex + 1}: ${labour['labour_name']}'),
+                      subtitle: Text('Quantity: ${labour['quantity']}'),
+                      trailing: IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          _editLabourQuantity(
+                              labourIndex, structureIndex, index);
+                        },
                       ),
-                    ],
-                  );
-                },
-              ),
-        ],
-      );
-    });
+                    ),
+                  ],
+                );
+              },
+            )
+          ],
+        );
+      });
+    } else {
+      return Builder(builder: (context) {
+        return Column(children: [Container(child: Text('No labour'))]);
+      });
+    }
   }
 
   Builder TakenBackView(structure, int structureIndex, int index) {
