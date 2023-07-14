@@ -36,6 +36,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         child: Scaffold(
           backgroundColor: AppTheme.nearlyWhite,
           body: DrawerUserController(
+            drawerIsOpen: (p0) => true,
             screenIndex: drawerIndex,
             drawerWidth: MediaQuery.of(context).size.width * 0.75,
             onDrawerCall: (DrawerIndex drawerIndexdata) {

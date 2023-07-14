@@ -772,6 +772,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 ElevatedButton(
                                     onPressed: () => {_gotToAnotherLocation()},
                                     child: Text('Go to  Another Location')),
+                                Spacer(),
                                 ElevatedButton(
                                     onPressed: () => {
                                           sendObjectToServer(measurementDetails)
@@ -1272,13 +1273,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                         Container(
                             width: MediaQuery.of(context).size.width / 3.5,
-                            child: Flexible(
+                            child: SizedBox(
+                                width: MediaQuery.of(context).size.width / 3.5,
                                 child: Text(
-                              status['text'].toString(),
-                              style: TextStyle(
-                                color: status['color'] as Color,
-                              ),
-                            ))),
+                                  status['text'].toString(),
+                                  style: TextStyle(
+                                    color: status['color'] as Color,
+                                  ),
+                                ))),
                         // Container(
                         //   width: MediaQuery.of(context).size.width / 3,
                         //   child: Flexible(
@@ -1684,10 +1686,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
 
-        // print(re['issues']);
-
-        // print('re above');
-
         var totalIssuedMaterialDetails = re['issues'];
 
         // print(totalIssuedMaterialDetails);
@@ -1700,8 +1698,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         var result_data = response.data['result_data'];
         var takenBacks = result_data['takenbacks'];
-
-        ;
 
         print(takenBacks);
 
@@ -1716,17 +1712,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
           orElse: () => {}, // Return null as the default value
         );
 
-        // return;
-
-        // var existingTasks = out['tasks'];
-
-        // measurementDetails =
-
-        // var x
-
-        // print(_tasks);
-        // print('NO EXITING TASKS tasks above');
-
         var x = List.from(measurementDetails.map((location) {
           int locationNumber = _selectedLocationIndex + 1;
 
@@ -1737,239 +1722,68 @@ class _PolVarScreenState extends State<PolVarScreen> {
           if (location['locationNo'] == locationNumber) {
             // Create a copy of the original item with specified fields replaced
 
+            print(
+                "$location['tasks'].any((task) => task['id'] == taskId) is the task presence at 1742");
+
             if (location['tasks'] == null) {
-              debugPrint("$location['tasks'] is null part");
+              print('No tasks in location so adding tasks array');
               location['tasks'] = [];
+            }
 
-              var task = {};
+            var task;
+            if (!(location['tasks'].any((task) => task['id'] == taskId))) {
+              print('Current task absent so adding current task');
 
-              structureName = initiateTaskDetailsAndReturnStructureName(
-                  task, taskId, mstStructureId, structureName);
+              task = {};
+            } else {
+              task =
+                  location['tasks'].firstWhere((task) => task['id'] == taskId);
+            }
 
+            initiateTaskDetails(task, taskId, mstStructureId, structureName);
+
+            if (task['structures'] == null) {
+              task['structures'] = [];
+            }
+
+            if (task['structures'].any((s) => s['id'] == mstStructureId)) {
+              var structure = task['structures'].firstWhere(
+                  (s) => s['id'] == mstStructureId,
+                  orElse: () => {});
+              structure['quantity'] = structure['quantity'] + 1;
+            } else {
               var structure = {};
-
-              structure['id'] = mstStructureId;
-
               structure['materials'] = [];
               structure['labour'] = [];
               structure['takenBack'] = [];
+
               structure['quantity'] = 1;
+              structure['strcuture_name'] =
+                  structureName ?? 'str Name Not Found';
+              structure['id'] = mstStructureId;
 
-              structure['strcuture_name'] = structureName ?? 'Name Not Found';
-
-              updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
-
-              setIssuedmaterials(totalIssuedMaterialDetails, structure);
+              // setIssuedmaterials(totalIssuedMaterialDetails, structure);
+              // setIssuedmaterials(totalIssuedMaterialDetails,);
+              setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
+                  mstStructureId, structure);
 
               setLabourDetails(
                   totalLabourDetails, jsonData, mstStructureId, structure);
 
               setTakenBacks(takenBacks, structure);
-
-              task['structures'] = [];
-
               task['structures'].add(structure);
-
-              location['tasks'].add(task);
-
-              return location;
-            } else if (location['tasks'] != null) {
-              debugPrint("$location['tasks'] is NOT NULL part");
-              print(location['tasks']);
-              print("some tasks are presnt and out task id is $taskId");
-// have task of our given task id
-
-              if (location['tasks'].any((task) => task['id'] == taskId)) {
-                debugPrint("OUT TASK IS PRESENT 1783");
-                final taskToUpdate = location['tasks']
-                    .firstWhere((task) => task['id'] == taskId);
-
-                print("TASK IS PRESNT");
-                print('taskToUpdate');
-
-                final isStructurePresent = taskToUpdate['structures']
-                    .any((str) => str['id'] == mstStructureId);
-
-                /// structue present
-                ///
-                ///
-                ///
-                print('STRUCTRE  PRESENTe $isStructurePresent');
-                var structure;
-
-                if (isStructurePresent) {
-                  debugPrint("STRUCTURE PRESNET PRESENT 1783");
-                  structure = taskToUpdate['structures'].firstWhere(
-                      (structure) => strcuture['id'] == mstStructureId);
-
-                  structure['structure_name'] = structureName;
-                  print(structure);
-
-                  print(structureName);
-                  print('structure above at ---------------1604');
-
-                  // if (totalIssuedMaterialDetails.length != 0) {
-                  //   structure['materials'].add(totalIssuedMaterialDetails[0]);
-                  // }
-
-                  // if (totalLabourDetails.length != 0) {
-                  //   structure['labour'].add(totalLabourDetails[0]);
-                  // }
-
-                  /// we are changing only quantity
-                  print(
-                      'str quantity before updating is ${structure['quantity']}');
-
-                  setState(() {
-                    structure['quantity'] = (structure['quantity'] ?? 0) + 1;
-                    print(_taskList);
-                    print('this is task id $taskId');
-
-                    var t = _taskList.firstWhere(
-                        (element) =>
-                            element['id'].toString() == taskId.toString(),
-                        orElse: () => {});
-
-                    print(t);
-
-                    print('T ABOVE');
-
-                    var s = t['structures'].firstWhere((ele) =>
-                        ele['id'].toString() == mstStructureId.toString());
-
-                    s['quantity'] = structure['quantity'];
-
-                    _showSaveMeasurementDetailsButton = true;
-                  });
-
-                  print(
-                      'str quantity after updating is ${structure['quantity']}');
-
-                  return location;
-                } else {
-                  print('STRUCTRE is not present PRESENT');
-
-                  /// strcuture not present
-                  var str = {};
-
-                  str['id'] = mstStructureId;
-                  str['structure_name'] = structureName;
-                  str['materials'] = [];
-                  str['labour'] = [];
-                  str['takenBacks'] = [];
-
-                  //          getUnitQuantity(
-                  //   Map<String, dynamic> jsonData,
-                  //   String type,
-                  //   int mstId,
-                  //   int mstStructureId,
-                  // )
-
-                  if (totalIssuedMaterialDetails.length != 0) {
-                    str['materials'].addAll(totalIssuedMaterialDetails);
-                  }
-
-                  print(str['materials']);
-                  print("str['materials'] above 3333");
-                  str['labour'] = [];
-                  if (totalLabourDetails.length != 0) {
-                    str['labour'].addAll(totalLabourDetails);
-                  }
-
-                  if (takenBacks.length != 0) {
-                    str['takenBacks'].addAll(takenBacks);
-                  }
-                  str['quantity'] = 1;
-
-                  // location['tasks'].add(task);
-
-                  var t1 = _taskList.firstWhere((element) =>
-                      element['id'].toString() == taskId.toString());
-                  t1['structures'].add(str);
-
-                  var t = t1['structures'];
-
-                  var s = t.firstWhere((ele) =>
-                      ele['id'].toString() == mstStructureId.toString());
-
-                  updateQuantityOfStructureInStrucureList(
-                      taskId, mstStructureId);
-
-                  setState(() {
-                    s['quantity'] = s['quantity'] ?? 0 + 1;
-                    _showSaveMeasurementDetailsButton = true;
-                  });
-
-                  return location;
-                }
-
-                ///
-                ///
-              } else {
-                print('our task id not present');
-
-                /// our task id not present
-                ///
-                ///
-                ///
-                var selectedTask = _tasks.firstWhere(
-                  (element) => element['id'].toString() == taskId.toString(),
-                  orElse: () {},
-                );
-                var task = {};
-                task['id'] = taskId;
-                task['task_name'] = selectedTask['task_name'];
-
-                var structure = {};
-
-                print('$structureName at last ');
-
-                structure['id'] = mstStructureId;
-                strcuture['structure_name'] = structureName;
-                structure['materials'] = [];
-                structure['labour'] = [];
-
-                structure['quantity'] = 1;
-
-                // _taskList.add(task);
-                var t = _taskList.firstWhere(
-                    (element) => element['id'].toString() == taskId.toString());
-
-                var s = t['structures']
-                    .firstWhere((ele) => ele['id'] == mstStructureId);
-                if (totalIssuedMaterialDetails.length != 0) {
-                  structure['materials'].addAll(totalIssuedMaterialDetails);
-                }
-
-                if (totalLabourDetails.length != 0) {
-                  structure['labour'].add(totalLabourDetails);
-                }
-
-                if (takenBacks.length != 0) {
-                  structure['labour'].add(takenBacks);
-                }
-
-                task['structures'] = [];
-
-                task['structures'].add(structure);
-
-                location['tasks'].add(task);
-                setState(() {
-                  // print(_taskList);
-
-                  // print('tasklist above');
-
-                  s['quantity'] = structure['quantity'];
-
-                  _showSaveMeasurementDetailsButton = true;
-                });
-
-                return location;
-              }
             }
+
+            // task['structures'] = [];
+
+            location['tasks'].add(task);
+            updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
+            _showSaveMeasurementDetailsButton = true;
 
             return location;
           }
+
+          return location;
         }));
 
         setState(() {
@@ -1983,53 +1797,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
     } catch (e) {
       print("$e is the try cathc error at 1975 of polvar");
     }
-    // return {...item, ...out};
-
-    // print(x);
-
-    // print('emasurement details above');
-
-    //task id// strucure/material & lab & taken back
-
-    // print(_selectedLocationIndex + 1);
-    // print('locationNo abobe @1134');
-
-    // print(out);
-
-    // print(totalIssuedMaterialDetails);
-
-    // print('---------');
-    // print(master);
-
-    // print('out above @ 1128 polvar');
-
-    // var out1 = measurementDetails.firstWhere(
-    //   (element) => element['locationNo'] == _selectedLocationIndex + 1,
-    //   orElse: () => {}, // Return null as the default value
-    // );
-
-    // var t = out1['tasks']
-    //     .firstWhere((element) => element['id'] == taskId, orElse: () => {});
-
-    // print(t);
-
-    // print('tabove at 2030');
-
-    // var st1 = t['structures'].firstWhere(
-    //     (element) => element['id'] == mstStructureId,
-    //     orElse: () => {});
-    // // .toList();
-
-    // print(st1['quantity'] ?? 'NIL');
-    // // print(st1);
-
-    // print('${st1['quantity']}  st1 ln 1142');
 
     _saveMeasurementDetails();
   }
 
-  String initiateTaskDetailsAndReturnStructureName(Map<dynamic, dynamic> task,
-      String taskId, int mstStructureId, String structureName) {
+  initiateTaskDetails(Map<dynamic, dynamic> task, String taskId,
+      int mstStructureId, String structureName) {
     task['id'] = taskId;
 
     var selectedTask = _tasks.firstWhere(
@@ -2040,21 +1813,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
     if (selectedTask != null && selectedTask['task_name'] != null) {
       task['task_name'] = selectedTask['task_name'];
 
-      var str1 = selectedTask['structures'].firstWhere(
-        (element) => element['id'].toString() == mstStructureId.toString(),
-        orElse: () {},
-      );
+      // var str1 = selectedTask['structures'].firstWhere(
+      //   (element) => element['id'].toString() == mstStructureId.toString(),
+      //   orElse: () {},
+      // );
 
-      print(str1);
-      print('str1 above @1488');
-      structureName = str1['structure_name'];
+      // print(str1);
+      // print('str1 above @1488');
+      // structureName = str1['structure_name'];
 
       print('---------------------------$structureName');
     } else {
       print('some issue with selectedTask name $selectedTask');
-      task['task_name'] = 'No avail';
+      task['task_name'] = 'Issue with task name';
     }
-    return structureName;
+    // return structureName;
   }
 
   void updateQuantityOfStructureInStrucureList(
@@ -2076,8 +1849,24 @@ class _PolVarScreenState extends State<PolVarScreen> {
     });
   }
 
-  void setIssuedmaterials(
-      totalIssuedMaterialDetails, Map<dynamic, dynamic> structure) {
+  void setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
+      int mstStructureId, Map<dynamic, dynamic> structure) {
+    print("this is issued materials $totalIssuedMaterialDetails");
+    if (totalIssuedMaterialDetails.length != 0) {
+      totalIssuedMaterialDetails.forEach((item) {
+        int mstMaterialId = item['mst_labour_id'] ?? 0;
+        // int mstStructureId = item['mst_labour_id'];
+
+        String quantity =
+            getUnitQuantity(jsonData, 'labour', mstMaterialId, mstStructureId);
+        item['quantity'] = quantity;
+
+        print("this is unit of labour quantity $quantity");
+      });
+
+      structure['labour'].addAll(totalIssuedMaterialDetails);
+    }
+
     if (totalIssuedMaterialDetails.length != 0) {
       structure['materials'].addAll(totalIssuedMaterialDetails);
 

@@ -139,7 +139,7 @@ class WorkSelection extends StatelessWidget {
                 'key': a['material_code'],
                 'code': a['material_code'],
                 'uom': a['mst_stock_uom']['uom_code'],
-                'rate': a['mst_material_rates']['rate'],
+                'rate': a['mst_material_rates'][0]['rate'],
 
                 'name': a['name'], 'mst_uom_id': a['mst_uom_id'],
 

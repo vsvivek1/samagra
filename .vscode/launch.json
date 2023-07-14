@@ -1,5 +1,8 @@
 {
     "configurations": [
     
-    ]
+    ],
+    "args": [
+        "--show-line-numbers"
+      ]
 }
