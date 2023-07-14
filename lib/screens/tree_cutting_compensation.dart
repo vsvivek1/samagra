@@ -298,7 +298,7 @@ class Work {
 
   factory Work.fromMap(Map<String, dynamic> map) {
     return Work(
-      workDetail: WorkDetail.fromMap(map['workDetail']),
+      workDetail: WorkDetail.fromMap(map['wrk_work_detail']),
     );
   }
 }

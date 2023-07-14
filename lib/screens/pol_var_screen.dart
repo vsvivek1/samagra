@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/utils.dart';
 import 'package:samagra/screens/arrow_with_text_painter.dart';
+import 'package:samagra/screens/custom_button_row.dart';
 import 'package:samagra/screens/editable_table.dart';
 import 'package:samagra/screens/location_details_widget.dart';
 import 'package:samagra/screens/location_list_screen.dart';
+import 'package:samagra/screens/location_measurement_progress.dart';
 import 'package:samagra/screens/location_measurement_view.dart';
 import 'package:samagra/screens/work_name_widget.dart';
 
@@ -121,6 +123,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
   var _viewFullLocationList = false;
 
   bool _showSpinnerForAsync = false;
+
+  var _selectedLocationHasGeoLocations = false;
+
+  var _selectedLocationHasMeasurements = false;
 
   void togglePlay() {
     setState(() {
@@ -561,6 +567,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _showSpinnerForAsync = true;
       if (measurementDetails != null) {
         int locationNumber = _selectedLocationIndex + 1;
+
         Map existingMeasurementDetails = measurementDetails.firstWhere(
             (element) => element['locationNo'] == locationNumber,
             orElse: () => {});
@@ -573,12 +580,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           print('locDetais new above');
 
-          existingMeasurementDetails = {
-            ...existingMeasurementDetails,
-            ...locDetails
-          };
+          if (locDetails.isNotEmpty) {
+            existingMeasurementDetails = {
+              ...existingMeasurementDetails,
+              ...locDetails
+            };
 
-          print(existingMeasurementDetails);
+            print(existingMeasurementDetails);
+          }
 
           print('new exiasting details above');
           int locationNumber = _selectedLocationIndex + 1;
@@ -816,19 +825,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 child: Row(children: [
                                   Column(
                                     children: [
-                                      LocationDetailsWidget(
-                                          hasLocationDetailsInStorage:
-                                              _hasLocationDetailsInStorage,
-                                          locationDetails: {},
-                                          updateLocationDetailsArray:
-                                              _updateLocationDetailsArray,
-                                          locationNo:
-                                              _selectedLocationIndex.toString(),
-                                          measurements: List<String>.from(
-                                            _selectedMeasurements,
-                                          ),
-                                          emitLocDetailsToPolVarWidget:
-                                              _handleEmitLocDetailsToPolVarWidget)
+                                      // _selectedLocationHasGeoLocations
+                                      if (!_selectedLocationHasGeoLocations)
+                                        LocationDetailsWidget(
+                                            hasLocationDetailsInStorage:
+                                                _hasLocationDetailsInStorage,
+                                            locationDetails: {},
+                                            updateLocationDetailsArray:
+                                                _updateLocationDetailsArray,
+                                            locationNo: _selectedLocationIndex
+                                                .toString(),
+                                            measurements: List<String>.from(
+                                              _selectedMeasurements,
+                                            ),
+                                            emitLocDetailsToPolVarWidget:
+                                                _handleEmitLocDetailsToPolVarWidget)
                                       // ,
 
                                       ,
@@ -1205,13 +1216,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   SizedBox showLocationButtons() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * .15,
+      height: MediaQuery.of(context).size.height * .3,
       // width: MediaQuery.of(context).size.height * 1.4,
       child: ListView.builder(
         itemCount: _numberOfLocations,
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
           var status = _getLocationMeasuredStatus(index);
+
+          bool hasGeoLocations = status['hasGeoLocations'] as bool;
+          bool hasMeasurements = status['hasMeasurements'] as bool;
 
           print(status);
           print('status above at 1076');
@@ -1228,6 +1242,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 status['geoCordinatesEnd'] as Map<dynamic, dynamic>;
           }
 
+          print("viii this is status $status");
           print(
               'geocordinates above @1095 is location ${index + 1} $geoCordinatesEnd and $geoCordinates');
           String distanceText = '0 Meters';
@@ -1260,27 +1275,90 @@ class _PolVarScreenState extends State<PolVarScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               GestureDetector(
-                onTap: () => _viewLocationDetail(index),
+                onTap: () => _viewLocationDetail(index, status),
                 child: Container(
                   margin: EdgeInsets.all(8.0),
-                  height: 175.0,
-                  color:
-                      (index == _tappedIndex) ? Colors.green : Colors.grey[300],
+                  color: (index == _tappedIndex)
+                      ? Color.fromARGB(255, 56, 96, 58)
+                      : Colors.grey[300],
                   child: Center(
                     child: Column(
+                      textBaseline: TextBaseline.alphabetic,
                       children: [
                         CircleAvatar(child: Text('L  ${(index + 1)}')),
 
+                        CustomButtonRow(
+                            locationNumber: (index + 1), workId: widget.workId),
+
+                        SizedBox(
+                          height: 18,
+                        ),
+
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
+                          onPressed: () {
+                            // Get the location number from the index.
+                            // int locationNo = measurementDetails[index];
+
+                            var locationNo = index + 1;
+
+                            // Show a confirmation dialog.
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('Delete Location?'),
+                                  content: Text(
+                                      'Are you sure you want to delete location number $locationNo?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        // Remove the location from the list.
+                                        measurementDetails.removeWhere(
+                                            (element) =>
+                                                element['locationNo'] ==
+                                                locationNo);
+
+                                        setState(() {});
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Delete'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        // Dismiss the dialog.
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+
                         Container(
-                            width: MediaQuery.of(context).size.width / 3.5,
+                            alignment: AlignmentDirectional.bottomStart,
+                            width: MediaQuery.of(context).size.width / 2.5,
                             child: SizedBox(
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                child: Text(
-                                  status['text'].toString(),
-                                  style: TextStyle(
-                                    color: status['color'] as Color,
-                                  ),
-                                ))),
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: LocationMeasurementProgress(
+                                    hasGeoLocations: hasGeoLocations,
+                                    hasMeasurements: hasMeasurements)
+
+                                //  Text(
+                                //   status['text'].toString(),
+                                //   style: TextStyle(
+                                //     color: status['color'] as Color,
+                                //   ),
+                                // )
+                                //
+                                )),
+
                         // Container(
                         //   width: MediaQuery.of(context).size.width / 3,
                         //   child: Flexible(
@@ -1712,11 +1790,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
           orElse: () => {}, // Return null as the default value
         );
 
-        var x = List.from(measurementDetails.map((location) {
+        // var x = List.from(measurementDetails.map((location) {
+
+        measurementDetails.forEach((location) {
           int locationNumber = _selectedLocationIndex + 1;
 
           if (location['locationNo'] != locationNumber) {
-            return location;
+            return; //location;
           }
 
           if (location['locationNo'] == locationNumber) {
@@ -1731,22 +1811,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
             }
 
             var task;
-            if (!(location['tasks'].any((task) => task['id'] == taskId))) {
+            if (!(location['tasks'].any((tsk) => tsk['id'] == taskId))) {
               print('Current task absent so adding current task');
 
               task = {};
+              initiateTaskDetails(task, taskId, mstStructureId, structureName);
             } else {
               task =
                   location['tasks'].firstWhere((task) => task['id'] == taskId);
             }
-
-            initiateTaskDetails(task, taskId, mstStructureId, structureName);
 
             if (task['structures'] == null) {
               task['structures'] = [];
             }
 
             if (task['structures'].any((s) => s['id'] == mstStructureId)) {
+              // print("STRCUTURE ALREADY PRESENT SO ADDING");
               var structure = task['structures'].firstWhere(
                   (s) => s['id'] == mstStructureId,
                   orElse: () => {});
@@ -1780,16 +1860,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
             updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
             _showSaveMeasurementDetailsButton = true;
 
-            return location;
+            return; // location;
           }
 
-          return location;
-        }));
+          return; // location;
+        }
+            // )
+            );
 
         setState(() {
-          if (x != null) {
-            measurementDetails = List.from(x);
-          }
+          // if (x != null) {
+          //   measurementDetails = List.from(x);
+          // }
 
           _fetchingMasterEstimate = false;
         });
@@ -1874,7 +1956,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
   }
 
-  void setLabourDetails(totalLabourDetails, jsonData, int mstStructureId,
+  void setLabourDetails(
+      totalLabourDetails,
+      jsonData,
+      int mstStructureId,
+
+      //function to add new labour to existing labour in the structure
       Map<dynamic, dynamic> structure) {
     if (totalLabourDetails.length != 0) {
       totalLabourDetails.forEach((item) {
@@ -1888,11 +1975,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
         print("this is unit of labour quantity $quantity");
       });
 
+      if (structure['labour'] == null) {
+        structure['labour'] = [];
+      }
+
       structure['labour'].addAll(totalLabourDetails);
     }
   }
 
   void setTakenBacks(takenBacks, Map<dynamic, dynamic> structure) {
+    // funcgtion to append taken backs of a strcuture to a strcutre
+
+    print("this is from taken backs 1991 $takenBacks");
     if (takenBacks.length != 0) {
       takenBacks.forEach((item) {
         // int mstLabourId = item['mst_labour_id'] ?? 0;
@@ -1904,6 +1998,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         //   print("this is unit of labour quantity $quantity");
         // });
+
+        if (structure['takenBacks'] == null) {
+          structure['takenBacks'] = [];
+        }
 
         structure['takenBacks'].addAll(takenBacks);
       });
@@ -2030,7 +2128,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
   }
 
-  _viewLocationDetail(int index) async {
+  _viewLocationDetail(int index, status) async {
     logCurrentFunction();
     print("this is new index of locations $index");
 
@@ -2074,6 +2172,28 @@ class _PolVarScreenState extends State<PolVarScreen> {
         widget.workId.toString(), _selectedLocationIndex);
 
     setState(() {
+      _selectedLocationHasGeoLocations = status['hasGeoLocations'];
+      _selectedLocationHasMeasurements = status['hasMeasurements'];
+
+      if (_selectedLocationHasGeoLocations) {
+        _handleEmitLocDetailsToPolVarWidget({});
+
+        print("HAS GEO LOCATIONS $_selectedLocationHasMeasurements ");
+        // _showAnotherLocationButton = true;
+        // _showSaveMeasurementDetailsButton = true;
+        // viewStructures = true;
+        // _enableEntryOfLocationDetails = false;
+
+        // _selectedLocationTasks = [];
+        // _selectedLocationDetails['tasks'] = [];
+        // _selectedLocationDetails = {};
+
+        // // _gotToAnotherLocation();
+        // // viewStructures = true;
+        // _enableEntryOfLocationDetails = false;
+        // // _fetchingMasterEstimate = false;
+      }
+
       _previoslySelectedIndex = _selectedLocationIndex;
       _selectedLocationIndex = index;
 
@@ -2093,7 +2213,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
 
     if (_selectedLocationDetails.isNotEmpty) {
-      _selectedLocationTasks = _selectedLocationDetails['tasks'];
+      if (_selectedLocationDetails['tasks'] == null) {
+        _selectedLocationTasks = [];
+      } else {
+        _selectedLocationTasks = _selectedLocationDetails['tasks'];
+      }
     }
   }
 
@@ -2181,7 +2305,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var measured = measurementDetails.length;
 
-    print("location no is ${locationNo} &&  measured is  ${measured}");
+    // print("location no is ${locationNo} &&  measured is  ${measured}");
+
     if (locationNo <= measured) {
       var locationEnd = measurementDetails.firstWhere(
         (element) => element['locationNo'] == (locationNo + 1),
@@ -2201,6 +2326,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print('location above at 1942');
 
     if (location.isEmpty) {
+      retObj['hasGeoLocations'] = false;
+      retObj['hasMeasurements'] = false;
       retObj['text'] = ' \n Not Started1';
       color = Color.fromARGB(255, 255, 82, 151);
       retObj['color'] = color;
@@ -2224,6 +2351,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
             '@2158 ${location['geoCordinates']} ${location['geoCordinates'].isEmpty}');
 
         retObj['text'] = ' \n No measurements';
+
+        retObj['hasGeoLocations'] = true;
+        retObj['hasMeasurements'] = false;
         color = Color.fromARGB(255, 255, 82, 229);
         retObj['color'] = color;
         return retObj;
@@ -2231,6 +2361,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
 
     retObj['text'] = ' \n Has measurements and Geo';
+
+    retObj['hasGeoLocations'] = true;
+    retObj['hasMeasurements'] = true;
+
     retObj['geoCordinates'] = location['geoCordinates'];
 
     if (locationNo <= measured) {

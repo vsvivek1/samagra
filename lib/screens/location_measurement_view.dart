@@ -184,7 +184,14 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
   Builder LabourView(structure, int structureIndex, int index) {
     if (structure != null && structure.containsKey('labour')) {
+      print("this is structreue $structure");
       final labour1 = structure['labour'];
+
+      // labour1.keys.forEach((key) {
+      //   print("this is key from 190 $key");
+      // });
+
+      print('from view this is labour $labour1');
       return Builder(builder: (context) {
         return Column(
           children: [
@@ -238,6 +245,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
   Builder TakenBackView(structure, int structureIndex, int index) {
     return Builder(builder: (context) {
+      var tb = structure['takenbacks'];
+
+      print('from view this is TAKEN BACKS tb');
       return Column(
         children: [
           Text(
@@ -256,7 +266,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 physics: ClampingScrollPhysics(),
                 itemCount: structure['materials'].length,
                 itemBuilder: (context, takenBackIndex) {
-                  final material = structure['takenbacks'][takenBackIndex];
+                  final takenBacks = structure['takenbacks'][takenBackIndex];
 
                   // final labour = structure['labour'][materialIndex];
 
@@ -265,7 +275,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                       Container(
                         padding: EdgeInsets.all(5.0),
                         child: Text(
-                          'Materials',
+                          'Taken Backs',
                           style: TextStyle(
                             color: Colors.grey[750],
                             fontSize: 15.0,
@@ -275,8 +285,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                       ),
                       ListTile(
                         title: Text(
-                            '${takenBackIndex + 1} : ${material['material_name']}'),
-                        subtitle: Text('Quantity: ${material['quantity']}'),
+                            '${takenBackIndex + 1} : ${takenBacks['material_name']}'),
+                        subtitle: Text('Quantity: ${takenBacks['quantity']}'),
                         trailing: IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {

@@ -250,42 +250,43 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.clear),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        _filteredItems = List.from(widget.schGrpList);
-                      });
-                    },
-                  ),
+            padding: const EdgeInsets.all(5.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search by Work code or Work Name',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.clear),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {
+                      _filteredItems = List.from(widget.schGrpList);
+                    });
+                  },
                 ),
-                onChanged: (value) {
-                  List<dynamic> schGrpList = List.from(widget.schGrpList);
-                  setState(() {
-                    _filteredItems = schGrpList
-                        .where((item) => item['wrk_work_detail']['work_name']
-                            .toLowerCase()
-                            .contains(value.toLowerCase()))
-                        .toList();
-                  });
-                },
               ),
+              onChanged: (value) {
+                List<dynamic> schGrpList = List.from(widget.schGrpList);
+                setState(() {
+                  _filteredItems = schGrpList
+                      .where((item) =>
+                          item['wrk_work_detail']['work_name']
+                              .toLowerCase()
+                              .contains(value.toLowerCase()) ||
+                          item['wrk_work_detail']['work_code']
+                              .toLowerCase()
+                              .contains(value.toLowerCase()))
+                      .toList();
+                });
+              },
             ),
           ),
           Expanded(
             child: GridView.builder(
               shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1,
+                crossAxisCount: 1,
+                childAspectRatio: 2,
               ),
               itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
@@ -333,15 +334,23 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey, width: 2.0),
                       ),
                       child: GridTile(
-                        header: Text(sl.toString()),
+                        header: Row(
+                          children: [
+                            CircleAvatar(child: Text(sl.toString())),
+                            Spacer(),
+                            Text('WorkId :$workId'),
+                          ],
+                        ),
                         child: Center(
-                          child: Text(item['wrk_work_detail']['work_name'] +
-                              '\n\n' 'WorkId :$workId'),
+                          child: Text('\n\n' +
+                              item['wrk_work_detail']['work_name'] +
+                              '\n\n' +
+                              '\n \n WorkCode: $workCode'),
                         ),
                       ),
                     ));
