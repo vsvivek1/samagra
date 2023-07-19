@@ -8,10 +8,12 @@ import 'package:get/utils.dart';
 import 'package:samagra/screens/arrow_with_text_painter.dart';
 import 'package:samagra/screens/custom_button_row.dart';
 import 'package:samagra/screens/editable_table.dart';
+import 'package:samagra/screens/file_helper.dart';
 import 'package:samagra/screens/location_details_widget.dart';
 import 'package:samagra/screens/location_list_screen.dart';
 import 'package:samagra/screens/location_measurement_progress.dart';
 import 'package:samagra/screens/location_measurement_view.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/work_name_widget.dart';
 
 import '../app_theme.dart';
@@ -544,21 +546,136 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return 0.toString();
   }
 
-  void sendObjectToServer(Object obj) async {
-    var url =
-        'http://192.168.1.215:3001/api/send-object'; // Replace with your server endpoint
+  void sendObjectToServer(obj) async {
+    // var url =
+    //     'http://192.168.1.215/api/send-object'; // Replace with your server endpoint
 
-    try {
-      var response = await Dio().post(url, data: obj);
+    // print(obj);
 
-      if (response.statusCode == 200) {
-        print('Object sent successfully!');
-      } else {
-        print('Request failed with status: ${response.statusCode}');
+    print(obj.runtimeType);
+
+    var o = List.from(obj);
+
+    var ts = [];
+
+    Map taskMeasurements = getTaskMeasurementList(obj);
+
+    Map strcutreMeasurements = getStructureMeasurementList(obj);
+
+    print(taskMeasurements);
+
+    print(strcutreMeasurements);
+    // var tasks = obj.forEach((o) => {
+    //       o['tasks'].forEach((t) => {ts.add(t['task_name'])})
+    //     });
+
+    print(ts.length);
+
+    // sendObjectViaEmail(obj);
+
+    return;
+
+    // final myObject = obj; // Replace with your own object
+    // final fileHelper = FileHelper();
+    // await fileHelper.saveObjectAsFile(myObject, 'myObject.json');
+
+    // return;
+    // try {
+    //   var response = await Dio().post(url, data: obj);
+
+    //   if (response.statusCode == 200) {
+    //     print('Object sent successfully!');
+    //   } else {
+    //     print('Request failed with status: ${response.statusCode}');
+    //   }
+    // } catch (e) {
+    //   print('Error: $e');
+    // }
+  }
+
+  Map getTaskMeasurementList(obj) {
+    List taskMeasurements = [];
+    Map tm = {};
+
+    Map<String, int> taskCounts = {};
+
+    for (var location in obj) {
+      List<Map<dynamic, dynamic>> tasks =
+          List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
+      for (var task in tasks) {
+        String taskName = task['id'] ?? 'Unknown Task';
+        if (taskCounts.containsKey(taskName)) {
+          if (taskCounts[taskName] == null) {
+            taskCounts[taskName] = 0;
+            taskCounts[taskName] = (taskCounts[taskName]! + 1);
+          }
+        } else {
+          taskCounts[taskName] = 1;
+        }
       }
-    } catch (e) {
-      print('Error: $e');
     }
+
+    print('Task Counts:');
+
+    taskCounts.forEach((taskName, count) {
+      Map taskMeasurement = {};
+      Map taskMeasurementDetails = {};
+
+      taskMeasurementDetails['quantity'] = count;
+      taskMeasurementDetails['mst_task_id'] = taskName;
+      taskMeasurementDetails['plg_work_id'] = widget.workId;
+
+      taskMeasurement[taskName] = taskMeasurementDetails;
+
+      tm[taskName] = taskMeasurement;
+    });
+    return tm;
+  }
+
+  Map getStructureMeasurementList(obj) {
+    List structureMeasurements = [];
+    List taskMeasurements = [];
+    Map<String, int> taskCounts = {};
+    Map<String, dynamic> structureCounts = {};
+
+    for (var location in obj) {
+      List<Map<dynamic, dynamic>> tasks =
+          List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
+      for (var task in tasks) {
+        List<Map<dynamic, dynamic>> structures =
+            List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
+
+// structures
+
+        for (var structure in structures) {
+          int structureId = structure['id'] ?? '-1';
+
+          if (structureCounts.containsKey(structureId)) {
+            Map struct = structureCounts[structureId];
+
+            struct["quantity"] = struct["quantity"] + 1;
+
+            structureCounts[structureId.toString()] = struct;
+          } else {
+            Map struct = {};
+
+            struct['mst_task_id'] = task['id'];
+            struct['id'] = structureId;
+            struct['wrk_schedule_group_structure_id'] = 'add it later';
+            struct['quantity'] = 1;
+            structureCounts[structureId.toString()] = struct;
+          }
+
+          // structureMeasurements.add()
+        }
+      }
+
+      return structureCounts;
+    }
+
+    print('Task Counts:');
+
+    return structureCounts;
   }
 
   _handleEmitLocDetailsToPolVarWidget(Map locDetails) async {
@@ -1216,7 +1333,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   SizedBox showLocationButtons() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * .3,
+      height: MediaQuery.of(context).size.height * .35,
       // width: MediaQuery.of(context).size.height * 1.4,
       child: ListView.builder(
         itemCount: _numberOfLocations,
@@ -1226,6 +1343,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           bool hasGeoLocations = status['hasGeoLocations'] as bool;
           bool hasMeasurements = status['hasMeasurements'] as bool;
+
+          // bool completed = hasGeoLocations && hasMeasurements;
 
           print(status);
           print('status above at 1076');
@@ -1280,7 +1399,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   margin: EdgeInsets.all(8.0),
                   color: (index == _tappedIndex)
                       ? Color.fromARGB(255, 56, 96, 58)
-                      : Colors.grey[300],
+                      : (hasGeoLocations && hasMeasurements)
+                          ? Color.fromARGB(74, 10, 54, 229)
+                          : Color.fromRGBO(241, 78, 3, 0.6),
                   child: Center(
                     child: Column(
                       textBaseline: TextBaseline.alphabetic,
@@ -1339,6 +1460,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               },
                             );
                           },
+                        ),
+
+                        IconButton(
+                          icon: Icon(Icons.play_circle_filled),
+                          onPressed: () {
+                            _viewLocationDetail(index, status);
+                            // Handle the button press
+                            // You can add the logic to navigate to the location detail
+                          },
+                          tooltip: 'GO',
                         ),
 
                         Container(
@@ -1764,24 +1895,25 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
 
-        var totalIssuedMaterialDetails = re['issues'];
+        var issuedMaterialsForSelectedStructure = re['issues'];
 
         // print(totalIssuedMaterialDetails);
         // print('issued materials above');
 
-        var totalLabourDetails =
+        var labourDetailsForSelectedStrutre =
             response.data['result_data']['labour_schedule'];
 
-        print("This is labour details from 1699  $totalLabourDetails");
+        print(
+            "This is labour details from 1699  $labourDetailsForSelectedStrutre");
 
         var result_data = response.data['result_data'];
-        var takenBacks = result_data['takenbacks'];
+        var takenBacksOfSelectedStructure = result_data['takenbacks'];
 
-        print(takenBacks);
+        print(takenBacksOfSelectedStructure);
 
         print('taken backs above 1707');
 
-        var jsonData = response.data['result_data'];
+        var responseDataForStructureDetails = response.data['result_data'];
 
         var master = response.data['result_data']['unit_master'];
 
@@ -1802,23 +1934,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
           if (location['locationNo'] == locationNumber) {
             // Create a copy of the original item with specified fields replaced
 
-            print(
-                "$location['tasks'].any((task) => task['id'] == taskId) is the task presence at 1742");
+            ;
 
             if (location['tasks'] == null) {
               print('No tasks in location so adding tasks array');
               location['tasks'] = [];
             }
 
-            var task;
-            if (!(location['tasks'].any((tsk) => tsk['id'] == taskId))) {
-              print('Current task absent so adding current task');
+            print(
+                "$location['tasks'].any((task) => task['id'] == taskId) is the task presence at 1");
 
-              task = {};
-              initiateTaskDetails(task, taskId, mstStructureId, structureName);
-            } else {
+            var ts = location['tasks'];
+
+            bool isTaskPresent =
+                location['tasks'].any((task) => task['id'] == taskId);
+            print(
+                "  this is b $isTaskPresent and task id is $taskId this is tasks at 1810 $ts");
+
+            var task;
+            if (isTaskPresent) {
               task =
                   location['tasks'].firstWhere((task) => task['id'] == taskId);
+
+              print('TASK PRESENT ');
+            } else {
+              print('TASK ABSENT SO INITATING  1831');
+              task = {};
+              initiateTaskDetails(task, taskId, mstStructureId, structureName);
             }
 
             if (task['structures'] == null) {
@@ -1832,26 +1974,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   orElse: () => {});
               structure['quantity'] = structure['quantity'] + 1;
             } else {
-              var structure = {};
-              structure['materials'] = [];
-              structure['labour'] = [];
-              structure['takenBack'] = [];
+              print("@@@@@@@@ STRCUTREU ADDING FROM HERE");
+              var selectedStructure = {};
+              selectedStructure['materials'] = [];
+              selectedStructure['labour'] = [];
+              selectedStructure['takenBack'] = [];
 
-              structure['quantity'] = 1;
-              structure['strcuture_name'] =
+              selectedStructure['quantity'] = 1;
+              selectedStructure['structure_name'] =
                   structureName ?? 'str Name Not Found';
-              structure['id'] = mstStructureId;
+              selectedStructure['id'] = mstStructureId;
 
               // setIssuedmaterials(totalIssuedMaterialDetails, structure);
               // setIssuedmaterials(totalIssuedMaterialDetails,);
-              setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
-                  mstStructureId, structure);
+              setIssuedmaterials(
+                  issuedMaterialsForSelectedStructure,
+                  responseDataForStructureDetails,
+                  mstStructureId,
+                  selectedStructure);
 
               setLabourDetails(
-                  totalLabourDetails, jsonData, mstStructureId, structure);
+                  labourDetailsForSelectedStrutre,
+                  responseDataForStructureDetails,
+                  mstStructureId,
+                  selectedStructure);
 
-              setTakenBacks(takenBacks, structure);
-              task['structures'].add(structure);
+              setTakenBacks(takenBacksOfSelectedStructure, selectedStructure);
+              task['structures'].add(selectedStructure);
             }
 
             // task['structures'] = [];
@@ -1988,23 +2137,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     print("this is from taken backs 1991 $takenBacks");
     if (takenBacks.length != 0) {
-      takenBacks.forEach((item) {
-        // int mstLabourId = item['mst_labour_id'] ?? 0;
-        // int mstStructureId = item['mst_labour_id'];
+      if (structure['takenBacks'] == null) {
+        structure['takenBacks'] = [];
+      }
+      structure['takenBacks'].addAll(takenBacks);
 
-        //   String quantity = getUnitQuantity(
-        //       jsonData, 'labour', mstLabourId, mstStructureId);
-        //   item['quantity'] = quantity;
+      // takenBacks.forEach((item) {
+      //   // int mstLabourId = item['mst_labour_id'] ?? 0;
+      //   // int mstStructureId = item['mst_labour_id'];
 
-        //   print("this is unit of labour quantity $quantity");
-        // });
+      //   //   String quantity = getUnitQuantity(
+      //   //       jsonData, 'labour', mstLabourId, mstStructureId);
+      //   //   item['quantity'] = quantity;
 
-        if (structure['takenBacks'] == null) {
-          structure['takenBacks'] = [];
-        }
+      //   //   print("this is unit of labour quantity $quantity");
+      //   // });
 
-        structure['takenBacks'].addAll(takenBacks);
-      });
+      //   if (structure['takenBacks'] == null) {
+      //     structure['takenBacks'] = [];
+      //   }
+      // });
     }
   }
 

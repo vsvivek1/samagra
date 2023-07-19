@@ -23,7 +23,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           final structureList = task["structures"].toList();
 
           // print(task["structures"]);
-          print('structes above');
 
           return Column(
             children: [
@@ -75,9 +74,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                               backgroundColor: Colors.blue[100],
                               child:
                                   Text('S' + (structureIndex + 1).toString())),
-                          title: structure['strcuture_name'] != null
+                          title: structure['structure_name'] != null
                               ? Text(
-                                  '${structure['strcuture_name']}',
+                                  '${structure['structure_name']}',
                                   style: TextStyle(
                                       color: Colors.blueGrey,
                                       fontSize: 12,
@@ -119,7 +118,18 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   }
 
   Builder MaterialsView(structure, int structureIndex, int index) {
-    int matLen = structure['materials'].length;
+    // int matLen = structure['materials'].length;
+
+    print('structes above');
+
+    int matLen = structure['labour'].length;
+    int labLen = structure['materials'].length;
+    int takenLen = structure['takenBacks']?.length ?? 0;
+
+    String name = structure['structure_name'];
+
+    print(
+        "$name material no $matLen and labour len $labLen and taen len $takenLen at 130 ");
 
     return Builder(builder: (context) {
       return Column(
@@ -184,7 +194,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
   Builder LabourView(structure, int structureIndex, int index) {
     if (structure != null && structure.containsKey('labour')) {
-      print("this is structreue $structure");
+// structure.
+
+      print("this is structreue 190 $structure");
       final labour1 = structure['labour'];
 
       // labour1.keys.forEach((key) {
@@ -245,13 +257,13 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
   Builder TakenBackView(structure, int structureIndex, int index) {
     return Builder(builder: (context) {
-      var tb = structure['takenbacks'];
+      var tb = structure['takenBacks'];
 
-      print('from view this is TAKEN BACKS tb');
+      print('from view this is TAKEN BACKS $tb');
       return Column(
         children: [
           Text(
-              structure.containsKey('takenbacks') == false
+              structure.containsKey('takenBacks') == false
                   ? "No Taken backs"
                   : "structure['structure_name']",
               style: TextStyle(
@@ -259,14 +271,14 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 fontSize: 15.0,
                 fontWeight: FontWeight.bold,
               )),
-          if (structure.containsKey('takenbacks'))
-            if (structure != null && structure.containsKey('materials'))
+          if (structure.containsKey('takenBacks'))
+            if (structure != null && structure.containsKey('takenBacks'))
               ListView.builder(
                 shrinkWrap: true,
                 physics: ClampingScrollPhysics(),
-                itemCount: structure['materials'].length,
+                itemCount: structure['takenBacks'].length,
                 itemBuilder: (context, takenBackIndex) {
-                  final takenBacks = structure['takenbacks'][takenBackIndex];
+                  final takenBacks = structure['takenBacks'][takenBackIndex];
 
                   // final labour = structure['labour'][materialIndex];
 
@@ -353,7 +365,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       context: context,
       builder: (context) {
         String newQuantity = widget.tasks[taskIndex]['structures']
-            [structureIndex]['takenBack'][takenBackIndex]['quantity'];
+            [structureIndex]['takenBacks'][takenBackIndex]['quantity'];
 
         return AlertDialog(
           title: Text('Edit Quantity'),
@@ -379,7 +391,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               onPressed: () {
                 setState(() {
                   widget.tasks[taskIndex]['structures'][structureIndex]
-                      ['materials'][takenBackIndex]['quantity'] = newQuantity;
+                      ['takenBacks'][takenBackIndex]['quantity'] = newQuantity;
                 });
                 Navigator.of(context).pop();
               },

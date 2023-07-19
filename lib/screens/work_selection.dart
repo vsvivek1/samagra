@@ -250,19 +250,22 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(10.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search by Work code or Work Name',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() {
-                      _filteredItems = List.from(widget.schGrpList);
-                    });
-                  },
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {
+                        _filteredItems = List.from(widget.schGrpList);
+                      });
+                    },
+                  ),
                 ),
               ),
               onChanged: (value) {
