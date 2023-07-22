@@ -553,7 +553,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // print(obj);
 
-    print(obj.runtimeType);
+    // print(obj.runtimeType);
 
     var o = List.from(obj);
 
@@ -561,9 +561,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     Map taskMeasurements = getTaskMeasurementList(obj);
 
+    // print("TASk measurements $taskMeasurements");
+
     Map strcutreMeasurements = getStructureMeasurementList(obj);
 
-    print(taskMeasurements);
+    return;
 
     print(strcutreMeasurements);
 
@@ -617,7 +619,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     }
 
-    print('Task Counts:');
+    // print('Task Counts:');
 
     taskCounts.forEach((taskName, count) {
       Map taskMeasurement = {};
@@ -659,9 +661,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // print(obj);
 
     // List structureMeasurements = [];
-    List materialMeasurements = [];
-    List labourMeasurements = [];
-    List materialTakenBackMeasurements = [];
+    Map materialMeasurements = {};
+    Map labourMeasurements = {};
+    Map materialTakenBackMeasurements = {};
 
     for (var location in obj) {
       List<Map<dynamic, dynamic>> tasks =
@@ -681,39 +683,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
         }
 
         Map<String, Map<String, dynamic>> structureMeasurement = {};
+
         for (var structure in structures) {
-          print("$structure['id'] is str id");
+          // print("STRCUTRE ID $structure is str id");
           updateStructureMeasurements(structureMeasurements, structure['id']);
-
-          print("${structureMeasurements.length} is len");
-// structures.forEach()
-
-          // print(structure);
-          // structure.forEach( (element)=>
-
-          //  {
-
-          //   print("this is object id  $objectId");
-          //   print("this is object id  $objectData");
-          //   final String mstStructureId =
-          //       objectData['mst_structure_id'].toString();
-          //   final String mstTaskId = objectData['mst_task_id'].toString();
-          //   final String wrkScheduleGroupStructureId =
-          //       objectData['wrk_schedule_group_structure_id'].toString();
-          //   // final int quantity = int.parse(objectData['quantity'].toString());
-
-          //   if (uniqueObjectsWithQuantity.containsKey(objectId)) {
-          //     uniqueObjectsWithQuantity[objectId]!['quantity'] =
-          //         uniqueObjectsWithQuantity[objectId]!['quantity'] + 1;
-          //   } else {
-          //     uniqueObjectsWithQuantity[objectId] = {
-          //       'mst_structure_id': mstStructureId,
-          //       'mst_task_id': mstTaskId,
-          //       'wrk_schedule_group_structure_id': wrkScheduleGroupStructureId,
-          //       'quantity': 1,
-          //     };
-          //   }
-          // });
 
           List<Map<dynamic, dynamic>> materials =
               List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
@@ -723,6 +696,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           List<Map<dynamic, dynamic>> takenBacks =
               List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
+
+          int labourLen = labours.length;
+          int takenbackLen = takenBacks.length;
+
+          updateMaterialmeasurements(materialMeasurements, materials);
         }
 
         // List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
@@ -731,7 +709,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     }
 
-    print(structureMeasurements);
+    print("Strcutre measurement  is this $structureMeasurements");
 
     // print(obj.length);
     return {};
@@ -2682,5 +2660,89 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   _viewMeasurementDetilsOfLocation(context) {
     // ViewTabbedViewOfComponentsInLocation._showComponentPopup( context);
+  }
+
+  void updateMaterialmeasurements(
+      Map materialMeasurements, List<Map> materials) {
+    int materialLen = materials.length;
+
+    for (Map material in materials) {
+      // print("Material $material");
+
+      Map<dynamic, dynamic> result = createMaterialMeasurementObject(material);
+
+      print("RESULT $result");
+
+      debugger;
+
+      appendToMaterialMeasurements(materialMeasurements, result);
+
+      // Destructuring the 'result' map
+      String key = result["key"];
+
+      Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
+
+      // print("KEY $key");
+
+      String materialId = material['mst_material_id'].toString();
+      if (materialMeasurements.containsKey(materialId)) {
+        materialMeasurements[materialId]['quantity'] =
+            materialMeasurements[materialId]['quantity'] + 1;
+      } else {
+        Map mat = {};
+        materialMeasurements[materialId] = mat;
+        mat['material_name'] = material['material_name'];
+        mat['quantity'] = 1;
+      }
+    }
+
+    print("MATERIAL MEASUREMENTS $materialMeasurements");
+    debugger;
+
+    print("MATERIALmeasurements only $materialMeasurements");
+
+    // print("This is materials $materials");
+  }
+
+  Map<dynamic, dynamic> createMaterialMeasurementObject(
+      Map<dynamic, dynamic> materialObject) {
+    String key =
+        "${materialObject["wrk_execution_material_schedule_id"]}_${materialObject["mst_material_id"]}_${materialObject["mst_uom_id"]}";
+
+    Map<String, dynamic> materialMeasurement = {
+      "wrk_execution_material_schedule_id":
+          materialObject["wrk_execution_material_schedule_id"],
+      "wrk_material_allocation_item_id":
+          materialObject["wrk_material_allocation_item_id"],
+      "mst_material_id": materialObject["mst_material_id"],
+      "material_name": materialObject["material_name"],
+      "material_code": materialObject["material_code"],
+      "mst_material_status_id": materialObject["mst_material_status_id"],
+      "mst_material_status": materialObject["mst_material_status"],
+      "mst_uom_id": materialObject["mst_uom_id"],
+      "uom_code": materialObject["uom_code"],
+      "supply_mode": materialObject["supply_mode"],
+      "batch_id": materialObject["batch_id"],
+      "rate": materialObject["rate"],
+      "quantity": materialObject["quantity"],
+    };
+
+    return {
+      "key": key,
+      "materialMeasurement": materialMeasurement,
+    };
+  }
+
+  void appendToMaterialMeasurements(Map materialMeasurements, Map result) {
+    String key = result["key"];
+    Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
+
+    if (materialMeasurements.containsKey(key)) {
+      materialMeasurements[key]['quantity'] = materialMeasurements[key]
+              ['quantity'] +
+          materialMeasurement['quantity'];
+    } else {
+      materialMeasurement[key] = materialMeasurement;
+    }
   }
 }
