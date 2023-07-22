@@ -10,7 +10,7 @@ class DirectMeasurementScreen extends StatelessWidget {
         title: Text('Direct measurement'),
       ),
       body: Center(
-        child: Text('Direct measurement screen'),
+        child: Text('Direct measurement screen .. Under developement'),
       ),
     );
   }

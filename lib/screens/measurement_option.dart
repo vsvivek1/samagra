@@ -32,6 +32,9 @@ class MeasurementOptionScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Color.fromARGB(255, 148, 148, 148))),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -42,18 +45,21 @@ class MeasurementOptionScreen extends StatelessWidget {
                 child: Text('Direct measurement'),
               ),
               SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DirectMeasurementScreen()),
-                  );
-                },
-                child: Text('Polarimetric variables'),
-              ),
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) => DirectMeasurementScreen()),
+              //     );
+              //   },
+              //   child: Text('Polarimetric variables'),
+              // ),
               SizedBox(height: 16.0),
               ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Color.fromARGB(255, 148, 148, 148))),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -64,7 +70,7 @@ class MeasurementOptionScreen extends StatelessWidget {
                             workCode: this.workCode)),
                   );
                 },
-                child: Text('measure with a Pol Var'),
+                child: Text('Measure with a Pol Var'),
               ),
             ],
           ),

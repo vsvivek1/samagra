@@ -14,6 +14,7 @@ import 'package:samagra/screens/location_list_screen.dart';
 import 'package:samagra/screens/location_measurement_progress.dart';
 import 'package:samagra/screens/location_measurement_view.dart';
 import 'package:samagra/screens/send_to_mail.dart';
+import 'package:samagra/screens/view_tabbed_view_of_components_in_location.dart';
 import 'package:samagra/screens/work_name_widget.dart';
 
 import '../app_theme.dart';
@@ -546,7 +547,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return 0.toString();
   }
 
-  void sendObjectToServer(obj) async {
+  void sendObjectToSamagra(obj) async {
     // var url =
     //     'http://192.168.1.215/api/send-object'; // Replace with your server endpoint
 
@@ -565,6 +566,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print(taskMeasurements);
 
     print(strcutreMeasurements);
+
     // var tasks = obj.forEach((o) => {
     //       o['tasks'].forEach((t) => {ts.add(t['task_name'])})
     //     });
@@ -632,16 +634,115 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return tm;
   }
 
+  void updateStructureMeasurements(
+      List<Map<String, dynamic>> structureMeasurements, int targetId) {
+    bool structureExists =
+        structureMeasurements.any((structure) => structure['id'] == targetId);
+
+    if (structureExists) {
+      // Increment the quantity if the structure exists
+      structureMeasurements
+          .firstWhere((structure) => structure['id'] == targetId)
+          .update('quantity', (value) => value + 1);
+    } else {
+      // If the structure does not exist, add it with quantity 1
+      structureMeasurements.add({'id': targetId, 'quantity': 1});
+    }
+  }
+
   Map getStructureMeasurementList(obj) {
-    List structureMeasurements = [];
+    List<Map<String, dynamic>> structureMeasurements = [];
     List taskMeasurements = [];
     Map<String, int> taskCounts = {};
     Map<String, dynamic> structureCounts = {};
 
+    // print(obj);
+
+    // List structureMeasurements = [];
+    List materialMeasurements = [];
+    List labourMeasurements = [];
+    List materialTakenBackMeasurements = [];
+
     for (var location in obj) {
       List<Map<dynamic, dynamic>> tasks =
           List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
+
+      if (tasks.isEmpty) {
+        continue;
+      }
+
       for (var task in tasks) {
+        // print(task);
+        List<Map<dynamic, dynamic>> structures =
+            List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
+
+        if (structures.isEmpty) {
+          continue;
+        }
+
+        Map<String, Map<String, dynamic>> structureMeasurement = {};
+        for (var structure in structures) {
+          print("$structure['id'] is str id");
+          updateStructureMeasurements(structureMeasurements, structure['id']);
+
+          print("${structureMeasurements.length} is len");
+// structures.forEach()
+
+          // print(structure);
+          // structure.forEach( (element)=>
+
+          //  {
+
+          //   print("this is object id  $objectId");
+          //   print("this is object id  $objectData");
+          //   final String mstStructureId =
+          //       objectData['mst_structure_id'].toString();
+          //   final String mstTaskId = objectData['mst_task_id'].toString();
+          //   final String wrkScheduleGroupStructureId =
+          //       objectData['wrk_schedule_group_structure_id'].toString();
+          //   // final int quantity = int.parse(objectData['quantity'].toString());
+
+          //   if (uniqueObjectsWithQuantity.containsKey(objectId)) {
+          //     uniqueObjectsWithQuantity[objectId]!['quantity'] =
+          //         uniqueObjectsWithQuantity[objectId]!['quantity'] + 1;
+          //   } else {
+          //     uniqueObjectsWithQuantity[objectId] = {
+          //       'mst_structure_id': mstStructureId,
+          //       'mst_task_id': mstTaskId,
+          //       'wrk_schedule_group_structure_id': wrkScheduleGroupStructureId,
+          //       'quantity': 1,
+          //     };
+          //   }
+          // });
+
+          List<Map<dynamic, dynamic>> materials =
+              List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
+
+          List<Map<dynamic, dynamic>> labours =
+              List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
+
+          List<Map<dynamic, dynamic>> takenBacks =
+              List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
+        }
+
+        // List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
+
+        // print("this is tasks $tasks");
+      }
+    }
+
+    print(structureMeasurements);
+
+    // print(obj.length);
+    return {};
+    for (var location in obj) {
+      print('locatiuon $location');
+
+      List<Map<dynamic, dynamic>> tasks =
+          List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
+
+      for (var task in tasks) {
+        print(task);
         List<Map<dynamic, dynamic>> structures =
             List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
 
@@ -656,6 +757,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             struct["quantity"] = struct["quantity"] + 1;
 
             structureCounts[structureId.toString()] = struct;
+
+            print("existing struct  $struct");
           } else {
             Map struct = {};
 
@@ -664,6 +767,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             struct['wrk_schedule_group_structure_id'] = 'add it later';
             struct['quantity'] = 1;
             structureCounts[structureId.toString()] = struct;
+
+            print("new struct  $struct");
           }
 
           // structureMeasurements.add()
@@ -673,7 +778,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return structureCounts;
     }
 
-    print('Task Counts:');
+    print('structre counts:');
 
     return structureCounts;
   }
@@ -901,7 +1006,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 Spacer(),
                                 ElevatedButton(
                                     onPressed: () => {
-                                          sendObjectToServer(measurementDetails)
+                                          sendObjectToSamagra(
+                                              measurementDetails)
                                         },
                                     child: Text('Save to samagra')),
                               ],
@@ -917,7 +1023,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               child: Row(
                                 children: [
                                   Visibility(
-                                    visible: _showSaveMeasurementDetailsButton,
+                                    visible:
+                                        _showSaveMeasurementDetailsButton &&
+                                            false,
                                     child: ElevatedButton(
                                         onPressed: () =>
                                             {_saveMeasurementDetails()},
@@ -990,18 +1098,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           //   padding: const EdgeInsets.all(8.0),
                           //   child: Text('Full Location details nelow'),
                           // ),
-                          ElevatedButton(
-                              onPressed: () => {
-                                    setState(
-                                      () {
-                                        _viewFullLocationList =
-                                            !_viewFullLocationList;
-                                      },
-                                    )
-                                  },
-                              child: Text(_viewFullLocationList
-                                  ? 'View All Locations'
-                                  : "Hide Detailed View")),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: ElevatedButton(
+                                onPressed: () => {
+                                      setState(
+                                        () {
+                                          _viewFullLocationList =
+                                              !_viewFullLocationList;
+                                        },
+                                      )
+                                    },
+                                child: Text(_viewFullLocationList
+                                    ? 'Hide Detailed View of Locations'
+                                    : "View Detailed View of Locations")),
+                          ),
 
                           Visibility(
                             visible: _viewFullLocationList,
@@ -1408,8 +1519,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       children: [
                         CircleAvatar(child: Text('L  ${(index + 1)}')),
 
-                        CustomButtonRow(
-                            locationNumber: (index + 1), workId: widget.workId),
+                        Visibility(
+                          visible: hasMeasurements,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Map obj = measurementDetails.firstWhere(
+                                (element) => element['locationNo'] == index + 1,
+                                orElse: () => {},
+                              );
+                              ViewTabbedViewOfComponentsInLocation
+                                  .showComponentsPopUp(context, obj);
+                            },
+                            child: Text('Show Components'),
+                          ),
+                        ),
+
+                        // CustomButtonRow(
+                        //     locationNumber: (index + 1), workId: widget.workId),
 
                         SizedBox(
                           height: 18,
@@ -1463,7 +1589,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         ),
 
                         IconButton(
-                          icon: Icon(Icons.play_circle_filled),
+                          color: Colors.amber,
+                          icon: Icon(Icons.view_agenda),
                           onPressed: () {
                             _viewLocationDetail(index, status);
                             // Handle the button press
@@ -2551,5 +2678,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   _enterLocationDetails(int index) {
     var _selectedLocationIndex = index;
+  }
+
+  _viewMeasurementDetilsOfLocation(context) {
+    // ViewTabbedViewOfComponentsInLocation._showComponentPopup( context);
   }
 }

@@ -26,16 +26,41 @@ class _PhoneBookState extends State<PhoneBook> {
   }
 
   callNumber(String number) async {
-    String url = 'tel:$number';
-    if (await canLaunch(url)) {
-      await launch(url);
+    String sanitizedNumber = number.replaceAll(RegExp(r'[^0-9]'), '');
+    if (sanitizedNumber.isNotEmpty) {
+      String url = 'tel:$sanitizedNumber';
+      try {
+        await launch(url);
+      } catch (e) {
+        // Handle the error here, e.g., show a SnackBar
+        showSnackBar('Error: Could not initiate the phone call');
+      }
     } else {
-      throw 'Could not launch $url';
+      throw 'Invalid phone number: $number';
     }
+  }
+
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    List<dynamic> filteredPhoneData = phoneData.where((data) {
+      String officeName = data['office_name'].toLowerCase();
+      String name = data['name'].toLowerCase();
+      String phoneNumber = data['phone']?.toLowerCase() ?? '';
+      String searchTermLowerCase = searchTerm.toLowerCase();
+      return officeName.contains(searchTermLowerCase) ||
+          name.contains(searchTermLowerCase) ||
+          phoneNumber.contains(searchTermLowerCase);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("PhoneBook"),
@@ -58,25 +83,16 @@ class _PhoneBookState extends State<PhoneBook> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: phoneData.length,
+              itemCount: filteredPhoneData.length,
               itemBuilder: (context, index) {
-                var data = phoneData[index];
-                if (searchTerm.isNotEmpty &&
-                    !data['office_name']
-                        .toLowerCase()
-                        .contains(searchTerm.toLowerCase()) &&
-                    !data['name']
-                        .toLowerCase()
-                        .contains(searchTerm.toLowerCase())) {
-                  return Container();
-                }
+                var data = filteredPhoneData[index];
                 return ListTile(
                   title: Text("${data['office_name']} - ${data['name']}"),
-                  subtitle: Text(data['phone_number'] ?? ''),
+                  subtitle: Text(data['phone'] ?? ''),
                   trailing: IconButton(
                     icon: Icon(Icons.call),
                     onPressed: () {
-                      callNumber(data['phone_number'] ?? '');
+                      callNumber(data['phone'] ?? '');
                     },
                   ),
                 );

@@ -46,6 +46,15 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        tabBarTheme: TabBarTheme(
+          labelColor:
+              Colors.white, // Set the text color of the selected tab to white
+          unselectedLabelColor:
+              Colors.grey, // Set the text color of unselected tabs to grey
+          indicator: BoxDecoration(
+            color: Colors.grey, // Set the indicator color to grey
+          ),
+        ),
         primarySwatch: Colors.blue,
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.iOS,
