@@ -14,6 +14,7 @@ import 'package:samagra/screens/location_list_screen.dart';
 import 'package:samagra/screens/location_measurement_progress.dart';
 import 'package:samagra/screens/location_measurement_view.dart';
 import 'package:samagra/screens/send_to_mail.dart';
+import 'package:samagra/screens/speak_text.dart';
 import 'package:samagra/screens/view_tabbed_view_of_components_in_location.dart';
 import 'package:samagra/screens/work_name_widget.dart';
 
@@ -709,7 +710,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     }
 
-    print("Strcutre measurement  is this $structureMeasurements");
+    // print("Strcutre measurement  is this $structureMeasurements");
+
+    // speakText('നമസ്കാരം, ഇത് മലയാളം ആവാസം ആണ്‌.');
+
+    // await flutterTts.speak('നമസ്കാരം, ഇത് മലയാളം ആവാസം ആണ്‌.');
 
     // print(obj.length);
     return {};
@@ -946,16 +951,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                           // for showing loading issued material
                         ],
-                        Visibility(
-                          visible: _selectedLocationTasks.length > 0,
-                          child: SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.5,
-                            child: LocationMeasurementView(
-                              tasks: List<Map<dynamic, dynamic>>.from(
-                                  _selectedLocationTasks),
-                            ),
-                          ),
-                        ),
                         if ((!_enableEntryOfLocationDetails &&
                             _numberOfLocations > 0 &&
                             _numberOfLocations < 999 &&
@@ -1016,6 +1011,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                         child: Text('Submit to Samagara')),
                                   ),
                                 ],
+                              ),
+                            ),
+                          ),
+
+                          Visibility(
+                            visible: _selectedLocationTasks.length > 0,
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              child: LocationMeasurementView(
+                                tasks: List<Map<dynamic, dynamic>>.from(
+                                    _selectedLocationTasks),
                               ),
                             ),
                           ),
@@ -2670,6 +2676,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // print("Material $material");
 
       Map<dynamic, dynamic> result = createMaterialMeasurementObject(material);
+
+      speakText('result oflogin request below');
 
       print("RESULT $result");
 

@@ -33,8 +33,10 @@ class WorkSelection extends StatelessWidget {
     InternetConnectivity.showInternetConnectivityToast(context);
     return Scaffold(
       appBar: AppBar(
+        leading: null,
+        automaticallyImplyLeading: false,
         backgroundColor: AppTheme.grey.withOpacity(0.7),
-        title: Text('Select an Work'),
+        title: Text('Select a Work'),
       ),
       body: Theme(
         data: ThemeData(buttonColor: AppTheme.grey.withOpacity(0.9)),
@@ -376,6 +378,7 @@ class OptionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: null,
           title: Text(itemName),
         ),
         body: Center(

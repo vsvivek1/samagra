@@ -6,7 +6,7 @@ import 'package:mailer/smtp_server.dart';
 String username = 'samagramobile@gmail.com';
 String password = 'rbjjsxhxpdmgxbtq';
 
-void sendObjectViaEmail(dynamic object) async {
+void gmailMe(dynamic object) async {
   // print()
   final smtpServer = gmail(username, password);
   //  final smtpServer = gmail(username, password);

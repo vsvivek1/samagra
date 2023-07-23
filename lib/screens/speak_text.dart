@@ -1,14 +1,28 @@
 import 'package:flutter_tts/flutter_tts.dart';
-
-final FlutterTts flutterTts = FlutterTts();
+import 'package:samagra/screens/send_to_mail.dart';
 
 void speakText(String text) async {
-  await flutterTts.setLanguage("en-US");
-  await flutterTts.setPitch(1.0);
-  await flutterTts.setSpeechRate(1.0);
+  final FlutterTts flutterTts = FlutterTts();
+  await flutterTts.setLanguage("en-IN");
+  // await flutterTts.setPitch(.5);
+  // await flutterTts.setSpeechRate(.5);
+
+  await flutterTts.setPitch(1.0); // Adjust this value as needed
+
+  // Configure the speech rate for a slower speech (range: 0.0 to 1.0)
+  await flutterTts.setSpeechRate(0.4);
+
+  await flutterTts.setLanguage('ml-IN');
+
+  List<dynamic> voices = await flutterTts.getVoices;
+
+  print(voices);
+
+  // gmailMe(voices);
+
   await flutterTts.speak(text);
 }
 
-// prasan@205
+// pras@205
 
 // prasan@205

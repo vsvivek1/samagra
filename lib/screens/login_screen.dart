@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
+import 'package:samagra/screens/speak_text.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
 
@@ -519,6 +520,8 @@ class _LoginScreenState extends State<LoginScreen> {
       String showPhoto = '1';
 
       _password = "uat123";
+      //_password = "pras@205";
+      //1049878
 
       await _setSavedUserNameAndPassword(email, _password);
 
@@ -536,7 +539,17 @@ class _LoginScreenState extends State<LoginScreen> {
       if (result == -1 || result['result_flag'] == -1) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
             content: Text('Invalid Credentials'),
-            duration: Duration(seconds: 3))));
+            duration: Duration(seconds: 5))));
+
+        if (occation == 'regular') {
+          setState(() {
+            _isLoggingIn = 0;
+          });
+        } else {
+          setState(() {
+            _firstTimeLoginSpinner = 1;
+          });
+        }
 
         return Future(() => '');
       }
@@ -817,7 +830,16 @@ class MyAPI {
         return Future(() => result);
       }
 
+      print("MESSAGE HERE $response");
+
       if (response.statusCode != 200 || response.data['result_flag'] == -1) {
+        // String resultMessage = response['result_message'];
+
+        // String resultMessage = response.result_message;
+
+        // ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+        //     content: Text("$resultMessage"), duration: Duration(seconds: 3))));
+
         print(response);
         return -1;
       }
