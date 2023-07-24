@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:samagra/app_theme.dart';
+import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/speak_text.dart';
@@ -257,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               Text(
                                                 '$username ',
                                                 style: TextStyle(
-                                                    color: Colors.grey[500],
+                                                    color: ksebColor,
                                                     fontSize: 24,
                                                     fontWeight:
                                                         FontWeight.bold),
@@ -270,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       backgroundColor:
                                                           MaterialStateProperty
                                                               .all<Color>(
-                                                                  Colors.grey),
+                                                                  ksebColor),
                                                     ),
                                                     onPressed: () {
                                                       _handleBiometricLogin(
@@ -286,7 +287,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       backgroundColor:
                                                           MaterialStateProperty
                                                               .all<Color>(
-                                                                  Colors.grey),
+                                                                  ksebColor),
                                                     ),
                                                     onPressed: () {
                                                       // Handle login with pin
@@ -423,8 +424,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         backgroundColor:
                                                             MaterialStateProperty
                                                                 .all<Color>(
-                                                                    Colors
-                                                                        .grey),
+                                                                    ksebColor),
                                                       ),
                                                       child: Text('Yes'),
                                                       onPressed: () {
@@ -450,8 +450,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(20.0),
                                           ),
-                                          fillColor: Color.fromARGB(
-                                              255, 196, 194, 194),
+                                          fillColor: ksebColor
+
+                                          // Color.fromARGB(
+                                          //     255, 196, 194, 194)
+
+                                          ,
                                           padding: EdgeInsets.all(10.0),
                                         ),
                                         SizedBox(height: 30, width: 40),
@@ -465,7 +469,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     backgroundColor:
                                                         MaterialStateProperty
                                                             .all<Color>(
-                                                                Colors.grey),
+                                                                ksebColor),
                                                   ),
                                                   onPressed: () async {
                                                     await proceedForLogin(
