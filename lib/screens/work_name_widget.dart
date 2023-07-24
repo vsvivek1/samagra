@@ -15,25 +15,25 @@ class WorkNameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20, top: 20),
-      padding: EdgeInsets.all(16.0),
+      margin: EdgeInsets.only(bottom: 10, top: 10),
+      padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(3.0),
         boxShadow: [
           BoxShadow(
             color: Colors.blueAccent.withOpacity(0.9),
-            blurRadius: 5.0,
-            offset: Offset(0, 3),
+            blurRadius: 3.0,
+            offset: Offset(0, 1),
           ),
         ],
       ),
       child: Text(
         label + workName,
         style: TextStyle(
-            fontStyle: FontStyle.italic,
+            // fontStyle: FontStyle.italic,
             fontFamily: 'Verdana',
-            fontSize: 18.0,
+            fontSize: 12.0,
             fontWeight: FontWeight.bold,
             color: color),
       ),

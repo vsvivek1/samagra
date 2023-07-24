@@ -419,7 +419,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     logCurrentFunction();
     final data = await getWorkDetails(widget.workId.toString());
 
-    print(data);
+    // print(data);
 
     print('data above 277');
 
@@ -461,7 +461,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           measurementDetails = measurementDetails1;
 
-          print(measurementDetails);
+          getTasksofSelectedLocation();
+
+          // print(measurementDetails);
 
           print(' measurementDetails @n393');
 
@@ -686,6 +688,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         Map<String, Map<String, dynamic>> structureMeasurement = {};
 
         for (var structure in structures) {
+          gmailMe(structure);
           // print("STRCUTRE ID $structure is str id");
           updateStructureMeasurements(structureMeasurements, structure['id']);
 
@@ -693,7 +696,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
 
           List<Map<dynamic, dynamic>> labours =
-              List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
+              List<Map<dynamic, dynamic>>.from(structure['labours'] ?? []);
 
           List<Map<dynamic, dynamic>> takenBacks =
               List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
@@ -701,7 +704,27 @@ class _PolVarScreenState extends State<PolVarScreen> {
           int labourLen = labours.length;
           int takenbackLen = takenBacks.length;
 
-          updateMaterialmeasurements(materialMeasurements, materials);
+          if (materials.length > 0) {
+            updateMaterialmeasurements(materialMeasurements, materials);
+          }
+
+          if (labours.length > 0) {
+            gmailMe(labours);
+
+// wrkExecutionLabourScheduleId: {
+//         "wrk_execution_schedule_id": inputData["id"].toString(),
+//         "wrk_execution_labour_schedule_id": wrkExecutionLabourScheduleId,
+//         "mst_labour_id": labourEntry["mst_labour_id"].toString(),
+//         "quantity": [labourEntry["quantity"]],
+
+//       }
+
+            // gmailMe(labours);
+// updateMaterialmeasurements(materialMeasurements, materials);
+          }
+
+          print("LABOURr  $labours");
+          // debugger;
         }
 
         // List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
@@ -1016,16 +1039,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           ),
 
                           Visibility(
-                            visible: _selectedLocationTasks.length > 0,
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              child: LocationMeasurementView(
-                                tasks: List<Map<dynamic, dynamic>>.from(
-                                    _selectedLocationTasks),
-                              ),
-                            ),
-                          ),
-                          Visibility(
                             visible: _selectedLocationIndex != -1,
                             child: IntrinsicHeight(
                               child: SizedBox(
@@ -1082,6 +1095,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           //   padding: const EdgeInsets.all(8.0),
                           //   child: Text('Full Location details nelow'),
                           // ),
+
+                          Visibility(
+                            visible: _selectedLocationTasks.length > 0,
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.9,
+                              child: LocationMeasurementView(
+                                tasks: List<Map<dynamic, dynamic>>.from(
+                                    _selectedLocationTasks),
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: ElevatedButton(
@@ -1441,8 +1465,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           // bool completed = hasGeoLocations && hasMeasurements;
 
-          print(status);
-          print('status above at 1076');
+          // print(status);
+          // print('status above at 1076');
 
           var geoCordinates;
 
@@ -1456,9 +1480,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 status['geoCordinatesEnd'] as Map<dynamic, dynamic>;
           }
 
-          print("viii this is status $status");
-          print(
-              'geocordinates above @1095 is location ${index + 1} $geoCordinatesEnd and $geoCordinates');
+          // print("viii this is status $status");
+          // print(
+          //     'geocordinates above @1095 is location ${index + 1} $geoCordinatesEnd and $geoCordinates');
+
           String distanceText = '0 Meters';
 
           if (geoCordinates != null) {
@@ -1477,9 +1502,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 endLongitude,
               );
 
-              print(geoCordinates.runtimeType);
-              print(geoCordinatesEnd.runtimeType);
-              print('geocordinates above @1081 is location ${index + 1}');
+              // print(geoCordinates.runtimeType);
+              // print(geoCordinatesEnd.runtimeType);
+              // print('geocordinates above @1081 is location ${index + 1}');
 
               distanceText = ' ${distance.toStringAsFixed(2)} mtrs';
             }
@@ -1972,7 +1997,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
     workId,
     task,
     strcuture,
-    // mstStructureId, quantity, struct
   ) async {
     logCurrentFunction();
     try {
@@ -1985,22 +2009,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
       int mstStructureId = strcuture['id'];
       String structureName = strcuture['structure_name'] ?? 'BUG in struc name';
 
-      // print(strcuture);
-      // print('$structureName  is h the STR33');
-
       String taskId = task['id'].toString();
-      // return;
+
       final url =
           "http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
-
-      print(url);
 
       final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
       final response = await dio.get(
         url,
         options: Options(headers: headers),
-        // queryParameters: body,
       );
 
       if (response.data != null && response.data['result_data'] != null) {
@@ -2008,70 +2026,39 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         var issuedMaterialsForSelectedStructure = re['issues'];
 
-        // print(totalIssuedMaterialDetails);
-        // print('issued materials above');
-
-        var labourDetailsForSelectedStrutre =
+        var totalLabourDetails =
             response.data['result_data']['labour_schedule'];
-
-        print(
-            "This is labour details from 1699  $labourDetailsForSelectedStrutre");
 
         var result_data = response.data['result_data'];
         var takenBacksOfSelectedStructure = result_data['takenbacks'];
 
-        print(takenBacksOfSelectedStructure);
-
-        print('taken backs above 1707');
-
         var responseDataForStructureDetails = response.data['result_data'];
-
         var master = response.data['result_data']['unit_master'];
 
         var out = measurementDetails.firstWhere(
           (element) => element['locationNo'] == _selectedLocationIndex + 1,
-          orElse: () => {}, // Return null as the default value
+          orElse: () => {},
         );
-
-        // var x = List.from(measurementDetails.map((location) {
 
         measurementDetails.forEach((location) {
           int locationNumber = _selectedLocationIndex + 1;
 
           if (location['locationNo'] != locationNumber) {
-            return; //location;
+            return;
           }
 
           if (location['locationNo'] == locationNumber) {
-            // Create a copy of the original item with specified fields replaced
-
-            ;
-
-            if (location['tasks'] == null) {
-              print('No tasks in location so adding tasks array');
-              location['tasks'] = [];
-            }
-
-            print(
-                "$location['tasks'].any((task) => task['id'] == taskId) is the task presence at 1");
-
-            var ts = location['tasks'];
-
             bool isTaskPresent =
                 location['tasks'].any((task) => task['id'] == taskId);
-            print(
-                "  this is b $isTaskPresent and task id is $taskId this is tasks at 1810 $ts");
 
             var task;
             if (isTaskPresent) {
               task =
                   location['tasks'].firstWhere((task) => task['id'] == taskId);
-
-              print('TASK PRESENT ');
             } else {
-              print('TASK ABSENT SO INITATING  1831');
               task = {};
               initiateTaskDetails(task, taskId, mstStructureId, structureName);
+              location['tasks'].add(task);
             }
 
             if (task['structures'] == null) {
@@ -2079,13 +2066,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
             }
 
             if (task['structures'].any((s) => s['id'] == mstStructureId)) {
-              // print("STRCUTURE ALREADY PRESENT SO ADDING");
               var structure = task['structures'].firstWhere(
                   (s) => s['id'] == mstStructureId,
                   orElse: () => {});
               structure['quantity'] = structure['quantity'] + 1;
             } else {
-              print("@@@@@@@@ STRCUTREU ADDING FROM HERE");
               var selectedStructure = {};
               selectedStructure['materials'] = [];
               selectedStructure['labour'] = [];
@@ -2096,8 +2081,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   structureName ?? 'str Name Not Found';
               selectedStructure['id'] = mstStructureId;
 
-              // setIssuedmaterials(totalIssuedMaterialDetails, structure);
-              // setIssuedmaterials(totalIssuedMaterialDetails,);
               setIssuedmaterials(
                   issuedMaterialsForSelectedStructure,
                   responseDataForStructureDetails,
@@ -2105,7 +2088,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   selectedStructure);
 
               setLabourDetails(
-                  labourDetailsForSelectedStrutre,
+                  totalLabourDetails,
                   responseDataForStructureDetails,
                   mstStructureId,
                   selectedStructure);
@@ -2114,26 +2097,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
               task['structures'].add(selectedStructure);
             }
 
-            // task['structures'] = [];
-
-            location['tasks'].add(task);
             updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
             _showSaveMeasurementDetailsButton = true;
 
-            return; // location;
+            return;
           }
 
-          return; // location;
-        }
-            // )
-            );
-
-        setState(() {
-          // if (x != null) {
-          //   measurementDetails = List.from(x);
-          // }
-
-          _fetchingMasterEstimate = false;
+          return;
         });
       }
     } catch (e) {
@@ -2141,6 +2111,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
 
     _saveMeasurementDetails();
+    setState(() {
+      _fetchingMasterEstimate = false;
+    });
+
+    // getTasksofSelectedLocation();
   }
 
   initiateTaskDetails(Map<dynamic, dynamic> task, String taskId,
@@ -2224,7 +2199,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       //function to add new labour to existing labour in the structure
       Map<dynamic, dynamic> structure) {
     if (totalLabourDetails.length != 0) {
-      totalLabourDetails.forEach((item) {
+      print("TOITAL LABOUR DETAILS $totalLabourDetails");
+      totalLabourDetails.forEach((Map item) {
+        if (!item.containsKey('wrk_execution_labour_schedule_id')) {
+          return;
+        }
+
         int mstLabourId = item['mst_labour_id'] ?? 0;
         // int mstStructureId = item['mst_labour_id'];
 
@@ -2364,20 +2344,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
-        // print('res above 1488');
-
-        _wrk_schedule_group_id = res['data']['id'];
-
-        // print('$_wrk_schedule_group_id res above 1488');
-
-        // print('RES ABOVE WORK ID BELOW----------');
-
-        // print(widget.workId);
-
-        // print(res['wrk_schedule_group_structures']);
-        // print('RES ABOVE');
-        // print('RES ABOVE');
-
         return Future.value([res['data']]);
       } else {
         return Future.value([-1]);
@@ -2396,6 +2362,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print("this is new index of locations $index");
 
     if (index != -1) {
+      _previoslySelectedIndex = _selectedLocationIndex;
+      _selectedLocationIndex = index;
+
+      _tappedIndex = index;
+
       /// if a user selectts a location after selecting any other location saving the current datat to storage
 
       storeMeasurementDetails(measurementDetails);
@@ -2462,26 +2433,35 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       _tappedIndex = index;
 
-      print(s);
-      print('s aprinted above');
+      // print(s);
+      // print('s aprinted above');
     });
   }
 
   void getTasksofSelectedLocation() {
     String locationNo = (_selectedLocationIndex + 1).toString();
 
-    _selectedLocationDetails = measurementDetails.firstWhere(
-      (element) => element['locationNo'].toString() == locationNo,
-      orElse: () => {},
-    );
+    print("MEASUREMENT DETAILS $measurementDetails");
+    print("LOCATION NO $locationNo");
 
-    if (_selectedLocationDetails.isNotEmpty) {
-      if (_selectedLocationDetails['tasks'] == null) {
-        _selectedLocationTasks = [];
-      } else {
-        _selectedLocationTasks = _selectedLocationDetails['tasks'];
+    setState(() {
+      _selectedLocationDetails = measurementDetails.firstWhere(
+        (element) => element['locationNo'].toString() == locationNo,
+        orElse: () => {},
+      );
+
+      print("_selectedLocationDetails $_selectedLocationDetails");
+
+      if (_selectedLocationDetails.isNotEmpty) {
+        if (_selectedLocationDetails['tasks'] == null) {
+          _selectedLocationTasks = [];
+        } else {
+          _selectedLocationTasks = _selectedLocationDetails['tasks'];
+        }
       }
-    }
+    });
+
+    print("SELECTED LOCATION DR $_selectedLocationDetails");
   }
 
   void saveFromAndTwoLocation() {
@@ -2677,37 +2657,39 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       Map<dynamic, dynamic> result = createMaterialMeasurementObject(material);
 
-      speakText('result oflogin request below');
+      // speakText('result oflogin request below');
 
-      print("RESULT $result");
+      // print("RESULT $result");
 
-      debugger;
+      // debugger;
 
+      Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
       appendToMaterialMeasurements(materialMeasurements, result);
+
+      ;
 
       // Destructuring the 'result' map
       String key = result["key"];
 
-      Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
-
       // print("KEY $key");
 
-      String materialId = material['mst_material_id'].toString();
-      if (materialMeasurements.containsKey(materialId)) {
-        materialMeasurements[materialId]['quantity'] =
-            materialMeasurements[materialId]['quantity'] + 1;
-      } else {
-        Map mat = {};
-        materialMeasurements[materialId] = mat;
-        mat['material_name'] = material['material_name'];
-        mat['quantity'] = 1;
-      }
+      // String materialId = material['mst_material_id'].toString();
+      // if (materialMeasurements.containsKey(materialId)) {
+      //   materialMeasurements[materialId]['quantity'] =
+      //       materialMeasurements[materialId]['quantity'] + 1;
+      // } else {
+      //   Map mat = {};
+      //   materialMeasurements[materialId] = mat;
+      //   mat['material_name'] = material['material_name'];
+      //   mat['quantity'] = 1;
+      // }
     }
 
-    print("MATERIAL MEASUREMENTS $materialMeasurements");
-    debugger;
+    print('NOW FROM HERE ${materialMeasurements.length}');
+    // print("MATERIAL MEASUREMENTS $materialMeasurements");
+    // debugger;
 
-    print("MATERIALmeasurements only $materialMeasurements");
+    // print("MATERIALmeasurements only $materialMeasurements");
 
     // print("This is materials $materials");
   }
@@ -2746,11 +2728,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
 
     if (materialMeasurements.containsKey(key)) {
-      materialMeasurements[key]['quantity'] = materialMeasurements[key]
-              ['quantity'] +
-          materialMeasurement['quantity'];
+      int currentQuantity = int.parse(materialMeasurements[key]['quantity']);
+      int additionalQuantity = int.parse(materialMeasurement['quantity']);
+      int updatedQuantity = currentQuantity + additionalQuantity;
+      materialMeasurements[key]['quantity'] = updatedQuantity.toString();
+
+      print("new quantity ${materialMeasurements[key]['quantity']}");
     } else {
-      materialMeasurement[key] = materialMeasurement;
+      materialMeasurements[key] = materialMeasurement;
     }
+
+    // print("Materrial measuremetn from $materialMeasurements");
   }
 }

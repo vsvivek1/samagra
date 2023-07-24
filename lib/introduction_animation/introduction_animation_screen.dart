@@ -41,12 +41,12 @@ class _IntroductionAnimationScreenState
       body: ClipRect(
         child: Stack(
           children: [
-            SplashView(
-              animationController: _animationController!,
-            ),
-            RelaxView(
-              animationController: _animationController!,
-            ),
+            // SplashView(
+            //   animationController: _animationController!,
+            // ),
+            // RelaxView(
+            //   animationController: _animationController!,
+            // ),
             CareView(
               animationController: _animationController!,
             ),

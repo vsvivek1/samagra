@@ -227,6 +227,26 @@ class _LoginScreenState extends State<LoginScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
+                                              SizedBox(
+                                                width: 125,
+                                                child: Image(
+                                                    image: AssetImage(
+                                                        'assets/images/kseb.jpg')),
+                                              ),
+                                              Container(
+                                                padding: EdgeInsets.all(20),
+                                                child: Text(
+                                                    'KERALA STATE ELECTRICTY BOARD LIMITED',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        decoration:
+                                                            TextDecoration
+                                                                .underline,
+                                                        fontSize: 14,
+                                                        color: Color.fromARGB(
+                                                            255, 16, 87, 161))),
+                                              ),
                                               CircleAvatar(
                                                 radius: 100,
                                                 backgroundImage:

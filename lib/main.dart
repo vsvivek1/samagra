@@ -9,6 +9,8 @@ import 'package:samagra/screens/login_screen.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import 'kseb_color.dart';
+
 void main() async {
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
     return SizedBox(
@@ -28,6 +30,19 @@ class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     '/login': (BuildContext context) => LoginScreen(),
   };
+
+  MaterialColor ksebMaterialColor = MaterialColor(0xFF1087A1, {
+    50: Color.fromRGBO(16, 135, 161, 0.1),
+    100: Color.fromRGBO(16, 135, 161, 0.2),
+    200: Color.fromRGBO(16, 135, 161, 0.3),
+    300: Color.fromRGBO(16, 135, 161, 0.4),
+    400: Color.fromRGBO(16, 135, 161, 0.5),
+    500: Color.fromRGBO(16, 135, 161, 0.6),
+    600: Color.fromRGBO(16, 135, 161, 0.7),
+    700: Color.fromRGBO(16, 135, 161, 0.8),
+    800: Color.fromRGBO(16, 135, 161, 0.9),
+    900: Color.fromRGBO(16, 135, 161, 1.0),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +65,12 @@ class MyApp extends StatelessWidget {
           labelColor:
               Colors.white, // Set the text color of the selected tab to white
           unselectedLabelColor:
-              Colors.grey, // Set the text color of unselected tabs to grey
+              ksebColor, // Set the text color of unselected tabs to grey
           indicator: BoxDecoration(
-            color: Colors.grey, // Set the indicator color to grey
+            color: ksebMaterialColor, // Set the indicator color to grey
           ),
         ),
-        primarySwatch: Colors.blue,
+        primarySwatch: ksebMaterialColor,
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.iOS,
       ),

@@ -204,6 +204,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       // });
 
       print('from view this is labour $labour1');
+      print('LABOUR LENGTH ${labour1.length}');
       return Builder(builder: (context) {
         return Column(
           children: [
@@ -226,6 +227,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 // final material = structure['materials'][labourIndex];
 
                 final labour = labour1[labourIndex];
+
+                print("LABVOURNAME $labourIndex ${labour}");
 
                 return Column(
                   children: [
