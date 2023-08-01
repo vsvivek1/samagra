@@ -75,11 +75,16 @@ class _LocationButtonState extends State<LocationButton> {
 
                       _currentPosition = await Geolocator.getCurrentPosition();
 
-                      List<Placemark> placemarks1 =
-                          await placemarkFromCoordinates(
-                        _currentPosition!.latitude,
-                        _currentPosition!.longitude,
-                      );
+                      List<Placemark> placemarks1;
+                      try {
+                        placemarks1 = await placemarkFromCoordinates(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                        );
+                      } on Exception catch (e) {
+                        // TODO
+                        placemarks1 = [];
+                      }
                       // Placemark placemark = placemarks[0];
 
                       List<Placemark> placemarks =

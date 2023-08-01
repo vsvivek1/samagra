@@ -14,6 +14,7 @@ import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/speak_text.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 
 import '../internet_connectivity.dart';
@@ -152,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 1000,
             child: SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(10.0),
                 child: Form(
                   key: _formKey,
                   child: FutureBuilder(
@@ -512,10 +513,10 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.only(top: 200, left: 20, right: 20),
         child: Column(children: [
           CircleAvatar(
-            radius: 50,
+            radius: 30,
             backgroundImage: AssetImage('assets/images/kseb_emblem.jpeg'),
           ),
-          SizedBox(height: 20, width: 20),
+          SizedBox(height: 1, width: 1),
           showUserNameForm1(),
         ]),
       ),
@@ -554,7 +555,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print(
           "$email is email and password is $_password from proceed for login function");
-      var result = await api.login(email, _password, showPhoto, context);
+
+      var result =
+          await api.login(email, _password, showPhoto, context).catchError((e) {
+        throw e;
+      });
 
       // return;
 
@@ -611,7 +616,9 @@ class _LoginScreenState extends State<LoginScreen> {
         context,
         MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
       );
-    } on Exception catch (e) {
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+          content: Text(e.toString()), duration: Duration(seconds: 5))));
       print('exception hit');
       print(e);
 

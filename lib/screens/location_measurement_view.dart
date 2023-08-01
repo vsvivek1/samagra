@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/whatsapp_button.dart';
 
 class LocationMeasurementView extends StatefulWidget {
@@ -14,6 +15,7 @@ class LocationMeasurementView extends StatefulWidget {
 class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   @override
   Widget build(BuildContext context) {
+    print("TAKS from hloca measurement widget ${widget.tasks}");
     return Scaffold(
       body: ListView.builder(
         itemCount: widget.tasks.length,
@@ -42,62 +44,29 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                     textScaleFactor: .5,
                   ),
                 ),
+
+                contentPadding: EdgeInsets.only(right: 1.0),
                 title: Container(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    ' ${task['task_name']}',
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  padding: EdgeInsets.all(1.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        ' ${task['task_name']}',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      structureWidget(structureList, index),
+                    ],
                   ),
                 ),
                 // subtitle:
                 //     Text("Task ID: ${task['id']}  ${structureList.length}, "),
 
-                subtitle: ListView.builder(
-                  shrinkWrap: true,
-                  physics: ClampingScrollPhysics(),
-                  itemCount: structureList.length,
-                  itemBuilder: (context, structureIndex) {
-                    final structure = structureList[structureIndex];
-
-                    // print(structure);
-
-                    print('structure above at 53');
-                    return Column(
-                      children: [
-                        ListTile(
-                          leading: CircleAvatar(
-                              maxRadius: 13,
-                              backgroundColor: Colors.blue[100],
-                              child:
-                                  Text('S' + (structureIndex + 1).toString())),
-                          title: structure['structure_name'] != null
-                              ? Text(
-                                  '${structure['structure_name']}',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500),
-                                )
-                              : Text('Structure No: ${structureIndex + 1}'),
-                        ),
-                        Column(
-                          children: [
-                            MaterialsView(structure, structureIndex, index),
-                            Divider(color: Colors.grey[100]),
-                            LabourView(structure, structureIndex, index),
-                            Divider(color: Colors.grey[100]),
-                            TakenBackView(structure, structureIndex, index),
-                            Divider(color: Colors.grey[100])
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                // subtitle:
+                //  structureWidget(structureList, index),
               ),
               //  print();
 
@@ -114,6 +83,70 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           );
         },
       ),
+    );
+  }
+
+  ListView structureWidget(structureList, int index) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      itemCount: structureList.length,
+      itemBuilder: (context, structureIndex) {
+        final structure = structureList[structureIndex];
+
+        // print(structure);
+
+        print('structure above at 53');
+        return Column(
+          children: [
+            ListTile(
+              contentPadding: EdgeInsets.only(left: 1.0),
+              leading: CircleAvatar(
+                  maxRadius: 13,
+                  backgroundColor: Colors.blue[100],
+                  child: Text('S' + (structureIndex + 1).toString())),
+              title: structure['structure_name'] != null
+                  ? Text(
+                      '${structure['structure_name']}',
+                      style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500),
+                    )
+                  : Text('Structure No: ${structureIndex + 1}'),
+            ),
+            Column(
+              children: [
+                MaterialsView(structure, structureIndex, index),
+                //  Divider({Key? key, double? height, double? thickness, double? indent, double? endIndent, Color? color}))
+                Divider(
+                  color: ksebMaterialColor,
+                  height: 30,
+                  indent: 0,
+                  endIndent: BorderSide.strokeAlignOutside,
+                  thickness: 7,
+                ),
+                LabourView(structure, structureIndex, index),
+                Divider(
+                  color: ksebMaterialColor,
+                  height: 30,
+                  indent: 0,
+                  endIndent: BorderSide.strokeAlignOutside,
+                  thickness: 7,
+                ),
+                TakenBackView(structure, structureIndex, index),
+                Divider(
+                  color: ksebMaterialColor,
+                  height: 30,
+                  indent: 0,
+                  endIndent: BorderSide.strokeAlignOutside,
+                  thickness: 7,
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -171,6 +204,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                             // final labour = structure['labour'][materialIndex];
 
                             return ListTile(
+                              contentPadding: EdgeInsets.only(left: 1.0),
                               title: Text(
                                   '${materialIndex + 1} : ${material['material_name']}'),
                               subtitle:
@@ -233,6 +267,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 return Column(
                   children: [
                     ListTile(
+                      contentPadding: EdgeInsets.only(left: 1.0),
                       title:
                           Text('${labourIndex + 1}: ${labour['labour_name']}'),
                       subtitle: Text('Quantity: ${labour['quantity']}'),
@@ -265,12 +300,23 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       print('from view this is TAKEN BACKS $tb');
       return Column(
         children: [
+          Container(
+            padding: EdgeInsets.all(5.0),
+            child: Text(
+              'Taken Backs',
+              style: TextStyle(
+                color: Colors.grey[750],
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           Text(
               structure.containsKey('takenBacks') == false
                   ? "No Taken backs"
-                  : "structure['structure_name']",
+                  : "${structure['structure_name']}",
               style: TextStyle(
-                color: Colors.grey[400],
+                color: ksebColor,
                 fontSize: 15.0,
                 fontWeight: FontWeight.bold,
               )),
@@ -287,18 +333,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
                   return Column(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          'Taken Backs',
-                          style: TextStyle(
-                            color: Colors.grey[750],
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
                       ListTile(
+                        contentPadding: EdgeInsets.only(left: 1.0),
                         title: Text(
                             '${takenBackIndex + 1} : ${takenBacks['material_name']}'),
                         subtitle: Text('Quantity: ${takenBacks['quantity']}'),

@@ -13,6 +13,7 @@ import 'package:samagra/secure_storage/common_functions.dart';
 import 'dart:math' as math;
 // import 'package:samagra/common.dart';
 
+import 'get_work_details.dart';
 import 'measurement_option.dart';
 
 class WorkSelection extends StatelessWidget {
@@ -204,6 +205,13 @@ class WorkSelection extends StatelessWidget {
           response.data['result_data']['schGrpList'] != null) {
         var res = response.data['result_data']['schGrpList'];
 
+        // print(res);
+        // res.forEach((r) async => {print("R  $r")});
+
+        //  Future<Map<String, dynamic>?> wd = await getWorkDetails(workId.toString());
+
+        // print("WD this is WD $wd");
+
         this.callApiAndSaveLabourGroupMasterInSecureStorage();
 
         return res;
@@ -236,10 +244,32 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
   String workCode = '';
 
+  setWorKdetails(_filteredItems) async {
+    _filteredItems.forEach((i) async {
+      var vd = await getWorkDetails(i["id"].toString());
+
+      if (vd != null) {
+        var measurements = vd!['measurements'];
+
+        i['measurements'] = measurements;
+
+        if (measurements != null) {
+          i['noOflocationMeasured'] = measurements.length;
+          i['started'] = measurements.length > 0 ? true : false;
+
+          print("VD is $vd");
+        }
+      }
+    });
+  }
+
   @override
   void initState() {
     audioCache = AudioCache(prefix: 'assets/audio/');
     _filteredItems = List.from(widget.schGrpList);
+    setWorKdetails(_filteredItems);
+
+    // print(_filteredItems);
 
     super.initState();
 
@@ -305,6 +335,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                 // int workId = workDetail?['id'];
                 int workId = item?['id'];
+
                 final workName = workDetail['work_name'];
                 final workCode = workDetail['work_code'];
 
@@ -339,7 +370,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                       );
                     },
                     child: Container(
-                      padding: EdgeInsets.all(10.0),
+                      padding: EdgeInsets.all(14.0),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.grey, width: 2.0),
                       ),
@@ -352,10 +383,17 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                           ],
                         ),
                         child: Center(
-                          child: Text('\n\n' +
-                              item['wrk_work_detail']['work_name'] +
-                              '\n\n' +
-                              '\n \n WorkCode: $workCode'),
+                          child: ListTile(
+                            subtitle: item['started'] == true
+                                ? Text(
+                                    "No of Locations Mdeasures ${item['noOflocationMeasured']}")
+                                : Text(
+                                    'Measurements Not Started ${item['noOflocationMeasured']}'),
+                            title: Text('\n\n' +
+                                item['wrk_work_detail']['work_name'] +
+                                '\n' +
+                                '\n WorkCode: $workCode'),
+                          ),
                         ),
                       ),
                     ));
