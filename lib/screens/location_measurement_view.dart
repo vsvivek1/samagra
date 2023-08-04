@@ -15,7 +15,7 @@ class LocationMeasurementView extends StatefulWidget {
 class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   @override
   Widget build(BuildContext context) {
-    print("TAKS from hloca measurement widget ${widget.tasks}");
+    // print("TAKS from hloca measurement widget ${widget.tasks}");
     return Scaffold(
       body: ListView.builder(
         itemCount: widget.tasks.length,

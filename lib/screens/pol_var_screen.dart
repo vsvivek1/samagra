@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:samagra/screens/save_to_work_module.dart';
+
 import '../common.dart';
 import 'get_work_details.dart';
 import 'log_functions.dart';
@@ -33,6 +35,8 @@ import 'package:geolocator/geolocator.dart';
 
 import 'dart:core';
 import 'dart:developer';
+
+import 'measurement_property_copier_screen.dart';
 
 class PolVarScreen extends StatefulWidget {
   @override
@@ -112,6 +116,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
   var _selectedLocationHasGeoLocations = false;
 
   var _selectedLocationHasMeasurements = false;
+
+  var apiDataForSamagra = {};
+
+  bool _openedMeasurementCopier = false;
 
   void togglePlay() {
     setState(() {
@@ -523,14 +531,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // print("TASk measurements $taskMeasurements");
 
-    await getMeasurementObjForApi(obj);
+    Map<dynamic, dynamic> a = await getMeasurementObjForApi(obj);
+
+    print("A is $a");
 
     // var strcutreMeasurements =
     //     (await getMeasurementObjForApi(obj)) as Future<Map<dynamic, dynamic>>;
 
     return;
 
-    print(strcutreMeasurements);
+    // print(strcutreMeasurements);
 
     // var tasks = obj.forEach((o) => {
     //       o['tasks'].forEach((t) => {ts.add(t['task_name'])})
@@ -600,24 +610,34 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   void updateStructureMeasurements(
-      List<Map<String, dynamic>> structureMeasurements, int targetId) {
-    bool structureExists =
-        structureMeasurements.any((structure) => structure['id'] == targetId);
+      // List<Map<String, dynamic>> structureMeasurements, int targetId) {
+      Map<dynamic, dynamic> structureMeasurements,
+      int targetId,
+      Map structure) {
+    bool structureExists = structureMeasurements.containsKey(targetId);
 
     if (structureExists) {
       // Increment the quantity if the structure exists
-      structureMeasurements
-          .firstWhere((structure) => structure['id'] == targetId)
-          .update('quantity', (value) => value + 1);
+
+      structureMeasurements[targetId]['quantity'] =
+          structureMeasurements[targetId]['quantity'] + 1;
+
+      // structureMeasurements
+      //     .firstWhere((structure) => structure['id'] == targetId)
+      //     .update('quantity', (value) => value + 1);
     } else {
+      structure['quantity'] = 1;
+      structureMeasurements[targetId.toString()] = structure;
       // If the structure does not exist, add it with quantity 1
-      structureMeasurements.add({'id': targetId, 'quantity': 1});
+      // structureMeasurements.add({'id': targetId, 'quantity': 1});
     }
   }
 
-  void getMeasurementObjForApi(obj) async {
+  getMeasurementObjForApi(obj) async {
     Map taskMeasurements = getTaskMeasurementList(obj);
-    List<Map<String, dynamic>> structureMeasurements = [];
+
+    apiDataForSamagra['taskMeasurements'] = taskMeasurements;
+    // List<Map<String, dynamic>> structureMeasurements = [];
     // List taskMeasurements = [];
     Map<String, int> taskCounts = {};
     Map<String, dynamic> structureCounts = {};
@@ -625,6 +645,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // print(obj);
 
     // List structureMeasurements = [];
+    Map<String, Map<String, dynamic>> structureMeasurements = {};
     Map materialMeasurements = {};
     Map labourMeasurements = {};
     Map materialTakenBackMeasurements = {};
@@ -646,12 +667,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
           continue;
         }
 
-        Map<String, Map<String, dynamic>> structureMeasurement = {};
-
         for (var structure in structures) {
           // gmailMe(structure);
           // print("STRCUTRE ID $structure is str id");
-          updateStructureMeasurements(structureMeasurements, structure['id']);
+          updateStructureMeasurements(
+              structureMeasurements, structure['id'], structure);
 
           List<Map<dynamic, dynamic>> materials =
               List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
@@ -669,13 +689,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
           int takenbackLen = takenBacks.length;
 
           if (materials.length > 0) {
-            updateMaterialmeasurements(materialMeasurements, labours);
+            updateMaterialmeasurements(materialMeasurements, materials);
           }
 
           if (labours.length > 0) {
-            print("LABOURS IS $labours");
+            // print("LABOURS IS $labours");
 
-            updateLabourmeasurements(labourMeasurements, materials);
+            updateLabourmeasurements(labourMeasurements, labours);
+          }
+
+          if (takenBacks.length > 0) {
+            print("takenBacks IS $takenBacks");
+
+            updateMaterialTakenBackMeasurements(
+                materialTakenBackMeasurements, takenBacks);
           }
 
           print("LABOURr  $labours");
@@ -688,23 +715,35 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     }
 
-    final loginDetails1 =
-        await storage.getSecureAllStorageDataByKey('loginDetails');
-    final loginDetails = loginDetails1['loginDetails'];
+    apiDataForSamagra['structreMeasurements'] = structureMeasurements;
+    apiDataForSamagra['labourMeasurements'] = labourMeasurements;
+    apiDataForSamagra['materialMeasurements'] = materialMeasurements;
+    apiDataForSamagra['materialTakenBackMeasurements'] =
+        materialTakenBackMeasurements;
 
-    final currentSeatDetails = getCurrentSeatDetails(loginDetails);
-
-    // final officeCode = currentSeatDetails['office']['office_code'];
-    final officeId = currentSeatDetails['office_id'];
-
-    print("currentSeatDetails + $currentSeatDetails ");
-
-    debugger;
-
-    print("taskmeasurement $taskMeasurements");
+    print("materialTakenBackMeasurements $materialTakenBackMeasurements");
     print("STR  MEASUREMENT $structureMeasurements");
     print("LABOUR MEASUREMENT $labourMeasurements");
     print("material  MEASUREMENT $materialMeasurements");
+    print("tasks  MEASUREMENT $taskMeasurements");
+
+    debugger;
+
+    //       Map materialMeasurements = {};
+    // Map labourMeasurements = {};
+    // Map materialTakenBackMeasurements
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            SaveToWorkModule(dataFromPreviousScreen: apiDataForSamagra),
+      ),
+    );
+
+    print('test');
+    // debugger;
+    return Future.value({});
 
     // print("Strcutre measurement  is this $structureMeasurements");
 
@@ -713,53 +752,92 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // await flutterTts.speak('നമസ്കാരം, ഇത് മലയാളം ആവാസം ആണ്‌.');
 
     // print(obj.length);
-    return {};
-    for (var location in obj) {
-      print('locatiuon $location');
+  }
 
-      List<Map<dynamic, dynamic>> tasks =
-          List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
+  dynamic updateMeasurementDetails(
+      String locationNo, Map<dynamic, dynamic> newObject) {
+    print("from parent function $newObject");
+    setState(() {
+      // Find the index of the locationNo in measurementDetails
+      int index = measurementDetails.indexWhere((details) =>
+          details['locationNo'].toString() == locationNo.toString());
 
-      for (var task in tasks) {
-        print(task);
-        List<Map<dynamic, dynamic>> structures =
-            List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
+      if (index != -1) {
+        // Update the object at the specified location
 
-// structures
-
-        for (var structure in structures) {
-          int structureId = structure['id'] ?? '-1';
-
-          if (structureCounts.containsKey(structureId)) {
-            Map struct = structureCounts[structureId];
-
-            struct["quantity"] = struct["quantity"] + 1;
-
-            structureCounts[structureId.toString()] = struct;
-
-            print("existing struct  $struct");
-          } else {
-            Map struct = {};
-
-            struct['mst_task_id'] = task['id'];
-            struct['id'] = structureId;
-            struct['wrk_schedule_group_structure_id'] = 'add it later';
-            struct['quantity'] = 1;
-            structureCounts[structureId.toString()] = struct;
-
-            print("new struct  $struct");
-          }
-
-          // structureMeasurements.add()
-        }
+        print('updating');
+        measurementDetails[index] = newObject;
+      } else {
+        print('ading');
+        measurementDetails.add(newObject);
       }
+    });
 
-      return structureCounts;
-    }
+    measurementDetails.forEach((element) {
+      print("LOCS NEW ${element['locationNo']} ${element}");
+    });
+    _saveMeasurementDetails();
+    setState(() {
+      _openedMeasurementCopier = true;
+      _openedMeasurementCopier = false;
+    });
 
-    print('structre counts:');
+    // setState(() {
+    //   _openedMeasurementCopier = false;
+    // });
+  }
 
-    return structureCounts;
+  void _showMeasurementCopierDialog(BuildContext context) {
+    setState(() {
+      _openedMeasurementCopier = !_openedMeasurementCopier;
+    });
+    measurementDetails.forEach((element) {
+      print("current m dstails ${element}");
+    });
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Measurement Property Copier'),
+          content: AspectRatio(
+            aspectRatio: .1,
+            child: MeasurementPropertyCopierScreen(
+                measurementDetails: measurementDetails,
+                noOfLocations: _numberOfLocations,
+                updateMeasurementDetails: updateMeasurementDetails),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _openedMeasurementCopier = false;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                measurementDetails.forEach(
+                  (element) {
+                    print("MEASURESMENT LIST loc ${element["locationNo"]}");
+                  },
+                );
+
+                setState(() {});
+                Navigator.of(context).pop();
+
+                setState(() {
+                  _openedMeasurementCopier = false;
+                });
+              },
+              child: Text('Done'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   _handleEmitLocDetailsToPolVarWidget(Map locDetails) async {
@@ -943,7 +1021,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         locationNumberAndLocationPointsEntryScreen(),
                         if (_selectedLocationIndex == -1 &&
                             !_enableEntryOfLocationDetails) ...[
-                          showLocationButtons()
+                          Visibility(
+                              visible: !_openedMeasurementCopier,
+                              child: showLocationButtons())
 
                           // for showing loading issued material
                         ],
@@ -1068,7 +1148,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           //   padding: const EdgeInsets.all(8.0),
                           //   child: Text('Full Location details nelow'),
                           // ),
-
+                          ElevatedButton(
+                            onPressed: () =>
+                                _showMeasurementCopierDialog(context),
+                            child: Text('Open Measurement Copier'),
+                          ),
                           Visibility(
                             // visible: _selectedLocationTasks.length > 0,
                             visible: true,
@@ -1434,6 +1518,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         itemBuilder: (BuildContext context, int index) {
           var status = _getLocationMeasuredStatus(index);
 
+          print("STATUS OF LOC $index $status");
+
           bool hasGeoLocations = status['hasGeoLocations'] as bool;
           bool hasMeasurements = status['hasMeasurements'] as bool;
 
@@ -1549,8 +1635,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                         // Remove the location from the list.
                                         measurementDetails.removeWhere(
                                             (element) =>
-                                                element['locationNo'] ==
-                                                locationNo);
+                                                element['locationNo']
+                                                    .toString() ==
+                                                locationNo.toString());
 
                                         setState(() {});
                                         Navigator.of(context).pop();
@@ -2579,7 +2666,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Color? color;
 
     var location = measurementDetails.firstWhere(
-      (element) => element['locationNo'] == locationNo,
+      (element) => element['locationNo'].toString() == locationNo.toString(),
       orElse: () => {},
     );
 
@@ -2589,11 +2676,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     if (locationNo <= measured) {
       var locationEnd = measurementDetails.firstWhere(
-        (element) => element['locationNo'] == (locationNo + 1),
+        (element) =>
+            element['locationNo'].toString() == (locationNo + 1).toString(),
         orElse: () => {},
       );
 
-      print("$locationEnd is location ebnd");
+      // print("$locationEnd is location ebnd");
       if (locationEnd['geoCordinates'] != null) {
         retObj['geoCordinatesEnd'] = locationEnd['geoCordinates'];
       }
@@ -2603,7 +2691,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // print(location['geoCordinates']);
     // print(location['geoCordinates']);
-    print('location above at 1942');
+    // print('location above at 1942');
 
     if (location.isEmpty) {
       retObj['hasGeoLocations'] = false;
@@ -2627,8 +2715,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       } else {
         retObj['geoCordinates'] = location['geoCordinates'];
 
-        print(
-            '@2158 ${location['geoCordinates']} ${location['geoCordinates'].isEmpty}');
+        // print(
+        //     '@2158 ${location['geoCordinates']} ${location['geoCordinates'].isEmpty}');
 
         retObj['text'] = ' \n No measurements';
 
@@ -2649,7 +2737,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     if (locationNo <= measured) {
       var locationEnd = measurementDetails.firstWhere(
-        (element) => element['locationNo'] == (locationNo + 1),
+        (element) =>
+            element['locationNo'].toString() == (locationNo + 1).toString(),
         orElse: () => {},
       );
 
@@ -2698,6 +2787,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       // print("RESULT $result");
 
+//aug 23  22 heado oof  aadhar pan card mcc road jayalakshmi
       // debugger;
 
       Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
@@ -2722,7 +2812,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // }
     }
 
-    print('NOW FROM HERE ${materialMeasurements.length}');
+    // print('NOW FROM HERE ${materialMeasurements.length}');
     // print("MATERIAL MEASUREMENTS $materialMeasurements");
     // debugger;
 
@@ -2787,6 +2877,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
             labourMeasurements[key]['quantity'] + element['quantity'];
       } else {
         labourMeasurements[key] = element;
+      }
+    });
+  }
+
+  void updateMaterialTakenBackMeasurements(
+      Map materialTakenBackMeasurements, List<Map> takenBacks) {
+    takenBacks.forEach((element) {
+      var key = element['wrk_execution_schedule_id'];
+
+      if (materialTakenBackMeasurements.containsKey(element[key])) {
+        materialTakenBackMeasurements[key]['quantity'] =
+            materialTakenBackMeasurements[key]['quantity'] +
+                element['quantity'];
+      } else {
+        materialTakenBackMeasurements[key] = element;
       }
     });
   }

@@ -103,7 +103,7 @@ class WorkSelection extends StatelessWidget {
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
     final response = await dio.get(url, options: Options(headers: headers));
 
-    print('lab  called');
+    // print('lab  called');
     final responseMaterial =
         await dio.get(url2, options: Options(headers: headers));
 //
@@ -114,7 +114,7 @@ class WorkSelection extends StatelessWidget {
 
       var mat = responseMaterial.data['result_data']['materialMaster'];
 
-      print('mat called');
+      // print('mat called');
 
       var store = inp
           .map((a) => {
