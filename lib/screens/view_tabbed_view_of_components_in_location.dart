@@ -7,6 +7,7 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(this.componentsMap.keys);
     return ElevatedButton(
       onPressed: () {
         _showComponentPopup(context, componentsMap);
@@ -15,9 +16,9 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
     );
   }
 
-  static void _showComponentPopup(
+  void _showComponentPopup(
       BuildContext context, Map<dynamic, dynamic> componentsMap) {
-    print("this is componenet map $componentsMap");
+    // print("this is componenet map $componentsMap");
     showDialog(
       context: context,
       builder: (context) {
@@ -42,9 +43,9 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
                     height: 300, // Adjust the height as needed
                     child: TabBarView(
                       children: [
-                        _buildListComponent(componentsMap['materials']),
-                        _buildListComponent(componentsMap['labour']),
-                        _buildListComponent(componentsMap['takenBacks']),
+                        _buildListComponent(componentsMap, 'materials'),
+                        _buildListComponent(componentsMap, 'labour'),
+                        _buildListComponent(componentsMap, 'takenBacks'),
                         // _buildListComponent(componentsMap['takenBacks']),
                       ],
                     ),
@@ -66,21 +67,67 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
     );
   }
 
-  static Widget _buildListComponent(List<dynamic>? components) {
-    print(components);
-    print('components');
+  _getFullListOfComponsnts(components, type) {
+    List<dynamic> items = [];
+
+    List<dynamic> tasks = components["tasks"];
+    tasks.forEach((task) {
+      // print("T $task ");
+      if (task != null && task["structures"] != null) {
+        List<dynamic> structures = task["structures"];
+        structures.forEach((structure) {
+          // print("s $structure ");
+
+          // print("type $type");
+          // print("structure $structure");
+          if (structure != null && structure[type] != null) {
+            // print("type ${structure[type]} ");
+
+            List<dynamic> typeList = structure[type];
+            // items.addAll(typeList as Iterable<String>);
+
+            // print("TYPE $type STRUCTURE $structure");
+            print("TYPE $type typeListx $typeList");
+            print("typeListxrun  ${typeList.runtimeType}");
+
+            items.addAll(typeList);
+            print("items $items");
+          }
+        });
+      }
+    });
+
+    print("ITEMS $items");
+    return items;
+  }
+
+  Widget _buildListComponent(Map<dynamic, dynamic>? components1, type) {
+    List components = _getFullListOfComponsnts(components1, type);
+
+    print("components $components");
+
     return ListView.builder(
       itemCount: components?.length ?? 0,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(components?[index].toString() ?? ''),
-        );
+        // print("CONTEXT $context");
+
+        if (components[index])
+          return ListTile(
+            trailing: Text(double.parse(components[index]?['quantity'])
+                .toStringAsFixed(2)),
+            contentPadding: EdgeInsets.only(left: 0.0),
+            leading: CircleAvatar(
+              maxRadius: 10,
+              child: Text(index.toString()),
+            ),
+            title: Text(components?[index]['material_name'].toString() ?? ''),
+          );
       },
     );
   }
 
   // Public method to trigger the pop-up dialog
-  static void showComponentsPopUp(
+  void showComponentsPopUp(
       BuildContext context, Map<dynamic, dynamic> componentsMap) {
     _showComponentPopup(context, componentsMap);
   }
