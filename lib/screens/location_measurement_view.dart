@@ -4,8 +4,10 @@ import 'package:samagra/screens/whatsapp_button.dart';
 
 class LocationMeasurementView extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
+  final Function reflectQuantityDetails;
 
-  LocationMeasurementView({required this.tasks});
+  LocationMeasurementView(
+      {required this.tasks, required this.reflectQuantityDetails});
 
   @override
   _LocationMeasurementViewState createState() =>

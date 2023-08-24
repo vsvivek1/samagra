@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:samagra/screens/save_to_work_module.dart';
+import 'package:samagra/screens/set_access_token_to_dio.dart';
+import 'package:samagra/screens/work_shedule_group.dart';
 
 import '../common.dart';
 import 'get_work_details.dart';
@@ -120,6 +122,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   var apiDataForSamagra = {};
 
   bool _openedMeasurementCopier = false;
+
+  List wrk_schedule_group_structures = [];
 
   void togglePlay() {
     setState(() {
@@ -531,7 +535,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // print("TASk measurements $taskMeasurements");
 
-    Map<dynamic, dynamic> a = await getMeasurementObjForApi(obj);
+    Map<dynamic, dynamic> a =
+        Map<String, dynamic>.from(await getMeasurementObjForApi(obj));
 
     print("A is $a");
 
@@ -546,7 +551,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //       o['tasks'].forEach((t) => {ts.add(t['task_name'])})
     //     });
 
-    print(ts.length);
+    // print(ts.length);
 
     // sendObjectViaEmail(obj);
 
@@ -580,31 +585,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
       List<Map<dynamic, dynamic>> tasks =
           List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
       for (var task in tasks) {
-        String taskName = task['id'] ?? 'Unknown Task';
-        if (taskCounts.containsKey(taskName)) {
-          if (taskCounts[taskName] == null) {
-            taskCounts[taskName] = 0;
-            taskCounts[taskName] = (taskCounts[taskName]! + 1);
+        String taskId = task['id'] ?? 'Unknown Task';
+        if (taskCounts.containsKey(taskId)) {
+          if (taskCounts[taskId] == null) {
+            taskCounts[taskId] = 0;
+            taskCounts[taskId] = (taskCounts[taskId]! + 1);
           }
         } else {
-          taskCounts[taskName] = 1;
+          taskCounts[taskId] = 1;
         }
       }
     }
 
     // print('Task Counts:');
 
-    taskCounts.forEach((taskName, count) {
+    taskCounts.forEach((taskId, count) {
+      // print("TASK NAME FROm $taskId");
       Map taskMeasurement = {};
       Map taskMeasurementDetails = {};
 
       taskMeasurementDetails['quantity'] = count;
-      taskMeasurementDetails['mst_task_id'] = taskName;
+      taskMeasurementDetails['mst_task_id'] = taskId;
       taskMeasurementDetails['plg_work_id'] = widget.workId;
 
-      taskMeasurement[taskName] = taskMeasurementDetails;
+      // taskMeasurement[taskId] = taskMeasurementDetails;
 
-      tm[taskName] = taskMeasurement;
+      // tm[taskId] = taskMeasurement;
+      tm[taskId] = taskMeasurementDetails;
     });
     return tm;
   }
@@ -613,7 +620,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // List<Map<String, dynamic>> structureMeasurements, int targetId) {
       Map<dynamic, dynamic> structureMeasurements,
       int targetId,
-      Map structure) {
+      Map structure,
+      taskId,
+      wrkScheduleGroupStructureId) {
     bool structureExists = structureMeasurements.containsKey(targetId);
 
     if (structureExists) {
@@ -626,17 +635,76 @@ class _PolVarScreenState extends State<PolVarScreen> {
       //     .firstWhere((structure) => structure['id'] == targetId)
       //     .update('quantity', (value) => value + 1);
     } else {
+      Map<String, dynamic> result = {};
+      Map<String, dynamic> str = Map<String, dynamic>.from(structure);
       structure['quantity'] = 1;
-      structureMeasurements[targetId.toString()] = structure;
+
+      result['mst_structure_id'] = targetId;
+      result['mst_task_id'] = taskId;
+      result['wrk_schedule_group_structure_id'] = wrkScheduleGroupStructureId;
+
+      print("wrkScheduleGroupStructureId $wrkScheduleGroupStructureId");
+
+      structureMeasurements[targetId.toString()] = result;
+
+      // Map<String, dynamic>.from(structure);
       // If the structure does not exist, add it with quantity 1
       // structureMeasurements.add({'id': targetId, 'quantity': 1});
     }
   }
 
+  dt() {
+    debugger(when: true);
+  }
+
+  Future<List> getScheduleDetailsForMeasurement(String workId) async {
+    // bool retVal = false;
+    try {
+      String baseUrl =
+          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+
+      print("BASE UR mdtwm 136L $baseUrl");
+
+      Dio dio = new Dio();
+
+      dio = await setAccessTockenToDio(dio);
+
+      Response response = await dio.get(baseUrl);
+      if (response.statusCode == 200) {
+        Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
+
+        print("api @693 $apiData");
+
+        return apiData['wrk_schedule_group_structures'];
+        // print("apidata at mdtwm $apiData");
+      } else {
+        return Future.value([]);
+      }
+    } catch (e) {
+      print('error at 672 polvar screen $e');
+
+      return Future.value([]);
+    }
+  }
+
   getMeasurementObjForApi(obj) async {
+    // getScheduleDetailsForMeasurement(
+    Map retObj = {};
+
+    apiDataForSamagra['polevar_data'] = obj;
+
+    wrk_schedule_group_structures =
+        await getScheduleDetailsForMeasurement(widget.workId.toString());
+
+    print("wrk_schedule_group_structures 693 $wrk_schedule_group_structures");
+
     Map taskMeasurements = getTaskMeasurementList(obj);
 
     apiDataForSamagra['taskMeasurements'] = taskMeasurements;
+    // apiDataForSamagra['taskMeasurements'] = taskMeasurements;
+
+    // apiDataForSamagra['taskMeasurements'] = taskMeasurements;
+
     // List<Map<String, dynamic>> structureMeasurements = [];
     // List taskMeasurements = [];
     Map<String, int> taskCounts = {};
@@ -654,12 +722,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
       List<Map<dynamic, dynamic>> tasks =
           List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
 
+      // print("tasks xx; $tasks");
+      // debugger(when: true);
       if (tasks.isEmpty) {
         continue;
       }
 
       for (var task in tasks) {
-        // print(task);
+        String taskId = task["id"] ?? -1;
+        print("this is task $task");
+
+        // debugger(when: true);
         List<Map<dynamic, dynamic>> structures =
             List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
 
@@ -670,8 +743,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
         for (var structure in structures) {
           // gmailMe(structure);
           // print("STRCUTRE ID $structure is str id");
-          updateStructureMeasurements(
-              structureMeasurements, structure['id'], structure);
+
+          var mstStructureId = structure['id'];
+
+          var wrkScheduleGroupStructureId =
+              wrk_schedule_group_structures.firstWhere(
+            (item) =>
+                item['mst_task_id'] == taskId &&
+                item['mst_structure_id'] == mstStructureId,
+            orElse: () => null,
+          );
+          updateStructureMeasurements(structureMeasurements, structure['id'],
+              structure, taskId, wrkScheduleGroupStructureId);
 
           List<Map<dynamic, dynamic>> materials =
               List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
@@ -683,7 +766,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           // debugger;
 
           List<Map<dynamic, dynamic>> takenBacks =
-              List<Map<dynamic, dynamic>>.from(structure['materials'] ?? []);
+              List<Map<dynamic, dynamic>>.from(structure['takenBacks'] ?? []);
 
           int labourLen = labours.length;
           int takenbackLen = takenBacks.length;
@@ -699,13 +782,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
 
           if (takenBacks.length > 0) {
-            print("takenBacks IS $takenBacks");
-
             updateMaterialTakenBackMeasurements(
                 materialTakenBackMeasurements, takenBacks);
           }
 
-          print("LABOURr  $labours");
+          // print("LABOURr  $labours");
           // debugger;
         }
 
@@ -721,18 +802,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
     apiDataForSamagra['materialTakenBackMeasurements'] =
         materialTakenBackMeasurements;
 
-    print("materialTakenBackMeasurements $materialTakenBackMeasurements");
-    print("STR  MEASUREMENT $structureMeasurements");
-    print("LABOUR MEASUREMENT $labourMeasurements");
-    print("material  MEASUREMENT $materialMeasurements");
-    print("tasks  MEASUREMENT $taskMeasurements");
+    // print("qqqmaterialTakenBackMeasurements $materialTakenBackMeasurements");
+    // print("qqqSTR  MEASUREMENT $structureMeasurements");
+    // print("qqqLABOUR MEASUREMENT $labourMeasurements");
+    // print("qqqmaterial  MEASUREMENT $materialMeasurements");
+    // print("qqqtasks  MEASUREMENT $taskMeasurements");
 
-    debugger;
+    // debugger;
 
     //       Map materialMeasurements = {};
     // Map labourMeasurements = {};
     // Map materialTakenBackMeasurements
 
+    apiDataForSamagra['workId'] = widget.workId;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -1053,12 +1135,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     onPressed: () => {_gotToAnotherLocation()},
                                     child: Text('Go to  Another Location')),
                                 Spacer(),
-                                ElevatedButton(
-                                    onPressed: () => {
-                                          sendObjectToSamagra(
-                                              measurementDetails)
-                                        },
-                                    child: Text('Save to samagra')),
                               ],
                             ),
                           ),
@@ -1148,6 +1224,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           //   padding: const EdgeInsets.all(8.0),
                           //   child: Text('Full Location details nelow'),
                           // ),
+
+                          ElevatedButton(
+                              onPressed: () =>
+                                  {sendObjectToSamagra(measurementDetails)},
+                              child: Text('Save to samagra')),
                           ElevatedButton(
                             onPressed: () =>
                                 _showMeasurementCopierDialog(context),
@@ -1159,9 +1240,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.9,
                               child: LocationMeasurementView(
-                                tasks: List<Map<dynamic, dynamic>>.from(
-                                    _selectedLocationTasks),
-                              ),
+                                  tasks: List<Map<dynamic, dynamic>>.from(
+                                      _selectedLocationTasks),
+                                  reflectQuantityDetails:
+                                      reflectQuantityDetails),
                             ),
                           ),
                           Padding(
@@ -1518,7 +1600,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         itemBuilder: (BuildContext context, int index) {
           var status = _getLocationMeasuredStatus(index);
 
-          print("STATUS OF LOC $index $status");
+          // print("STATUS OF LOC $index $status");
 
           bool hasGeoLocations = status['hasGeoLocations'] as bool;
           bool hasMeasurements = status['hasMeasurements'] as bool;
@@ -1596,8 +1678,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 (element) => element['locationNo'] == index + 1,
                                 orElse: () => {},
                               );
-                              ViewTabbedViewOfComponentsInLocation
-                                  .showComponentsPopUp(context, obj);
+                              viewMeasurementExtract(context, obj);
                             },
                             child: Text('Show Components'),
                           ),
@@ -1714,6 +1795,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
         },
       ),
     );
+  }
+
+  void viewMeasurementExtract(BuildContext context, Map<dynamic, dynamic> obj) {
+    ViewTabbedViewOfComponentsInLocation _ViewTabbedViewOfComponentsInLocation =
+        ViewTabbedViewOfComponentsInLocation(
+      componentsMap: obj,
+    );
+
+    _ViewTabbedViewOfComponentsInLocation.showComponentsPopUp(context, obj);
   }
 
   Widget arrowWithText(String text) {
@@ -2169,6 +2259,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               location['tasks'].add(task);
             }
 
+// print(tasks)
             if (task['structures'] == null) {
               task['structures'] = [];
             }
@@ -2326,8 +2417,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       // print()
 
-      debugger;
-
       // totalLabourDetails.forEach((Map<dynamic, dynamic> item) {
 
       //   if (item.containsKey('wrk_execution_labour_schedule_id')) {
@@ -2454,7 +2543,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       final url =
           'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workId}/0';
 
-      print(url);
+      print("url called $url");
       final headers = {'Authorization': 'Bearer $accessToken'};
       Response response =
           await Dio().get(url, options: Options(headers: headers));
@@ -2465,6 +2554,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
+
+        print("response polvar 2504 $res");
 
         _wrk_schedule_group_id = res['data']['id'];
 
@@ -2852,6 +2943,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   void appendToMaterialMeasurements(Map materialMeasurements, Map result) {
     String key = result["key"];
+
+    // print("result key $result");
     Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
 
     if (materialMeasurements.containsKey(key)) {
@@ -2870,7 +2963,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   void updateLabourmeasurements(Map labourMeasurements, List<Map> labours) {
     labours.forEach((element) {
-      var key = element['wrk_execution_schedule_id'];
+      // print('qqq1 labour ${element}');
+      var key = element['wrk_execution_labour_schedule_id'];
 
       if (labourMeasurements.containsKey(element[key])) {
         labourMeasurements[key]['quantity'] =
@@ -2884,15 +2978,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void updateMaterialTakenBackMeasurements(
       Map materialTakenBackMeasurements, List<Map> takenBacks) {
     takenBacks.forEach((element) {
-      var key = element['wrk_execution_schedule_id'];
+      // print('qqq1 taken back ${element}');
+      // var key = element['wrk_execution_schedule_id'];
+      var key = element['wrk_material_field_return_item_id'];
 
       if (materialTakenBackMeasurements.containsKey(element[key])) {
         materialTakenBackMeasurements[key]['quantity'] =
-            materialTakenBackMeasurements[key]['quantity'] +
-                element['quantity'];
+            double.parse(materialTakenBackMeasurements[key]['quantity']) +
+                double.parse(element['quantity']);
       } else {
         materialTakenBackMeasurements[key] = element;
       }
     });
   }
+
+  reflectQuantityDetails() {}
 }

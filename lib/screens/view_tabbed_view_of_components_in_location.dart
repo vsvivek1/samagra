@@ -111,9 +111,10 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
       itemBuilder: (context, index) {
         // print("CONTEXT $context");
 
-        if (components[index])
+        if (components[index] != null)
           return ListTile(
-            trailing: Text(double.parse(components[index]?['quantity'])
+            trailing: Text(double.parse(
+                    components[index]?['quantity'].toString() as String)
                 .toStringAsFixed(2)),
             contentPadding: EdgeInsets.only(left: 0.0),
             leading: CircleAvatar(

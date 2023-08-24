@@ -13,6 +13,7 @@ import 'package:samagra/secure_storage/common_functions.dart';
 import 'dart:math' as math;
 // import 'package:samagra/common.dart';
 
+import 'get_login_details.dart';
 import 'get_work_details.dart';
 import 'measurement_option.dart';
 
@@ -37,7 +38,17 @@ class WorkSelection extends StatelessWidget {
         leading: null,
         automaticallyImplyLeading: false,
         backgroundColor: AppTheme.grey.withOpacity(0.7),
-        title: Text('Select a Work'),
+        title: Row(
+          children: [
+            Spacer(),
+            Text('Select a Work'),
+            Spacer(),
+            IconButton(
+                color: Colors.red,
+                onPressed: refreshWorkList(),
+                icon: Icon(Icons.refresh))
+          ],
+        ),
       ),
       body: Theme(
         data: ThemeData(buttonColor: AppTheme.grey.withOpacity(0.9)),
@@ -223,6 +234,10 @@ class WorkSelection extends StatelessWidget {
       return Future.value(['hi']);
       print(e); // TODO
     }
+  }
+
+  refreshWorkList() {
+    _fetchWorkListList();
   }
 
   ///SchGrp is WorkList for readability

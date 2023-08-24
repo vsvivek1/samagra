@@ -1,31 +1,17 @@
+import 'dart:convert';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
+import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/send_to_mail.dart';
+import 'package:samagra/screens/set_access_token_to_dio.dart';
 import 'package:samagra/secure_storage/common_functions.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
-
-class MeasurementDetails {
-  bool isPremeasurement;
-  bool isPart;
-  DateTime measurementSetDate;
-  DateTime commencementDate;
-  DateTime completionDate;
-
-  MeasurementDetails({
-    required this.isPremeasurement,
-    required this.isPart,
-    DateTime? measurementSetDate,
-    DateTime? commencementDate,
-    DateTime? completionDate,
-    String seat_id: '',
-  })  : this.measurementSetDate = measurementSetDate ?? DateTime.now(),
-        this.commencementDate = commencementDate ?? DateTime.now(),
-        this.completionDate = completionDate ?? DateTime.now();
-}
+import 'measurement_data_to_work_module.dart';
 
 class SaveToWorkModule extends StatefulWidget {
-  final Object dataFromPreviousScreen;
+  final Map dataFromPreviousScreen;
 
   SaveToWorkModule({required this.dataFromPreviousScreen});
 
@@ -35,26 +21,47 @@ class SaveToWorkModule extends StatefulWidget {
 
 class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   final _formKey = GlobalKey<FormState>();
-  late MeasurementDetails _measurementDetails;
-
+  late MeasurementDataToWorkModule _measurementDataToWorkModule;
   late Map polVarMeasurementObject;
-
   bool _isSubmitting = false;
   String _apiResult = '';
+  var workId;
+  var polvar_data;
 
   @override
   void initState() {
     super.initState();
-
+    workId = widget.dataFromPreviousScreen['workId'];
+    polvar_data = widget.dataFromPreviousScreen['polevar_data'];
+    initialiseMeasurementObject().then((_) {
+      // print('MDATA ${_measurementDataToWorkModule.toMap()}');
+    });
     polVarMeasurementObject = widget.dataFromPreviousScreen as Map;
-    //  widget.dataFromPreviousScreen as MeasurementDetails ??
-    _measurementDetails = MeasurementDetails(
-      isPremeasurement: false,
-      isPart: true,
-      measurementSetDate: DateTime.now(),
-      commencementDate: DateTime.now(),
-      completionDate: DateTime.now(),
+  }
+
+  initialiseMeasurementObject() async {
+    _measurementDataToWorkModule = MeasurementDataToWorkModule(
+      workId: workId.toString(),
+      is_premeasurement: false,
+      part_or_final: true,
+      measurement_set_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      commencement_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      completion_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      plg_work_id: workId,
     );
+
+    _measurementDataToWorkModule.seat_id = await getSeatId();
+
+    await _measurementDataToWorkModule
+        .fetchScheduleDetailsAndSetParams(
+            workId.toString(), widget.dataFromPreviousScreen)
+        .then(
+      (value) {
+        print("VALUE line 60 stwm ${value.toString()}");
+      },
+    );
+
+    print('MDATA stwm 64 ${_measurementDataToWorkModule.toMap()}');
   }
 
   @override
@@ -71,59 +78,68 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
             children: [
               CheckboxListTile(
                 title: Text('Is this a  Premeasurement ?'),
-                value: _measurementDetails.isPremeasurement,
+                value: _measurementDataToWorkModule.is_premeasurement,
                 onChanged: (newValue) {
                   setState(() {
-                    _measurementDetails.isPremeasurement = newValue!;
+                    _measurementDataToWorkModule.is_premeasurement = newValue!;
                   });
                 },
               ),
               CheckboxListTile(
                 title: Text('Is This a  Part Measurement ? '),
-                value: _measurementDetails.isPart,
+                value: _measurementDataToWorkModule.part_or_final,
                 onChanged: (newValue) {
                   setState(() {
-                    _measurementDetails.isPart = newValue!;
+                    _measurementDataToWorkModule.part_or_final = newValue!;
                   });
                 },
               ),
               ListTile(
                 title: Text('Date of Commencement of Work'),
-                subtitle: Text(_measurementDetails.commencementDate.toString()),
+                subtitle: Text(
+                    _measurementDataToWorkModule.commencement_date.toString()),
                 trailing: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () => _selectDate(
-                      context, _measurementDetails.commencementDate, (newDate) {
+                      context,
+                      _measurementDataToWorkModule.commencement_date
+                          as DateTime, (newDate) {
                     setState(() {
-                      _measurementDetails.commencementDate = newDate;
+                      _measurementDataToWorkModule.commencement_date =
+                          newDate as String?;
                     });
                   }),
                 ),
               ),
               ListTile(
                 title: Text('Date of Completion of Work'),
-                subtitle: Text(_measurementDetails.completionDate.toString()),
+                subtitle: Text(
+                    _measurementDataToWorkModule.completion_date.toString()),
                 trailing: IconButton(
                   icon: Icon(Icons.calendar_today),
-                  onPressed: () => _selectDate(
-                      context, _measurementDetails.completionDate, (newDate) {
+                  onPressed: () => _selectDate(context,
+                      _measurementDataToWorkModule.completion_date as DateTime,
+                      (newDate) {
                     setState(() {
-                      _measurementDetails.completionDate = newDate;
+                      _measurementDataToWorkModule.completion_date =
+                          newDate as String?;
                     });
                   }),
                 ),
               ),
               ListTile(
                 title: Text('Measurement Set Date'),
-                subtitle:
-                    Text(_measurementDetails.measurementSetDate.toString()),
+                subtitle: Text(_measurementDataToWorkModule.measurement_set_date
+                    .toString()),
                 trailing: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () => _selectDate(
-                      context, _measurementDetails.measurementSetDate,
-                      (newDate) {
+                      context,
+                      _measurementDataToWorkModule.measurement_set_date
+                          as DateTime, (newDate) {
                     setState(() {
-                      _measurementDetails.measurementSetDate = newDate;
+                      _measurementDataToWorkModule.measurement_set_date =
+                          newDate as String?;
                     });
                   }),
                 ),
@@ -179,66 +195,91 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   }
 
   void _submitForm() async {
+    // widget.dataFromPreviousScreen.forEach((key, value) {
+    //   print("$key --> $value");
+    // });
+
+    // return;
+
     if (_formKey.currentState!.validate()) {
-      final storage = SecureStorage();
-
-      final loginDetails1 =
-          await storage.getSecureAllStorageDataByKey('loginDetails');
-      final loginDetails = loginDetails1['loginDetails'];
-
-      final currentSeatDetails = getCurrentSeatDetails(loginDetails);
-
-      // final officeCode = currentSeatDetails['office']['office_code'];
-      final officeId = currentSeatDetails['office_id'];
-
-      print("currentSeatDetails + $currentSeatDetails ");
-
-      debugger;
-
       setState(() {
         _isSubmitting = true;
-        _apiResult =
-            ''; // Clear the result message on every submission attempt.
+        _apiResult = '';
       });
       _formKey.currentState!.save();
 
       // Perform the POST request using Dio
       Dio dio = Dio();
       try {
-        // Convert the MeasurementDetails object to a map
-        Map<String, dynamic> dataToSend = {
-          'isPremeasurement': _measurementDetails.isPremeasurement,
-          'isPart': _measurementDetails.isPart,
-          'measurementSetDate':
-              _measurementDetails.measurementSetDate.toIso8601String(),
-          'commencementDate':
-              _measurementDetails.commencementDate.toIso8601String(),
-          'completionDate':
-              _measurementDetails.completionDate.toIso8601String(),
-        };
+        var dataToSend = _measurementDataToWorkModule.toMap();
 
-        // Send the POST request to the specified URL
+        dataToSend['office_id'] = await getOfficeId();
+        dataToSend['role_id'] = await getUserRoleId();
+        dataToSend['part_or_final'] = 'FINAL';
+        dataToSend['polevar_data'] = jsonEncode(polvar_data);
+        // dataToSend['polevar_data'] = dataToSend.
+
+        // print("${dataToSend['office_id']} -  ${dataToSend['seat_id']}");
+
+        // return;
+
+        // dataToSend.forEach((key, value) {
+        //   print('$key: ${value.runtimeType}');
+        // });
+
+        // print("polvar_data $polvar_data");
+        dio = await setAccessTockenToDio(dio);
+
+        dataToSend.forEach((key, value) {
+          print("KEYstwm 234 $key -> $value");
+
+          // if (key == 'taskmeasurements') {
+          //   dataToSend[key].forEach((key, value) => {print("TASK  ${value} ")});
+          //   print("TASK  ${value.runtimeType}");
+          // }
+        });
+
+        // gmailMe(dataToSend);
+
+        // return;
+
+        setState(() {
+          _isSubmitting = false;
+          _apiResult = 'Success';
+        });
+
+        // debugger(when: true);
+        // return;
+
+        // print('stop');
+
         var response = await dio.post(
           'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',
           data: dataToSend,
         );
 
-        // Handle the response
+        // gmailMe(response.data);
+
+        // print(dataToSend);
+        print('---------------');
+        print(response.data);
+
         if (response.statusCode == 200) {
+          // print(response.data);
           setState(() {
             _isSubmitting = false;
             _apiResult = 'Success';
           });
-          // Do something with the successful response, if needed.
         } else {
           setState(() {
+            print(response);
+
             _isSubmitting = false;
             _apiResult = 'Failed';
           });
-          // Handle the failure case, if needed.
         }
       } catch (e) {
-        // Handle any errors that occurred during the request
+        // print(e);
         setState(() {
           _isSubmitting = false;
           _apiResult = 'Error: $e';
