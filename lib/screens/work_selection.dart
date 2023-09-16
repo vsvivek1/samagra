@@ -51,7 +51,7 @@ class WorkSelection extends StatelessWidget {
         ),
       ),
       body: Theme(
-        data: ThemeData(buttonColor: AppTheme.grey.withOpacity(0.9)),
+        data: ThemeData(),
         child: FutureBuilder(
           future: _fetchWorkListList(),
           builder: (context, snapshot) {

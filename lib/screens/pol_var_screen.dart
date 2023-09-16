@@ -1905,14 +1905,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
         ExpansionPanelList(
             key: GlobalKey(),
             expansionCallback: (int panelIndex, bool isExpanded) {
-              print(
-                  'expansion panel index $panelIndex  and isExpanded is $isExpanded && ${tasklist1[panelIndex]['isExpanded']}');
               setState(() {
                 for (int i = 0; i < tasklist1.length; i++) {
                   tasklist1[i]['isExpanded'] = false;
+                  // tasklist1[i]['isExpanded'] = !tasklist1[i]['isExpanded'];
                 }
 
-                tasklist1[panelIndex]['isExpanded'] = !isExpanded;
+                tasklist1[panelIndex]['isExpanded'] = isExpanded;
+                print(
+                    'expansion panel index $panelIndex  and isExpanded is $isExpanded && ${tasklist1[panelIndex]['isExpanded']}');
+
                 //
               });
             },
@@ -1923,7 +1925,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               // print(t);
               // print('tabove');
 
-              print('is expanded ${t['isExpanded']}');
+              print('is  yyy  expanded ${t['isExpanded']}');
 
               counter++;
               return ExpansionPanel(

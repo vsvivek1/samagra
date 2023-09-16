@@ -25,7 +25,7 @@ class MeasurementOptionScreen extends StatelessWidget {
         title: Text('Select an option'),
       ),
       body: Theme(
-        data: ThemeData(buttonColor: AppTheme.dark_grey),
+        data: ThemeData(),
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Column(

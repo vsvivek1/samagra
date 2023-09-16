@@ -9,6 +9,7 @@
          <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
+         android:enableOnBackInvokedCallback="true"
         android:label="m-Samagra"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
