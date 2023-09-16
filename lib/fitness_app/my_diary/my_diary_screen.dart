@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/fitness_app/ui_view/body_measurement.dart';
 import 'package:samagra/fitness_app/ui_view/glass_view.dart';
 import 'package:samagra/fitness_app/ui_view/mediterranean_diet_view.dart';
@@ -111,6 +112,12 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     tot_coll_amt_eht = response['tot_coll_amt_eht'] != null
         ? response['tot_coll_amt_eht'].toString()
         : 'No data';
+  }
+
+  Future<String> getAccessToken() async {
+    final secureStorage = FlutterSecureStorage();
+    final accessToken = await secureStorage.read(key: 'access_token');
+    return Future.value(accessToken);
   }
 
   Future<void> getDashBoard() async {

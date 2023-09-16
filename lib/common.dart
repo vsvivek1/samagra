@@ -14,7 +14,7 @@ String getDateAndWeek() {
   return formattedDate;
 }
 
-Future<String> getAccessToken() async {
+Future<String> Token() async {
   final secureStorage = FlutterSecureStorage();
   final accessToken = await secureStorage.read(key: 'access_token');
   return Future.value(accessToken);

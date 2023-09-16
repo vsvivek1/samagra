@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/send_to_mail.dart';
@@ -9,6 +10,9 @@ import 'package:samagra/screens/set_access_token_to_dio.dart';
 import 'package:samagra/secure_storage/common_functions.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'measurement_data_to_work_module.dart';
+import '../common.dart';
+
+import 'package:http/http.dart' as http;
 
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;
@@ -194,6 +198,12 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
     }
   }
 
+  Future<String> getAccessToken() async {
+    final secureStorage = FlutterSecureStorage();
+    final accessToken = await secureStorage.read(key: 'access_token');
+    return Future.value(accessToken);
+  }
+
   void _submitForm() async {
     // widget.dataFromPreviousScreen.forEach((key, value) {
     //   print("$key --> $value");
@@ -217,21 +227,11 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
         dataToSend['role_id'] = await getUserRoleId();
         dataToSend['part_or_final'] = 'FINAL';
         dataToSend['polevar_data'] = jsonEncode(polvar_data);
-        // dataToSend['polevar_data'] = dataToSend.
 
-        // print("${dataToSend['office_id']} -  ${dataToSend['seat_id']}");
-
-        // return;
-
-        // dataToSend.forEach((key, value) {
-        //   print('$key: ${value.runtimeType}');
-        // });
-
-        // print("polvar_data $polvar_data");
         dio = await setAccessTockenToDio(dio);
 
         dataToSend.forEach((key, value) {
-          print("KEYstwm 234 $key -> $value");
+          print("KEYstwm 234 ${key.toString()} -> ${value.toString()}");
 
           // if (key == 'taskmeasurements') {
           //   dataToSend[key].forEach((key, value) => {print("TASK  ${value} ")});
@@ -243,29 +243,55 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
 
         // return;
 
+        // debugger(when: true);
+        // return;
+
+        // print('stop');
+        // FormData formData = FormData.fromMap(dataToSend);
+
+        FormData formData = FormData();
+
+        // Iterate through the dataToSend map and add each key-value pair as a field
+        dataToSend.forEach((key, value) {
+          formData.fields.add(MapEntry(key.toString(), value.toString()));
+        });
+
+        // print('here2');
         setState(() {
           _isSubmitting = false;
           _apiResult = 'Success';
         });
 
-        // debugger(when: true);
-        // return;
+        print(formData.fields);
+        // var response = await dio.post(
+        //   'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',
+        //   // data: dataToSend,
+        //   data: formData,
+        // );
 
-        // print('stop');
+        final String url =
+            'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar';
 
-        var response = await dio.post(
-          'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',
-          data: dataToSend,
-        );
+        var request = http.MultipartRequest('POST', Uri.parse(url));
 
-        // gmailMe(response.data);
+        String token = await getAccessToken();
 
-        // print(dataToSend);
-        print('---------------');
-        print(response.data);
+        print('$token');
+        request.headers['Authorization'] = 'Bearer $token';
+
+        // final http.Response response = await http.post(
+        //   Uri.parse(url),
+        //   body: formData,
+        // );
+
+        final response = await request.send();
+
+        // print(response.data);
 
         if (response.statusCode == 200) {
-          // print(response.data);
+          // print(response);
+          final responseData = await response.stream.bytesToString();
+          print('Response: $responseData');
           setState(() {
             _isSubmitting = false;
             _apiResult = 'Success';
@@ -279,7 +305,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
           });
         }
       } catch (e) {
-        // print(e);
+        print(e);
         setState(() {
           _isSubmitting = false;
           _apiResult = 'Error: $e';

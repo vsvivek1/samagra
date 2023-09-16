@@ -113,13 +113,20 @@ class MeasurementDataToWorkModule {
       'measurement_set_date': measurement_set_date,
       'commencement_date': commencement_date,
       'completion_date': completion_date,
+      'taskMeasurements': taskMeasurements,
+      'structureMeasurements': structureMeasurements,
+      'materialMeasurements': materialMeasurements,
+      'labourMeasurements': labourMeasurements,
+      'materialTakenBackMeasurements': materialTakenBackMeasurements,
+      'polevar_data': polevar_data,
+
       // 'polevar_data': convertMapKeysToString(polevar_data),
-      'taskMeasurements': convertMapKeysToString(taskMeasurements),
-      'structureMeasurements': convertMapKeysToString(structureMeasurements),
-      'materialMeasurements': convertMapKeysToString(materialMeasurements),
-      'labourMeasurements': convertMapKeysToString(labourMeasurements),
-      'materialTakenBackMeasurements':
-          convertMapKeysToString(materialTakenBackMeasurements),
+      // 'taskMeasurements': convertMapKeysToString(taskMeasurements),
+      // 'structureMeasurements': convertMapKeysToString(structureMeasurements),
+      // 'materialMeasurements': convertMapKeysToString(materialMeasurements),
+      // 'labourMeasurements': convertMapKeysToString(labourMeasurements),
+      // 'materialTakenBackMeasurements':
+      //     convertMapKeysToString(materialTakenBackMeasurements),
       // 'wrk_schedule_group_structures': convertMapToDynamicKeys(wrk_schedule_group_structures),
       // Add other attributes here...
     };
