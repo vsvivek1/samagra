@@ -118,7 +118,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
                         child: ListView.builder(
                           itemCount: _workList.length,
                           itemBuilder: (context, index) {
-                            Work work = _workList[index] as Work;
+                            Work work = _workList[index];
                             bool isRightSide = index % 2 ==
                                 0; // Check if the index is even or odd
 
@@ -203,7 +203,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
                                 ],
                               ),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.lightGreen,
+                                backgroundColor: Colors.lightGreen,
                                 minimumSize: Size(double.infinity, 50),
                               ),
                             ),
@@ -217,7 +217,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
                                 style: TextStyle(color: Colors.white),
                               ),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
+                                backgroundColor: Colors.green,
                                 minimumSize: Size(double.infinity, 50),
                               ),
                             ),
@@ -231,7 +231,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
                                 style: TextStyle(color: Colors.white),
                               ),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.green.shade800,
+                                backgroundColor: Colors.green.shade800,
                                 minimumSize: Size(double.infinity, 50),
                               ),
                             ),
@@ -245,7 +245,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
                                 style: TextStyle(color: Colors.white),
                               ),
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.green.shade900,
+                                backgroundColor: Colors.green.shade900,
                                 minimumSize: Size(double.infinity, 50),
                               ),
                             ),

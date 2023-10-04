@@ -257,7 +257,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
     });
 
     print(
-        'line 251 selected from loc det widget taking from loc det widget ${p1}');
+        'line 251 selected from loc det widget taking from loc det widget $p1');
     // print(widget.latitude);
     // print(widget.longitude);
     //  print('abo');

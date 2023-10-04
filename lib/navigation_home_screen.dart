@@ -1,8 +1,6 @@
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/custom_drawer/drawer_user_controller.dart';
 import 'package:samagra/custom_drawer/home_drawer.dart';
-import 'package:samagra/feedback_screen.dart';
-import 'package:samagra/help_screen.dart';
 import 'package:samagra/home_screen.dart';
 import 'package:samagra/invite_friend_screen.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
-import 'package:samagra/screens/whatsapp_button.dart';
 
 class LocationMeasurementView extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
@@ -264,7 +263,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
                 final labour = labour1[labourIndex];
 
-                print("LABVOURNAME $labourIndex ${labour}");
+                print("LABVOURNAME $labourIndex $labour");
 
                 return Column(
                   children: [

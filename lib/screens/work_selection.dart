@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
@@ -9,7 +10,6 @@ import 'package:samagra/internet_connectivity.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../secure_storage/secure_storage.dart';
-import 'package:samagra/secure_storage/common_functions.dart';
 import 'dart:math' as math;
 // import 'package:samagra/common.dart';
 
@@ -53,10 +53,14 @@ class WorkSelection extends StatelessWidget {
       body: Theme(
         data: ThemeData(),
         child: FutureBuilder(
-          future: _fetchWorkListList(),
+          future: _fetchWorkListList(context: context),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.hasData && snapshot.data != "-1") {
               final workListList = snapshot.data;
+
+              // print("worklist $workListList");
+
+              // debugger(when: true);
 
               // p(WorkListList);
               // p(workListList.runtimeType);
@@ -74,7 +78,7 @@ class WorkSelection extends StatelessWidget {
               //     body: WorkListListWidget(WorkListList),
               //   ),
               // );
-            } else if (snapshot.hasError) {
+            } else if (snapshot.hasError || snapshot.data == '-1') {
               return Text('Error: ${snapshot.error}');
             } else {
               return Center(
@@ -186,7 +190,7 @@ class WorkSelection extends StatelessWidget {
     return;
   }
 
-  Future<List<dynamic>> _fetchWorkListList() async {
+  Future<List<dynamic>> _fetchWorkListList({context = -1}) async {
     final accessToken1 =
         await storage.getSecureAllStorageDataByKey("access_token");
 
@@ -217,6 +221,8 @@ class WorkSelection extends StatelessWidget {
         var res = response.data['result_data']['schGrpList'];
 
         // print(res);
+
+        // debugger(when: true);
         // res.forEach((r) async => {print("R  $r")});
 
         //  Future<Map<String, dynamic>?> wd = await getWorkDetails(workId.toString());
@@ -231,8 +237,19 @@ class WorkSelection extends StatelessWidget {
         return [];
       }
     } on Exception catch (e) {
-      return Future.value(['hi']);
+      if (context != -1) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('This is a SnackBar!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+
+        // print(context);
+      }
+
       print(e); // TODO
+      return Future.value(['-1']);
     }
   }
 
@@ -264,7 +281,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
       var vd = await getWorkDetails(i["id"].toString());
 
       if (vd != null) {
-        var measurements = vd!['measurements'];
+        var measurements = vd['measurements'];
 
         i['measurements'] = measurements;
 

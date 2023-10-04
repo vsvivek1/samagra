@@ -160,7 +160,7 @@ class _MeasurementPropertyCopierScreenState
       //   print(element['locationNo']);
       // });
 
-      print("M details ${targetDetails}");
+      print("M details $targetDetails");
 
       print("TARGET LOC  ${targetLocation.toString()}");
 

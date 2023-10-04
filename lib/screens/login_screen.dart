@@ -12,9 +12,7 @@ import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
-import 'package:samagra/screens/speak_text.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 
 import '../internet_connectivity.dart';

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
-import 'package:samagra/app_theme.dart';
 
 class AuthenticationBottomSheet extends StatefulWidget {
   const AuthenticationBottomSheet({super.key});

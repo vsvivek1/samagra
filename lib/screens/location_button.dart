@@ -81,7 +81,7 @@ class _LocationButtonState extends State<LocationButton> {
                           _currentPosition!.latitude,
                           _currentPosition!.longitude,
                         );
-                      } on Exception catch (e) {
+                      } on Exception {
                         // TODO
                         placemarks1 = [];
                       }

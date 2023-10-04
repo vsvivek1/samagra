@@ -19,7 +19,8 @@ class MeasurementDataToWorkModule {
   // Map<dynamic, dynamic>? polevar_data;
   String? polevar_data;
   Map<dynamic, dynamic>? structureMeasurements;
-  Map<dynamic, dynamic>? taskMeasurements;
+  // Map<dynamic, dynamic>? taskMeasurements;
+  List taskMeasurements = [];
   Map<dynamic, dynamic>? materialMeasurements;
   Map<dynamic, dynamic>? labourMeasurements;
   Map<dynamic, dynamic>? materialTakenBackMeasurements;
@@ -39,7 +40,7 @@ class MeasurementDataToWorkModule {
     this.commencement_date,
     this.completion_date,
     this.polevar_data,
-    this.taskMeasurements,
+    required this.taskMeasurements,
     this.structureMeasurements,
     this.materialMeasurements,
     this.labourMeasurements,
@@ -103,7 +104,7 @@ class MeasurementDataToWorkModule {
 
   Map<String, dynamic> toMap() {
     return {
-      'wrk_measurement_set_id': wrk_measurement_set_id,
+      // 'wrk_measurement_set_id': wrk_measurement_set_id,
       'user_id': user_id,
       'seat_id': seat_id,
       'plg_work_id': plg_work_id,
@@ -113,12 +114,17 @@ class MeasurementDataToWorkModule {
       'measurement_set_date': measurement_set_date,
       'commencement_date': commencement_date,
       'completion_date': completion_date,
-      'taskMeasurements': taskMeasurements,
-      'structureMeasurements': structureMeasurements,
-      'materialMeasurements': materialMeasurements,
-      'labourMeasurements': labourMeasurements,
-      'materialTakenBackMeasurements': materialTakenBackMeasurements,
-      'polevar_data': polevar_data,
+
+      'taskMeasurements': jsonEncode(taskMeasurements),
+      'structureMeasurements': jsonEncode(structureMeasurements),
+      'materialMeasurements': jsonEncode(materialMeasurements),
+      'labourMeasurements': jsonEncode(labourMeasurements),
+      'materialTakenBackMeasurements':
+          jsonEncode(materialTakenBackMeasurements),
+
+      // 9231004321
+
+      'polevar_data': jsonEncode(polevar_data),
 
       // 'polevar_data': convertMapKeysToString(polevar_data),
       // 'taskMeasurements': convertMapKeysToString(taskMeasurements),
@@ -152,17 +158,19 @@ class MeasurementDataToWorkModule {
 
         // print("apidata at mdtwm $apiData");
 
-        Map wrk_schedule_group_structures =
-            apiData!['wrk_schedule_group_structures'] ?? {};
+        Map wrkScheduleGroupStructures =
+            apiData['wrk_schedule_group_structures'] ?? {};
 
         print(
-            'thi is wrk_schedule_group_structures $wrk_schedule_group_structures ');
+            'thi is wrk_schedule_group_structures $wrkScheduleGroupStructures ');
 
         // print("REE res  ${response.data}");
 
         // print('plg data ${this.plg_work_id}');
 
         var resultdata = apiData['result_data'];
+
+        // debugger(when: true);
 
         if (resultdata != null) {
           wrk_schedule_group_id = resultdata['data']['id'].toString();
@@ -212,33 +220,30 @@ class MeasurementDataToWorkModule {
         // return ;
 
         taskMeasurements =
-            dataFromPolvarScreen['taskMeasurements'] as Map<dynamic, dynamic>;
+            // dataFromPolvarScreen['taskMeasurements'] as Map<dynamic, dynamic>;
+            dataFromPolvarScreen['taskMeasurements'];
 
         print("taskMeasurements $taskMeasurements");
 
-        structureMeasurements = dataFromPolvarScreen['structreMeasurements'] ??
-            {} as Map<dynamic, dynamic>;
-        ;
+        structureMeasurements =
+            dataFromPolvarScreen['structreMeasurements'] ?? {};
 
         structureMeasurements?.forEach(
-          (key, value) => {print("strm $key -> $value")},
+          (key, value) => print("strm $key -> $value"),
         );
 
         print("structureMeasurements $structureMeasurements");
         materialMeasurements = dataFromPolvarScreen['materialMeasurements']
             as Map<dynamic, dynamic>;
-        ;
 
         print("materialMeasurements $materialMeasurements");
         labourMeasurements =
             dataFromPolvarScreen['labourMeasurements'] as Map<dynamic, dynamic>;
-        ;
 
         print("labourMeasurements $labourMeasurements");
         materialTakenBackMeasurements =
             dataFromPolvarScreen['materialTakenBackMeasurements']
                 as Map<dynamic, dynamic>;
-        ;
 
         print("materialTakenBackMeasurements $materialTakenBackMeasurements");
 

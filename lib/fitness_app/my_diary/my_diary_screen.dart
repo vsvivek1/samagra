@@ -1,14 +1,9 @@
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:samagra/fitness_app/ui_view/body_measurement.dart';
-import 'package:samagra/fitness_app/ui_view/glass_view.dart';
 import 'package:samagra/fitness_app/ui_view/mediterranean_diet_view.dart';
 import 'package:samagra/fitness_app/ui_view/title_view.dart';
 import 'package:samagra/fitness_app/fitness_app_theme.dart';
-import 'package:samagra/fitness_app/my_diary/meals_list_view.dart';
-import 'package:samagra/fitness_app/my_diary/water_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:samagra/common.dart';
@@ -230,10 +225,10 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       animation: widget.animationController!,
       builder: (BuildContext context, Widget? child) {
         return FadeTransition(
-          opacity: animation!,
+          opacity: animation,
           child: Transform(
             transform: Matrix4.translationValues(
-                0.0, 50 * (1.0 - animation!.value), 0.0),
+                0.0, 50 * (1.0 - animation.value), 0.0),
             child: Container(
               decoration: BoxDecoration(
                 color: FitnessAppTheme.white,

@@ -1,8 +1,6 @@
 import 'package:samagra/introduction_animation/components/care_view.dart';
 import 'package:samagra/introduction_animation/components/center_next_button.dart';
 import 'package:samagra/introduction_animation/components/mood_diary_vew.dart';
-import 'package:samagra/introduction_animation/components/relax_view.dart';
-import 'package:samagra/introduction_animation/components/splash_view.dart';
 import 'package:samagra/introduction_animation/components/top_back_skip_view.dart';
 import 'package:samagra/introduction_animation/components/welcome_view.dart';
 import 'package:flutter/material.dart';

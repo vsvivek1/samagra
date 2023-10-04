@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -7,8 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
-import 'package:image/image.dart' as img;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:samagra/secure_storage/common_functions.dart';
 
@@ -511,7 +508,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
       // }
       // initials = initials + '-' + words.last.substring(0, 3);
       // return initials.toUpperCase();
-    } on Exception catch (e) {
+    } on Exception {
       // TODO
 
       return name;

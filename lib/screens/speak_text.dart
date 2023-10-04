@@ -1,5 +1,4 @@
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:samagra/screens/send_to_mail.dart';
 
 void speakText(String text) async {
   final FlutterTts flutterTts = FlutterTts();

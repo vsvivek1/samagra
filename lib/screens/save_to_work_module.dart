@@ -1,18 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
-import 'package:samagra/screens/send_to_mail.dart';
-import 'package:samagra/screens/set_access_token_to_dio.dart';
-import 'package:samagra/secure_storage/common_functions.dart';
-import 'package:samagra/secure_storage/secure_storage.dart';
 import 'measurement_data_to_work_module.dart';
-import '../common.dart';
-
-import 'package:http/http.dart' as http;
 
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;
@@ -40,7 +32,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
     initialiseMeasurementObject().then((_) {
       // print('MDATA ${_measurementDataToWorkModule.toMap()}');
     });
-    polVarMeasurementObject = widget.dataFromPreviousScreen as Map;
+    polVarMeasurementObject = widget.dataFromPreviousScreen;
   }
 
   initialiseMeasurementObject() async {
@@ -52,6 +44,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
       commencement_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
       completion_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
       plg_work_id: workId,
+      taskMeasurements: [],
     );
 
     _measurementDataToWorkModule.seat_id = await getSeatId();
@@ -201,10 +194,12 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   Future<String> getAccessToken() async {
     final secureStorage = FlutterSecureStorage();
     final accessToken = await secureStorage.read(key: 'access_token');
+
     return Future.value(accessToken);
   }
 
   void _submitForm() async {
+    String token = await getAccessToken();
     // widget.dataFromPreviousScreen.forEach((key, value) {
     //   print("$key --> $value");
     // });
@@ -223,21 +218,23 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
       try {
         var dataToSend = _measurementDataToWorkModule.toMap();
 
-        dataToSend['office_id'] = await getOfficeId();
-        dataToSend['role_id'] = await getUserRoleId();
+        dataToSend['office_id'] = (await getOfficeId()).toString();
+        dataToSend['role_id'] = (await getUserRoleId()).toString();
         dataToSend['part_or_final'] = 'FINAL';
+        // dataToSend['polevar_data'] = jsonEncode(polvar_data);
         dataToSend['polevar_data'] = jsonEncode(polvar_data);
 
-        dio = await setAccessTockenToDio(dio);
+        // return;
+        // dio = await setAccessTockenToDio(dio);
 
-        dataToSend.forEach((key, value) {
-          print("KEYstwm 234 ${key.toString()} -> ${value.toString()}");
+        // dataToSend.forEach((key, value) {
+        //   print("KEYstwm 234 ${key.toString()} -> ${value.toString()}");
 
-          // if (key == 'taskmeasurements') {
-          //   dataToSend[key].forEach((key, value) => {print("TASK  ${value} ")});
-          //   print("TASK  ${value.runtimeType}");
-          // }
-        });
+        //   // if (key == 'taskmeasurements') {
+        //   //   dataToSend[key].forEach((key, value) => {print("TASK  ${value} ")});
+        //   //   print("TASK  ${value.runtimeType}");
+        //   // }
+        // });
 
         // gmailMe(dataToSend);
 
@@ -251,59 +248,205 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
 
         FormData formData = FormData();
 
-        // Iterate through the dataToSend map and add each key-value pair as a field
-        dataToSend.forEach((key, value) {
-          formData.fields.add(MapEntry(key.toString(), value.toString()));
-        });
+        // // Iterate through the dataToSend map and add each key-value pair as a field
+        // dataToSend.forEach((key, value) {
+        //   formData.fields.add(MapEntry(key.toString(), value.toString()));
+        // });
 
         // print('here2');
         setState(() {
           _isSubmitting = false;
           _apiResult = 'Success';
         });
+        // return;
+        var headers = {
+          'Authorization': 'Bearer $token',
+          'Cookie': 'laravel_session=8XnfA1lbGXvJZWBf8sDwwTWs1YAaekeM0jo0OTXk',
+          'Content-Type': 'application/json',
+        };
+        // var data = FormData.fromMap({
+        //   'wrk_measurement_set_id': '',
+        //   'user_id': '21701',
+        //   'seat_id': '23752',
+        //   'plg_work_id': '43181',
+        //   'wrk_schedule_group_id': '26353',
+        //   'is_premeasurement': 'false',
+        //   'part_or_final': 'FINAL',
+        //   'measurement_set_date': '2023-09-18',
+        //   'commencement_date': '2023-09-17',
+        //   'completion_date': '2023-09-17',
+        //   'taskMeasurements':
+        //       '{1216: {quantity: 1, mst_task_id: 1216, plg_work_id: 26353}, 1219: {quantity: 1, mst_task_id: 1219, plg_work_id: 26353}}',
+        //   'structureMeasurements':
+        //       '{3524: {mst_structure_id: 3524, mst_task_id: 1216, wrk_schedule_group_structure_id: null}, 3525: {mst_structure_id: 3525, mst_task_id: 1219, wrk_schedule_group_structure_id: null}}',
+        //   'materialMeasurements': '{}',
+        //   'labourMeasurements':
+        //       '{160765: {wrk_execution_schedule_id: 43481, wrk_execution_labour_schedule_id: 160765, mst_labour_id: 113, labour_name: Giving one single phase WP service connection, as per standards, incl. conveyance of materials., labour_code: 251, mst_uom_id: 74, uom_code: No, rate: 1153.00, quantity: 1}, 160766: {wrk_execution_schedule_id: 43481, wrk_execution_labour_schedule_id: 160766, mst_labour_id: 114, labour_name: Giving one three phase   WP service connection (upto 10kW) as per standards, incl. conveyance of materials., labour_code: 252, mst_uom_id: 74, uom_code: No, rate: 1715.00, quantity: 1}}',
+        //   'materialTakenBackMeasurements': '{}',
+        //   'polevar_data': '{}',
+        //   'office_id': '1704',
+        //   'role_id': '1'
+        // });
 
-        print(formData.fields);
-        // var response = await dio.post(
-        //   'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',
-        //   // data: dataToSend,
-        //   data: formData,
-        // );
+//         dataToSend.forEach((key, value) {
+//           // dataToSend[key] = value.toString();
 
-        final String url =
-            'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar';
+//           String type = dataToSend[key].runtimeType.toString();
 
-        var request = http.MultipartRequest('POST', Uri.parse(url));
+//           if (dataToSend[key] == null) {
+//             dataToSend[key] = 'Null';
+//           }
 
-        String token = await getAccessToken();
+// // if(type==null)
+//           if (key == 'labourMeasurements') {
+//             return;
+//           }
 
-        print('$token');
-        request.headers['Authorization'] = 'Bearer $token';
+//           // print(key);
+
+//           type.contains("Map")
+//               ? dataToSend[key] = jsonEncode(dataToSend[key])
+//               : dataToSend[key] = dataToSend[key].toString();
+
+//           print("$key-->> ${dataToSend[key].runtimeType}");
+//         });
+
+        // dataToSend.forEach((key, value) {
+        //   print(key);
+        //   if (key == 'labourMeasurements') {
+        //     print('here');
+        //     dataToSend[key] = {};
+
+        //     print('lab ${dataToSend[key]}');
+        //   }
+        //   if (value == null) {
+        //     dataToSend[key] = 'Null';
+        //   } else if (value is Map || value is List) {
+        //     try {
+        //       jsonEncode(value);
+        //       print('The value is JSON-encodable.');
+        //     } catch (e) {
+        //       print(value);
+        //       print(' $key The value is not JSON-encodable: $e');
+        //     }
+        //     ;
+        //   } else {
+        //     dataToSend[key] = value.toString();
+        //   }
+        //   print("$key-->> ${dataToSend[key].runtimeType}");
+        // });
+
+        // return;
+        // var data = 0;
+
+        // FormData data = FormData.fromMap(dataToSend);
+
+        // debugger(when: true);
+
+        FormData data = FormData();
+
+        // Iterate through the structured data and add it to the FormData object
+        dataToSend.forEach((key, value) {
+          if (value.runtimeType != String) {
+            value = value.toString();
+          }
+          print("$key  ->> $value");
+
+          // data.fields.add(MapEntry(key, value.toString()));
+        });
+
+        // try {
+        //   // String jsonData = json.encode(dataToSend);
+        //   // Make the Dio request here
+        // } catch (e) {
+        //   print('Error encoding JSON: $e');
+        // }
+        // return;
+        var dio = Dio();
+        var response = await dio.request(
+          'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',
+          options: Options(
+            method: 'POST',
+            headers: headers,
+          ),
+          // data: data,
+          data: dataToSend,
+        );
+
+        print("error ${response.data}");
+        if (response.statusCode == 200) {
+          if (response.data['result_flag'] == -1) {
+            final snackBar = SnackBar(
+              content: Text('Error '),
+              duration: Duration(
+                  seconds: 3), // How long the snackBar will be displayed
+              action: SnackBarAction(
+                label: 'Close',
+                onPressed: () {
+                  // Code to execute when 'Close' is pressed
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                },
+              ),
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+
+          print(json.encode(response.data));
+        } else {
+          print(response.statusMessage);
+        }
+
+        ///here ////
+
+        // // print('$token');
+        // request.headers['Authorization'] = 'Bearer $token';
+
+        // dataToSend.forEach((key, value) {
+        //   // print("$key");
+
+        //   // request.fields[key] = value ?? 'null';
+        // });
+
+        // dataToSend.forEach((key, value) {
+        //   print("$key --> $value");
+        //   request.fields[key] = value.toString() ?? 'null';
+        // });
+
+        // request.fields.forEach((key, value) {
+        //   print("$key --> $value");
+        //   // request.fields[key] = value.toString() ?? 'null';
+        // });
 
         // final http.Response response = await http.post(
         //   Uri.parse(url),
         //   body: formData,
         // );
 
-        final response = await request.send();
+        // print(request.url);
+        // print(request.headers);
+        // print(request.method);
+
+        // final response = await request.send();
 
         // print(response.data);
 
-        if (response.statusCode == 200) {
-          // print(response);
-          final responseData = await response.stream.bytesToString();
-          print('Response: $responseData');
-          setState(() {
-            _isSubmitting = false;
-            _apiResult = 'Success';
-          });
-        } else {
-          setState(() {
-            print(response);
+        // if (response.statusCode == 200) {
+        //   // print(response);
+        //   final responseData = await response.stream.bytesToString();
+        //   print('Response: $responseData');
+        //   setState(() {
+        //     _isSubmitting = false;
+        //     _apiResult = 'Success';
+        //   });
+        // } else {
+        //   setState(() {
+        //     print(response);
 
-            _isSubmitting = false;
-            _apiResult = 'Failed';
-          });
-        }
+        //     _isSubmitting = false;
+        //     _apiResult = 'Failed';
+        //   });
+        // }
       } catch (e) {
         print(e);
         setState(() {

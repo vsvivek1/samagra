@@ -26,7 +26,7 @@ class InternetConnectivity {
       final response =
           await Dio().post('http://erpuat.kseb.in/api/login', data: data);
       return response.statusCode == 200;
-    } on DioError catch (e) {
+    } on DioError {
       return false;
     }
   }

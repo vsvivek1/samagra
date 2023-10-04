@@ -689,7 +689,7 @@ class _MediterranesnDietViewState extends State<MediterranesnDietView> {
 }
 
 Padding consumptionDetails(
-    widget, consumption_lt, consumption_ht, consumption_eht) {
+    widget, consumptionLt, consumptionHt, consumptionEht) {
   return Padding(
     padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 16),
     child: Row(
@@ -749,7 +749,7 @@ Padding consumptionDetails(
                       Padding(
                         padding: const EdgeInsets.only(top: 6),
                         child: Text(
-                          consumption_lt,
+                          consumptionLt,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: FitnessAppTheme.fontName,
@@ -817,7 +817,7 @@ Padding consumptionDetails(
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      consumption_ht,
+                      consumptionHt,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: FitnessAppTheme.fontName,
@@ -882,7 +882,7 @@ Padding consumptionDetails(
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      consumption_eht,
+                      consumptionEht,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: FitnessAppTheme.fontName,

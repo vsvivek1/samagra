@@ -107,7 +107,7 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
     print("components $components");
 
     return ListView.builder(
-      itemCount: components?.length ?? 0,
+      itemCount: components.length ?? 0,
       itemBuilder: (context, index) {
         // print("CONTEXT $context");
 
@@ -121,8 +121,9 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
               maxRadius: 10,
               child: Text(index.toString()),
             ),
-            title: Text(components?[index]['material_name'].toString() ?? ''),
+            title: Text(components[index]['material_name'].toString() ?? ''),
           );
+        return null;
       },
     );
   }
