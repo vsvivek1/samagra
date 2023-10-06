@@ -722,7 +722,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Map labourMeasurements = {};
     Map materialTakenBackMeasurements = {};
 
+    // Map locationAndMaterialsView = {};
+    // List locationList = [];
+    // List<Map<String, dynamic>> totalMaterialList = [];
+    Set<Map<String, dynamic>> totalMaterialList = {};
+
     for (var location in obj) {
+      print('location $location');
+      // debugger(when: true);
       List<Map<dynamic, dynamic>> tasks =
           List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
 
@@ -781,6 +788,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
           int takenbackLen = takenBacks.length;
 
           if (materials.length > 0) {
+            Map<String, dynamic> mat = {};
+
+            print('materialx $materials');
+
+            materials.forEach((mat1) {
+              mat['material_name'] = mat1['material_name'];
+              mat['mst_material_id'] = mat1['mst_material_id'];
+              mat['material_code'] = mat1['material_code'];
+            });
+
+            totalMaterialList.add(mat);
+            // debugger(when: true);
+
+            // // mat['material_name'] = materials['material_name'];
+            // mat['material_code'] = materialMeasurements['material_code'];
+            // mat['mst_material_status'] =
+            //     materialMeasurements['mst_material_status'];
+
+            // totalMaterialList.add(mat);
+
             updateMaterialmeasurements(materialMeasurements, materials);
           }
 
@@ -802,6 +829,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
 
         // print("this is tasks $tasks");
+
+        print('totalmaterial list  $totalMaterialList');
+
+        debugger(when: true);
       }
 
       setState(() {
@@ -826,6 +857,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //       Map materialMeasurements = {};
     // Map labourMeasurements = {};
     // Map materialTakenBackMeasurements
+
+    print('all materials $totalMaterialList');
+    debugger(when: true);
 
     apiDataForSamagra['workId'] = widget.workId;
     Navigator.push(

@@ -220,6 +220,14 @@ class WorkSelection extends StatelessWidget {
           response.data['result_data']['schGrpList'] != null) {
         var res = response.data['result_data']['schGrpList'];
 
+        final urlEdit =
+            "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementSetListForEdit";
+
+        Response responseEdit =
+            await Dio().get(urlEdit, options: Options(headers: headers));
+
+        print('response edit $responseEdit');
+        // debugger(when: true);
         // print(res);
 
         // debugger(when: true);
