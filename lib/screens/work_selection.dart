@@ -286,6 +286,10 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
   setWorKdetails(_filteredItems) async {
     _filteredItems.forEach((i) async {
+      if (i == "-1") {
+        return;
+      }
+
       var vd = await getWorkDetails(i["id"].toString());
 
       if (vd != null) {
