@@ -859,7 +859,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // Map materialTakenBackMeasurements
 
     print('all materials $totalMaterialList');
-    debugger(when: true);
+    // debugger(when: true);
 
     apiDataForSamagra['workId'] = widget.workId;
     Navigator.push(

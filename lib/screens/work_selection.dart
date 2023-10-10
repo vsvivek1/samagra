@@ -215,8 +215,12 @@ class WorkSelection extends StatelessWidget {
       //write code here to action for no work code error code -1 display error etc
       // p(response.data['result_data']);
 
-      if (response.data != null &&
-          response.data['result_data'] != null &&
+      print(response.data.runtimeType);
+      print("res data. ${response.data}");
+      // print("res data. ${response['data']}");
+
+      // debugger(when: true);
+      if (response.data['result_data'] != null &&
           response.data['result_data']['schGrpList'] != null) {
         var res = response.data['result_data']['schGrpList'];
 
@@ -226,7 +230,9 @@ class WorkSelection extends StatelessWidget {
         Response responseEdit =
             await Dio().get(urlEdit, options: Options(headers: headers));
 
-        print('response edit $responseEdit');
+        var res2 = responseEdit.data['result_data'];
+        var measurement_set_list = res2['measurement_set_list'];
+        print('response edit $measurement_set_list');
         // debugger(when: true);
         // print(res);
 
@@ -371,6 +377,12 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
               itemBuilder: (context, index) {
                 final item = _filteredItems[index];
 
+                if (item == "-1") {
+                  return Text(
+                      'some error -1 in item Failed to load List of Works');
+                  // showErrorSnackBar(context);
+                }
+
                 int sl = index + 1;
 
                 Map workDetail = item['wrk_work_detail'];
@@ -383,19 +395,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 final workName = workDetail['work_name'];
                 final workCode = workDetail['work_code'];
 
-                if (workName == null || workId == -1) {
-                  final snackBar = SnackBar(
-                    content: Text(
-                        'Some error caused to load work id go back and try again'),
-                    action: SnackBarAction(
-                      label: 'Go Back',
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                  print('work_name key not found in map or its value is null');
+                if (workName == null || workId == -1 || item == "-1") {
+                  showErrorSnackBar(context);
                 }
 
                 ///temporary
@@ -447,6 +448,20 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
         ],
       ),
     );
+  }
+
+  void showErrorSnackBar(BuildContext context) {
+    final snackBar = SnackBar(
+      content: Text('Some error caused to load work id go back and try again'),
+      action: SnackBarAction(
+        label: 'Go Back',
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    print('work_name key not found in map or its value is null');
   }
 }
 
