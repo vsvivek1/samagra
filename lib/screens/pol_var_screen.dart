@@ -832,7 +832,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         print('totalmaterial list  $totalMaterialList');
 
-        debugger(when: true);
+        // debugger(when: true);
       }
 
       setState(() {

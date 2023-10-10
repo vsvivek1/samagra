@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'measurement_data_to_work_module.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;
@@ -23,6 +24,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   String _apiResult = '';
   var workId;
   var polvar_data;
+
+  var _apiResultFlag = 1;
 
   @override
   void initState() {
@@ -165,12 +168,20 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
               ),
               if (_apiResult.isNotEmpty) SizedBox(height: 16),
               if (_apiResult.isNotEmpty)
-                Text(
-                  _apiResult,
-                  style: TextStyle(
-                      color:
-                          _apiResult == 'Success' ? Colors.green : Colors.red),
+                Column(
+                  children: [
+                    // HtmlWidget(_apiResult),
+                    Text(
+                      _apiResult,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: _apiResultFlag.toString() != '-1'
+                              ? Colors.green
+                              : Colors.red),
+                    ),
+                  ],
                 ),
+              Text(_apiResultFlag.toString())
             ],
           ),
         ),
@@ -277,11 +288,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
 
-          print(json.encode(response.data));re
+          print(json.encode(response.data));
 
           setState(() {
             _isSubmitting = false;
-            _apiResult = 'Success';
+
+            _apiResultFlag = response.data['result_flag'];
+            _apiResult = response.data['result_message'][0];
           });
         } else {
           print(response.statusMessage);

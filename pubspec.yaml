@@ -50,6 +50,7 @@ dependencies:
     audioplayers: ^0.20.1
     mailer: ^6.0.1
     flutter_tts: ^3.7.0
+    flutter_widget_from_html: ^0.10.6
 
 
 dev_dependencies:
