@@ -209,32 +209,41 @@ class WorkSelection extends StatelessWidget {
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     try {
+      String seatId = await getSeatId();
+      final urlEdit =
+          "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementSetListForEdit";
+
+      print(urlEdit);
+      Response responseEdit = await Dio().get(
+        queryParameters: Map.from({'seat_id': seatId}),
+        urlEdit,
+        options: Options(headers: headers),
+      );
+
+// await Dio().get(queryParameters:
+      var res2 = responseEdit.data['result_data'];
+      var measurement_set_list = res2['measurement_set_list'];
+      print('response edit $measurement_set_list');
+
       Response response =
           await Dio().get(url, options: Options(headers: headers));
-
       //write code here to action for no work code error code -1 display error etc
       // p(response.data['result_data']);
 
-      print(response.data.runtimeType);
-      print("res data. ${response.data}");
+      // print(response.data.runtimeType);
+      // print("res data. ${response.data}");
       // print("res data. ${response['data']}");
-
+      // debugger(when: true);
       // debugger(when: true);
       if (response.data['result_data'] != null &&
           response.data['result_data']['schGrpList'] != null) {
         var res = response.data['result_data']['schGrpList'];
 
-        final urlEdit =
-            "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementSetListForEdit";
+        res.addAll(measurement_set_list);
 
-        Response responseEdit =
-            await Dio().get(urlEdit, options: Options(headers: headers));
-
-        var res2 = responseEdit.data['result_data'];
-        var measurement_set_list = res2['measurement_set_list'];
-        print('response edit $measurement_set_list');
-        // debugger(when: true);
         // print(res);
+
+        // debugger(when: true);
 
         // debugger(when: true);
         // res.forEach((r) async => {print("R  $r")});
@@ -394,6 +403,12 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                 final workName = workDetail['work_name'];
                 final workCode = workDetail['work_code'];
+                final status = item['status'];
+                final measurementSetId =
+                    (status == 'CREATED') ? -1 : item['id'];
+
+                // debugger(when: workCode == 'CW-6661-202223-15');
+                // print(work)
 
                 if (workName == null || workId == -1 || item == "-1") {
                   showErrorSnackBar(context);
@@ -410,7 +425,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => MeasurementOptionScreen(
-                              workId, workName, workCode),
+                              workId, workName, workCode, measurementSetId),
                         ),
                       );
                     },
@@ -425,10 +440,15 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                             CircleAvatar(child: Text(sl.toString())),
                             Spacer(),
                             Text('WorkId :$workId'),
+                            Spacer(),
+                            (status != 'UNDR_MSR') ? Text(status) : Text('k'),
                           ],
                         ),
                         child: Center(
                           child: ListTile(
+                            tileColor: (status != 'CREATED')
+                                ? Color.fromARGB(255, 33, 194, 151)
+                                : Colors.white,
                             subtitle: item['started'] == true
                                 ? Text(
                                     "No of Locations Mdeasures ${item['noOflocationMeasured']}")

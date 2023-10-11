@@ -34,6 +34,7 @@ class PolVarScreen extends StatefulWidget {
   final int workId;
   final String workName;
   final String workCode;
+  final String measurementSetId;
 
   PolVarScreen(
       {Key? key,
