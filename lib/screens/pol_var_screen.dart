@@ -144,6 +144,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     logCurrentFunction();
     final storage = new FlutterSecureStorage();
     String? jsonDetails = await storage.read(key: 'measurementDetails');
+
     if (jsonDetails != null) {
       List<dynamic> details = jsonDecode(jsonDetails);
       Map<dynamic, dynamic> matchingDetail = details.firstWhere(
@@ -381,7 +382,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<void> _updateWorkDetailsOnLoading() async {
     logCurrentFunction();
-    final data = await getWorkDetails(widget.workId.toString());
+
+    final data = await getWorkDetails(widget.workId.toString(),
+        measurementsetListId: widget.measurementSetId.toString());
 
     // print(data);
 
@@ -2753,7 +2756,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
     noOFLocationsMeasured = measurementDetails.length;
 
     // print('Number of locations now is noOFLocationsMeasured');
-    var a = await getWorkDetails(widget.workId.toString());
+    var a = await getWorkDetails(widget.workId.toString(),
+        measurementsetListId: widget.measurementSetId.toString());
 
     setState(() {
       this._showSaveMeasurementDetailsButton = false;

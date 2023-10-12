@@ -237,9 +237,12 @@ class WorkSelection extends StatelessWidget {
       // debugger(when: true);
       if (response.data['result_data'] != null &&
           response.data['result_data']['schGrpList'] != null) {
-        var res = response.data['result_data']['schGrpList'];
+        var res1 = response.data['result_data']['schGrpList'];
 
-        res.addAll(measurement_set_list);
+        measurement_set_list.addAll(res1);
+
+        List res = res1;
+        // res.addAll(measurement_set_list);
 
         // print(res);
 
