@@ -20,6 +20,12 @@ Future<String> Token() async {
   return Future.value(accessToken);
 }
 
+Future<String> getAccessToken() async {
+  final secureStorage = FlutterSecureStorage();
+  final accessToken = await secureStorage.read(key: 'access_token');
+  return Future.value(accessToken);
+}
+
 Map getCurrentSeatDetails(loginDeatails1) {
   Map loginDetails = json.decode(loginDeatails1);
 

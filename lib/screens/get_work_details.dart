@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:samagra/common.dart';
+import 'package:samagra/screens/get_login_details.dart';
 
 import 'log_functions.dart';
 import 'package:dio/dio.dart';
@@ -42,4 +44,21 @@ Future<Map<String, dynamic>?> getWorkDetails(String workId,
   }
 }
 
-getWorkDertailsFromServer(measurementsetListId) {}
+getWorkDertailsFromServer(measurementsetListId) async {
+  String seatId = await getSeatId();
+
+  final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+  String url =
+      "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementDetails/$seatId";
+
+  print(url);
+
+  var res = await Dio().get(
+    url,
+    options: Options(headers: headers),
+  );
+
+  print(res);
+
+  debugger(when: true);
+}
