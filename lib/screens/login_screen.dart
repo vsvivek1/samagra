@@ -551,8 +551,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
           content: Text('loggining in '), duration: Duration(seconds: 3))));
 
-      print(
-          "$email is email and password is $_password from proceed for login function");
+      // print(
+      //     "$email is email and password is $_password from proceed for login function");
 
       var result =
           await api.login(email, _password, showPhoto, context).catchError((e) {
