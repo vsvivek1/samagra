@@ -7,8 +7,8 @@ import 'log_functions.dart';
 import 'package:dio/dio.dart';
 
 Future<Map<String, dynamic>?> getWorkDetails(String workId,
-    {measurementsetListId = -1}) async {
-  if (measurementsetListId != -1) {
+    {measurementsetListId = '-1'}) async {
+  if (measurementsetListId != '-1') {
     var workDataFromServer =
         await getWorkDertailsFromServer(measurementsetListId);
 
