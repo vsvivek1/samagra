@@ -213,7 +213,7 @@ class WorkSelection extends StatelessWidget {
       final urlEdit =
           "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementSetListForEdit";
 
-      print(urlEdit);
+      // print(urlEdit);
       Response responseEdit = await Dio().get(
         queryParameters: Map.from({'seat_id': seatId}),
         urlEdit,
@@ -223,7 +223,7 @@ class WorkSelection extends StatelessWidget {
 // await Dio().get(queryParameters:
       var res2 = responseEdit.data['result_data'];
       var measurement_set_list = res2['measurement_set_list'];
-      print('response edit $measurement_set_list');
+      // print('response edit $measurement_set_list');
 
       Response response =
           await Dio().get(url, options: Options(headers: headers));
@@ -241,7 +241,7 @@ class WorkSelection extends StatelessWidget {
 
         measurement_set_list.addAll(res1);
 
-        List res = res1;
+        List res = measurement_set_list;
         // res.addAll(measurement_set_list);
 
         // print(res);
@@ -256,7 +256,7 @@ class WorkSelection extends StatelessWidget {
         // print("WD this is WD $wd");
 
         this.callApiAndSaveLabourGroupMasterInSecureStorage();
-
+        // debugger(when: true);
         return res;
       } else {
         p('some error');

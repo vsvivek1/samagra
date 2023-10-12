@@ -20,7 +20,7 @@ Future<Map<String, dynamic>?> getWorkDetails(String workId,
       return null;
     }
   }
-
+  // debugger(when: true);
   logCurrentFunction();
   final storage = FlutterSecureStorage();
   // Get existing work details from secure storage, if any
