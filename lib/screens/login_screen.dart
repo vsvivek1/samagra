@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
+import 'package:samagra/screens/SSOLogin.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
@@ -164,6 +165,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           print('no stored login details');
                           // no stored data or stored data is null or seat details -1
                           /// show fist time login screen
+
                           return noStoredLoginDetailsSoFirstLoginScreen();
                         } else {
                           try {
@@ -288,11 +290,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                               .all<Color>(
                                                                   ksebColor),
                                                     ),
-                                                    onPressed: () {
-                                                      // Handle login with pin
+                                                    onPressed: () => {
+                                                      loginUsingSso(context)
                                                     },
                                                     child:
-                                                        Text('Login with Pin'),
+                                                        Text('Login with SSO'),
                                                   ),
                                                 ],
                                               ),
@@ -829,6 +831,13 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         });
   }
+
+  loginUsingSso(context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SSOLogin()),
+    );
+  }
 }
 
 class MyAPI {
@@ -869,7 +878,7 @@ class MyAPI {
         // ScaffoldMessenger.of(context).showSnackBar((SnackBar(
         //     content: Text("$resultMessage"), duration: Duration(seconds: 3))));
 
-        print(response);
+        // print(response);
         return -1;
       }
       return response.data;
@@ -877,11 +886,11 @@ class MyAPI {
       if (e.response != null) {
         // print('\n          Thee is some errot in loggin in , response is below $e.response \n');
 
-        print(e.response!.statusCode);
-        print(e.response!.data);
-        print(e.response!.headers);
+        // print(e.response!.statusCode);
+        // print(e.response!.data);
+        // print(e.response!.headers);
 
-        print('error above');
+        // print('error above');
         // print(e.response.headers);
         // print(e.response.request);
       } else {
