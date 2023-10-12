@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -10,6 +11,8 @@ Future<Map<String, dynamic>?> getWorkDetails(String workId,
   if (measurementsetListId != -1) {
     var workDataFromServer =
         await getWorkDertailsFromServer(measurementsetListId);
+
+    debugger(when: true);
 
     if (workDataFromServer != null) {
       return Map<String, dynamic>.from(workDataFromServer);

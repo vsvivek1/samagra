@@ -859,7 +859,7 @@ class MyAPI {
         return Future(() => result);
       }
 
-      print("MESSAGE HERE $response");
+      // print("MESSAGE HERE $response");
 
       if (response.statusCode != 200 || response.data['result_flag'] == -1) {
         // String resultMessage = response['result_message'];

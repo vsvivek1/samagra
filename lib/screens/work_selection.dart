@@ -427,8 +427,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => MeasurementOptionScreen(
-                              workId, workName, workCode, measurementSetId),
+                          builder: (context) => MeasurementOptionScreen(workId,
+                              workName, workCode, measurementSetId.toString()),
                         ),
                       );
                     },
