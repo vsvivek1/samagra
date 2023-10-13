@@ -45,20 +45,24 @@ Future<Map<String, dynamic>?> getWorkDetails(String workId,
 }
 
 getWorkDertailsFromServer(measurementsetListId) async {
-  String seatId = await getSeatId();
+  // String seatId = await getSeatId();
 
   final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
   String url =
-      "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementDetails/$seatId";
+      "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementDetails/$measurementsetListId";
 
   print(url);
 
-  var res = await Dio().get(
+  Response<Map<String, dynamic>> res = await Dio().get(
     url,
     options: Options(headers: headers),
   );
 
-  print(res);
+  var dta = res.data;
+  if (dta!["result_flag"] == 1) {
+    print(dta['result_data']);
+  } else {}
+  // print(res);
 
-  debugger(when: true);
+  // debugger(when: true);
 }
