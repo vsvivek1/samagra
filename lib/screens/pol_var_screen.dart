@@ -667,11 +667,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
     debugger(when: true);
   }
 
-  Future<List> getScheduleDetailsForMeasurement(String workId) async {
+  Future<List> getScheduleDetailsForMeasurement(
+      String workScheduleGroupId) async {
     // bool retVal = false;
     try {
+      // String baseUrlOld =
+      //     "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+
       String baseUrl =
-          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workScheduleGroupId/0";
 
       print("BASE UR mdtwm 136L $baseUrl");
 
@@ -703,8 +707,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     apiDataForSamagra['polevar_data'] = obj;
 
-    wrk_schedule_group_structures =
-        await getScheduleDetailsForMeasurement(widget.workId.toString());
+    wrk_schedule_group_structures = await getScheduleDetailsForMeasurement(
+        widget.workScheduleGroupId.toString());
 
     print("wrk_schedule_group_structures 693 $wrk_schedule_group_structures");
 
