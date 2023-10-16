@@ -10,34 +10,45 @@ import 'package:dio/dio.dart';
 
 Future<Map<String, dynamic>?> getWorkDetails(String workId,
     {measurementsetListId = '-1'}) async {
-  if (measurementsetListId != '-1') {
-    var workDataFromServer =
-        await getWorkDertailsFromServer(measurementsetListId);
+  // debugger(when: true);
 
-    debugger(when: true);
-
-    if (workDataFromServer != null) {
-      return Map<String, dynamic>.from(workDataFromServer);
-    } else {
-      return null;
-    }
-  }
   // debugger(when: true);
   logCurrentFunction();
   final storage = FlutterSecureStorage();
   // Get existing work details from secure storage, if any
   final existingDetails = await storage.read(key: 'workDetails') ?? '{}';
+
   final workDetails = Map<String, dynamic>.from(json.decode(existingDetails));
+
+  // debugger(when: true);
 
   // Return work details for the given workId, if present
   final workData = workDetails[workId];
 
-  // print(workData);
+  if (measurementsetListId != '-1') {
+    var measurementDetailsfromServer =
+        await getWorkDertailsFromServer(measurementsetListId);
 
+    // debugger(when: true);
+    if (measurementDetailsfromServer != null) {
+      print('measurementDetailsFrom server');
+
+      var ob = {};
+      ob[workId] = measurementDetailsfromServer;
+
+      workData['measurementDetails'] = Map<String, dynamic>.from(ob);
+    }
+  }
+
+  // print(workData);
+  // debugger(when: true);
   // print('workada ta ar 217');
 
   // return;
+
   if (workData != null) {
+    print("workData['measurementDetails'] ${workData['measurementDetails']}");
+    // debugger(when: true);
     return Map<String, dynamic>.from(workData);
   } else {
     return null;
@@ -60,8 +71,11 @@ getWorkDertailsFromServer(measurementsetListId) async {
 
   var dta = res.data;
   if (dta!["result_flag"] == 1) {
-    print(dta['result_data']);
-  } else {}
+    return dta['result_data']['data'];
+    // print(dta['result_data']['data']);
+  } else {
+    return [];
+  }
   // print(res);
 
   // debugger(when: true);

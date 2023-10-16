@@ -222,7 +222,7 @@ class WorkSelection extends StatelessWidget {
 
 // await Dio().get(queryParameters:
       var res2 = responseEdit.data['result_data'];
-      var measurement_set_list = res2['measurement_set_list'];
+      List measurement_set_list = res2['measurement_set_list'];
       // print('response edit $measurement_set_list');
 
       Response response =
@@ -239,6 +239,13 @@ class WorkSelection extends StatelessWidget {
           response.data['result_data']['schGrpList'] != null) {
         var res1 = response.data['result_data']['schGrpList'];
 
+        measurement_set_list.forEach(
+          (element) {
+            print('element $element');
+          },
+        );
+
+        debugger(when: true);
         measurement_set_list.addAll(res1);
 
         List res = measurement_set_list;
@@ -246,7 +253,7 @@ class WorkSelection extends StatelessWidget {
 
         // print(res);
 
-        // debugger(when: true);
+        debugger(when: true);
 
         // debugger(when: true);
         // res.forEach((r) async => {print("R  $r")});
@@ -402,7 +409,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 // int hasTakenback=
 
                 // int workId = workDetail?['id'];
-                int workId = item?['id'];
+                int workId = item?['workId'];
 
                 final workName = workDetail['work_name'];
                 final workCode = workDetail['work_code'];
