@@ -241,11 +241,16 @@ class WorkSelection extends StatelessWidget {
 
         measurement_set_list.forEach(
           (element) {
-            print('element $element');
+            // print('element $element');
+
+            element['workId'] = element['plg_work_id'];
           },
         );
 
-        debugger(when: true);
+        res1.forEach((element) {
+          element['workId'] = element['id'];
+        });
+        // debugger(when: true);
         measurement_set_list.addAll(res1);
 
         List res = measurement_set_list;
@@ -253,7 +258,7 @@ class WorkSelection extends StatelessWidget {
 
         // print(res);
 
-        debugger(when: true);
+        // debugger(when: true);
 
         // debugger(when: true);
         // res.forEach((r) async => {print("R  $r")});
