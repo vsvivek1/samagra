@@ -241,14 +241,15 @@ class WorkSelection extends StatelessWidget {
 
         measurement_set_list.forEach(
           (element) {
-            // print('element $element');
-
             element['workId'] = element['plg_work_id'];
+
+            print('element measurement_set_list  work id ${element['workId']}');
           },
         );
 
         res1.forEach((element) {
-          element['workId'] = element['id'];
+          element['workId'] = element['plg_work_id'];
+          print('element normal ${element['workId']} ');
         });
         // debugger(when: true);
         measurement_set_list.addAll(res1);
@@ -320,7 +321,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
         return;
       }
 
-      var vd = await getWorkDetails(i["id"].toString());
+      var vd = await getWorkDetails(i["workId"].toString());
 
       if (vd != null) {
         var measurements = vd['measurements'];
@@ -415,6 +416,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                 // int workId = workDetail?['id'];
                 int workId = item?['workId'];
+                int workScheduleGroupId = item?['id'];
 
                 final workName = workDetail['work_name'];
                 final workCode = workDetail['work_code'];
@@ -439,8 +441,12 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => MeasurementOptionScreen(workId,
-                              workName, workCode, measurementSetId.toString()),
+                          builder: (context) => MeasurementOptionScreen(
+                              workId,
+                              workName,
+                              workCode,
+                              measurementSetId.toString(),
+                              workScheduleGroupId.toString()),
                         ),
                       );
                     },

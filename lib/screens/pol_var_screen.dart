@@ -35,6 +35,7 @@ class PolVarScreen extends StatefulWidget {
   final String workName;
   final String workCode;
   final String measurementSetId;
+  final String workScheduleGroupId;
 
   PolVarScreen({
     Key? key,
@@ -42,6 +43,7 @@ class PolVarScreen extends StatefulWidget {
     required this.workName,
     required this.workCode,
     required this.measurementSetId,
+    required this.workScheduleGroupId,
   }) : super(key: key);
 
   _PolVarScreenState createState() => _PolVarScreenState();
