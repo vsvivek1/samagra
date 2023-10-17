@@ -3,6 +3,7 @@ import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
 // import 'package:samagra/spalsh_screen.dart';
 // import 'navigation_home_screen.dart';
@@ -59,6 +60,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'm-Samagra',
       initialRoute: '/',
+      routes: {
+        // '/': (context) => NavigationHomeScreen(),
+        '/redirected': (context) => NavigationHomeScreen(),
+      },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         tabBarTheme: TabBarTheme(

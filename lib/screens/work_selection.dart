@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/navigation_home_screen.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../secure_storage/secure_storage.dart';
@@ -33,72 +34,90 @@ class WorkSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
-    return Scaffold(
-      appBar: AppBar(
-        leading: null,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppTheme.grey.withOpacity(0.7),
-        title: Row(
-          children: [
-            Spacer(),
-            Text('Select a Work'),
-            Spacer(),
-            IconButton(
-                color: Colors.red,
-                onPressed: refreshWorkList(),
-                icon: Icon(Icons.refresh))
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        print('this callsed');
+        debugger(when: true);
+
+        // Navigator.of(context).pushReplacementNamed('/redirected');
+        return false; // Prevent default back button behavior
+
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+        // );
+        // // Navigator.push(
+        // //   context,
+        // //   MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+        // // );
+        // return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: null,
+          automaticallyImplyLeading: false,
+          backgroundColor: AppTheme.grey.withOpacity(0.7),
+          title: Row(
+            children: [
+              Spacer(),
+              Text('Select a Work'),
+              Spacer(),
+              IconButton(
+                  color: Colors.red,
+                  onPressed: refreshWorkList(),
+                  icon: Icon(Icons.refresh))
+            ],
+          ),
         ),
-      ),
-      body: Theme(
-        data: ThemeData(),
-        child: FutureBuilder(
-          future: _fetchWorkListList(context: context),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != "-1") {
-              final workListList = snapshot.data;
+        body: Theme(
+          data: ThemeData(),
+          child: FutureBuilder(
+            future: _fetchWorkListList(context: context),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != "-1") {
+                final workListList = snapshot.data;
 
-              // print("worklist $workListList");
+                // print("worklist $workListList");
 
-              // debugger(when: true);
+                // debugger(when: true);
 
-              // p(WorkListList);
-              // p(workListList.runtimeType);
+                // p(WorkListList);
+                // p(workListList.runtimeType);
 
-              // return Text(WorkListList.toString());
+                // return Text(WorkListList.toString());
 
-              return SchGrpListWidget(workListList);
+                return SchGrpListWidget(workListList);
 
-              // return MaterialApp(
-              //   title: 'List of Works',
-              //   home: Scaffold(
-              //     appBar: AppBar(
-              //       title: Text('Square Tiles Demo'),
-              //     ),
-              //     body: WorkListListWidget(WorkListList),
-              //   ),
-              // );
-            } else if (snapshot.hasError || snapshot.data == '-1') {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return Center(
-                  child: CircularStepProgressIndicator(
-                totalSteps: 20,
-                currentStep: 12,
-                stepSize: 20,
-                selectedColor: Colors.red,
-                unselectedColor: Colors.purple[400],
-                padding: math.pi / 80,
-                width: 150,
-                height: 150,
-                startingAngle: -math.pi * 2 / 3,
-                arcSize: math.pi * 2 / 3 * 2,
-                gradientColor: LinearGradient(
-                  colors: [Colors.red, Colors.purple],
-                ),
-              ));
-            }
-          },
+                // return MaterialApp(
+                //   title: 'List of Works',
+                //   home: Scaffold(
+                //     appBar: AppBar(
+                //       title: Text('Square Tiles Demo'),
+                //     ),
+                //     body: WorkListListWidget(WorkListList),
+                //   ),
+                // );
+              } else if (snapshot.hasError || snapshot.data == '-1') {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Center(
+                    child: CircularStepProgressIndicator(
+                  totalSteps: 20,
+                  currentStep: 12,
+                  stepSize: 20,
+                  selectedColor: Colors.red,
+                  unselectedColor: Colors.purple[400],
+                  padding: math.pi / 80,
+                  width: 150,
+                  height: 150,
+                  startingAngle: -math.pi * 2 / 3,
+                  arcSize: math.pi * 2 / 3 * 2,
+                  gradientColor: LinearGradient(
+                    colors: [Colors.red, Colors.purple],
+                  ),
+                ));
+              }
+            },
+          ),
         ),
       ),
     );

@@ -667,15 +667,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
     debugger(when: true);
   }
 
-  Future<List> getScheduleDetailsForMeasurement(
-      String workScheduleGroupId) async {
+  Future<List> getScheduleDetailsForMeasurement(String workId) async {
     // bool retVal = false;
     try {
-      // String baseUrlOld =
-      //     "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+      String baseUrlOld =
+          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       String baseUrl =
-          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workScheduleGroupId/0";
+          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       print("BASE UR mdtwm 136L $baseUrl");
 
@@ -707,8 +706,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     apiDataForSamagra['polevar_data'] = obj;
 
-    wrk_schedule_group_structures = await getScheduleDetailsForMeasurement(
-        widget.workScheduleGroupId.toString());
+    wrk_schedule_group_structures =
+        await getScheduleDetailsForMeasurement(widget.workId.toString());
 
     print("wrk_schedule_group_structures 693 $wrk_schedule_group_structures");
 
@@ -2596,7 +2595,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
 // http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
       final url =
-          'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workId}/0';
+          'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
       print("url called $url");
       final headers = {'Authorization': 'Bearer $accessToken'};
