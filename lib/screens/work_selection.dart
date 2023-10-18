@@ -246,13 +246,7 @@ class WorkSelection extends StatelessWidget {
       Response response =
           await Dio().get(url, options: Options(headers: headers));
       //write code here to action for no work code error code -1 display error etc
-      // p(response.data['result_data']);
 
-      // print(response.data.runtimeType);
-      // print("res data. ${response.data}");
-      // print("res data. ${response['data']}");
-      // debugger(when: true);
-      // debugger(when: true);
       if (response.data['result_data'] != null &&
           response.data['result_data']['schGrpList'] != null) {
         var res1 = response.data['result_data']['schGrpList'];
@@ -261,6 +255,8 @@ class WorkSelection extends StatelessWidget {
           (element) {
             element['workId'] = element['plg_work_id'];
 
+            //  element['wrk_schedule_group_id'] = element['wrk_schedule_group_id'];
+
             print('element measurement_set_list  work id ${element['workId']}');
           },
         );
@@ -268,6 +264,9 @@ class WorkSelection extends StatelessWidget {
         res1.forEach((element) {
           // element['workId'] = element['plg_work_id'];
           element['workId'] = element['plg_work_id'];
+
+          element['wrk_schedule_group_id'] = element['id'];
+
           print('element normal ${element['workId']} ');
         });
         // debugger(when: true);
@@ -435,7 +434,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                 // int workId = workDetail?['id'];
                 int workId = item?['workId'];
-                int workScheduleGroupId = item?['id'];
+
+                int workScheduleGroupId = item?['wrk_schedule_group_id'];
 
                 final workName = workDetail['work_name'];
                 final workCode = workDetail['work_code'];
