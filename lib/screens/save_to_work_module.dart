@@ -9,8 +9,14 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;
+  int workId; // Initialize these fields
+  String workScheduleGroupId;
 
-  SaveToWorkModule({required this.dataFromPreviousScreen});
+  SaveToWorkModule({
+    required this.dataFromPreviousScreen,
+    required this.workId, // Initialize this field in the constructor
+    required this.workScheduleGroupId, // Initialize this field in the constructor
+  });
 
   @override
   _SaveToWorkModuleState createState() => _SaveToWorkModuleState();
@@ -22,7 +28,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   late Map polVarMeasurementObject;
   bool _isSubmitting = false;
   String _apiResult = '';
-  var workId;
+  // var workId;
   var polvar_data;
 
   var _apiResultFlag = 1;
@@ -30,7 +36,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   @override
   void initState() {
     super.initState();
-    workId = widget.dataFromPreviousScreen['workId'];
+    // workId = widget.dataFromPreviousScreen['workId'];
+    // workId = widget.wo
     polvar_data = widget.dataFromPreviousScreen['polevar_data'];
     initialiseMeasurementObject().then((_) {
       // print('MDATA ${_measurementDataToWorkModule.toMap()}');
@@ -40,13 +47,15 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
 
   initialiseMeasurementObject() async {
     _measurementDataToWorkModule = MeasurementDataToWorkModule(
-      workId: workId.toString(),
+      wrk_schedule_group_id: widget.workScheduleGroupId,
+      workScheduleGroupId: widget.workScheduleGroupId,
+      workId: widget.workId.toString(),
       is_premeasurement: false,
       part_or_final: true,
       measurement_set_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
       commencement_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
       completion_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-      plg_work_id: workId,
+      plg_work_id: widget.workId,
       taskMeasurements: [],
     );
 
@@ -54,7 +63,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
 
     await _measurementDataToWorkModule
         .fetchScheduleDetailsAndSetParams(
-            workId.toString(), widget.dataFromPreviousScreen)
+            widget.workId.toString(), widget.dataFromPreviousScreen)
         .then(
       (value) {
         print("VALUE line 60 stwm ${value.toString()}");
@@ -258,6 +267,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
           // data.fields.add(MapEntry(key, value.toString()));
         });
 
+        dataToSend['plg_work_id'] = "28552";
+        dataToSend['wrk_schedule_group_id'] = "16114";
         var dio = Dio();
         var response = await dio.request(
           'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',

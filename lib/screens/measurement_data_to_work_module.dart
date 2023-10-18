@@ -45,6 +45,7 @@ class MeasurementDataToWorkModule {
     this.materialMeasurements,
     this.labourMeasurements,
     this.materialTakenBackMeasurements,
+    required String workScheduleGroupId,
     // this.polevar_data,
   }) {
     // Fetch the API data using Dio and set parameters from the response
@@ -172,9 +173,11 @@ class MeasurementDataToWorkModule {
 
         // debugger(when: true);
 
-        if (resultdata != null) {
-          wrk_schedule_group_id = resultdata['data']['id'].toString();
-        }
+        // if (resultdata != null) {
+        //   wrk_schedule_group_id = resultdata['data']['id'].toString();
+        // }
+
+        // wrk_schedule_group_id =
 
         // print(" FOR WORK SHECDULE GROUP ID ${response.data}");
 
@@ -182,13 +185,14 @@ class MeasurementDataToWorkModule {
         // print(
         //     'wrk_schedule_group id  ${apiData['result_data']['data']['plg_work_id']}');
 
-        plg_work_id = apiData['result_data']['data']['plg_work_id'].toString();
+        // plg_work_id = apiData['result_data']['data']['plg_work_id'].toString();
 
         // debugger(when: true, message: 'poda');
 
         // wrk_schedule_group_structures =
         //     apiData['result_data']['data']['wrk_schedule_group_structures'];
 
+        plg_work_id = workId;
         user_id = await getUserId();
 
         // print("dataFromPolvarScreen $dataFromPolvarScreen");

@@ -130,20 +130,19 @@ class WorkSelection extends StatelessWidget {
   }
 
   Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
-    final dio = Dio();
-    final url = 'http://erpuat.kseb.in/api/wrk/getLabourMaster/0';
-    final url2 = 'http://erpuat.kseb.in/api/wrk/getMaterialMaster/2/0';
-
-    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
-    final response = await dio.get(url, options: Options(headers: headers));
-
-    // print('lab  called');
-    final responseMaterial =
-        await dio.get(url2, options: Options(headers: headers));
-//
-    print('materail master called');
-
     try {
+      final dio = Dio();
+      final url = 'http://erpuat.kseb.in/api/wrk/getLabourMaster/0';
+      final url2 = 'http://erpuat.kseb.in/api/wrk/getMaterialMaster/2/0';
+
+      final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+      final response = await dio.get(url, options: Options(headers: headers));
+
+      // print('lab  called');
+      final responseMaterial =
+          await dio.get(url2, options: Options(headers: headers));
+//
+      print('materail master called');
       var inp = response.data['result_data']['labourMaster'];
 
       var mat = responseMaterial.data['result_data']['materialMaster'];
@@ -267,6 +266,7 @@ class WorkSelection extends StatelessWidget {
         );
 
         res1.forEach((element) {
+          // element['workId'] = element['plg_work_id'];
           element['workId'] = element['plg_work_id'];
           print('element normal ${element['workId']} ');
         });
@@ -480,6 +480,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                             CircleAvatar(child: Text(sl.toString())),
                             Spacer(),
                             Text('WorkId :$workId'),
+                            Spacer(),
+                            Text('SchGrp :$workScheduleGroupId'),
                             Spacer(),
                             (status != 'UNDR_MSR') ? Text(status) : Text('k'),
                           ],

@@ -875,8 +875,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            SaveToWorkModule(dataFromPreviousScreen: apiDataForSamagra),
+        builder: (context) => SaveToWorkModule(
+            dataFromPreviousScreen: apiDataForSamagra,
+            workId: widget.workId,
+            workScheduleGroupId: widget.workScheduleGroupId),
       ),
     );
 
@@ -2240,6 +2242,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
         });
 
         response = response1;
+
+        print('response $response');
+        // debugger(when: true);
       } catch (e) {
         final snackBar = SnackBar(
           content: Text('Internet error $e'),
@@ -2970,7 +2975,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     String key =
         "${materialObject["wrk_execution_material_schedule_id"]}_${materialObject["mst_material_id"]}_${materialObject["mst_uom_id"]}";
 
+// print()
     Map<String, dynamic> materialMeasurement = {
+      "wrk_execution_schedule_id": materialObject["wrk_execution_schedule_id"],
       "wrk_execution_material_schedule_id":
           materialObject["wrk_execution_material_schedule_id"],
       "wrk_material_allocation_item_id":
