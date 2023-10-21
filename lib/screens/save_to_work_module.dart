@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/work_selection.dart';
 import 'measurement_data_to_work_module.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
@@ -190,7 +191,16 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
                     ),
                   ],
                 ),
-              Text(_apiResultFlag.toString())
+              Text(_apiResultFlag.toString()),
+              ElevatedButton(
+                  onPressed: gotToWorkList,
+                  child: Row(
+                    children: [
+                      Text('Got to Work Lists'),
+                      Spacer(),
+                      Icon(Icons.list)
+                    ],
+                  ))
             ],
           ),
         ),
@@ -318,5 +328,11 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
         });
       }
     }
+  }
+
+  void gotToWorkList() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => WorkSelection()),
+    );
   }
 }

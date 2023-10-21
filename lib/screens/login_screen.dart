@@ -13,6 +13,7 @@ import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/SSOLogin.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
+import 'package:samagra/screens/launch_sso_url.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
 
@@ -833,10 +834,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   loginUsingSso(context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SSOLogin()),
-    );
+    launchSSOUrl();
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => SSOLogin()),
+    // );
   }
 }
 

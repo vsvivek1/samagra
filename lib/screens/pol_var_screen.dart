@@ -422,8 +422,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
             // jsonDecode(data['measurementDetails']!) != null
 
             ) {
-          var measurementDetails1 = List<Map<dynamic, dynamic>>.from(
-              jsonDecode(data['measurementDetails']));
+          if (widget.measurementSetId.toString() == '-1') {
+            measurementDetails = List<Map<dynamic, dynamic>>.from(
+                jsonDecode(data['measurementDetails']));
+          } else {
+            measurementDetails =
+                List<Map<dynamic, dynamic>>.from(data['measurementDetails']);
+
+            debugger(when: true);
+          }
+
+          ///during normal fetching from storage its a striong
+          // var measurementDetails1 =
+          //     List<Map<dynamic, dynamic>>.from(data['measurementDetails']);
+
           // jsonDecode(data['measurementDetails']!)
 
           // measurementDetails1 = data['measurementDetails'];
@@ -434,7 +446,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           // print(measurementDetails);
 
-          print(' measurementDetails @n393');
+          // print(' measurementDetails @n393');
 
           noOFLocationsMeasured = measurementDetails.length;
         }
