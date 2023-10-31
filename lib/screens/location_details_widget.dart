@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/location_button.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -245,6 +247,8 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       widget.latitude = p1;
       widget.longitude = p2;
       widget.locationName = name;
+
+      // debugger(when: true);
 
       widget.locationDetails['lattitude'] = p1.toString();
       widget.locationDetails['longitude'] = p2.toString();

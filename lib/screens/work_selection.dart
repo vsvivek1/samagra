@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
-import 'package:samagra/navigation_home_screen.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../secure_storage/secure_storage.dart';
@@ -240,7 +239,7 @@ class WorkSelection extends StatelessWidget {
 
 // await Dio().get(queryParameters:
       var res2 = responseEdit.data['result_data'];
-      List measurement_set_list = res2['measurement_set_list'];
+      List measurementSetList = res2['measurement_set_list'];
       // print('response edit $measurement_set_list');
 
       Response response =
@@ -251,7 +250,7 @@ class WorkSelection extends StatelessWidget {
           response.data['result_data']['schGrpList'] != null) {
         var res1 = response.data['result_data']['schGrpList'];
 
-        measurement_set_list.forEach(
+        measurementSetList.forEach(
           (element) {
             element['workId'] = element['plg_work_id'];
 
@@ -270,9 +269,9 @@ class WorkSelection extends StatelessWidget {
           print('element normal ${element['workId']} ');
         });
         // debugger(when: true);
-        measurement_set_list.addAll(res1);
+        measurementSetList.addAll(res1);
 
-        List res = measurement_set_list;
+        List res = measurementSetList;
         // res.addAll(measurement_set_list);
 
         // print(res);

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
@@ -585,6 +586,17 @@ class _HomeDrawerState extends State<HomeDrawer> {
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Row(
                 children: <Widget>[
+                  Container(
+                    width: 6.0,
+                    height: 46.0,
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              ksebColor), // Replace with your desired background color
+                        ),
+                        onPressed: (() {}),
+                        child: Text('works')),
+                  ),
                   Container(
                     width: 6.0,
                     height: 46.0,

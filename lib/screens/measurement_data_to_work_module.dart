@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:samagra/screens/get_login_details.dart';
@@ -62,7 +61,6 @@ class MeasurementDataToWorkModule {
         commencement_date != null &&
         completion_date != null &&
         polevar_data != null &&
-        taskMeasurements != null &&
         structureMeasurements != null &&
         materialMeasurements != null &&
         labourMeasurements != null &&

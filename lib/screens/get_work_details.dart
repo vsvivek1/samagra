@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/common.dart';
-import 'package:samagra/screens/get_login_details.dart';
 
 import 'log_functions.dart';
 import 'package:dio/dio.dart';
@@ -33,16 +32,16 @@ Future<Map<dynamic, dynamic>?> getWorkDetails(String workId,
   var msr = workData['measurementDetails'];
 
 // "[{"locationNo":1,"latitude":11.2638448,"longitude":75.7692694,"locationName":"Gandhi Road","geoCordinates":{"lattitude":11.26384…"
-  debugger(when: true);
+  // debugger(when: true);
 
-  print(msr.runtimeType);
-  debugger(when: true);
+  // print(msr.runtimeType);
+  // debugger(when: true);
 
   if (measurementsetListId != '-1') {
     var measurementDetailsfromServer =
         await getWorkDertailsFromServer(measurementsetListId);
 
-    debugger(when: true);
+    // debugger(when: true);
 
     // debugger(when: true);
     if (measurementDetailsfromServer != null) {

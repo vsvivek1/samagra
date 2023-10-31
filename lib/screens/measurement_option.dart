@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/pol_var_screen.dart';
+import 'package:samagra/screens/work_name_widget.dart';
 
 import '../app_theme.dart';
 import 'direct_measurement.dart';
@@ -34,6 +35,7 @@ class MeasurementOptionScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              WorkNameWidget(workName: this.workName),
               ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor: MaterialStateColor.resolveWith(

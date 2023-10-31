@@ -3,6 +3,7 @@
 // ignore_for_file: unrelated_type_equality_checks
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 // import 'package:samagra/home_screen.dart';
@@ -11,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
-import 'package:samagra/screens/SSOLogin.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
@@ -218,6 +218,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         Uint8List bytes = base64.decode(dp);
 
+                                        // debugger(when: true);
+
                                         empCodeInitialValue =
                                             user["employee_code"].toString();
 
@@ -250,10 +252,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         color: Color.fromARGB(
                                                             255, 16, 87, 161))),
                                               ),
-                                              CircleAvatar(
-                                                radius: 100,
-                                                backgroundImage:
-                                                    MemoryImage(bytes),
+                                              Visibility(
+                                                visible: bytes.isEmpty,
+                                                child: CircleAvatar(
+                                                  radius: 30,
+                                                  backgroundImage: AssetImage(
+                                                      'assets/images/kseb_emblem.jpeg'),
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: bytes.isNotEmpty,
+                                                child: CircleAvatar(
+                                                  radius: 100,
+                                                  backgroundImage:
+                                                      MemoryImage(bytes),
+                                                ),
                                               ),
                                               SizedBox(height: 16),
                                               Text('Welcome Back '),

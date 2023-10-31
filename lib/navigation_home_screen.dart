@@ -66,7 +66,7 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           break;
 
         case DrawerIndex.WorkMeasurement:
-          Navigator.of(context).pushReplacement(
+          Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => WorkSelection()),
           );
           // setState(() {

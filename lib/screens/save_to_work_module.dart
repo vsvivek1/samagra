@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/work_selection.dart';
 import 'measurement_data_to_work_module.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;

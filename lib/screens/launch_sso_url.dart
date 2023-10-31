@@ -1,6 +1,5 @@
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 
 String generateCodeChallenge(String codeVerifier) {
@@ -27,7 +26,7 @@ launchSSOUrl() async {
   const scope = 'scope=openid%20offline_access%20erp_work';
 
   String url =
-      '''https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&code_chalenge=${codeChallenge}&code_challenge_method=${codeChallengeMethod}&scope=${scope}&state=1234zyx''';
+      '''https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&code_chalenge=$codeChallenge&code_challenge_method=$codeChallengeMethod&scope=$scope&state=1234zyx''';
 
   print(url);
 

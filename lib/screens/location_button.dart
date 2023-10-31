@@ -99,27 +99,64 @@ class _LocationButtonState extends State<LocationButton> {
                         };
                       }).toList();
 
-                      // print(placemarks.runtimeType);
+                      // print(placemarks.runtimeType)
+                      //
+                      // ;
 
-                      print(placemarks[0]);
+                      // if (placemarks != null) {
+                      //   print(placemarks[0]);
 
-                      print('placemark above');
+                      //   print('placemark above');
+                      // }
 
-                      String? name = placemarks[0].name ?? '';
+                      if (placemarks.isEmpty) {
+                        setState(() {
+                          _loading = false;
 
-                      setState(() {
-                        _loading = false;
+                          // audioCache.play('press_save_location_button.wav');
 
-                        audioCache.play('press_save_location_button.wav');
+                          enableLocationButton = false;
 
-                        enableLocationButton = false;
+                          //  this.userDirections =
+                          // 'Now Select any Location to Starting with  L, Ensure correct location ';
+                        });
+                        final snackBar = SnackBar(
+                          content: Text('Could not fetch Loc'),
+                          duration: Duration(
+                              seconds:
+                                  3), // How long the snackBar will be displayed
+                          action: SnackBarAction(
+                            label: 'Close',
+                            onPressed: () {
+                              // Code to execute when 'Close' is pressed
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                            },
+                          ),
+                        );
 
-                        //  this.userDirections =
-                        // 'Now Select any Location to Starting with  L, Ensure correct location ';
-                      });
+                        widget.onLocationSelected(
+                            0, 0, 'Location cant be retrived');
 
-                      widget.onLocationSelected(_currentPosition!.latitude,
-                          _currentPosition!.longitude, name);
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        // return;
+                      } else {
+                        String? name = placemarks[0].name ?? '';
+
+                        setState(() {
+                          _loading = false;
+
+                          audioCache.play('press_save_location_button.wav');
+
+                          enableLocationButton = false;
+
+                          //  this.userDirections =
+                          // 'Now Select any Location to Starting with  L, Ensure correct location ';
+                        });
+
+                        widget.onLocationSelected(_currentPosition!.latitude,
+                            _currentPosition!.longitude, name);
+                      }
                     },
                     icon: _loading
                         ? Icon(Icons.label_important)
