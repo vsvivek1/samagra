@@ -9,7 +9,7 @@ import 'package:samagra/screens/login_screen.dart';
 // import 'navigation_home_screen.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'kseb_color.dart';
 
 void main() async {
@@ -24,7 +24,7 @@ void main() async {
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(MyApp()));
+  ]).then((_) => runApp(ProviderScope(child: MyApp())));
 }
 
 class MyApp extends StatelessWidget {

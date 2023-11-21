@@ -11,11 +11,23 @@ import 'package:samagra/screens/work_selection.dart';
 class NavigationHomeScreen extends StatefulWidget {
   @override
   _NavigationHomeScreenState createState() => _NavigationHomeScreenState();
+  static var screenView1;
+
+  static void setScreenView(val) {
+    screenView1 = val;
+  }
 }
 
 class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
   Widget? screenView;
   DrawerIndex? drawerIndex;
+
+  void setScreenView(Widget newScreenView, DrawerIndex) {
+    setState(() {
+      screenView = newScreenView;
+      // drawerIndex = newDrawerIndex;
+    });
+  }
 
   @override
   void initState() {
@@ -66,12 +78,12 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
           break;
 
         case DrawerIndex.WorkMeasurement:
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => WorkSelection()),
-          );
-          // setState(() {
-          //   screenView = WorkSelection();
-          // });
+          // Navigator.of(context).push(
+          //   MaterialPageRoute(builder: (context) => WorkSelection()),
+          // );
+          setState(() {
+            screenView = WorkSelection();
+          });
           break;
 
         case DrawerIndex.TreeCuttingCompensation:

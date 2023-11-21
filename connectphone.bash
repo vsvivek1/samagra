@@ -24,7 +24,7 @@ adb tcpip 5555
 #   echo "IP address of device with MAC address 22:d0:46:f7:88:68 is: $ip_address"
 # fi
 
-ip_address=192.168.1.201
+ip_address=172.20.10.4
 
 # echo $ip_address
 adb connect $ip_address:5555

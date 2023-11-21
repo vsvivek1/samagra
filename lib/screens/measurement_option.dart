@@ -12,10 +12,12 @@ class MeasurementOptionScreen extends StatelessWidget {
   final String measurementSetId;
   final String workScheduleGroupId;
 
+  bool isMuted;
+
   // var workCode;
 
   MeasurementOptionScreen(this.workId, this.workName, this.workCode,
-      this.measurementSetId, this.workScheduleGroupId) {
+      this.measurementSetId, this.workScheduleGroupId, this.isMuted) {
     // print(this.workId);
     // print('workid above');
   }
@@ -74,7 +76,8 @@ class MeasurementOptionScreen extends StatelessWidget {
                             workName: this.workName,
                             workCode: this.workCode,
                             measurementSetId: this.measurementSetId,
-                            workScheduleGroupId: this.workScheduleGroupId)),
+                            workScheduleGroupId: this.workScheduleGroupId,
+                            isMuted: this.isMuted)),
                   );
                 },
                 child: Text('Measure with a Pol Var'),

@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/screens/work_details.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../secure_storage/secure_storage.dart';
@@ -98,22 +101,7 @@ class WorkSelection extends StatelessWidget {
               } else if (snapshot.hasError || snapshot.data == '-1') {
                 return Text('Error: ${snapshot.error}');
               } else {
-                return Center(
-                    child: CircularStepProgressIndicator(
-                  totalSteps: 20,
-                  currentStep: 12,
-                  stepSize: 20,
-                  selectedColor: Colors.red,
-                  unselectedColor: Colors.purple[400],
-                  padding: math.pi / 80,
-                  width: 150,
-                  height: 150,
-                  startingAngle: -math.pi * 2 / 3,
-                  arcSize: math.pi * 2 / 3 * 2,
-                  gradientColor: LinearGradient(
-                    colors: [Colors.red, Colors.purple],
-                  ),
-                ));
+                return rotatingProgress();
               }
             },
           ),
@@ -316,6 +304,48 @@ class WorkSelection extends StatelessWidget {
   ///SchGrp is WorkList for readability
 }
 
+class rotatingProgress extends StatelessWidget {
+  const rotatingProgress({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+        child: AnimatedBuilder(
+            animation: AlwaysStoppedAnimation(0.0),
+            builder: (context, child) {
+              var angle = 2 * pi * DateTime.now().second / 60;
+              return Transform.rotate(angle: angle, child: progress());
+            }));
+  }
+}
+
+class progress extends StatelessWidget {
+  const progress({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CircularStepProgressIndicator(
+      totalSteps: 20,
+      currentStep: 12,
+      stepSize: 20,
+      selectedColor: Colors.red,
+      unselectedColor: Colors.purple[400],
+      padding: math.pi / 80,
+      width: 150,
+      height: 150,
+      startingAngle: -math.pi * 2 / 3,
+      arcSize: math.pi * 2 / 3 * 2,
+      gradientColor: LinearGradient(
+        colors: [Colors.red, Colors.purple],
+      ),
+    );
+  }
+}
+
 class SchGrpListWidget extends StatefulWidget {
   final dynamic schGrpList;
 
@@ -331,6 +361,15 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
   late AudioCache audioCache;
 
   String workCode = '';
+  void toggleMute() {
+    setState(() {
+      isAudioMuted = !isAudioMuted;
+
+      // WorkDetails.isAudioMuted = !WorkDetails.isAudioMuted;
+    });
+  }
+
+  var isAudioMuted = false;
 
   setWorKdetails(_filteredItems) async {
     _filteredItems.forEach((i) async {
@@ -365,150 +404,190 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
     super.initState();
 
-    audioCache.play('select_work.wav');
+    if (!isAudioMuted) {
+      audioCache.play('select_work.wav');
+    }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search by Work code or Work Name',
-                suffixIcon: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      _searchController.clear();
-                      setState(() {
-                        _filteredItems = List.from(widget.schGrpList);
-                      });
-                    },
-                  ),
+  Widget build(
+    BuildContext context,
+  ) {
+    return Consumer(builder: (context, ref, child) {
+      final workDetails = ref.watch(workDetailsProvider);
+
+      // debugger(when: true);
+      return WillPopScope(
+        onWillPop: () {
+          debugger(when: true);
+          return Future.value(false);
+        },
+        child: SafeArea(
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: toggleMute,
+                child: Text(
+                  isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
+                  style: TextStyle(fontSize: 20),
                 ),
               ),
-              onChanged: (value) {
-                List<dynamic> schGrpList = List.from(widget.schGrpList);
-                setState(() {
-                  _filteredItems = schGrpList
-                      .where((item) =>
-                          item['wrk_work_detail']['work_name']
-                              .toLowerCase()
-                              .contains(value.toLowerCase()) ||
-                          item['wrk_work_detail']['work_code']
-                              .toLowerCase()
-                              .contains(value.toLowerCase()))
-                      .toList();
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-                childAspectRatio: 2,
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by Work code or Work Name',
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _filteredItems = List.from(widget.schGrpList);
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    List<dynamic> schGrpList = List.from(widget.schGrpList);
+                    setState(() {
+                      _filteredItems = schGrpList
+                          .where((item) =>
+                              item['wrk_work_detail']['work_name']
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()) ||
+                              item['wrk_work_detail']['work_code']
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                          .toList();
+                    });
+                  },
+                ),
               ),
-              itemCount: _filteredItems.length,
-              itemBuilder: (context, index) {
-                final item = _filteredItems[index];
+              Expanded(
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: 2,
+                  ),
+                  itemCount: _filteredItems.length,
+                  itemBuilder: (context, index) {
+                    final item = _filteredItems[index];
 
-                if (item == "-1") {
-                  return Text(
-                      'some error -1 in item Failed to load List of Works');
-                  // showErrorSnackBar(context);
-                }
+                    if (item == "-1") {
+                      return Text(
+                          'some error -1 in item Failed to load List of Works');
+                      // showErrorSnackBar(context);
+                    }
 
-                int sl = index + 1;
+                    int sl = index + 1;
 
-                Map workDetail = item['wrk_work_detail'];
+                    Map workDetail = item['wrk_work_detail'];
 
-                // int hasTakenback=
+                    // int hasTakenback=
 
-                // int workId = workDetail?['id'];
-                int workId = item?['workId'];
+                    // int workId = workDetail?['id'];
+                    int workId = item?['workId'];
 
-                int workScheduleGroupId = item?['wrk_schedule_group_id'];
+                    int workScheduleGroupId = item?['wrk_schedule_group_id'];
 
-                final workName = workDetail['work_name'];
-                final workCode = workDetail['work_code'];
-                final status = item['status'];
-                final measurementSetId =
-                    (status == 'CREATED') ? -1 : item['id'];
+                    final workName = workDetail['work_name'];
+                    final workCode = workDetail['work_code'];
+                    final status = item['status'];
+                    final measurementSetId =
+                        (status == 'CREATED') ? -1 : item['id'];
 
-                // debugger(when: workCode == 'CW-6661-202223-15');
-                // print(work)
+                    // debugger(when: workCode == 'CW-6661-202223-15');
+                    // print(work)
 
-                if (workName == null || workId == -1 || item == "-1") {
-                  showErrorSnackBar(context);
-                }
+                    if (workName == null || workId == -1 || item == "-1") {
+                      showErrorSnackBar(context);
+                    }
 
-                ///temporary
+                    ///temporary
 
-                //  'workId' : workId,
-                //             'workName': workName,
+                    //  'workId' : workId,
+                    //             'workName': workName,
 
-                // return Text('hi');
-                return GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => MeasurementOptionScreen(
-                              workId,
-                              workName,
-                              workCode,
-                              measurementSetId.toString(),
-                              workScheduleGroupId.toString()),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(14.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey, width: 2.0),
-                      ),
-                      child: GridTile(
-                        header: Row(
-                          children: [
-                            CircleAvatar(child: Text(sl.toString())),
-                            Spacer(),
-                            Text('WorkId :$workId'),
-                            Spacer(),
-                            Text('SchGrp :$workScheduleGroupId'),
-                            Spacer(),
-                            (status != 'UNDR_MSR') ? Text(status) : Text('k'),
-                          ],
-                        ),
-                        child: Center(
-                          child: ListTile(
-                            tileColor: (status != 'CREATED')
-                                ? Color.fromARGB(255, 33, 194, 151)
-                                : Colors.white,
-                            subtitle: item['started'] == true
-                                ? Text(
-                                    "No of Locations Mdeasures ${item['noOflocationMeasured']}")
-                                : Text(
-                                    'Measurements Not Started ${item['noOflocationMeasured']}'),
-                            title: Text('\n\n' +
-                                item['wrk_work_detail']['work_name'] +
-                                '\n' +
-                                '\n WorkCode: $workCode'),
+                    // return Text('hi');
+                    return GestureDetector(
+                        onTap: () {
+                          ///setting global work details
+                          WorkDetails workDetails = WorkDetails();
+
+                          // Setting properties
+                          workDetails.workName = workName;
+                          workDetails.workCode = workCode;
+                          workDetails.workId = workId;
+                          workDetails.isAudioMuted = true;
+
+                          print(
+                              "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
+
+                          debugger(when: true);
+
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MeasurementOptionScreen(
+                                workId,
+                                workName,
+                                workCode,
+                                measurementSetId.toString(),
+                                workScheduleGroupId.toString(),
+                                isAudioMuted,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(14.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: 2.0),
                           ),
-                        ),
-                      ),
-                    ));
-              },
-            ),
+                          child: GridTile(
+                            header: Row(
+                              children: [
+                                CircleAvatar(child: Text(sl.toString())),
+                                Spacer(),
+                                Text('WorkId :$workId'),
+                                Spacer(),
+                                Text('SchGrp :$workScheduleGroupId'),
+                                Spacer(),
+                                (status != 'UNDR_MSR')
+                                    ? Text(status)
+                                    : Text('k'),
+                              ],
+                            ),
+                            child: Center(
+                              child: ListTile(
+                                tileColor: (status != 'CREATED')
+                                    ? Color.fromARGB(255, 33, 194, 151)
+                                    : Colors.white,
+                                subtitle: item['started'] == true
+                                    ? Text(
+                                        "No of Locations Mdeasures ${item['noOflocationMeasured']}")
+                                    : Text(
+                                        'Measurements Not Started ${item['noOflocationMeasured']}'),
+                                title: Text('\n\n' +
+                                    item['wrk_work_detail']['work_name'] +
+                                    '\n' +
+                                    '\n WorkCode: $workCode'),
+                              ),
+                            ),
+                          ),
+                        ));
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 
   void showErrorSnackBar(BuildContext context) {

@@ -25,6 +25,8 @@ class _LocationButtonState extends State<LocationButton> {
 
   PermissionStatus _permissionStatus = PermissionStatus.denied;
 
+  bool isAudioMuted = true;
+
   @override
   void initState() {
     audioCache = AudioCache(prefix: 'assets/audio/');
@@ -146,7 +148,9 @@ class _LocationButtonState extends State<LocationButton> {
                         setState(() {
                           _loading = false;
 
-                          audioCache.play('press_save_location_button.wav');
+                          if (!isAudioMuted) {
+                            audioCache.play('press_save_location_button.wav');
+                          }
 
                           enableLocationButton = false;
 
@@ -182,11 +186,15 @@ class _LocationButtonState extends State<LocationButton> {
   Future<void> checkAndRequestLocationPermission() async {
     _permissionStatus = await Permission.location.status;
     if (_permissionStatus != PermissionStatus.granted) {
-      audioCache.play('provide_permision.wav');
+      if (!isAudioMuted) {
+        audioCache.play('provide_permision.wav');
+      }
     }
 
     if (_permissionStatus == PermissionStatus.granted) {
-      audioCache.play('press_get_location.wav');
+      if (isAudioMuted) {
+        audioCache.play('press_get_location.wav');
+      }
     }
 
     if (_permissionStatus == PermissionStatus.denied) {

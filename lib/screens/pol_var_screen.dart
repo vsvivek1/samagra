@@ -44,6 +44,7 @@ class PolVarScreen extends StatefulWidget {
     required this.workCode,
     required this.measurementSetId,
     required this.workScheduleGroupId,
+    required isMuted,
   }) : super(key: key);
 
   _PolVarScreenState createState() => _PolVarScreenState();
@@ -73,7 +74,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   int steps = 0;
 
-  Map<dynamic, dynamic> _selectedLocationDetails = {};
+  Map<String, dynamic> _selectedLocationDetails = {};
 
   List _selectedMeasurements = [];
   List<Map<String, dynamic>> _masterMaterialEstimate = [];
@@ -119,6 +120,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   List wrk_schedule_group_structures = [];
 
   var _savedToSamagra = false;
+
+  bool isAudioMuted = true;
 
   void togglePlay() {
     setState(() {
@@ -341,16 +344,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
         this.steps = this.steps++;
         if (_numberOfLocations == 0) {
           this.userDirections = 'Enter Number of Locations';
-          audioCache.play('no_of_loc.mp3');
+          if (!isAudioMuted) {
+            audioCache.play('no_of_loc.mp3');
+          }
         } else if (!(_numberOfLocations > 0) && _fromLocation == '' ||
             _toLocation == '') {
           this.userDirections = 'Please Enter From and To Locations';
-          audioCache.play('enter_from_to_location_name.wav');
+          if (!isAudioMuted) {
+            audioCache.play('enter_from_to_location_name.wav');
+          }
         } else if (_fromLocation != '' &&
             _toLocation != '' &&
             _numberOfLocations != 0) {
           this.userDirections = 'Select a Location';
-          audioCache.play('select_location.wav');
+          if (!isAudioMuted) {
+            audioCache.play('select_location.wav');
+          }
         }
 
 // else {
@@ -365,7 +374,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
             _toLocation != '') {
           this.userDirections =
               'Now Select any Location to Starting with  L, Ensure correct location ';
-          audioCache.play('select_location.wav');
+          if (!isAudioMuted) {
+            audioCache.play('select_location.wav');
+          }
         }
 
         this.steps = 0;
@@ -1069,7 +1080,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     this.userDirections =
         'NOW Select Task and then correct structure inside it ';
-    audioCache.play('select_structure.wav');
+    if (!isAudioMuted) {
+      audioCache.play('select_structure.wav');
+    }
     // print(this._workDetails);
 
     // print(' measurementDetails above');
@@ -1481,7 +1494,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           if (_numberOfLocations > 0) {
                             this.userDirections =
                                 'NOW ENTER FROM AND TO LOCATIONS';
-                            audioCache.play('enter_from_to_location_name.wav');
+                            if (!isAudioMuted) {
+                              audioCache
+                                  .play('enter_from_to_location_name.wav');
+                            }
                           }
                           this.steps = this.steps++;
                         });
@@ -1517,7 +1533,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     to == _toLocation) {
                                   this.userDirections = 'Now Press save ';
 
-                                  audioCache.play('press_save_button.mp3');
+                                  if (!isAudioMuted) {
+                                    audioCache.play('press_save_button.mp3');
+                                  }
                                 } else {
                                   from = _fromLocation;
                                   to = _toLocation;
@@ -1546,7 +1564,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                                 if (_fromLocation != '' && _toLocation != '') {
                                   this.userDirections = 'Now Press save ';
-                                  audioCache.play('press_save_button.mp3');
+                                  if (!isAudioMuted) {
+                                    audioCache.play('press_save_button.mp3');
+                                  }
                                   this.steps = this.steps++; //3
                                 }
                               });
@@ -2303,7 +2323,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         if (out.length > 0) {
           setState(() {
-            _selectedLocationDetails = out;
+            _selectedLocationDetails = Map<String, dynamic>.from(out);
 
             _selectedLocationTasks = out['tasks'] ?? [];
           });
@@ -2731,10 +2751,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print("LOCATION NO $locationNo");
 
     setState(() {
-      _selectedLocationDetails = measurementDetails.firstWhere(
+      _selectedLocationDetails =
+          Map<String, dynamic>.from(measurementDetails.firstWhere(
         (element) => element['locationNo'].toString() == locationNo,
         orElse: () => {},
-      );
+      ));
 
       print("_selectedLocationDetails $_selectedLocationDetails");
 
@@ -2756,7 +2777,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       this.userDirections =
           'Now Select any Location to Starting with  L, Ensure correct location ';
-      audioCache.play('select_location.wav');
+      if (!isAudioMuted) {
+        audioCache.play('select_location.wav');
+      }
 
       this.saveWorkDetails(
           workId: widget.workId.toString(),

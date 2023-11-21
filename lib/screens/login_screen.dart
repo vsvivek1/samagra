@@ -218,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         Uint8List bytes = base64.decode(dp);
 
-                                        // debugger(when: true);
+                                        // debun    sgger(when: true);
 
                                         empCodeInitialValue =
                                             user["employee_code"].toString();
