@@ -314,7 +314,12 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
             _isSubmitting = false;
 
             _apiResultFlag = response.data['result_flag'];
-            _apiResult = response.data['result_message'][0];
+
+            String inputString = response.data['result_message'][0];
+            List<String> parts = inputString.split('<br/>');
+            _apiResult = parts.isNotEmpty ? parts[0] : '';
+
+            // _apiResult = response.data['result_message'][0];
           });
         } else {
           print(response.statusMessage);
