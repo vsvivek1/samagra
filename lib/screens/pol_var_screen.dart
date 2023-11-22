@@ -1720,8 +1720,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
           String distanceText = '0 Meters';
 
           if (geoCordinates != null) {
-            double startLatitude = geoCordinates['latitude'] ?? 0.0;
-            double startLongitude = geoCordinates['longitude'] ?? 0.0;
+            double startLatitude =
+                (geoCordinates['latitude'] ?? 0.0).toDouble();
+            double startLongitude =
+                (geoCordinates['longitude'] ?? 0.0).toDouble();
 
             // Replace `endLatitude` and `endLongitude` with the coordinates of the other location
             if (geoCordinatesEnd != null) {
@@ -2754,7 +2756,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _selectedLocationDetails =
           Map<String, dynamic>.from(measurementDetails.firstWhere(
         (element) => element['locationNo'].toString() == locationNo,
-        orElse: () => {},
+        orElse: () =>
+            Map<String, dynamic>(), // Return an empty map of the correct type
       ));
 
       print("_selectedLocationDetails $_selectedLocationDetails");
@@ -2853,7 +2856,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var location = measurementDetails.firstWhere(
       (element) => element['locationNo'].toString() == locationNo.toString(),
-      orElse: () => {},
+      orElse: () => Map<String, dynamic>(),
     );
 
     var measured = measurementDetails.length;
@@ -2864,7 +2867,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       var locationEnd = measurementDetails.firstWhere(
         (element) =>
             element['locationNo'].toString() == (locationNo + 1).toString(),
-        orElse: () => {},
+        orElse: () => Map<String, dynamic>(),
       );
 
       // print("$locationEnd is location ebnd");
@@ -2925,7 +2928,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       var locationEnd = measurementDetails.firstWhere(
         (element) =>
             element['locationNo'].toString() == (locationNo + 1).toString(),
-        orElse: () => {},
+        orElse: () => Map<String, dynamic>(),
       );
 
       if (locationEnd['geoCordinatesEnd'] != null) {

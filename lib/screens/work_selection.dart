@@ -528,7 +528,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                           print(
                               "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
 
-                          debugger(when: true);
+                          // debugger(when: true);
 
                           Navigator.of(context).push(
                             MaterialPageRoute(
