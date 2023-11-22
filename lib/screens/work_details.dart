@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class WorkDetails {
+  bool isAudioMuted = true;
+
   // Private constructor - prevents direct instantiation from outside the class
+  bool isMuted = false;
   WorkDetails._();
 
   // Singleton instance
@@ -14,7 +17,7 @@ class WorkDetails {
   String workName = '';
   String workCode = '';
   int workId = 0;
-  bool isMuted = false;
+  // bool isMuted = false;
 }
 
 final workDetailsProvider = Provider<WorkDetails>((ref) {
