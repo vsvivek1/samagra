@@ -89,6 +89,7 @@ getWorkDertailsFromServer(measurementsetListId) async {
 
   var dta = res.data;
   if (dta!["result_flag"] == 1) {
+    debugger(when: true);
     return dta['result_data']['data'];
     // print(dta['result_data']['data']);
   } else {

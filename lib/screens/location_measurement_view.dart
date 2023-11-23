@@ -23,7 +23,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
         itemBuilder: (context, index) {
           final task = widget.tasks[index];
 
-          final structureList = task["structures"].toList();
+          final structureList = (task["structures"] ?? []).toList();
 
           // print(task["structures"]);
 

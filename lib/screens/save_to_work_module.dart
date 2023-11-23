@@ -184,14 +184,14 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
 
                     serverMessageWidget(context, _apiResult,
                         _apiResultFlag.toString() != '-1' ? 1 : 0),
-                    // Text(
-                    //   _apiResult,
-                    //   style: TextStyle(
-                    //       fontSize: 20,
-                    //       color: _apiResultFlag.toString() != '-1'
-                    //           ? Colors.green
-                    //           : Colors.red),
-                    // ),
+                    Text(
+                      _apiResult,
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: _apiResultFlag.toString() != '-1'
+                              ? Colors.green
+                              : Colors.red),
+                    ),
                   ],
                 ),
               // Text(_apiResultFlag.toString()),

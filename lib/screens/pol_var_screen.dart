@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
 
@@ -437,8 +438,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             measurementDetails = List<Map<dynamic, dynamic>>.from(
                 jsonDecode(data['measurementDetails']));
           } else {
-            measurementDetails =
-                List<Map<dynamic, dynamic>>.from(data['measurementDetails']);
+            var mout = jsonDecode(data['measurementDetails']);
+            measurementDetails = List<Map<dynamic, dynamic>>.from(mout);
 
             debugger(when: true);
           }
@@ -1140,224 +1141,246 @@ class _PolVarScreenState extends State<PolVarScreen> {
               //     :
 
               SafeArea(
-            child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: AppTheme.grey.withOpacity(0.7),
-                title: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 500),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: child,
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Text(
-                        userDirections,
-                        key: ValueKey<String>(userDirections),
-                        style: TextStyle(fontSize: 11, color: Colors.red),
-                      ),
-                      // VoiceControl(),
-                    ],
+            child: Container(
+              padding: EdgeInsets.all(1),
+              child: Scaffold(
+                appBar: AppBar(
+                  backgroundColor: AppTheme.grey.withOpacity(0.7),
+                  title: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 500),
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Text(
+                          userDirections,
+                          key: ValueKey<String>(userDirections),
+                          style: TextStyle(fontSize: 11, color: Colors.red),
+                        ),
+                        // VoiceControl(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              body: Scrollbar(
-                thumbVisibility: true,
-                trackVisibility: true,
-                thickness: 10,
-                child: SingleChildScrollView(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 9,
-                    margin: EdgeInsets.all(16.0),
-                    child: Column(
-                      // mainAxisSize: MainAxisSize.min,
-                      // crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        WorkNameWidget(
-                          workName: widget.workName +
-                              '\n\nWork Code : ${widget.workCode}',
-                          color: Colors.blue,
-                        ),
-                        enterLocationDetails(),
-                        locationNumberAndLocationPointsEntryScreen(),
-                        if (_selectedLocationIndex == -1 &&
-                            !_enableEntryOfLocationDetails) ...[
-                          Visibility(
-                              visible: !_openedMeasurementCopier,
-                              child: showLocationButtons())
-
-                          // for showing loading issued material
-                        ],
-                        if ((!_enableEntryOfLocationDetails &&
-                            _numberOfLocations > 0 &&
-                            _numberOfLocations < 999 &&
-                            _fromLocation != '' &&
-                            _toLocation != '')) ...[
-                          Divider(
-                            height: 5,
-                            thickness: 2,
-                            color: Colors.blueAccent,
+                body: Scrollbar(
+                  thumbVisibility: true,
+                  trackVisibility: true,
+                  thickness: 10,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 9,
+                      margin: EdgeInsets.all(16.0),
+                      child: Column(
+                        // mainAxisSize: MainAxisSize.min,
+                        // crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          WorkNameWidget(
+                            workName: widget.workName +
+                                '\n\nWork Code : ${widget.workCode}',
+                            color: Colors.blue,
                           ),
+                          enterLocationDetails(),
+                          locationNumberAndLocationPointsEntryScreen(),
+                          if (_selectedLocationIndex == -1 &&
+                              !_enableEntryOfLocationDetails) ...[
+                            Visibility(
+                                visible: !_openedMeasurementCopier,
+                                child: showLocationButtons())
 
-                          Visibility(
-                            // visible: _showAnotherLocationButton
-
-                            visible: _selectedLocationIndex != -1
-
-                            //  &&
-                            //     !_showSaveMeasurementDetailsButton
-                            ,
-                            child: Row(
-                              children: [
-                                Spacer(),
-                                ElevatedButton(
-                                    onPressed: () => {_gotToAnotherLocation()},
-                                    child: Text('Go to  Another Location')),
-                                Spacer(),
-                              ],
+                            // for showing loading issued material
+                          ],
+                          if ((!_enableEntryOfLocationDetails &&
+                              _numberOfLocations > 0 &&
+                              _numberOfLocations < 999 &&
+                              _fromLocation != '' &&
+                              _toLocation != '')) ...[
+                            Divider(
+                              height: 5,
+                              thickness: 2,
+                              color: Colors.blueAccent,
                             ),
-                          ),
-                          Visibility(
-                            visible: (_showSaveMeasurementDetailsButton ||
-                                (_showAnotherLocationButton &&
-                                    !_showSaveMeasurementDetailsButton) ||
-                                _showSubmitToSamagraButton),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 1.5,
+
+                            Visibility(
+                              // visible: _showAnotherLocationButton
+
+                              visible: _selectedLocationIndex != -1
+
+                              //  &&
+                              //     !_showSaveMeasurementDetailsButton
+                              ,
                               child: Row(
                                 children: [
-                                  Visibility(
-                                    visible:
-                                        _showSaveMeasurementDetailsButton &&
-                                            false,
-                                    child: ElevatedButton(
-                                        onPressed: () =>
-                                            {_saveMeasurementDetails()},
-                                        child: Text('Save')),
-                                  ),
-                                  Visibility(
-                                    visible: _showSubmitToSamagraButton,
-                                    child: ElevatedButton(
-                                        onPressed: () => {},
-                                        child: Text('Submit to Samagara')),
-                                  ),
+                                  Spacer(),
+                                  ElevatedButton(
+                                      onPressed: () =>
+                                          {_gotToAnotherLocation()},
+                                      child: Text('Go to  Another Location')),
+                                  Spacer(),
                                 ],
                               ),
                             ),
-                          ),
-
-                          Visibility(
-                            visible: _selectedLocationIndex != -1,
-                            child: IntrinsicHeight(
+                            Visibility(
+                              visible: (_showSaveMeasurementDetailsButton ||
+                                  (_showAnotherLocationButton &&
+                                      !_showSaveMeasurementDetailsButton) ||
+                                  _showSubmitToSamagraButton),
                               child: SizedBox(
-                                // height: 200,
-                                width: 500,
-                                child: Row(children: [
-                                  Column(
-                                    children: [
-                                      // _selectedLocationHasGeoLocations
-                                      if (!_selectedLocationHasGeoLocations)
-                                        LocationDetailsWidget(
-                                            hasLocationDetailsInStorage:
-                                                _hasLocationDetailsInStorage,
-                                            locationDetails: {},
-                                            updateLocationDetailsArray:
-                                                _updateLocationDetailsArray,
-                                            locationNo: _selectedLocationIndex
-                                                .toString(),
-                                            measurements: List<String>.from(
-                                              _selectedMeasurements,
-                                            ),
-                                            emitLocDetailsToPolVarWidget:
-                                                _handleEmitLocDetailsToPolVarWidget)
-                                      // ,
-
-                                      ,
-                                      // SizedBox(
-                                      //   height:
-                                      //       MediaQuery.of(context).size.height *
-                                      //           8,
-                                      //   width:
-                                      //       MediaQuery.of(context).size.width * 8,
-                                      //   child: MeasurementDisplayWidget(
-                                      //       measurementDetails),
-                                      // )
-
-                                      // // viewAllLocationDetails(context),
-                                      // ,
-                                    ],
-                                  )
-                                ]),
+                                width: MediaQuery.of(context).size.width * 1.5,
+                                child: Row(
+                                  children: [
+                                    Visibility(
+                                      visible:
+                                          _showSaveMeasurementDetailsButton &&
+                                              false,
+                                      child: ElevatedButton(
+                                          onPressed: () =>
+                                              {_saveMeasurementDetails()},
+                                          child: Text('Save')),
+                                    ),
+                                    Visibility(
+                                      visible: _showSubmitToSamagraButton,
+                                      child: ElevatedButton(
+                                          onPressed: () => {},
+                                          child: Text('Submit to Samagara')),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                          // Divider(color: Colors.white10, thickness: 10),
-                          // SizedBox(height: 50),
 
-                          viewLocationList(tasklist1),
-                          // viewLocationList(tasklist1),
-                          // SizedBox(height: 20),
+                            Visibility(
+                              visible: _selectedLocationIndex != -1,
+                              child: IntrinsicHeight(
+                                child: SizedBox(
+                                  // height: 200,
+                                  width: 500,
+                                  child: Row(children: [
+                                    Column(
+                                      children: [
+                                        // _selectedLocationHasGeoLocations
+                                        if (!_selectedLocationHasGeoLocations)
+                                          LocationDetailsWidget(
+                                              hasLocationDetailsInStorage:
+                                                  _hasLocationDetailsInStorage,
+                                              locationDetails: {},
+                                              updateLocationDetailsArray:
+                                                  _updateLocationDetailsArray,
+                                              locationNo: _selectedLocationIndex
+                                                  .toString(),
+                                              measurements: List<String>.from(
+                                                _selectedMeasurements,
+                                              ),
+                                              emitLocDetailsToPolVarWidget:
+                                                  _handleEmitLocDetailsToPolVarWidget)
+                                        // ,
 
-                          // Container(
-                          //   margin: const EdgeInsets.all(8.0),
-                          //   padding: const EdgeInsets.all(8.0),
-                          //   child: Text('Full Location details nelow'),
-                          // ),
+                                        ,
+                                        // SizedBox(
+                                        //   height:
+                                        //       MediaQuery.of(context).size.height *
+                                        //           8,
+                                        //   width:
+                                        //       MediaQuery.of(context).size.width * 8,
+                                        //   child: MeasurementDisplayWidget(
+                                        //       measurementDetails),
+                                        // )
 
-                          _savedToSamagra
-                              ? CircularProgressIndicator()
-                              : ElevatedButton(
-                                  onPressed: () =>
-                                      {sendObjectToSamagra(measurementDetails)},
-                                  child: Text('Save to samagra')),
-                          ElevatedButton(
-                            onPressed: () =>
-                                _showMeasurementCopierDialog(context),
-                            child: Text('Open Measurement Copier'),
-                          ),
-                          Visibility(
-                            // visible: _selectedLocationTasks.length > 0,
-                            visible: true,
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.9,
-                              child: LocationMeasurementView(
-                                  tasks: List<Map<dynamic, dynamic>>.from(
-                                      _selectedLocationTasks),
-                                  reflectQuantityDetails:
-                                      reflectQuantityDetails),
+                                        // // viewAllLocationDetails(context),
+                                        // ,
+                                      ],
+                                    )
+                                  ]),
+                                ),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: ElevatedButton(
-                                onPressed: () => {
-                                      setState(
-                                        () {
-                                          _viewFullLocationList =
-                                              !_viewFullLocationList;
-                                        },
-                                      )
-                                    },
-                                child: Text(_viewFullLocationList
-                                    ? 'Hide Detailed View of Locations'
-                                    : "View Detailed View of Locations")),
-                          ),
+                            // Divider(color: Colors.white10, thickness: 10),
+                            // SizedBox(height: 50),
 
-                          Visibility(
-                            visible: _viewFullLocationList,
-                            child: SizedBox(
-                                width: 300,
-                                height: 300,
-                                child: MeasurementDisplayWidget(
-                                    measurementDetails)),
-                          ),
+                            viewLocationList(tasklist1),
 
-                          Spacer(),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                _savedToSamagra
+                                    ? CircularProgressIndicator()
+                                    : ElevatedButton.icon(
+                                        icon: Icon(Icons.save_alt_outlined),
+                                        onPressed: () => {
+                                              sendObjectToSamagra(
+                                                  measurementDetails)
+                                            },
+                                        label: Text('Save to samagra')),
+                                Spacer(),
+                                ElevatedButton.icon(
+                                  icon: Icon(
+                                    Icons.copy,
+                                    color: Color.fromARGB(255, 237, 238, 241),
+                                  ),
+                                  onPressed: () =>
+                                      _showMeasurementCopierDialog(context),
+                                  label: Text('M- Copier'),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              width: 10,
+                              height: 10,
+                            ),
+                            Visibility(
+                              visible: _selectedLocationTasks.length > 0,
+                              // visible: true,
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    border: Border.all(width: 2),
+                                    color: ksebColor),
+                                child: SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.9,
+                                  child: LocationMeasurementView(
+                                      tasks: List<Map<dynamic, dynamic>>.from(
+                                          _selectedLocationTasks),
+                                      reflectQuantityDetails:
+                                          reflectQuantityDetails),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: ElevatedButton(
+                                  onPressed: () => {
+                                        setState(
+                                          () {
+                                            _viewFullLocationList =
+                                                !_viewFullLocationList;
+                                          },
+                                        )
+                                      },
+                                  child: Text(_viewFullLocationList
+                                      ? 'Hide Detailed View of Locations'
+                                      : "View Detailed View of Locations")),
+                            ),
+
+                            Visibility(
+                              visible: _viewFullLocationList,
+                              child: SizedBox(
+                                  width: 300,
+                                  height: 300,
+                                  child: MeasurementDisplayWidget(
+                                      measurementDetails)),
+                            ),
+
+                            Spacer(),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),
