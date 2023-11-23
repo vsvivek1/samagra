@@ -1012,7 +1012,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       Map existingMeasurementDetails = measurementDetails.firstWhere(
           (element) => element['locationNo'] == locationNumber,
-          orElse: () => {});
+          orElse: () => Map<String, dynamic>());
 
       if (existingMeasurementDetails.isEmpty) {
         print(existingMeasurementDetails);

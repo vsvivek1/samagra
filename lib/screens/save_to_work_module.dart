@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/server_message_widget.dart';
 import 'package:samagra/screens/work_selection.dart';
 import 'measurement_data_to_work_module.dart';
 
@@ -180,17 +181,20 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
                 Column(
                   children: [
                     // HtmlWidget(_apiResult),
-                    Text(
-                      _apiResult,
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: _apiResultFlag.toString() != '-1'
-                              ? Colors.green
-                              : Colors.red),
-                    ),
+
+                    serverMessageWidget(context, _apiResult,
+                        _apiResultFlag.toString() != '-1' ? 1 : 0),
+                    // Text(
+                    //   _apiResult,
+                    //   style: TextStyle(
+                    //       fontSize: 20,
+                    //       color: _apiResultFlag.toString() != '-1'
+                    //           ? Colors.green
+                    //           : Colors.red),
+                    // ),
                   ],
                 ),
-              Text(_apiResultFlag.toString()),
+              // Text(_apiResultFlag.toString()),
               ElevatedButton(
                   onPressed: gotToWorkList,
                   child: Row(
