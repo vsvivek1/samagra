@@ -445,40 +445,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
 
           ///during normal fetching from storage its a striong
-          // var measurementDetails1 =
-          //     List<Map<dynamic, dynamic>>.from(data['measurementDetails']);
-
-          // jsonDecode(data['measurementDetails']!)
-
-          // measurementDetails1 = data['measurementDetails'];
-
-          measurementDetails = measurementDetails1;
 
           getTasksofSelectedLocation();
-
-          // print(measurementDetails);
-
-          // print(' measurementDetails @n393');
-
-          noOFLocationsMeasured = measurementDetails.length;
         }
-
-        // print(measurementDetails);
-
-        // print('measurement details above 382');
-
-        // print(_workDetails);
-        // print(_workDetails.runtimeType);
-
-        // print('work details above');
-
-        // print('above issue');
-
-        // print(_workDetails!['locations']);
-
-        // print('_workDetails! above 304');
-
-        // if (!(_workDetails!['locations'] is Map)) {
 
         if (_workDetails!['locations'] == null) {
           // _workDetails!['locations'] = 'hi';
