@@ -695,8 +695,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     apiDataForSamagra['polevar_data'] = obj;
 
-    wrk_schedule_group_structures =
-        await getScheduleDetailsForMeasurement(widget.workId.toString());
+    await getWorkSheduleGroupStructuresfromSamgra();
 
     print("wrk_schedule_group_structures 693 $wrk_schedule_group_structures");
 
@@ -728,12 +727,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     for (var location in obj) {
       print('location $location');
-      // debugger(when: true);
+
       List<Map<dynamic, dynamic>> tasks =
           List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
 
-      // print("tasks xx; $tasks");
-      // debugger(when: true);
       if (tasks.isEmpty) {
         continue;
       }
@@ -742,7 +739,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
         String taskId = (task["id"] ?? -1).toString();
         print("this is task $task");
 
-        // debugger(when: true);
         List<Map<dynamic, dynamic>> structures =
             List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
 
@@ -766,6 +762,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
           );
           var wrkScheduleGroupStructureId =
               wrkScheduleGroupStructure?['id'] ?? -1;
+
+          // workScheduleGroupId
           debugger(when: true);
 
           updateStructureMeasurements(structureMeasurements, structure['id'],
@@ -882,6 +880,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // await flutterTts.speak('നമസ്കാരം, ഇത് മലയാളം ആവാസം ആണ്‌.');
 
     // print(obj.length);
+  }
+
+  Future<void> getWorkSheduleGroupStructuresfromSamgra() async {
+    wrk_schedule_group_structures =
+        await getScheduleDetailsForMeasurement(widget.workId.toString());
   }
 
   dynamic updateMeasurementDetails(
@@ -1193,6 +1196,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             workName: widget.workName +
                                 '\n\nWork Code : ${widget.workCode}',
                             color: Colors.blue,
+                            workId: widget.workId.toString(),
                           ),
                           enterLocationDetails(),
                           locationNumberAndLocationPointsEntryScreen(),
@@ -1630,9 +1634,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
             Padding(
               padding: const EdgeInsets.all(.0),
               child: WorkNameWidget(
-                  workName:
-                      ' Number  of location Measured : $noOFLocationsMeasured    \n Total  Locations : ' +
-                          _numberOfLocations.toString()),
+                workName:
+                    ' Number  of location Measured : $noOFLocationsMeasured    \n Total  Locations : ' +
+                        _numberOfLocations.toString(),
+                workId: widget.workId.toString(),
+              ),
             ),
             Divider(
               height: 5,
@@ -1643,16 +1649,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
               children: [
                 Expanded(
                   child: WorkNameWidget(
-                      workName: 'From :  $_fromLocation',
-                      color: Color(0xFF000080)),
+                    workName: 'From :  $_fromLocation',
+                    color: Color(0xFF000080),
+                    workId: '',
+                  ),
 
                   // Text('From : ' + _fromLocation),
                 ),
                 SizedBox(width: 16),
                 Expanded(
                   child: WorkNameWidget(
-                      workName: 'To  : ' + _toLocation,
-                      color: Color(0xFF0080800)),
+                    workName: 'To  : ' + _toLocation,
+                    color: Color(0xFF0080800),
+                    workId: '',
+                  ),
                 ),
               ],
             ),

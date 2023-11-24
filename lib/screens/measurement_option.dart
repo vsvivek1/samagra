@@ -37,7 +37,10 @@ class MeasurementOptionScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              WorkNameWidget(workName: this.workName),
+              WorkNameWidget(
+                workName: this.workName,
+                workId: this.workId.toString(),
+              ),
               ElevatedButton(
                 style: ButtonStyle(
                     backgroundColor: MaterialStateColor.resolveWith(

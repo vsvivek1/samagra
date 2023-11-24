@@ -5,9 +5,12 @@ class WorkNameWidget extends StatelessWidget {
   final Color color;
   final String label;
 
-  const WorkNameWidget(
+  String workId;
+
+  WorkNameWidget(
       {Key? key,
       required this.workName,
+      required this.workId,
       this.color = const Color(0xFF800000),
       this.label = ""})
       : super(key: key);
@@ -29,7 +32,7 @@ class WorkNameWidget extends StatelessWidget {
         ],
       ),
       child: Text(
-        label + workName,
+        label + workName + (workId != '' ? " '\n\nWork Id :${workId}" : ''),
         style: TextStyle(
             // fontStyle: FontStyle.italic,
             fontFamily: 'Verdana',
