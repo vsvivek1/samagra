@@ -956,6 +956,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           (element) => element['locationNo'] == locationNumber,
           orElse: () => Map<String, dynamic>());
 
+      debugger(when: true);
       if (existingMeasurementDetails.isEmpty) {
         print(existingMeasurementDetails);
         print('existng param above');
@@ -2273,8 +2274,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       final url =
           "http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
 
-      print(url);
-
       final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
       Response<dynamic> response;
@@ -2290,7 +2289,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         response = response1;
 
-        print('response $response');
         // debugger(when: true);
       } catch (e) {
         final snackBar = SnackBar(
