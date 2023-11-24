@@ -47,9 +47,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
     _loginDetails1 =
         await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
 
-    // print(_loginDetails1);
-    // print('_loginDetails1 above');
-
     if (_loginDetails1 != null &&
         _loginDetails1["loginDetails"] != null &&
         isJson(_loginDetails1["loginDetails"])) {
@@ -460,7 +457,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
       // p(seatId);
 
       String accessToken = accessToken1['access_token'];
-      print(accessToken);
 
       final response = await _dio.post(_url,
           data: data,
@@ -561,7 +557,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
           setState(() {
             switchingInProgress = false;
           });
-          print(e);
         }
       },
     );

@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/fitness_app/ui_view/mediterranean_diet_view.dart';
@@ -121,10 +120,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     Map<dynamic, dynamic> loginDetailsMap =
         _loginDetails as Map<dynamic, dynamic>;
 
-    // print()
     _officeName = loginDetailsMap['seat_details']['office']['disp_name'];
 
-    // print(_officeName);
     final dio = Dio();
 
     final url = 'http://erpuat.kseb.in/api/loadOrumaTotalDetails';
@@ -140,13 +137,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     Map<String, dynamic> response = res.data;
 
-    print(response.runtimeType);
-
     if (response['result_flag'] == 1) {
       _dashBoardData = response['result_data']['RevenueDatas']['0'];
-
-      print(response['result_data']['RevenueDatas']['ltrevenuecat']);
-      // print(_dashBoardData);
 
       return Future.value(_dashBoardData);
     }

@@ -44,7 +44,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           isLightMode == true ? AppTheme.white : AppTheme.nearlyBlack,
       body: WillPopScope(
         onWillPop: () {
-          print('will pop ');
           return Future.value(false);
         },
         child: FutureBuilder<bool>(

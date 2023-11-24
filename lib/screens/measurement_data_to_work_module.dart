@@ -145,8 +145,6 @@ class MeasurementDataToWorkModule {
       String baseUrl =
           "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
-      print("BASE UR mdtwm 136L $baseUrl");
-
       Dio dio = new Dio();
 
       dio = await setAccessTockenToDio(dio);
@@ -155,116 +153,42 @@ class MeasurementDataToWorkModule {
       if (response.statusCode == 200) {
         Map<dynamic, dynamic> apiData = response.data;
 
-        // print("apidata at mdtwm $apiData");
-
         Map wrkScheduleGroupStructures =
             apiData['wrk_schedule_group_structures'] ?? {};
 
-        print(
-            'thi is wrk_schedule_group_structures $wrkScheduleGroupStructures ');
-
-        // print("REE res  ${response.data}");
-
-        // print('plg data ${this.plg_work_id}');
-
         var resultdata = apiData['result_data'];
-
-        // debugger(when: true);
-
-        // if (resultdata != null) {
-        //   wrk_schedule_group_id = resultdata['data']['id'].toString();
-        // }
-
-        // wrk_schedule_group_id =
-
-        // print(" FOR WORK SHECDULE GROUP ID ${response.data}");
-
-        // print('wrk_schedule_group ${apiData['result_data']['data']}');
-        // print(
-        //     'wrk_schedule_group id  ${apiData['result_data']['data']['plg_work_id']}');
-
-        // plg_work_id = apiData['result_data']['data']['plg_work_id'].toString();
-
-        // debugger(when: true, message: 'poda');
-
-        // wrk_schedule_group_structures =
-        //     apiData['result_data']['data']['wrk_schedule_group_structures'];
 
         plg_work_id = workId;
         user_id = await getUserId();
 
-        // print("dataFromPolvarScreen $dataFromPolvarScreen");
-
         Map<dynamic, dynamic> ob = {};
         ob['measurements'] = dataFromPolvarScreen['polevar_data'];
 
-        // print('POLE VAR $ob');
         polevar_data = jsonEncode(ob);
-        // polevar_data = dataFromPolvarScreen['polevar_data'];
-
-        // print(
-        //     'polvar data ${this.polevar_data} ${dataFromPolvarScreen['polevar_data']}');
-
-        // debugger(when: true);
-        // plg_work_id = workId.toString();
 
         dataFromPolvarScreen.keys.forEach((key) {
           print("keyfrom 182 of mdtw $key");
         });
 
-        // print("dataFromPolvarScreen  123");
-
-        // print(
-        //     " 'taskMeasurements' ${dataFromPolvarScreen['taskMeasurements']}");
-        // print(dataFromPolvarScreen.runtimeType);
-        // print("dataFromPolvarScreen");
-
-        // return ;
-
         taskMeasurements =
             // dataFromPolvarScreen['taskMeasurements'] as Map<dynamic, dynamic>;
             dataFromPolvarScreen['taskMeasurements'];
 
-        print("taskMeasurements $taskMeasurements");
-
         structureMeasurements =
             dataFromPolvarScreen['structreMeasurements'] ?? {};
 
-        structureMeasurements?.forEach(
-          (key, value) => print("strm $key -> $value"),
-        );
-
-        print("structureMeasurements $structureMeasurements");
         materialMeasurements = dataFromPolvarScreen['materialMeasurements']
             as Map<dynamic, dynamic>;
 
-        print("materialMeasurements $materialMeasurements");
         labourMeasurements =
             dataFromPolvarScreen['labourMeasurements'] as Map<dynamic, dynamic>;
 
-        print("labourMeasurements $labourMeasurements");
         materialTakenBackMeasurements =
             dataFromPolvarScreen['materialTakenBackMeasurements']
                 as Map<dynamic, dynamic>;
 
-        print("materialTakenBackMeasurements $materialTakenBackMeasurements");
-
-        // var us = this.getUnsetVariables();
-
-        // print(us);
-
-        // print('dataFromPolvarScreen ${dataFromPolvarScreen}');
-
-        // dataFromPolvarScreen.forEach((key, value) {
-        //   print('$key: $value');
-        // });
-
-        // print(this.getUnsetVariables());
-        // debugger(when: true);
-
         retVal = true;
         return retVal;
-        // print("AFTER DEBUGGER");
 
         // Set other attributes as needed from the fetched data
         // For example:

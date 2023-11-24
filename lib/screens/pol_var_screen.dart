@@ -143,10 +143,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<Map<String, dynamic>> getMeasurementDetails(
-
-      // print()
-      String workId,
-      int locationNumber) async {
+      String workId, int locationNumber) async {
     logCurrentFunction();
     final storage = new FlutterSecureStorage();
     String? jsonDetails = await storage.read(key: 'measurementDetails');
@@ -188,11 +185,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return this.allTasks;
     }
 
-    print('getTasksByName CALLED');
-    // print(wrk_schedule_group_structures);
-
-    // print('dabove 144');
-    // return;
     List<dynamic> tasks = wrkScheduleGroupStructures;
 
     List res = [];
@@ -202,16 +194,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var allTasksIds = tasks.map((t) => t['mst_task']['id']).toSet().toList();
 
-    // print(allTasksIds);
-
-    // print('all task id above @157n pol var');
-
     for (int z = 0; z < allTasks.length; z++) {
       var ta = allTasks[z];
 
       var taskId = allTasksIds[z];
-
-      // print('tasks above');
 
       var t2 = tasks
           .where((t) => t['mst_task']['task_name'] == ta)
@@ -220,9 +206,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       var mstTaskId =
           tasks.where((t) => t['mst_task_id'] == taskId).map((t3) => t3['id']);
 
-// var wrkScheduleGroupStructureId= tasks.where((t) => t['id'] == taskId).map((t3) => t3['id']);
-      // print('mst_structure_id avbvove');
-
       var ob = {};
       // ob['wrkScheduleGroupStructureId'] = wrkScheduleGroupStructureId;
       ob['id'] = taskId;
@@ -230,7 +213,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       ob['isExpanded'] = false;
       ob['structures'] = t2;
 
-      print('$ta  $taskId is task id');
       res.add(ob);
     }
 
@@ -279,8 +261,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return _taskByName;
     }
 
-    print(_taskByName);
-    print('sheduleBuilder CALLED');
     var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
 
     if (workDetails.length == 1 && workDetails[0] == -1) {

@@ -64,8 +64,6 @@ getWorkDertailsFromServer(measurementsetListId) async {
   String url =
       "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementDetails/$measurementsetListId";
 
-  print(url);
-
   Response<Map<String, dynamic>> res = await Dio().get(
     url,
     options: Options(headers: headers),
@@ -75,11 +73,9 @@ getWorkDertailsFromServer(measurementsetListId) async {
   if (dta!["result_flag"] == 1) {
     debugger(when: true);
     return dta['result_data']['data'];
-    // print(dta['result_data']['data']);
   } else {
     return [];
   }
-  // print(res);
 
   // debugger(when: true);
 }
