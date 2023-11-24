@@ -158,11 +158,12 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                   icon: Icon(Icons.calendar_today),
                   onPressed: () => _selectDate(
                       context,
-                      _measurementDataToWorkModule.measurement_set_date
-                          as DateTime, (newDate) {
+                      DateTime.parse(_measurementDataToWorkModule
+                          .measurement_set_date as String), (newDate) {
                     setState(() {
+                      // Update the measurement_set_date with the converted DateTime
                       _measurementDataToWorkModule.measurement_set_date =
-                          newDate as String?;
+                          newDate.toString();
                     });
                   }),
                 ),

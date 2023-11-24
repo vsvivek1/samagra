@@ -129,7 +129,7 @@ class WorkSelection extends StatelessWidget {
       final responseMaterial =
           await dio.get(url2, options: Options(headers: headers));
 //
-      print('materail master called');
+      // print('materail master called');
       var inp = response.data['result_data']['labourMaster'];
 
       var mat = responseMaterial.data['result_data']['materialMaster'];
@@ -543,14 +543,17 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                           );
                         },
                         child: Container(
-                          padding: EdgeInsets.all(14.0),
+                          padding: EdgeInsets.all(10.0),
                           decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey, width: 2.0),
                           ),
                           child: GridTile(
                             header: Row(
                               children: [
-                                CircleAvatar(child: Text(sl.toString())),
+                                CircleAvatar(
+                                  child: Text(sl.toString()),
+                                  radius: 1,
+                                ),
                                 Spacer(),
                                 Text('WorkId :$workId'),
                                 Spacer(),
