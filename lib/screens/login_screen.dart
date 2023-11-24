@@ -163,7 +163,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (!(snapshot.hasData) ||
                             snapshot.data == '' ||
                             snapshot.data['seat_details'] == -1) {
-                          print('no stored login details');
                           // no stored data or stored data is null or seat details -1
                           /// show fist time login screen
 
@@ -197,8 +196,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         var user = login["user"];
 
-                                        // print(snapshot
-                                        //     .data['storedLogin'].runtimeType);
                                         var storedLogin = json.decode(
                                             snapshot.data['storedLogin']);
 
@@ -222,10 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                         empCodeInitialValue =
                                             user["employee_code"].toString();
-
-                                        // print(empCodeInitialValue);
-
-                                        // return Text('text');
 
                                         return Center(
                                           child: Column(
@@ -567,17 +560,10 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar((SnackBar(
           content: Text('loggining in '), duration: Duration(seconds: 3))));
 
-      // print(
-      //     "$email is email and password is $_password from proceed for login function");
-
       var result =
           await api.login(email, _password, showPhoto, context).catchError((e) {
         throw e;
       });
-
-      // return;
-
-      print('result oflogin request below');
 
       if (result == -1 || result['result_flag'] == -1) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
@@ -597,9 +583,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return Future(() => '');
       }
 
-      // print(result["result_data"]["token"]
-      //     ["access_token"]);
-
       if (result["result_data"] == null) {}
 
       await _secureStorage.writeKeyValuePairToSecureStorage(
@@ -617,14 +600,6 @@ class _LoginScreenState extends State<LoginScreen> {
           _firstTimeLoginSpinner = 1;
         });
       }
-
-      // print(result["result_data"]);
-      // dynamic re = await _secureStorage
-      //     .getSecureAllStorageDataByKey('loginDetails');
-
-      // print(re.toString());
-
-      // showAlert(context);
 
       Navigator.push(
         context,
@@ -658,11 +633,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // code to be executed after 2 seconds
       });
-
-      // print(e);
-
-      // return Future(computation)
-      // TODO
     }
   }
 
@@ -678,7 +648,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ? true
                     : false;
 
-// print(_showpassWordSpinner)
                 if (_showpassWordSpinner) {
                   // show the spinning icon for 2 seconds and then show the password field
                   Timer(Duration(seconds: 1), () {
@@ -869,10 +838,6 @@ class MyAPI {
     try {
       Response response = await _dio.post(_url, data: data);
 
-      // print(response.statusCode);
-
-      // print('dio response above');
-
       if (response.statusCode != 200) {
         ScaffoldMessenger.of(context).showSnackBar((SnackBar(
             content: Text('Too many requests and Load /server busy'),
@@ -883,8 +848,6 @@ class MyAPI {
         return Future(() => result);
       }
 
-      // print("MESSAGE HERE $response");
-
       if (response.statusCode != 200 || response.data['result_flag'] == -1) {
         // String resultMessage = response['result_message'];
 
@@ -893,24 +856,13 @@ class MyAPI {
         // ScaffoldMessenger.of(context).showSnackBar((SnackBar(
         //     content: Text("$resultMessage"), duration: Duration(seconds: 3))));
 
-        // print(response);
         return -1;
       }
       return response.data;
     } on DioError catch (e) {
       if (e.response != null) {
-        // print('\n          Thee is some errot in loggin in , response is below $e.response \n');
-
-        // print(e.response!.statusCode);
-        // print(e.response!.data);
-        // print(e.response!.headers);
-
-        // print('error above');
-        // print(e.response.headers);
-        // print(e.response.request);
       } else {
         // print(e.request);
-        print(e.message);
       }
       throw e;
     }
