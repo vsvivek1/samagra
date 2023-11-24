@@ -53,7 +53,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   child: Column(
                     children: [
                       Text(
-                        ' ${task['task_name']}',
+                        'Task Id: ${task['id']}' + '${task['task_name']}',
                         style: TextStyle(
                           color: Colors.grey[700],
                           fontSize: 15.0,
@@ -109,7 +109,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   child: Text('S' + (structureIndex + 1).toString())),
               title: structure['structure_name'] != null
                   ? Text(
-                      '${structure['structure_name']}',
+                      'Str Id : ${structure['id']}, ${structure['structure_name']}',
                       style: TextStyle(
                           color: Colors.blueGrey,
                           fontSize: 12,

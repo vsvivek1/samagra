@@ -425,12 +425,13 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
         child: SafeArea(
           child: Column(
             children: [
-              ElevatedButton(
+              IconButton(
+                iconSize: 40,
+                icon: isAudioMuted
+                    ? Icon(Icons.volume_up_rounded)
+                    : Icon(Icons.volume_mute_sharp),
                 onPressed: toggleMute,
-                child: Text(
-                  isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
-                  style: TextStyle(fontSize: 20),
-                ),
+                tooltip: isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
