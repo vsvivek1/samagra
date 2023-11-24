@@ -1330,13 +1330,29 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             ),
                             Visibility(
                                 visible: _selectedLocationTasks.length > 0,
-                                child: Text("Task view of This Location")),
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(width: 1),
+                                        color: ksebColor),
+                                    child: Text("Task view of This Location",
+                                        style: TextStyle(
+                                          shadows: [
+                                            Shadow(
+                                              blurRadius: 1.0,
+                                              color: const Color.fromARGB(
+                                                  255, 158, 158, 158),
+                                              offset: Offset(1.0, 1.0),
+                                            ),
+                                          ],
+                                          fontSize: 18,
+                                          color: Colors.amber,
+                                        )))),
 
                             Visibility(
                               visible: _selectedLocationTasks.length > 0,
                               // visible: true,
                               child: Container(
-                                padding: EdgeInsets.all(8),
+                                padding: EdgeInsets.all(3),
                                 decoration: BoxDecoration(
                                     border: Border.all(width: 1),
                                     color: ksebColor),
