@@ -1113,6 +1113,51 @@ class _PolVarScreenState extends State<PolVarScreen> {
             child: Container(
               padding: EdgeInsets.all(1),
               child: Scaffold(
+                bottomNavigationBar: BottomAppBar(
+                  shape: CircularNotchedRectangle(),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        _savedToSamagra
+                            ? CircularProgressIndicator()
+                            : IconButton(
+                                color: Colors.green,
+                                icon: Icon(Icons.send_sharp),
+                                onPressed: () =>
+                                    {sendObjectToSamagra(measurementDetails)},
+                                tooltip: 'Save to samagra'),
+                        IconButton(
+                          icon: Icon(
+                            Icons.copy,
+                            color: Color.fromARGB(255, 3, 64, 246),
+                          ),
+                          onPressed: () =>
+                              _showMeasurementCopierDialog(context),
+                          tooltip: 'M- Copier',
+                        ),
+                        IconButton(
+                            icon: Icon(Icons.remove_red_eye),
+                            onPressed: () => {
+                                  setState(
+                                    () {
+                                      _viewFullLocationList =
+                                          !_viewFullLocationList;
+                                    },
+                                  )
+                                },
+                            tooltip: _viewFullLocationList
+                                ? 'Hide Detailed View of Locations'
+                                : "View Detailed View of Locations")
+                      ]),
+                ),
+                floatingActionButton: FloatingActionButton(
+                  child: Icon(Icons.place),
+                  onPressed: () {
+                    _gotToAnotherLocation();
+                    // Add functionality for when the button is pressed
+                    // print('Button pressed!');
+                  },
+                ),
                 appBar: AppBar(
                   backgroundColor: AppTheme.grey.withOpacity(0.7),
                   title: AnimatedSwitcher(
@@ -1277,25 +1322,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             ),
                             Row(
                               children: [
-                                _savedToSamagra
-                                    ? CircularProgressIndicator()
-                                    : ElevatedButton.icon(
-                                        icon: Icon(Icons.save_alt_outlined),
-                                        onPressed: () => {
-                                              sendObjectToSamagra(
-                                                  measurementDetails)
-                                            },
-                                        label: Text('Save to samagra')),
                                 Spacer(),
-                                ElevatedButton.icon(
-                                  icon: Icon(
-                                    Icons.copy,
-                                    color: Color.fromARGB(255, 237, 238, 241),
-                                  ),
-                                  onPressed: () =>
-                                      _showMeasurementCopierDialog(context),
-                                  label: Text('M- Copier'),
-                                ),
                               ],
                             ),
                             SizedBox(
@@ -1320,21 +1347,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                           reflectQuantityDetails),
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: ElevatedButton(
-                                  onPressed: () => {
-                                        setState(
-                                          () {
-                                            _viewFullLocationList =
-                                                !_viewFullLocationList;
-                                          },
-                                        )
-                                      },
-                                  child: Text(_viewFullLocationList
-                                      ? 'Hide Detailed View of Locations'
-                                      : "View Detailed View of Locations")),
                             ),
 
                             Visibility(
