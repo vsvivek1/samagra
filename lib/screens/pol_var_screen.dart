@@ -1219,25 +1219,25 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               color: Colors.blueAccent,
                             ),
 
-                            Visibility(
-                              // visible: _showAnotherLocationButton
+                            // Visibility(
+                            //   // visible: _showAnotherLocationButton
 
-                              visible: _selectedLocationIndex != -1
+                            //   visible: _selectedLocationIndex != -1
 
-                              //  &&
-                              //     !_showSaveMeasurementDetailsButton
-                              ,
-                              child: Row(
-                                children: [
-                                  Spacer(),
-                                  ElevatedButton(
-                                      onPressed: () =>
-                                          {_gotToAnotherLocation()},
-                                      child: Text('Go to  Another Location')),
-                                  Spacer(),
-                                ],
-                              ),
-                            ),
+                            //   //  &&
+                            //   //     !_showSaveMeasurementDetailsButton
+                            //   ,
+                            //   child: Row(
+                            //     children: [
+                            //       Spacer(),
+                            //       ElevatedButton(
+                            //           onPressed: () =>
+                            //               {_gotToAnotherLocation()},
+                            //           child: Text('Go to  Another Location')),
+                            //       Spacer(),
+                            //     ],
+                            //   ),
+                            // ),
                             Visibility(
                               visible: (_showSaveMeasurementDetailsButton ||
                                   (_showAnotherLocationButton &&
