@@ -53,7 +53,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   child: Column(
                     children: [
                       Text(
-                        'Task Id: ${task['id']}' + '${task['task_name']}',
+                        'Task Id: ${task['id']}  \n' +
+                            'Task Name : ${task['task_name']}',
                         style: TextStyle(
                           color: Colors.grey[700],
                           fontSize: 15.0,

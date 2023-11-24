@@ -174,33 +174,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
   bool loadingLocationDetails = false;
   List<Map<dynamic, dynamic>> measurementDetails = [];
 
-  List<Map<String, dynamic>> measurementDetails1 = [
-    {
-      'locationNo': 1,
-      'locationName': 'my location',
-      'geoCordinates': {'lattitude': '0', 'longitude': 0, 'name': 0},
-      "tasks": [
-        {
-          'taskId': 1,
-          'taskName': 'sample',
-          'taskQty': 1,
-          'Structures': [
-            {
-              'Structurename': 'pole',
-              "Structureid": 1,
-              'materials': [
-                {'itemname': 'itemname', "quantity": "1"}
-              ],
-              'labour': [
-                {'itemname': 'labour1', "quantity": "2"}
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ];
-
   Map<dynamic, dynamic>? _workDetails;
 
   /// save this if this is present
