@@ -29,6 +29,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
           return Column(
             children: [
+              Text("Selected Task view of this Location"),
               // Center(
               //   child: WhatsAppButton(
               //     phoneNumber:

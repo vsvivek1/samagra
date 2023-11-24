@@ -1326,16 +1326,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               ],
                             ),
                             SizedBox(
-                              width: 10,
-                              height: 10,
+                              height: 30,
                             ),
+                            Visibility(
+                                visible: _selectedLocationTasks.length > 0,
+                                child: Text("Task view of This Location")),
+
                             Visibility(
                               visible: _selectedLocationTasks.length > 0,
                               // visible: true,
                               child: Container(
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                    border: Border.all(width: 2),
+                                    border: Border.all(width: 1),
                                     color: ksebColor),
                                 child: SizedBox(
                                   height:
