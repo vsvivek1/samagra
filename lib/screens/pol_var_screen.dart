@@ -656,10 +656,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
   }
 
-  dt() {
-    debugger(when: true);
-  }
-
   Future<List> getScheduleDetailsForMeasurement(String workId) async {
     // bool retVal = false;
     try {
@@ -1334,7 +1330,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     decoration: BoxDecoration(
                                         border: Border.all(width: 1),
                                         color: ksebColor),
-                                    child: Text("Task view of This Location",
+                                    child: Text(
+                                        "Task view of This Location\n Enter Mesasured Quantity",
                                         style: TextStyle(
                                           shadows: [
                                             Shadow(
