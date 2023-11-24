@@ -770,7 +770,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           );
           var wrkScheduleGroupStructureId =
               wrkScheduleGroupStructure?['id'] ?? -1;
-          // debugger(when: true);
+          debugger(when: true);
 
           updateStructureMeasurements(structureMeasurements, structure['id'],
               structure, taskId, wrkScheduleGroupStructureId.toString());
@@ -1142,7 +1142,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   thickness: 10,
                   child: SingleChildScrollView(
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 9,
+                      height: MediaQuery.of(context).size.height * 2,
                       margin: EdgeInsets.all(16.0),
                       child: Column(
                         // mainAxisSize: MainAxisSize.min,
@@ -1312,7 +1312,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     color: ksebColor),
                                 child: SizedBox(
                                   height:
-                                      MediaQuery.of(context).size.height * 0.9,
+                                      MediaQuery.of(context).size.height * 0.4,
                                   child: LocationMeasurementView(
                                       tasks: List<Map<dynamic, dynamic>>.from(
                                           _selectedLocationTasks),
@@ -1675,7 +1675,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   SizedBox showLocationButtons() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * .35,
+      height: MediaQuery.of(context).size.height * .3,
       // width: MediaQuery.of(context).size.height * 1.4,
       child: ListView.builder(
         itemCount: _numberOfLocations,
@@ -1743,18 +1743,25 @@ class _PolVarScreenState extends State<PolVarScreen> {
               GestureDetector(
                 onTap: () => _viewLocationDetail(index, status),
                 child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: (index == _tappedIndex)
+                        ? Color.fromARGB(255, 56, 96, 58)
+                        : (hasGeoLocations && hasMeasurements)
+                            ? Color.fromARGB(74, 10, 54, 229)
+                            : Color.fromRGBO(241, 78, 3, 0.6),
+                  ),
                   margin: EdgeInsets.all(8.0),
-                  color: (index == _tappedIndex)
-                      ? Color.fromARGB(255, 56, 96, 58)
-                      : (hasGeoLocations && hasMeasurements)
-                          ? Color.fromARGB(74, 10, 54, 229)
-                          : Color.fromRGBO(241, 78, 3, 0.6),
                   child: Center(
                     child: Column(
                       textBaseline: TextBaseline.alphabetic,
                       children: [
                         CircleAvatar(child: Text('L  ${(index + 1)}')),
 
+                        SizedBox(
+                          height: 5,
+                        ),
                         Visibility(
                           visible: hasMeasurements,
                           child: ElevatedButton(
@@ -1765,7 +1772,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               );
                               viewMeasurementExtract(context, obj);
                             },
-                            child: Text('Show Components'),
+                            child: Text('Details'),
                           ),
                         ),
 
@@ -1773,73 +1780,76 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         //     locationNumber: (index + 1), workId: widget.workId),
 
                         SizedBox(
-                          height: 18,
+                          height: 5,
                         ),
 
-                        IconButton(
-                          icon: Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                          ),
-                          onPressed: () {
-                            // Get the location number from the index.
-                            // int locationNo = measurementDetails[index];
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.delete,
+                                color: Colors.redAccent,
+                              ),
+                              onPressed: () {
+                                // Get the location number from the index.
+                                // int locationNo = measurementDetails[index];
 
-                            var locationNo = index + 1;
+                                var locationNo = index + 1;
 
-                            // Show a confirmation dialog.
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text('Delete Location?'),
-                                  content: Text(
-                                      'Are you sure you want to delete location number $locationNo?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        // Remove the location from the list.
-                                        measurementDetails.removeWhere(
-                                            (element) =>
-                                                element['locationNo']
-                                                    .toString() ==
-                                                locationNo.toString());
+                                // Show a confirmation dialog.
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      title: Text('Delete Location?'),
+                                      content: Text(
+                                          'Are you sure you want to delete location number $locationNo?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            // Remove the location from the list.
+                                            measurementDetails.removeWhere(
+                                                (element) =>
+                                                    element['locationNo']
+                                                        .toString() ==
+                                                    locationNo.toString());
 
-                                        setState(() {});
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Delete'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        // Dismiss the dialog.
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('Cancel'),
-                                    ),
-                                  ],
+                                            setState(() {});
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Delete'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // Dismiss the dialog.
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                        ),
-
-                        IconButton(
-                          color: Colors.amber,
-                          icon: Icon(Icons.view_agenda),
-                          onPressed: () {
-                            _viewLocationDetail(index, status);
-                            // Handle the button press
-                            // You can add the logic to navigate to the location detail
-                          },
-                          tooltip: 'GO',
+                            ),
+                            IconButton(
+                              color: Colors.amber,
+                              icon: Icon(Icons.view_agenda),
+                              onPressed: () {
+                                _viewLocationDetail(index, status);
+                                // Handle the button press
+                                // You can add the logic to navigate to the location detail
+                              },
+                              tooltip: 'GO',
+                            ),
+                          ],
                         ),
 
                         Container(
                             alignment: AlignmentDirectional.bottomStart,
                             width: MediaQuery.of(context).size.width / 2.5,
                             child: SizedBox(
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 1.5,
                                 child: LocationMeasurementProgress(
                                     hasGeoLocations: hasGeoLocations,
                                     hasMeasurements: hasMeasurements)

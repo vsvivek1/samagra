@@ -310,7 +310,7 @@ class WorkDetail {
 
   factory WorkDetail.fromMap(Map<String, dynamic> map) {
     return WorkDetail(
-      workName: map['workName'],
+      workName: map['workName'] ?? 'Some Issue Please Restart',
     );
   }
 }
