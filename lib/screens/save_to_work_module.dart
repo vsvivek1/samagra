@@ -23,7 +23,8 @@ class SaveToWorkModule extends StatefulWidget {
   _SaveToWorkModuleState createState() => _SaveToWorkModuleState();
 }
 
-class _SaveToWorkModuleState extends State<SaveToWorkModule> {
+class _SaveToWorkModuleState extends State<SaveToWorkModule>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   late MeasurementDataToWorkModule _measurementDataToWorkModule;
   late Map polVarMeasurementObject;
@@ -31,12 +32,24 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
   String _apiResult = '';
   // var workId;
   var polvar_data;
+  late AnimationController _animationController;
 
   var _apiResultFlag = 1;
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
+
+    _animationController = AnimationController(
+      vsync: this, // Use 'this' as the TickerProvider
+      duration: Duration(milliseconds: 500),
+    );
+    _animationController.forward();
     // workId = widget.dataFromPreviousScreen['workId'];
     // workId = widget.wo
     polvar_data = widget.dataFromPreviousScreen['polevar_data'];
@@ -182,16 +195,20 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
                   children: [
                     // HtmlWidget(_apiResult),
 
-                    serverMessageWidget(context, _apiResult,
-                        _apiResultFlag.toString() != '-1' ? 1 : 0),
-                    Text(
+                    serverMessageWidget(
+                      context,
                       _apiResult,
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: _apiResultFlag.toString() != '-1'
-                              ? Colors.green
-                              : Colors.red),
+                      _apiResultFlag.toString() != '-1' ? 1 : 0,
+                      vsync: this,
                     ),
+                    // Text(
+                    //   _apiResult,
+                    //   style: TextStyle(
+                    //       fontSize: 20,
+                    //       color: _apiResultFlag.toString() != '-1'
+                    //           ? Colors.green
+                    //           : Colors.red),
+                    // ),
                   ],
                 ),
               // Text(_apiResultFlag.toString()),
@@ -296,20 +313,20 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
         print("error ${response.data}");
         if (response.statusCode == 200) {
           if (response.data['result_flag'] == -1) {
-            final snackBar = SnackBar(
-              content: Text('Service error . Please try After Some time '),
-              duration: Duration(
-                  seconds: 3), // How long the snackBar will be displayed
-              action: SnackBarAction(
-                label: 'Close',
-                onPressed: () {
-                  // Code to execute when 'Close' is pressed
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                },
-              ),
-            );
+            // final snackBar = SnackBar(
+            //   content: Text('Service error . Please try After Some time '),
+            //   duration: Duration(
+            //       seconds: 10), // How long the snackBar will be displayed
+            //   action: SnackBarAction(
+            //     label: 'Close',
+            //     onPressed: () {
+            //       // Code to execute when 'Close' is pressed
+            //       ScaffoldMessenger.of(context).hideCurrentSnackBar();
+            //     },
+            //   ),
+            // );
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            // ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
 
           print(json.encode(response.data));
@@ -325,6 +342,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule> {
 
             // _apiResult = response.data['result_message'][0];
           });
+
+          serverMessageWidget(
+            context,
+            _apiResult,
+            _apiResultFlag.toString() != '-1' ? 1 : 0,
+            vsync: this,
+          );
         } else {
           print(response.statusMessage);
         }

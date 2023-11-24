@@ -16,7 +16,6 @@ class LocationMeasurementView extends StatefulWidget {
 class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   @override
   Widget build(BuildContext context) {
-    // print("TAKS from hloca measurement widget ${widget.tasks}");
     return Scaffold(
       body: ListView.builder(
         itemCount: widget.tasks.length,
@@ -24,8 +23,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           final task = widget.tasks[index];
 
           final structureList = (task["structures"] ?? []).toList();
-
-          // print(task["structures"]);
 
           return Column(
             children: [
@@ -71,7 +68,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 // subtitle:
                 //  structureWidget(structureList, index),
               ),
-              //  print();
 
               // if (false)
 
@@ -97,9 +93,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       itemBuilder: (context, structureIndex) {
         final structure = structureList[structureIndex];
 
-        // print(structure);
-
-        print('structure above at 53');
         return Column(
           children: [
             ListTile(
@@ -156,16 +149,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   Builder MaterialsView(structure, int structureIndex, int index) {
     // int matLen = structure['materials'].length;
 
-    print('structes above');
-
     int matLen = structure['labour'].length;
     int labLen = structure['materials'].length;
     int takenLen = structure['takenBacks']?.length ?? 0;
 
     String name = structure['structure_name'];
-
-    print(
-        "$name material no $matLen and labour len $labLen and taen len $takenLen at 130 ");
 
     return Builder(builder: (context) {
       return Column(
@@ -233,15 +221,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     if (structure != null && structure.containsKey('labour')) {
 // structure.
 
-      print("this is structreue 190 $structure");
       final labour1 = structure['labour'];
 
-      // labour1.keys.forEach((key) {
-      //   print("this is key from 190 $key");
-      // });
-
-      print('from view this is labour $labour1');
-      print('LABOUR LENGTH ${labour1.length}');
       return Builder(builder: (context) {
         return Column(
           children: [
@@ -264,8 +245,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 // final material = structure['materials'][labourIndex];
 
                 final labour = labour1[labourIndex];
-
-                print("LABVOURNAME $labourIndex $labour");
 
                 return Column(
                   children: [
@@ -300,7 +279,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     return Builder(builder: (context) {
       var tb = structure['takenBacks'];
 
-      print('from view this is TAKEN BACKS $tb');
       return Column(
         children: [
           Container(
@@ -474,22 +452,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               child: Text('Save'),
               onPressed: () {
                 setState(() {
-                  // print(widget.tasks[taskIndex]['structures'][structureIndex]
-                  //         ['labour'][labourIndex]['quantity']
-                  //     .toString());
-
-                  // print('task above');
-                  // // [taskIndex]
-
-                  // // ['structures'][structureIndex]
-                  // return;
-                  // print(widget.tasks[taskIndex]['structures'][structureIndex]
-                  //     ['labour']);
-                  // print(widget.tasks[taskIndex]['structures'][structureIndex]
-                  //     ['labour'][labourIndex]);
-                  // print(widget.tasks[taskIndex]['structures'][structureIndex]
-                  //     ['labour'][labourIndex]['quantity']);
-
                   widget.tasks[taskIndex]['structures'][structureIndex]
                       ['labour'][labourIndex]['quantity'] = newQuantity;
                 });

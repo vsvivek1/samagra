@@ -269,6 +269,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     List wrkScheduleGroupStructures =
         workDetails[0]['wrk_schedule_group_structures'];
 
+    wrk_schedule_group_structures = wrkScheduleGroupStructures;
     // print(workDetails);
     // print('workDetails above');
 
@@ -394,7 +395,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             var mout = jsonDecode(data['measurementDetails']);
             measurementDetails = List<Map<dynamic, dynamic>>.from(mout);
 
-            debugger(when: true);
+            // debugger(when: true);
           }
 
           ///during normal fetching from storage its a striong
@@ -611,6 +612,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<List> getScheduleDetailsForMeasurement(String workId) async {
     // bool retVal = false;
+
+    //wrong function
     try {
       String baseUrlOld =
           "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
@@ -630,6 +633,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         print("api @693 $apiData");
 
+        debugger(when: true);
+
+        ///34843
         return apiData['wrk_schedule_group_structures'];
         // print("apidata at mdtwm $apiData");
       } else {
@@ -690,7 +696,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       for (var task in tasks) {
         String taskId = (task["id"] ?? -1).toString();
-        print("this is task $task");
 
         List<Map<dynamic, dynamic>> structures =
             List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
@@ -717,7 +722,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               wrkScheduleGroupStructure?['id'] ?? -1;
 
           // workScheduleGroupId
-          debugger(when: true);
+          // debugger(when: true);
 
           updateStructureMeasurements(structureMeasurements, structure['id'],
               structure, taskId, wrkScheduleGroupStructureId.toString());
@@ -778,10 +783,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
 
-        // print("this is tasks $tasks");
-
-        print('totalmaterial list  $totalMaterialList');
-
         // debugger(when: true);
       }
 
@@ -836,8 +837,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<void> getWorkSheduleGroupStructuresfromSamgra() async {
-    wrk_schedule_group_structures =
-        await getScheduleDetailsForMeasurement(widget.workId.toString());
+    // wrk_schedule_group_structures =
+    //     await getScheduleDetailsForMeasurement(widget.workId.toString());
+
+    // debugger(when: true);
   }
 
   dynamic updateMeasurementDetails(
@@ -936,15 +939,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
           (element) => element['locationNo'] == locationNumber,
           orElse: () => Map<String, dynamic>());
 
-      debugger(when: true);
+      // debugger(when: true);
       if (existingMeasurementDetails.isEmpty) {
-        print(existingMeasurementDetails);
-        print('existng param above');
-
-        print(locDetails);
-
-        print('locDetais new above');
-
         if (locDetails.isNotEmpty) {
           existingMeasurementDetails = {
             ...existingMeasurementDetails,
@@ -1071,24 +1067,42 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        _savedToSamagra
-                            ? CircularProgressIndicator()
-                            : IconButton(
-                                color: Colors.green,
-                                icon: Icon(Icons.send_sharp),
-                                onPressed: () =>
-                                    {sendObjectToSamagra(measurementDetails)},
-                                tooltip: 'Save to samagra'),
-                        IconButton(
+                        ElevatedButton.icon(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(ksebColor),
+                          ),
                           icon: Icon(
                             Icons.copy,
-                            color: Color.fromARGB(255, 3, 64, 246),
                           ),
                           onPressed: () =>
                               _showMeasurementCopierDialog(context),
-                          tooltip: 'M- Copier',
+                          label: Text(
+                            'M-Copier',
+                            style: TextStyle(fontSize: 10),
+                          ),
                         ),
-                        IconButton(
+                        _savedToSamagra
+                            ? CircularProgressIndicator()
+                            : ElevatedButton.icon(
+                                style: ButtonStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          ksebColor),
+                                ),
+                                // color: Colors.green,
+                                icon: Icon(Icons.send_sharp),
+                                onPressed: () =>
+                                    {sendObjectToSamagra(measurementDetails)},
+                                label: Text(
+                                  'Save \nto Samagra',
+                                  style: TextStyle(fontSize: 10),
+                                )),
+                        ElevatedButton.icon(
+                            style: ButtonStyle(
+                              backgroundColor:
+                                  MaterialStateProperty.all<Color>(ksebColor),
+                            ),
                             icon: Icon(Icons.remove_red_eye),
                             onPressed: () => {
                                   setState(
@@ -1098,9 +1112,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     },
                                   )
                                 },
-                            tooltip: _viewFullLocationList
-                                ? 'Hide Detailed View of Locations'
-                                : "View Detailed View of Locations")
+                            label: Text(
+                                style: TextStyle(
+                                  fontSize: 9,
+                                ),
+                                _viewFullLocationList
+                                    ? 'Hide Detailed \n View of Locations'
+                                    : "Detailed \n View of Locations"))
                       ]),
                 ),
                 floatingActionButton: FloatingActionButton(

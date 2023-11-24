@@ -253,8 +253,6 @@ class WorkSelection extends StatelessWidget {
           element['workId'] = element['plg_work_id'];
 
           element['wrk_schedule_group_id'] = element['id'];
-
-          print('element normal ${element['workId']} ');
         });
         // debugger(when: true);
         measurementSetList.addAll(res1);

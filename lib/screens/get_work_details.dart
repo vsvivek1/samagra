@@ -47,9 +47,9 @@ Future<Map<dynamic, dynamic>?> getWorkDetails(String workId,
     }
   }
 
-  debugger(when: true);
+  // debugger(when: true);
   if (workData != null) {
-    debugger(when: true);
+    // debugger(when: true);
     // return Map<String, dynamic>.from(workData);
     return Map<dynamic, dynamic>.from(workData);
   } else {
@@ -71,7 +71,7 @@ getWorkDertailsFromServer(measurementsetListId) async {
 
   var dta = res.data;
   if (dta!["result_flag"] == 1) {
-    debugger(when: true);
+    // debugger(when: true);
     return dta['result_data']['data'];
   } else {
     return [];
