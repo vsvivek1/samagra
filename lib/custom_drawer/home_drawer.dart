@@ -117,7 +117,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
         imageName: 'assets/images/supportIcon.png',
       ),
       DrawerList(
-        index: DrawerIndex.Help,
+        index: DrawerIndex.IbBooking,
         labelName: 'Ib Booking',
         isAssetsImage: true,
         imageName: 'assets/images/supportIcon.png',
@@ -687,6 +687,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 enum DrawerIndex {
   HOME,
   WorkMeasurement,
+  IbBooking,
   TreeCuttingCompensation,
   Help,
   Share,

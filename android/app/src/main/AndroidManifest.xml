@@ -8,6 +8,29 @@
          <uses-permission android:name="android.permission.INTERNET" />
          <uses-permission android:name="android.permission.CALL_PHONE" />
 
+
+<queries>
+        <!-- If your app opens https URLs -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <!-- If your app makes calls -->
+        <intent>
+            <action android:name="android.intent.action.DIAL" />
+            <data android:scheme="tel" />
+        </intent>
+        <!-- If your sends SMS messages -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="smsto" />
+        </intent>
+        <!-- If your app sends emails -->
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="*/*" />
+        </intent>
+    </queries>
     <application
          android:enableOnBackInvokedCallback="true"
         android:label="m-Samagra"
@@ -44,18 +67,24 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-<intent-filter>
+<!-- <intent-filter>
     <action android:name="android.intent.action.VIEW" />
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
-    <data
-        android:scheme="m-samagra"
-        android:host="kseb.in"
-        android:path="/sso"
-         /> <!-- Define your host or domain here -->
-</intent-filter>
+    <data android:scheme="m-samagra" android:host="kseb.in" />
+</intent-filter> -->
 
 
+<intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
+        <data
+          android:scheme="m-samagra"
+          android:host="kseb.in" 
+          android:pathPrefix="/sso" />
+      </intent-filter>
 
 
         </activity>

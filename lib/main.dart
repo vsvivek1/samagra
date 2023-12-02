@@ -10,6 +10,7 @@ import 'package:samagra/screens/login_screen.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
 
 void main() async {
@@ -58,11 +59,28 @@ class MyApp extends StatelessWidget {
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
     return MaterialApp(
+      onGenerateRoute: (settings) {
+        // Handle incoming deep links here
+        if (settings.name == '/sso_screen') {
+          // Extract parameters from the deep link
+          // You might want to get the latest deep link and check its format
+          // For instance, using getInitialLink() from uni_links
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return SSO(); // Return the SSO screen with parameters if needed
+            },
+          );
+        }
+        // Handle other routes if needed
+        return null;
+      },
       title: 'm-Samagra',
       initialRoute: '/',
       routes: {
         // '/': (context) => NavigationHomeScreen(),
         '/redirected': (context) => NavigationHomeScreen(),
+        '/sso_screen': (context) => SSO(), // SSO screen
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

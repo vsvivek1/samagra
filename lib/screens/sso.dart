@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uni_links/uni_links.dart';
@@ -15,14 +17,9 @@ class _SSOState extends State<SSO> {
 
   Future<void> initUniLinks() async {
     try {
-      final initialLink = await getInitialLink();
-      if (initialLink != null) {
-        _latestLink = initialLink;
-        // Check if the link matches the expected callback URL "/sso" and take appropriate actions.
-        if (initialLink == "m-samagra://kseb.in/sso") {
-          // Open your sso.dart class or perform the desired actions.
-        }
-      }
+      final initialUri = await getInitialUri();
+
+      debugger(when: true);
     } on PlatformException {
       // Handle any exceptions that occur.
     }

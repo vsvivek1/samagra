@@ -13,13 +13,31 @@ import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
+import 'package:samagra/screens/generate_random_string.dart';
+import 'package:samagra/screens/get_oidc_access_token.dart';
+import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
+import 'package:uni_links/uni_links.dart';
 import 'dart:convert';
 
 import '../internet_connectivity.dart';
 
 // import 'package:samagra/secure_storage/common_functions.dart';
+String addPaddingToBase64UrlEncodedString(String base64String) {
+  // Add padding to the base64 URL-safe encoded string
+  int missingPadding = base64String.length % 4;
+  if (missingPadding != 0) {
+    base64String += '=' * (4 - missingPadding);
+  }
+  return base64String;
+}
+
+String codeVerifier = generateRandomString();
+// String codeChallenge =
+//     addPaddingToBase64UrlEncodedString(generateCodeChallenge(codeVerifier));
+
+String codeChallenge = 'MWlv47S554VAgCBkUNgxWacyRGG0Gg1TkTAShA_okW8';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -67,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    initUniLinks();
     super.initState();
   }
 
@@ -816,11 +835,61 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   loginUsingSso(context) {
-    launchSSOUrl();
+    launchSSOUrl(codeVerifier, codeChallenge);
     // Navigator.push(
     //   context,
     //   MaterialPageRoute(builder: (context) => SSOLogin()),
     // );
+  }
+}
+
+String extractTokenFromLink(String inputString) {
+  List<String> splitList = inputString.split('code=');
+
+  if (splitList.length > 1) {
+    String secondItem = splitList[1]
+        .split(' ')[0]; // Assuming the second item is separated by a space
+    return secondItem;
+  } else {
+    return '';
+  }
+}
+
+void initUniLinks() async {
+  // Handle the initial URL when the app is opened with a URL
+  try {
+    final initialLink = await getInitialLink();
+    late StreamSubscription _sub;
+
+    _sub = linkStream.listen((String? link) async {
+      if (link == '') {
+        return;
+      }
+      // print("link $link");
+
+      String token = extractTokenFromLink(link!);
+
+      if (token != '') {
+        // print(token);
+
+        List<String> oIdAccessTokens =
+            await getOidcAccessTokens(codeVerifier, token);
+
+        var a = await getUserInfo(oIdAccessTokens[0]);
+
+        print('OidcAccessTokenxyx $a');
+      }
+      // print(_sub);
+      // Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      // Handle exception by warning the user their action did not succeed
+    });
+
+    // debugger(when: true);
+
+    // Process the initial URL accordingly
+  } on PlatformException {
+    // Handle exception if unable to get initial URL
   }
 }
 
