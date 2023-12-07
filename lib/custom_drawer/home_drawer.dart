@@ -130,6 +130,14 @@ class _HomeDrawerState extends State<HomeDrawer> {
           color: Color.fromARGB(255, 2, 56, 30),
         ),
       ),
+      DrawerList(
+        index: DrawerIndex.FrtuInspection,
+        labelName: 'RMU/FRTU Inspection',
+        icon: Icon(
+          Icons.loop_outlined,
+          color: Color.fromARGB(255, 2, 56, 30),
+        ),
+      ),
       // DrawerList(
       //   index: DrawerIndex.Invite,
       //   labelName: 'Invite Friend',
@@ -208,8 +216,19 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
                                       var user = login["user"];
                                       var dp = user['photo_image'];
+                                      Uint8List imageBytes =
+                                          base64Decode('jjjj');
+                                      if (dp == null) {
+                                        String dummyBase64String =
+                                            "R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="; // 1x1 transparent GIF
+                                        List<int> dummyBytes =
+                                            base64Decode(dummyBase64String);
+                                        imageBytes =
+                                            Uint8List.fromList(dummyBytes);
+                                      } else {
+                                        imageBytes = base64Decode(dp);
+                                      }
 
-                                      Uint8List imageBytes = base64Decode(dp);
                                       return Image.memory(imageBytes);
                                     } else {
                                       return CircularProgressIndicator();
@@ -694,7 +713,8 @@ enum DrawerIndex {
   About,
   Invite,
   Testing,
-  PhoneBook
+  PhoneBook,
+  FrtuInspection
 }
 
 class DrawerList {

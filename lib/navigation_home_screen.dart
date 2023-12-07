@@ -1,6 +1,7 @@
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/custom_drawer/drawer_user_controller.dart';
 import 'package:samagra/custom_drawer/home_drawer.dart';
+import 'package:samagra/frtu/frtu_inspection.dart';
 import 'package:samagra/home_screen.dart';
 import 'package:samagra/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
@@ -89,6 +90,12 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         case DrawerIndex.TreeCuttingCompensation:
           setState(() {
             screenView = TreeCuttingCompensation();
+          });
+          break;
+
+        case DrawerIndex.FrtuInspection:
+          setState(() {
+            screenView = FrtuInspection();
           });
           break;
 

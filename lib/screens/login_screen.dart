@@ -40,6 +40,8 @@ String codeVerifier = generateRandomString();
 String codeChallenge = 'MWlv47S554VAgCBkUNgxWacyRGG0Gg1TkTAShA_okW8';
 
 class LoginScreen extends StatefulWidget {
+  LoginScreen();
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -99,7 +101,14 @@ class _LoginScreenState extends State<LoginScreen> {
         await _secureStorage.getSecureAllStorageDataByKey('storedLogin');
 
     if (!loginDetails1?.isEmpty && loginDetails1["loginDetails"] != null) {
-      var ob = json.decode(loginDetails1["loginDetails"] ?? '');
+      var ob1 = json.decode(loginDetails1["loginDetails"] ?? '');
+      var ob;
+
+      if (ob1 is String) {
+        ob = jsonDecode(ob1);
+      } else {
+        ob = ob1;
+      }
 
       ob['storedLogin'] = slogin['storedLogin'];
 
@@ -165,287 +174,139 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_isLoggingIn == -2) {
       return createLoadingSpinner();
     } else {
-      return Scaffold(
-        body: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-          return Container(
-            height: 1000,
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.all(10.0),
-                child: Form(
-                  key: _formKey,
-                  child: FutureBuilder(
-                      // future: _getSavedUsernameAndPassword(),
-                      future: _getUserLoginDetails(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (!(snapshot.hasData) ||
-                            snapshot.data == '' ||
-                            snapshot.data['seat_details'] == -1) {
-                          // no stored data or stored data is null or seat details -1
-                          /// show fist time login screen
+      return ScaffoldMessenger(
+        child: Scaffold(
+          body: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+            return Container(
+              height: 1000,
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Form(
+                    key: _formKey,
+                    child: FutureBuilder(
+                        // future: _getSavedUsernameAndPassword(),
+                        future: _getUserLoginDetails(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (!(snapshot.hasData) ||
+                              snapshot.data == '' ||
+                              snapshot.data['seat_details'] == -1) {
+                            // no stored data or stored data is null or seat details -1
+                            /// show fist time login screen
 
-                          return noStoredLoginDetailsSoFirstLoginScreen();
-                        } else {
-                          try {
-                            var loginDetails;
-                            if (snapshot.data.runtimeType == 'String') {
-                              loginDetails = json.decode(snapshot.data);
-                            } else {
-                              loginDetails = snapshot.data;
+                            return noStoredLoginDetailsSoFirstLoginScreen();
+                          } else {
+                            try {
+                              var loginDetails;
+                              if (snapshot.data.runtimeType == 'String') {
+                                loginDetails = json.decode(snapshot.data);
+                              } else {
+                                loginDetails = snapshot.data;
+                              }
+
+                              passwordInitialValue =
+                                  loginDetails!['password'] ?? '';
+                            } on Exception catch (e) {
+                              return Text('An error occurred @190: $e');
                             }
 
-                            passwordInitialValue =
-                                loginDetails!['password'] ?? '';
-                          } on Exception catch (e) {
-                            return Text('An error occurred @190: $e');
-                          }
+                            return Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.only(top: 100),
+                                  child: FutureBuilder(
+                                      future: _getUserLoginDetails(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot snapshot) {
+                                        if (snapshot.hasData) {
+                                          var login = Map<String, dynamic>.from(
+                                              snapshot.data);
 
-                          return Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.only(top: 100),
-                                child: FutureBuilder(
-                                    future: _getUserLoginDetails(),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot snapshot) {
-                                      if (snapshot.hasData) {
-                                        var login = Map<String, dynamic>.from(
-                                            snapshot.data);
+                                          var user = login["user"];
 
-                                        var user = login["user"];
+                                          var storedLogin = json.decode(
+                                              snapshot.data['storedLogin']);
 
-                                        var storedLogin = json.decode(
-                                            snapshot.data['storedLogin']);
+                                          var storedPassword =
+                                              storedLogin['password'];
 
-                                        var storedPassword =
-                                            storedLogin['password'];
+                                          _password = storedPassword;
 
-                                        _password = storedPassword;
+                                          passwordInitialValue = _password;
 
-                                        passwordInitialValue = _password;
+                                          var dp = user['photo_image'] ?? '';
 
-                                        var dp = user['photo_image'] ?? '';
+                                          var username = user["name"];
 
-                                        var username = user["name"];
+                                          _empcode =
+                                              user["employee_code"].toString();
 
-                                        _empcode =
-                                            user["employee_code"].toString();
+                                          Uint8List bytes = base64.decode(dp);
 
-                                        Uint8List bytes = base64.decode(dp);
+                                          // debun    sgger(when: true);
 
-                                        // debun    sgger(when: true);
+                                          empCodeInitialValue =
+                                              user["employee_code"].toString();
 
-                                        empCodeInitialValue =
-                                            user["employee_code"].toString();
-
-                                        return Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                width: 125,
-                                                child: Image(
-                                                    image: AssetImage(
-                                                        'assets/images/kseb.jpg')),
-                                              ),
-                                              Container(
-                                                padding: EdgeInsets.all(20),
-                                                child: Text(
-                                                    'KERALA STATE ELECTRICTY BOARD LIMITED',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        decoration:
-                                                            TextDecoration
-                                                                .underline,
-                                                        fontSize: 14,
-                                                        color: Color.fromARGB(
-                                                            255, 16, 87, 161))),
-                                              ),
-                                              Visibility(
-                                                visible: bytes.isEmpty,
-                                                child: CircleAvatar(
-                                                  radius: 30,
-                                                  backgroundImage: AssetImage(
-                                                      'assets/images/kseb_emblem.jpeg'),
+                                          return Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                SizedBox(
+                                                  width: 125,
+                                                  child: Image(
+                                                      image: AssetImage(
+                                                          'assets/images/kseb.jpg')),
                                                 ),
-                                              ),
-                                              Visibility(
-                                                visible: bytes.isNotEmpty,
-                                                child: CircleAvatar(
-                                                  radius: 100,
-                                                  backgroundImage:
-                                                      MemoryImage(bytes),
+                                                Container(
+                                                  padding: EdgeInsets.all(20),
+                                                  child: Text(
+                                                      'KERALA STATE ELECTRICTY BOARD LIMITED',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          fontSize: 14,
+                                                          color: Color.fromARGB(
+                                                              255,
+                                                              16,
+                                                              87,
+                                                              161))),
                                                 ),
-                                              ),
-                                              SizedBox(height: 16),
-                                              Text('Welcome Back '),
-                                              Text(
-                                                '$username ',
-                                                style: TextStyle(
-                                                    color: ksebColor,
-                                                    fontSize: 24,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              SizedBox(height: 32),
-                                              Row(
-                                                children: [
-                                                  ElevatedButton(
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(
-                                                                  ksebColor),
-                                                    ),
-                                                    onPressed: () {
-                                                      _handleBiometricLogin(
-                                                          context);
-                                                      // Handle biometric login
-                                                    },
-                                                    child: Text(
-                                                        'Login with Biometric'),
+                                                Visibility(
+                                                  visible: bytes.isEmpty,
+                                                  child: CircleAvatar(
+                                                    radius: 30,
+                                                    backgroundImage: AssetImage(
+                                                        'assets/images/kseb_emblem.jpeg'),
                                                   ),
-                                                  SizedBox(width: 30),
-                                                  ElevatedButton(
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(
-                                                                  ksebColor),
-                                                    ),
-                                                    onPressed: () => {
-                                                      loginUsingSso(context)
-                                                    },
-                                                    child:
-                                                        Text('Login with SSO'),
+                                                ),
+                                                Visibility(
+                                                  visible: bytes.isNotEmpty,
+                                                  child: CircleAvatar(
+                                                    radius: 100,
+                                                    backgroundImage:
+                                                        MemoryImage(bytes),
                                                   ),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                height: 20,
-                                                width: 20,
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    }),
-                              ),
-                              Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Visibility(
-                                        visible: empCodeInitialValue != '',
-                                        child: Text(
-                                          empCodeInitialValue,
-                                          style: TextStyle(
-                                              fontSize: 25,
-                                              color: AppTheme.grey
-                                                  .withOpacity(0.7)),
-                                        )),
-                                    SizedBox(height: 8.0),
-                                    TextFormField(
-                                      // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
-
-                                      initialValue: passwordInitialValue,
-                                      onChanged: (t) {
-                                        _password = t;
-                                        if (_empcode != '' && _password != '') {
-                                          setState(() {
-                                            _showLoginButton = true;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            _showLoginButton = false;
-                                          });
-                                        }
-                                      },
-                                      decoration: InputDecoration(
-                                          labelText: 'Password',
-                                          focusedErrorBorder:
-                                              OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.red),
-                                          ),
-                                          suffixIcon: IconButton(
-                                              icon: Icon(_obscureText
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off),
-                                              onPressed: () {
-                                                setState(() {
-                                                  _obscureText = !_obscureText;
-                                                });
-                                              })),
-                                      obscureText: _obscureText,
-                                      validator: (value) {
-                                        value ??= '';
-                                        if (value == '') {
-                                          setState(() {
-                                            _showLoginButton = false;
-                                          });
-
-                                          return 'Please enter your password';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    SizedBox(height: 20),
-                                    Visibility(
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              ElevatedButton(
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _isLoggingIn = 0;
-
-                                                      _loginError = '';
-                                                    });
-                                                  },
-                                                  child: Text('Reset Error')),
-                                            ],
-                                          ),
-                                          Text('Login Error $_loginError'),
-                                        ],
-                                      ),
-                                      visible: _isLoggingIn == -1,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(width: 8.0),
-                                        RawMaterialButton(
-                                          onPressed: () {
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: Text('Confirm'),
-                                                  content: Text(
-                                                      'Are you sure you want to perform this action?'),
-                                                  actions: <Widget>[
-                                                    ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all<Color>(
-                                                                    Colors
-                                                                        .grey),
-                                                      ),
-                                                      child: Text('Cancel'),
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
+                                                ),
+                                                SizedBox(height: 16),
+                                                Text('Welcome Back '),
+                                                Text(
+                                                  '$username ',
+                                                  style: TextStyle(
+                                                      color: ksebColor,
+                                                      fontSize: 24,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                SizedBox(height: 32),
+                                                Row(
+                                                  children: [
                                                     ElevatedButton(
                                                       style: ButtonStyle(
                                                         backgroundColor:
@@ -453,82 +314,239 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                 .all<Color>(
                                                                     ksebColor),
                                                       ),
-                                                      child: Text('Yes'),
                                                       onPressed: () {
-                                                        // Perform the action here
-                                                        Navigator.of(context)
-                                                            .pop();
-
-                                                        _secureStorage
-                                                            .deleteAlllSecureStorageData();
-
-                                                        setState(() {});
+                                                        _handleBiometricLogin(
+                                                            context);
+                                                        // Handle biometric login
                                                       },
+                                                      child: Text(
+                                                          'Login with Biometric'),
+                                                    ),
+                                                    SizedBox(width: 30),
+                                                    ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor:
+                                                            MaterialStateProperty
+                                                                .all<Color>(
+                                                                    ksebColor),
+                                                      ),
+                                                      onPressed: () => {
+                                                        loginUsingSso(context)
+                                                      },
+                                                      child: Text(
+                                                          'Login with SSO'),
                                                     ),
                                                   ],
-                                                );
-                                              },
-                                            );
-
-                                            // perform some action
-                                          },
-                                          child: Text('Another User ?'),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                          ),
-                                          fillColor: ksebColor
-
-                                          // Color.fromARGB(
-                                          //     255, 196, 194, 194)
-
-                                          ,
-                                          padding: EdgeInsets.all(10.0),
-                                        ),
-                                        SizedBox(height: 30, width: 40),
-                                        Visibility(
-                                          // visible: _showLoginButton,
-                                          visible: true,
-                                          child: _isLoggingIn == 1
-                                              ? CircularProgressIndicator()
-                                              : ElevatedButton(
-                                                  style: ButtonStyle(
-                                                    backgroundColor:
-                                                        MaterialStateProperty
-                                                            .all<Color>(
-                                                                ksebColor),
-                                                  ),
-                                                  onPressed: () async {
-                                                    await proceedForLogin(
-                                                        context, 'regular');
-                                                  },
-                                                  child: Text('Login'),
                                                 ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 8.0),
-                                    CheckboxListTile(
-                                      value: _rememberMe,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          _rememberMe = newValue ??= true;
-                                        });
-                                      },
-                                      title: Text('Remember me'),
-                                    )
-                                  ],
+                                                SizedBox(
+                                                  height: 20,
+                                                  width: 20,
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        } else {
+                                          return Container();
+                                        }
+                                      }),
                                 ),
-                              ),
-                            ],
-                          );
-                        }
-                      }), //
+                                Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Visibility(
+                                          visible: empCodeInitialValue != '',
+                                          child: Text(
+                                            empCodeInitialValue,
+                                            style: TextStyle(
+                                                fontSize: 25,
+                                                color: AppTheme.grey
+                                                    .withOpacity(0.7)),
+                                          )),
+                                      SizedBox(height: 8.0),
+                                      TextFormField(
+                                        // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
+
+                                        initialValue: passwordInitialValue,
+                                        onChanged: (t) {
+                                          _password = t;
+                                          if (_empcode != '' &&
+                                              _password != '') {
+                                            setState(() {
+                                              _showLoginButton = true;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _showLoginButton = false;
+                                            });
+                                          }
+                                        },
+                                        decoration: InputDecoration(
+                                            labelText: 'Password',
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                              borderSide:
+                                                  BorderSide(color: Colors.red),
+                                            ),
+                                            suffixIcon: IconButton(
+                                                icon: Icon(_obscureText
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _obscureText =
+                                                        !_obscureText;
+                                                  });
+                                                })),
+                                        obscureText: _obscureText,
+                                        validator: (value) {
+                                          value ??= '';
+                                          if (value == '') {
+                                            setState(() {
+                                              _showLoginButton = false;
+                                            });
+
+                                            return 'Please enter your password';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      SizedBox(height: 20),
+                                      Visibility(
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                ElevatedButton(
+                                                    onPressed: () {
+                                                      setState(() {
+                                                        _isLoggingIn = 0;
+
+                                                        _loginError = '';
+                                                      });
+                                                    },
+                                                    child: Text('Reset Error')),
+                                              ],
+                                            ),
+                                            Text('Login Error $_loginError'),
+                                          ],
+                                        ),
+                                        visible: _isLoggingIn == -1,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          SizedBox(width: 8.0),
+                                          RawMaterialButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text('Confirm'),
+                                                    content: Text(
+                                                        'Are you sure you want to perform this action?'),
+                                                    actions: <Widget>[
+                                                      ElevatedButton(
+                                                        style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                                      Colors
+                                                                          .grey),
+                                                        ),
+                                                        child: Text('Cancel'),
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                      ElevatedButton(
+                                                        style: ButtonStyle(
+                                                          backgroundColor:
+                                                              MaterialStateProperty
+                                                                  .all<Color>(
+                                                                      ksebColor),
+                                                        ),
+                                                        child: Text('Yes'),
+                                                        onPressed: () {
+                                                          // Perform the action here
+                                                          Navigator.of(context)
+                                                              .pop();
+
+                                                          _secureStorage
+                                                              .deleteAlllSecureStorageData();
+
+                                                          setState(() {});
+                                                        },
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+
+                                              // perform some action
+                                            },
+                                            child: Text('Another User ?'),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            ),
+                                            fillColor: ksebColor
+
+                                            // Color.fromARGB(
+                                            //     255, 196, 194, 194)
+
+                                            ,
+                                            padding: EdgeInsets.all(10.0),
+                                          ),
+                                          SizedBox(height: 30, width: 40),
+                                          Visibility(
+                                            // visible: _showLoginButton,
+                                            visible: true,
+                                            child: _isLoggingIn == 1
+                                                ? CircularProgressIndicator()
+                                                : ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all<Color>(
+                                                                  ksebColor),
+                                                    ),
+                                                    onPressed: () async {
+                                                      await proceedForLogin(
+                                                          context, 'regular');
+                                                    },
+                                                    child: Text('Login'),
+                                                  ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8.0),
+                                      CheckboxListTile(
+                                        value: _rememberMe,
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            _rememberMe = newValue ??= true;
+                                          });
+                                        },
+                                        title: Text('Remember me'),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+                        }), //
+                  ),
                 ),
               ),
-            ),
-          );
-        }),
+            );
+          }),
+        ),
       );
     }
   }
@@ -585,74 +603,101 @@ class _LoginScreenState extends State<LoginScreen> {
       });
 
       if (result == -1 || result['result_flag'] == -1) {
-        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-            content: Text('Invalid Credentials'),
-            duration: Duration(seconds: 5))));
-
-        if (occation == 'regular') {
-          setState(() {
-            _isLoggingIn = 0;
-          });
-        } else {
-          setState(() {
-            _firstTimeLoginSpinner = 1;
-          });
-        }
-
-        return Future(() => '');
+        return handleServerLoginScafoldMessenger(context, occation);
       }
 
-      if (result["result_data"] == null) {}
+      // if (result["result_data"] == null) {}
 
-      await _secureStorage.writeKeyValuePairToSecureStorage(
-          "access_token", result["result_data"]["token"]["access_token"]);
-
-      await _secureStorage.writeKeyValuePairToSecureStorage(
-          'loginDetails', jsonEncode(result['result_data']));
-
-      if (occation == 'regular') {
-        setState(() {
-          _isLoggingIn = 0;
-        });
-      } else {
-        setState(() {
-          _firstTimeLoginSpinner = 1;
-        });
-      }
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
-      );
+      await _handlServerLogin(result, occation, context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-          content: Text(e.toString()), duration: Duration(seconds: 5))));
-      print('exception hit');
-      print(e);
+      _handleServerLoginError(context, e, occation);
+    }
+  }
 
-      if (occation == 'regular') {
-        setState(() {
-          _isLoggingIn = -1;
-        });
-      } else {}
+  void _handleServerLoginError(BuildContext context, Object e, occation) {
+    ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+        content: Text(e.toString()), duration: Duration(seconds: 5))));
+    print('exception hit');
+    print(e);
 
-      _loginError = e.toString();
-
-      Future.delayed(Duration(seconds: 3), () {
-        _loginError = 'Restarting App';
-        // code to be executed after 2 seconds
+    if (occation == 'regular') {
+      setState(() {
+        _isLoggingIn = -1;
       });
+    } else {}
 
-      Future.delayed(Duration(seconds: 3), () {
-        // setState(() {
-        //   _isLoggingIn = 0;
-        // });
+    _loginError = e.toString();
 
-        WidgetsBinding.instance.reassembleApplication();
+    Future.delayed(Duration(seconds: 3), () {
+      _loginError = 'Restarting App';
+      // code to be executed after 2 seconds
+    });
 
-        // code to be executed after 2 seconds
+    Future.delayed(Duration(seconds: 3), () {
+      // setState(() {
+      //   _isLoggingIn = 0;
+      // });
+
+      WidgetsBinding.instance.reassembleApplication();
+
+      // code to be executed after 2 seconds
+    });
+  }
+
+  Future<void> _handlServerLogin(result, occation, BuildContext context,
+      {oIdAccessTokens = null}) async {
+    var resultData = {};
+    if (occation == 'sso') {
+      resultData = jsonDecode(result["result_data"]);
+
+      await _secureStorage.writeKeyValuePairToSecureStorage(
+          "access_token", oIdAccessTokens[0]);
+
+      await _secureStorage.writeKeyValuePairToSecureStorage(
+          "refresh_token", oIdAccessTokens[1]);
+    } else {
+      resultData = result["result_data"];
+
+      await _secureStorage.writeKeyValuePairToSecureStorage(
+          "access_token", resultData["token"]["access_token"]);
+    }
+    // debugger(when: true);
+
+    await _secureStorage.writeKeyValuePairToSecureStorage(
+        'loginDetails', jsonEncode(resultData));
+
+    if (occation == 'regular') {
+      setState(() {
+        _isLoggingIn = 0;
+      });
+    } else {
+      setState(() {
+        _firstTimeLoginSpinner = 1;
       });
     }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
+    );
+  }
+
+  Future<void> handleServerLoginScafoldMessenger(
+      BuildContext context, occation) {
+    ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+        content: Text('Invalid Credentials'), duration: Duration(seconds: 5))));
+
+    if (occation == 'regular') {
+      setState(() {
+        _isLoggingIn = 0;
+      });
+    } else {
+      setState(() {
+        _firstTimeLoginSpinner = 1;
+      });
+    }
+
+    return Future(() => '');
   }
 
   showUserNameForm1() {
@@ -823,6 +868,65 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(context: context, builder: (context) => alert);
   }
 
+  void initUniLinks() async {
+    // Handle the initial URL when the app is opened with a URL
+    try {
+      final initialLink = await getInitialLink();
+      late StreamSubscription _sub;
+
+      _sub = linkStream.listen((String? link) async {
+        if (link == '') {
+          return;
+        }
+        // print("link $link");
+
+        String token = extractTokenFromLink(link!);
+
+        if (token != '') {
+          // print(token);
+
+          List<String> oIdAccessTokens =
+              await getOidcAccessTokens(codeVerifier, token);
+
+          // debugger(when: true);
+
+          try {
+            var result = await getUserInfo(oIdAccessTokens[0]);
+
+            String occation = 'sso';
+
+            await _handlServerLogin(result, occation, context,
+                oIdAccessTokens: oIdAccessTokens);
+
+//1049878 chalode ae
+
+            /// 1063736
+            // debugger(when: true);
+
+            print(result);
+          } on Exception catch (e) {
+            String occation = 'regular';
+            _handleServerLoginError(context, e, occation);
+            print(e);
+            // TODO
+          } finally {
+            print('OidcAccessTokenxyx ');
+          }
+        }
+        // print(_sub);
+        // Parse the link and warn the user, if it is not correct
+      }, onError: (err) {
+        // Handle exception by warning the user their action did not succeed
+      });
+
+      // debugger(when: true);
+
+      // Process the initial URL accordingly
+    } on PlatformException {
+      // Handle exception if unable to get initial URL
+    }
+  }
+
   void _handleBiometricLogin(context) {
     showModalBottomSheet(
         context: context,
@@ -852,44 +956,6 @@ String extractTokenFromLink(String inputString) {
     return secondItem;
   } else {
     return '';
-  }
-}
-
-void initUniLinks() async {
-  // Handle the initial URL when the app is opened with a URL
-  try {
-    final initialLink = await getInitialLink();
-    late StreamSubscription _sub;
-
-    _sub = linkStream.listen((String? link) async {
-      if (link == '') {
-        return;
-      }
-      // print("link $link");
-
-      String token = extractTokenFromLink(link!);
-
-      if (token != '') {
-        // print(token);
-
-        List<String> oIdAccessTokens =
-            await getOidcAccessTokens(codeVerifier, token);
-
-        var a = await getUserInfo(oIdAccessTokens[0]);
-
-        print('OidcAccessTokenxyx $a');
-      }
-      // print(_sub);
-      // Parse the link and warn the user, if it is not correct
-    }, onError: (err) {
-      // Handle exception by warning the user their action did not succeed
-    });
-
-    // debugger(when: true);
-
-    // Process the initial URL accordingly
-  } on PlatformException {
-    // Handle exception if unable to get initial URL
   }
 }
 
