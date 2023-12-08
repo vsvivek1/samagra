@@ -2,6 +2,9 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
+import 'package:samagra/environmental_config.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class InternetConnectivity {
   static Future<bool> checkInternetConnectivity() async {
@@ -23,8 +26,7 @@ class InternetConnectivity {
         "password": 'uat123',
       };
 
-      final response =
-          await Dio().post('http://erpuat.kseb.in/api/login', data: data);
+      final response = await Dio().post('${config.erpUrl}login', data: data);
       return response.statusCode == 200;
     } on DioError {
       return false;
