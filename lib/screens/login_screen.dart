@@ -649,6 +649,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handlServerLogin(result, occation, BuildContext context,
       {oIdAccessTokens = null}) async {
+    if (result.response.statusCode != 200) {
+      showErrorMessage(
+          'Error fetching data. Status code: ${result.response.data['error']}',
+          context);
+
+      return;
+    }
+
     var resultData = {};
     if (occation == 'sso') {
       resultData = jsonDecode(result["result_data"]);
@@ -946,6 +954,16 @@ class _LoginScreenState extends State<LoginScreen> {
     // Navigator.push(
     //   context,
     //   MaterialPageRoute(builder: (context) => SSOLogin()),
+    // );
+  }
+
+  void showErrorMessage(String s, context) {
+    print(s);
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: Text(s),
+    //     duration: Duration(seconds: 5), // Optional duration
+    //   ),
     // );
   }
 }

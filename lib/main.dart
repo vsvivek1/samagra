@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:samagra/app_config.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +20,7 @@ void main() async {
   // lib/main.dart
 
   // .env
-  await dotenv.load(fileName: ".env");
+  AppConfig config = await AppConfig.fromEnvFile();
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
     return SizedBox(
       height: 1000,
@@ -31,10 +32,14 @@ void main() async {
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(ProviderScope(child: MyApp())));
+  ]).then((_) => runApp(ProviderScope(child: MyApp(appConfig: config))));
 }
 
 class MyApp extends StatelessWidget {
+  var appConfig;
+
+  MyApp({Key? key, required this.appConfig}) : super(key: key);
+
   final routes = <String, WidgetBuilder>{
     '/login': (BuildContext context) => LoginScreen(),
   };

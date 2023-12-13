@@ -23,11 +23,22 @@ class EnvironmentConfig {
     required this.liveAccessUrl,
     required this.liveServiceUrl,
     required this.isDebug,
+    required String apiKeyProd,
   }) {
     var a = loadEnv();
 
+    print(a);
+
     // debugger(when: true);
   }
+
+  // static final EnvironmentConfig _instance = EnvironmentConfig._internal();
+
+  // factory EnvironmentConfig() {
+  //   return _instance;
+  // }
+
+  // EnvironmentConfig._internal();
 
   Future<void> loadEnv() async {
     try {
@@ -47,11 +58,12 @@ class EnvironmentConfig {
   factory EnvironmentConfig.fromEnvFile() {
     // ignore: unused_local_variable
 
-    print(dotenv);
+    // print(dotenv);
 
     // debugger(when: true);
     return EnvironmentConfig(
       apiKey: dotenv.env['API_KEY'] ?? '',
+      apiKeyProd: dotenv.env['API_KEY_PROD'] ?? '',
       erpUrl: dotenv.env['ERP_URL'] ?? '',
       ssoTestServiceUrl: dotenv.env['SSO_TEST_SERVICE_URL'] ?? '',
       ssoProductionServiceUrl: dotenv.env['SSO_PRODUCTION_SERVICE_URL'] ?? '',

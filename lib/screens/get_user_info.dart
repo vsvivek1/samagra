@@ -2,18 +2,25 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/environmental_config.dart';
 
 Future getUserInfo(String accessToken) async {
   Dio dio = Dio();
-  String url = 'https://hris.kseb.in/ipdstest/api/erp/auth/getUserInfo';
+
+  EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+  String url = '${config.liveServiceUrl}getUserInfo';
+
+  String apiKey = '${config.apiKey}';
 
   try {
+    // EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
     // Set up headers with the access token and API key
     dio.options.headers['Authorization'] = 'Bearer $accessToken';
     dio.options.headers['x-api-key'] =
-        'a57a53b49a258aa97021735f9b9540709004fd0ae0a583a12f24590d17c78691d4249be46dd20dae'; // Replace with your actual API key
+        '${apiKey}'; // Replace with your actual API key
 
     Response response = await dio.post(url);
+    debugger(when: true);
 
     return response.data;
 

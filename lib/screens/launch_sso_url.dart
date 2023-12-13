@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/generate_random_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
@@ -25,6 +26,7 @@ String base64URL(String input) {
 
 launchSSOUrl(codeVerifier, codeChallenge) async {
   const CLIENT_ID = "pkce-client3";
+  EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
   // const REDIRECT_URI = "m-samagra://kseb.in/sso";
   // const REDIRECT_URI = "m-samagra%3A%2F%2Fkseb.in%2Fsso";
@@ -40,12 +42,17 @@ launchSSOUrl(codeVerifier, codeChallenge) async {
 
   const scope = 'scope=openid%20offline_access%20erp_work';
 
-  String url2 =
-      '''https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&code_challenge=$codeChallenge&code_challenge_method=$codeChallengeMethod&scope=$scope&state=1234zyx''';
+  // String url2 =
+  //     '''https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&code_challenge=$codeChallenge&code_challenge_method=$codeChallengeMethod&scope=$scope&state=1234zyx''';
+
+  // String url =
+  //     // "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
+  //     "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
 
   String url =
       // "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
-      "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
+      "${config.liveAccessUrl}auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
+
   print(url);
 
   final Uri _url = Uri.parse(url);
