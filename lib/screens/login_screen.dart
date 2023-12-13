@@ -22,6 +22,9 @@ import 'package:uni_links/uni_links.dart';
 import 'dart:convert';
 
 import '../internet_connectivity.dart';
+import 'package:samagra/environmental_config.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 // import 'package:samagra/secure_storage/common_functions.dart';
 String addPaddingToBase64UrlEncodedString(String base64String) {
@@ -961,7 +964,7 @@ String extractTokenFromLink(String inputString) {
 
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "http://erpuat.kseb.in/api/login";
+  final String _url = "config.liveServiceUrllogin";
 
   Future login(String email, String password, String showPhoto, context) async {
     final Map<String, String> data = {

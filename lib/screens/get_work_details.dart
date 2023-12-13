@@ -62,7 +62,7 @@ getWorkDertailsFromServer(measurementsetListId) async {
 
   final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
   String url =
-      "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementDetails/$measurementsetListId";
+      "config.liveServiceUrlwrk/getPolevarMeasurementDetails/$measurementsetListId";
 
   Response<Map<String, dynamic>> res = await Dio().get(
     url,

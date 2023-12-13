@@ -6,6 +6,9 @@ import 'package:samagra/fitness_app/fitness_app_theme.dart';
 import 'package:flutter/material.dart';
 
 import 'package:samagra/common.dart';
+import 'package:samagra/environmental_config.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class MyDiaryScreen extends StatefulWidget {
   const MyDiaryScreen({Key? key, this.animationController}) : super(key: key);
@@ -124,7 +127,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     final dio = Dio();
 
-    final url = 'http://erpuat.kseb.in/api/loadOrumaTotalDetails';
+    final url = 'config.liveServiceUrlloadOrumaTotalDetails';
 
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
     final body = {"selectkey": "HT", " mainmen": "consumercount"};

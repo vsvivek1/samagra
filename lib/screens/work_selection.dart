@@ -14,11 +14,13 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 
 import '../secure_storage/secure_storage.dart';
 import 'dart:math' as math;
+
 // import 'package:samagra/common.dart';
 
 import 'get_login_details.dart';
 import 'get_work_details.dart';
 import 'measurement_option.dart';
+import 'package:samagra/environmental_config.dart';
 
 class WorkSelection extends StatelessWidget {
   final storage = SecureStorage();
@@ -119,10 +121,14 @@ class WorkSelection extends StatelessWidget {
   Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
     try {
       final dio = Dio();
-      final url = 'http://erpuat.kseb.in/api/wrk/getLabourMaster/0';
-      final url2 = 'http://erpuat.kseb.in/api/wrk/getMaterialMaster/2/0';
+      final url = '$config.liveServiceUrlwrk/getLabourMaster/0';
+      final url2 = '$config.liveServiceUrlwrk/getMaterialMaster/2/0';
 
       final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+
+      print(url);
+
+      debugger(when: true);
       final response = await dio.get(url, options: Options(headers: headers));
 
       // print('lab  called');
@@ -210,15 +216,21 @@ class WorkSelection extends StatelessWidget {
     final officeId = currentSeatDetails['office_id'];
     // final officeCode = 1234;
     final url =
-        'http://erpuat.kseb.in/api/wrk/getScheduleListForNormalMeasurement/$officeId';
+        '$config.liveServiceUrlwrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     try {
       String seatId = await getSeatId();
+
+      var u = config.liveServiceUrl;
+
+      debugger(when: true);
       final urlEdit =
-          "http://erpuat.kseb.in/api/wrk/getPolevarMeasurementSetListForEdit";
+          "${config.liveServiceUrl}/wrk/getPolevarMeasurementSetListForEdit";
 
       // print(urlEdit);
+
+      debugger(when: true);
       Response responseEdit = await Dio().get(
         queryParameters: Map.from({'seat_id': seatId}),
         urlEdit,
@@ -394,6 +406,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
   @override
   void initState() {
+    EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
     audioCache = AudioCache(prefix: 'assets/audio/');
     _filteredItems = List.from(widget.schGrpList);
     setWorKdetails(_filteredItems);

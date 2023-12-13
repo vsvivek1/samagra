@@ -143,7 +143,7 @@ class MeasurementDataToWorkModule {
     bool retVal = false;
     try {
       String baseUrl =
-          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       Dio dio = new Dio();
 

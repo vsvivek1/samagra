@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:samagra/environmental_config.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "http://erpuat.kseb.in/api/login";
+  final String _url = "config.liveServiceUrllogin";
 
   Future<Map<String, dynamic>> login(
       String email, String password, String showPhoto) async {

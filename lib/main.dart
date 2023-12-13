@@ -15,6 +15,10 @@ import 'kseb_color.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
+  // lib/.env
+  // lib/main.dart
+
+  // .env
   await dotenv.load(fileName: ".env");
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
     return SizedBox(

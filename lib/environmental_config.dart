@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EnvironmentConfig {
@@ -21,10 +23,33 @@ class EnvironmentConfig {
     required this.liveAccessUrl,
     required this.liveServiceUrl,
     required this.isDebug,
-  });
+  }) {
+    var a = loadEnv();
+
+    // debugger(when: true);
+  }
+
+  Future<void> loadEnv() async {
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (e) {
+      print("Error loading .env file: $e");
+    }
+  }
+
+// Access variables after loading the .env file
+  void useEnvVariables() {
+    String apiKey = dotenv.env['API_KEY'] ?? 'default_value';
+    // Use the extracted variables as needed
+    // print("API Key: $apiKey");
+  }
 
   factory EnvironmentConfig.fromEnvFile() {
-    dotenv.load(fileName: ".env");
+    // ignore: unused_local_variable
+
+    print(dotenv);
+
+    // debugger(when: true);
     return EnvironmentConfig(
       apiKey: dotenv.env['API_KEY'] ?? '',
       erpUrl: dotenv.env['ERP_URL'] ?? '',

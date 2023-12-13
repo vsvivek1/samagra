@@ -616,10 +616,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //wrong function
     try {
       String baseUrlOld =
-          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       String baseUrl =
-          "http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       print("BASE UR mdtwm 136L $baseUrl");
 
@@ -2270,7 +2270,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       String taskId = task['id'].toString();
 
       final url =
-          "http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
+          "config.liveServiceUrlwrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
 
       final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
@@ -2641,9 +2641,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // final officeCode = currentSeatDetails['office']['office_code'];
       // final officeId = currentSeatDetails['office_id'];
 
-// http://erpuat.kseb.in/api/wrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
+// config.liveServiceUrlwrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
       final url =
-          'http://erpuat.kseb.in/api/wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
+          'config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
       print("url called $url");
       final headers = {'Authorization': 'Bearer $accessToken'};

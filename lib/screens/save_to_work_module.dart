@@ -8,6 +8,10 @@ import 'package:samagra/screens/server_message_widget.dart';
 import 'package:samagra/screens/work_selection.dart';
 import 'measurement_data_to_work_module.dart';
 
+import 'package:samagra/environmental_config.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;
   int workId; // Initialize these fields
@@ -302,7 +306,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
         dataToSend['wrk_schedule_group_id'] = "16114";
         var dio = Dio();
         var response = await dio.request(
-          'http://erpuat.kseb.in/api/wrk/saveMeasurementWithPolevar',
+          'config.liveServiceUrlwrk/saveMeasurementWithPolevar',
           options: Options(
             method: 'POST',
             headers: headers,

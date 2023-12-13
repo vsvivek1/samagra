@@ -3,12 +3,16 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
+
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'dart:convert';
 
 import 'package:samagra/secure_storage/common_functions.dart';
+import 'package:samagra/environmental_config.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -460,8 +464,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
         ));
   }
 
-  // final String _url = "http://erpuat.kseb.in/api/switchUserSeat";
-  final String _url = "http://erpuat.kseb.in/api/switchUserSeat";
+  // final String _url = "config.liveServiceUrlswitchUserSeat";
+  final String _url = "config.liveServiceUrlswitchUserSeat";
   final Dio _dio = new Dio();
 // final FlutterSecureStorage _secureStorage = new FlutterSecureStorage();
 

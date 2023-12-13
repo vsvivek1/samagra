@@ -435,7 +435,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "http://erpuat.kseb.in/api/login";
+  final String _url = "config.liveServiceUrllogin";
 
   Future<Map<String, dynamic>> login(
       String email, String password, String showPhoto) async {
