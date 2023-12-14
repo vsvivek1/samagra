@@ -8,7 +8,7 @@ Future getUserInfo(String accessToken) async {
   Dio dio = Dio();
 
   EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-  String url = '${config.liveServiceUrl}getUserInfo';
+  String url = '${config.liveServiceUrl}/auth1/getUserInfo';
 
   String apiKey = '${config.apiKey}';
 

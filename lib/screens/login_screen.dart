@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // import 'package:samagra/home_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
@@ -650,6 +651,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handlServerLogin(result, occation, BuildContext context,
       {oIdAccessTokens = null}) async {
     if (result.response.statusCode != 200) {
+      debugger(when: true);
+      Fluttertoast.showToast(
+        msg: 'This is a toast message!',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      print(result.response);
       showErrorMessage(
           'Error fetching data. Status code: ${result.response.data['error']}',
           context);
@@ -904,6 +917,9 @@ class _LoginScreenState extends State<LoginScreen> {
           try {
             var result = await getUserInfo(oIdAccessTokens[0]);
 
+            // debugger(when: true);
+
+            // debugger(when: true);
             String occation = 'sso';
 
             await _handlServerLogin(result, occation, context,
@@ -914,9 +930,11 @@ class _LoginScreenState extends State<LoginScreen> {
             /// 1063736
             // debugger(when: true);
 
-            print(result);
+            // print(result);
           } on Exception catch (e) {
             String occation = 'regular';
+
+            debugger(when: true);
             _handleServerLoginError(context, e, occation);
             print(e);
             // TODO
