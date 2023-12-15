@@ -13,11 +13,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
+import 'package:samagra/screens/SSOLogin.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
+import 'package:samagra/screens/login_with_sso.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:convert';
@@ -62,6 +64,8 @@ class _LoginScreenState extends State<LoginScreen> {
   int _isLoggingIn = 0;
   String _loginError = ' ';
   var _isValidUsername;
+
+  bool _ssoLoginLoading = false;
 
   int _firstTimeLoginSpinner =
       -1; //-1 init state, 0 spinning, 1 spin stop and load new //-2 error
@@ -171,11 +175,15 @@ class _LoginScreenState extends State<LoginScreen> {
     // return _loginDetails1["storedLogin"]; //.toString();
   }
 
+  setLoginState() {
+    _ssoLoginLoading = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
 
-    if (_isLoggingIn == -2) {
+    if (_isLoggingIn == -2 || _ssoLoginLoading) {
       return createLoadingSpinner();
     } else {
       return ScaffoldMessenger(
@@ -335,7 +343,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                     ksebColor),
                                                       ),
                                                       onPressed: () => {
-                                                        loginUsingSso(context)
+                                                        loginUsingSso(
+                                                            context,
+                                                            _ssoLoginLoading,
+                                                            setLoginState,
+                                                            _empcode)
                                                       },
                                                       child: Text(
                                                           'Login with SSO'),
@@ -650,18 +662,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handlServerLogin(result, occation, BuildContext context,
       {oIdAccessTokens = null}) async {
-    if (result.response.statusCode != 200) {
-      debugger(when: true);
+    if (!(result is Map) && result.response.statusCode != 200) {
+      String errorMsg = result.response.data['error'];
+      // debugger(when: true);
+
       Fluttertoast.showToast(
-        msg: 'This is a toast message!',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        msg: errorMsg,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 2,
         backgroundColor: Colors.black,
         textColor: Colors.white,
         fontSize: 16.0,
       );
 
+      setState(() {
+        _ssoLoginLoading = false;
+      });
       print(result.response);
       showErrorMessage(
           'Error fetching data. Status code: ${result.response.data['error']}',
@@ -685,6 +702,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await _secureStorage.writeKeyValuePairToSecureStorage(
           "access_token", resultData["token"]["access_token"]);
     }
+
     // debugger(when: true);
 
     await _secureStorage.writeKeyValuePairToSecureStorage(
@@ -692,10 +710,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (occation == 'regular') {
       setState(() {
+        _ssoLoginLoading = false;
         _isLoggingIn = 0;
       });
     } else {
       setState(() {
+        _ssoLoginLoading = false;
         _firstTimeLoginSpinner = 1;
       });
     }
@@ -779,27 +799,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         Visibility(
             visible: _showpassWordSpinner, child: CircularProgressIndicator()),
-        Visibility(
-          // visible: _showFirstTimePasswordField,
-          visible: _showFirstTimePasswordField,
-          child: TextField(
-            onChanged: (value) {
-              setState(() {
-                if (_firstTimeUserNameController.text.length > 3) {
-                  _showFirstTimeSubmitKeyboard = true;
-                }
-              });
-            },
-            controller: _firstTimePassWordController,
-            decoration: InputDecoration(
-              labelText: 'Password ..',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            obscureText: true,
-          ),
-        ),
+        // firstTimeLoginPassword(),
         SizedBox(height: 30, width: 40),
         Visibility(
           // visible: _showFirstTimeSubmitKeyboard,
@@ -816,12 +816,39 @@ class _LoginScreenState extends State<LoginScreen> {
               backgroundColor: MaterialStateProperty.all<Color>(Colors.grey),
             ),
             onPressed: () async {
-              await proceedForLogin(context, 'firstTime');
+              loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode);
+
+              //
+              // await proceedForLogin(context, 'firstTime');
             },
             child: Text('Login'),
           ),
         ),
       ],
+    );
+  }
+
+  Visibility firstTimeLoginPassword() {
+    return Visibility(
+      // visible: _showFirstTimePasswordField,
+      visible: _showFirstTimePasswordField,
+      child: TextField(
+        onChanged: (value) {
+          setState(() {
+            if (_firstTimeUserNameController.text.length > 3) {
+              _showFirstTimeSubmitKeyboard = true;
+            }
+          });
+        },
+        controller: _firstTimePassWordController,
+        decoration: InputDecoration(
+          labelText: 'Password ..',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+        obscureText: true,
+      ),
     );
   }
 
@@ -915,7 +942,8 @@ class _LoginScreenState extends State<LoginScreen> {
           // debugger(when: true);
 
           try {
-            var result = await getUserInfo(oIdAccessTokens[0]);
+            var result =
+                await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
 
             // debugger(when: true);
 
@@ -965,14 +993,6 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Center(child: AuthenticationBottomSheet()),
           );
         });
-  }
-
-  loginUsingSso(context) {
-    launchSSOUrl(codeVerifier, codeChallenge);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => SSOLogin()),
-    // );
   }
 
   void showErrorMessage(String s, context) {

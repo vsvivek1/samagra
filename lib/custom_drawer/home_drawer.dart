@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -220,8 +221,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
                                       var user = login["user"];
                                       var dp = user['photo_image'];
-                                      Uint8List imageBytes =
-                                          base64Decode('jjjj');
+
+                                      // debugger(when: true);
+                                      Uint8List imageBytes;
+                                      // base64Decode('jjjj');
                                       if (dp == null) {
                                         String dummyBase64String =
                                             "R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="; // 1x1 transparent GIF

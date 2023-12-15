@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/screens/warning_message.dart';
 import 'package:samagra/screens/work_details.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
@@ -224,9 +225,9 @@ class WorkSelection extends StatelessWidget {
 
       var u = config.liveServiceUrl;
 
-      debugger(when: true);
+      // debugger(when: true);
       final urlEdit =
-          "${config.liveServiceUrl}/wrk/getPolevarMeasurementSetListForEdit";
+          "${config.liveServiceUrl}wrk/getPolevarMeasurementSetListForEdit";
 
       // print(urlEdit);
 
@@ -292,6 +293,7 @@ class WorkSelection extends StatelessWidget {
       }
     } on Exception catch (e) {
       if (context != -1) {
+        debugger(when: true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('This is a SnackBar!'),
@@ -491,8 +493,10 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     final item = _filteredItems[index];
 
                     if (item == "-1") {
-                      return Text(
-                          'some error -1 in item Failed to load List of Works');
+                      return WarningMessage(
+                          message: 'No work Found For Measurement');
+                      // return Text(
+                      //     'some error -1 in item Failed to load List of Works');
                       // showErrorSnackBar(context);
                     }
 

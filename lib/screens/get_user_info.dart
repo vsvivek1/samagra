@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/environmental_config.dart';
 
-Future getUserInfo(String accessToken) async {
+Future getUserInfo(String accessToken, _ssoLoginLoading) async {
   Dio dio = Dio();
 
   EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-  String url = '${config.liveServiceUrl}/auth1/getUserInfo';
+  String url = '${config.liveServiceUrl}/auth/getUserInfo';
 
   String apiKey = '${config.apiKey}';
 
@@ -20,7 +20,7 @@ Future getUserInfo(String accessToken) async {
         '${apiKey}'; // Replace with your actual API key
 
     Response response = await dio.post(url);
-    debugger(when: true);
+    // debugger(when: true);
 
     return response.data;
 

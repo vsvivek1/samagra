@@ -24,7 +24,10 @@ String base64URL(String input) {
   return encoded.replaceAll('=', '').replaceAll('+', '-').replaceAll('/', '_');
 }
 
-launchSSOUrl(codeVerifier, codeChallenge) async {
+launchSSOUrl(codeVerifier, codeChallenge, empcode) async {
+  if (!(empcode is String)) {
+    empcode = '';
+  }
   const CLIENT_ID = "pkce-client3";
   EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
@@ -51,9 +54,9 @@ launchSSOUrl(codeVerifier, codeChallenge) async {
 
   String url =
       // "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
-      "${config.liveAccessUrl}auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
+      "${config.liveAccessUrl}auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work&login_hint=$empcode";
 
-  print(url);
+  // print(url);
 
   final Uri _url = Uri.parse(url);
 
