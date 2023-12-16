@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:samagra/environmental_config.dart';
-import 'package:samagra/screens/generate_random_string.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -54,7 +52,7 @@ launchSSOUrl(codeVerifier, codeChallenge, empcode) async {
 
   String url =
       // "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
-      "${config.liveAccessUrl}auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work&login_hint=$empcode";
+      "${config.liveAccessUrl}auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=$codeChallenge&code_challenge_method=S256&scope=openid%20offline_access%20erp_work&login_hint=$empcode";
 
   // print(url);
 

@@ -1,7 +1,5 @@
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:samagra/environmental_config.dart';
 
 Future getUserInfo(String accessToken, _ssoLoginLoading) async {
@@ -17,7 +15,7 @@ Future getUserInfo(String accessToken, _ssoLoginLoading) async {
     // Set up headers with the access token and API key
     dio.options.headers['Authorization'] = 'Bearer $accessToken';
     dio.options.headers['x-api-key'] =
-        '${apiKey}'; // Replace with your actual API key
+        '$apiKey'; // Replace with your actual API key
 
     Response response = await dio.post(url);
     // debugger(when: true);

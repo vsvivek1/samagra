@@ -10,15 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
-import 'package:samagra/screens/SSOLogin.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
-import 'package:samagra/screens/launch_sso_url.dart';
 import 'package:samagra/screens/login_with_sso.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:uni_links/uni_links.dart';
@@ -89,6 +88,10 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _showFirstTimePasswordField = false;
 
   bool _showFirstTimeSubmitKeyboard = false;
+
+  bool _BtnAndPassForSmagraDirect = false;
+
+  bool _showBiometricLoginButtton = false;
 
   // get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
   //  bool _showFirstTimePasswordField;
@@ -267,36 +270,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                SizedBox(
-                                                  width: 125,
-                                                  child: Image(
-                                                      image: AssetImage(
-                                                          'assets/images/kseb.jpg')),
-                                                ),
-                                                Container(
-                                                  padding: EdgeInsets.all(20),
-                                                  child: Text(
-                                                      'KERALA STATE ELECTRICTY BOARD LIMITED',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          decoration:
-                                                              TextDecoration
-                                                                  .underline,
-                                                          fontSize: 14,
-                                                          color: Color.fromARGB(
-                                                              255,
-                                                              16,
-                                                              87,
-                                                              161))),
-                                                ),
+                                                ksebMainEmblemAndName(),
                                                 Visibility(
                                                   visible: bytes.isEmpty,
-                                                  child: CircleAvatar(
-                                                    radius: 30,
-                                                    backgroundImage: AssetImage(
-                                                        'assets/images/kseb_emblem.jpeg'),
-                                                  ),
+                                                  child: RandomAvatar(
+                                                      'saytoonz',
+                                                      trBackground: true,
+                                                      height: 100,
+                                                      width: 100),
+                                                  //
+                                                  // CircleAvatar(
+                                                  //     radius: 30,
+                                                  //     backgroundImage: AssetImage(
+                                                  //         'assets/images/kseb_emblem.jpeg'),
+                                                  //   ),
                                                 ),
                                                 Visibility(
                                                   visible: bytes.isNotEmpty,
@@ -306,7 +293,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         MemoryImage(bytes),
                                                   ),
                                                 ),
-                                                SizedBox(height: 16),
                                                 Text('Welcome Back '),
                                                 Text(
                                                   '$username ',
@@ -316,48 +302,32 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       fontWeight:
                                                           FontWeight.bold),
                                                 ),
-                                                SizedBox(height: 32),
+                                                // SizedBox(height: 32),
+                                                SizedBox(height: 16),
+                                                displayStoredEmployeeCode(),
+
+                                                SizedBox(
+                                                  height: 30,
+                                                ),
                                                 Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
-                                                    ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all<Color>(
-                                                                    ksebColor),
-                                                      ),
-                                                      onPressed: () {
-                                                        _handleBiometricLogin(
-                                                            context);
-                                                        // Handle biometric login
-                                                      },
-                                                      child: Text(
-                                                          'Login with Biometric'),
-                                                    ),
-                                                    SizedBox(width: 30),
-                                                    ElevatedButton(
-                                                      style: ButtonStyle(
-                                                        backgroundColor:
-                                                            MaterialStateProperty
-                                                                .all<Color>(
-                                                                    ksebColor),
-                                                      ),
-                                                      onPressed: () => {
-                                                        loginUsingSso(
-                                                            context,
-                                                            _ssoLoginLoading,
-                                                            setLoginState,
-                                                            _empcode)
-                                                      },
-                                                      child: Text(
-                                                          'Login with SSO'),
-                                                    ),
+                                                    Spacer(),
+                                                    if (_showBiometricLoginButtton) ...[
+                                                      biometricLoginButton(
+                                                          context),
+                                                      Spacer(),
+                                                    ],
+                                                    Center(
+                                                        child: ssoLoginButton(
+                                                            context)),
+                                                    Spacer(),
+                                                    changeUserButton(context),
+                                                    Spacer()
                                                   ],
                                                 ),
-                                                SizedBox(
-                                                  height: 20,
-                                                  width: 20,
-                                                )
                                               ],
                                             ),
                                           );
@@ -370,63 +340,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
-                                      Visibility(
-                                          visible: empCodeInitialValue != '',
-                                          child: Text(
-                                            empCodeInitialValue,
-                                            style: TextStyle(
-                                                fontSize: 25,
-                                                color: AppTheme.grey
-                                                    .withOpacity(0.7)),
-                                          )),
                                       SizedBox(height: 8.0),
-                                      TextFormField(
-                                        // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
-
-                                        initialValue: passwordInitialValue,
-                                        onChanged: (t) {
-                                          _password = t;
-                                          if (_empcode != '' &&
-                                              _password != '') {
-                                            setState(() {
-                                              _showLoginButton = true;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _showLoginButton = false;
-                                            });
-                                          }
-                                        },
-                                        decoration: InputDecoration(
-                                            labelText: 'Password',
-                                            focusedErrorBorder:
-                                                OutlineInputBorder(
-                                              borderSide:
-                                                  BorderSide(color: Colors.red),
-                                            ),
-                                            suffixIcon: IconButton(
-                                                icon: Icon(_obscureText
-                                                    ? Icons.visibility
-                                                    : Icons.visibility_off),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    _obscureText =
-                                                        !_obscureText;
-                                                  });
-                                                })),
-                                        obscureText: _obscureText,
-                                        validator: (value) {
-                                          value ??= '';
-                                          if (value == '') {
-                                            setState(() {
-                                              _showLoginButton = false;
-                                            });
-
-                                            return 'Please enter your password';
-                                          }
-                                          return null;
-                                        },
-                                      ),
+                                      if (_BtnAndPassForSmagraDirect)
+                                        passWordForSamagraDirect(),
                                       SizedBox(height: 20),
                                       Visibility(
                                         child: Column(
@@ -454,94 +370,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                             MainAxisAlignment.center,
                                         children: [
                                           SizedBox(width: 8.0),
-                                          RawMaterialButton(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: Text('Confirm'),
-                                                    content: Text(
-                                                        'Are you sure you want to perform this action?'),
-                                                    actions: <Widget>[
-                                                      ElevatedButton(
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                                      Colors
-                                                                          .grey),
-                                                        ),
-                                                        child: Text('Cancel'),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                      ElevatedButton(
-                                                        style: ButtonStyle(
-                                                          backgroundColor:
-                                                              MaterialStateProperty
-                                                                  .all<Color>(
-                                                                      ksebColor),
-                                                        ),
-                                                        child: Text('Yes'),
-                                                        onPressed: () {
-                                                          // Perform the action here
-                                                          Navigator.of(context)
-                                                              .pop();
-
-                                                          _secureStorage
-                                                              .deleteAlllSecureStorageData();
-
-                                                          setState(() {});
-                                                        },
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-
-                                              // perform some action
-                                            },
-                                            child: Text('Another User ?'),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0),
-                                            ),
-                                            fillColor: ksebColor
-
-                                            // Color.fromARGB(
-                                            //     255, 196, 194, 194)
-
-                                            ,
-                                            padding: EdgeInsets.all(10.0),
-                                          ),
-                                          SizedBox(height: 30, width: 40),
-                                          Visibility(
-                                            // visible: _showLoginButton,
-                                            visible: true,
-                                            child: _isLoggingIn == 1
-                                                ? CircularProgressIndicator()
-                                                : ElevatedButton(
-                                                    style: ButtonStyle(
-                                                      backgroundColor:
-                                                          MaterialStateProperty
-                                                              .all<Color>(
-                                                                  ksebColor),
-                                                    ),
-                                                    onPressed: () async {
-                                                      await proceedForLogin(
-                                                          context, 'regular');
-                                                    },
-                                                    child: Text('Login'),
-                                                  ),
-                                          ),
+                                          // SizedBox(height: 30, width: 40),
+                                          if (_BtnAndPassForSmagraDirect)
+                                            loginButtonForSamagraDirect(
+                                                context),
                                         ],
                                       ),
-                                      SizedBox(height: 8.0),
+                                      // SizedBox(height: 1.0)
+
                                       CheckboxListTile(
+                                        activeColor: Colors.green[10],
                                         value: _rememberMe,
                                         onChanged: (newValue) {
                                           setState(() {
@@ -565,6 +403,181 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
     }
+  }
+
+  RawMaterialButton changeUserButton(BuildContext context) {
+    return RawMaterialButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Confirm'),
+              content: Text('Are you sure you want to perform this action?'),
+              actions: <Widget>[
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.white),
+                  ),
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(ksebColor),
+                  ),
+                  child: Text('Yes'),
+                  onPressed: () {
+                    // Perform the action here
+                    Navigator.of(context).pop();
+
+                    _secureStorage.deleteAlllSecureStorageData();
+
+                    setState(() {});
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+        // perform some action
+      },
+      child: Text(
+        'Another User ?',
+        style: TextStyle(color: Colors.white),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      fillColor: ksebColor
+
+      // Color.fromARGB(
+      //     255, 196, 194, 194)
+
+      ,
+      padding: EdgeInsets.all(10.0),
+    );
+  }
+
+  ElevatedButton ssoLoginButton(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(ksebColor),
+      ),
+      onPressed: () =>
+          {loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode)},
+      child: Text('Login with SSO'),
+    );
+  }
+
+  Column ksebMainEmblemAndName() {
+    return Column(
+      children: [
+        SizedBox(
+          width: 125,
+          child: Image(image: AssetImage('assets/images/kseb.jpg')),
+        ),
+        Container(
+          padding: EdgeInsets.all(20),
+          child: Text('KERALA STATE ELECTRICTY BOARD LIMITED',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  fontSize: 14,
+                  color: Color.fromARGB(255, 16, 87, 161))),
+        ),
+      ],
+    );
+  }
+
+  ElevatedButton biometricLoginButton(BuildContext context) {
+    return ElevatedButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(ksebColor),
+      ),
+      onPressed: () {
+        _handleBiometricLogin(context);
+        // Handle biometric login
+      },
+      child: Text('Login with Biometric'),
+    );
+  }
+
+  Visibility loginButtonForSamagraDirect(BuildContext context) {
+    return Visibility(
+      // visible: _showLoginButton,
+      visible: true,
+      child: _isLoggingIn == 1
+          ? CircularProgressIndicator()
+          : ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(ksebColor),
+              ),
+              onPressed: () async {
+                await proceedForLogin(context, 'regular');
+              },
+              child: Text('Login'),
+            ),
+    );
+  }
+
+  Visibility displayStoredEmployeeCode() {
+    return Visibility(
+        visible: empCodeInitialValue != '',
+        child: Text(
+          empCodeInitialValue,
+          style: TextStyle(fontSize: 25, color: AppTheme.grey.withOpacity(0.7)),
+        ));
+  }
+
+  TextFormField passWordForSamagraDirect() {
+    return TextFormField(
+      // (snapshot.data?.isNotEmpty == true)    ? jsonDecode(snapshot.data)?["password"] ??:'',
+
+      initialValue: passwordInitialValue,
+      onChanged: (t) {
+        _password = t;
+        if (_empcode != '' && _password != '') {
+          setState(() {
+            _showLoginButton = true;
+          });
+        } else {
+          setState(() {
+            _showLoginButton = false;
+          });
+        }
+      },
+      decoration: InputDecoration(
+          labelText: 'Password',
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red),
+          ),
+          suffixIcon: IconButton(
+              icon:
+                  Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+              onPressed: () {
+                setState(() {
+                  _obscureText = !_obscureText;
+                });
+              })),
+      obscureText: _obscureText,
+      validator: (value) {
+        value ??= '';
+        if (value == '') {
+          setState(() {
+            _showLoginButton = false;
+          });
+
+          return 'Please enter your password';
+        }
+        return null;
+      },
+    );
   }
 
   Center noStoredLoginDetailsSoFirstLoginScreen() {
@@ -661,7 +674,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _handlServerLogin(result, occation, BuildContext context,
-      {oIdAccessTokens = null}) async {
+      {oIdAccessTokens}) async {
     if (!(result is Map) && result.response.statusCode != 200) {
       String errorMsg = result.response.data['error'];
       // debugger(when: true);

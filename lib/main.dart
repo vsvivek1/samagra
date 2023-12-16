@@ -13,7 +13,6 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   // lib/.env

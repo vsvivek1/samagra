@@ -3,7 +3,6 @@ import 'package:samagra/custom_drawer/drawer_user_controller.dart';
 import 'package:samagra/custom_drawer/home_drawer.dart';
 import 'package:samagra/frtu/frtu_inspection.dart';
 import 'package:samagra/home_screen.dart';
-import 'package:samagra/invite_friend_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';

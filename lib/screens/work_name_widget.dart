@@ -32,7 +32,7 @@ class WorkNameWidget extends StatelessWidget {
         ],
       ),
       child: Text(
-        label + workName + (workId != '' ? " '\n\nWork Id :${workId}" : ''),
+        label + workName + (workId != '' ? " '\n\nWork Id :$workId" : ''),
         style: TextStyle(
             // fontStyle: FontStyle.italic,
             fontFamily: 'Verdana',
