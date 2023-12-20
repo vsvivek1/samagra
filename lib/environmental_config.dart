@@ -1,4 +1,3 @@
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EnvironmentConfig {
@@ -10,6 +9,8 @@ class EnvironmentConfig {
   final String ssoProductionAccessUrl;
   final String liveAccessUrl; // New variable
   final String liveServiceUrl; // New variable
+  final String liveServiceUrlGroup1; // New variable
+  final String liveServiceUrlLogin; // New variable
   final bool isDebug;
 
   EnvironmentConfig({
@@ -23,10 +24,12 @@ class EnvironmentConfig {
     required this.liveServiceUrl,
     required this.isDebug,
     required String apiKeyProd,
+    required this.liveServiceUrlGroup1,
+    required this.liveServiceUrlLogin,
   }) {
     var a = loadEnv();
 
-    print(a);
+    // print(a);
 
     // debugger(when: true);
   }
@@ -61,6 +64,8 @@ class EnvironmentConfig {
 
     // debugger(when: true);
     return EnvironmentConfig(
+      liveServiceUrlLogin: dotenv.env['LIVE_SERVICE_URL_LOGIN'] ?? '',
+      liveServiceUrlGroup1: dotenv.env['LIVE_SERVICE_URL_GROUP1'] ?? '',
       apiKey: dotenv.env['API_KEY'] ?? '',
       apiKeyProd: dotenv.env['API_KEY_PROD'] ?? '',
       erpUrl: dotenv.env['ERP_URL'] ?? '',

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/warning_message.dart';
 import 'package:samagra/screens/work_details.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -122,14 +123,17 @@ class WorkSelection extends StatelessWidget {
   Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
     try {
       final dio = Dio();
-      final url = '$config.liveServiceUrlwrk/getLabourMaster/0';
-      final url2 = '$config.liveServiceUrlwrk/getMaterialMaster/2/0';
+      final url = '${config.liveServiceUrl}wrk/getLabourMaster/0';
+      final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
 
       final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
+      String accessToken = await getAccessToken();
+      setDioAccessokenAndApiKey(dio, accessToken, config);
+
       print(url);
 
-      debugger(when: true);
+      // debugger(when: true);
       final response = await dio.get(url, options: Options(headers: headers));
 
       // print('lab  called');
@@ -217,7 +221,7 @@ class WorkSelection extends StatelessWidget {
     final officeId = currentSeatDetails['office_id'];
     // final officeCode = 1234;
     final url =
-        '$config.liveServiceUrlwrk/getScheduleListForNormalMeasurement/$officeId';
+        '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     try {
@@ -231,8 +235,12 @@ class WorkSelection extends StatelessWidget {
 
       // print(urlEdit);
 
-      debugger(when: true);
-      Response responseEdit = await Dio().get(
+      // debugger(when: true);
+
+      Dio dio = Dio();
+      setDioAccessokenAndApiKey(dio, accessToken, config);
+
+      Response responseEdit = await dio.get(
         queryParameters: Map.from({'seat_id': seatId}),
         urlEdit,
         options: Options(headers: headers),
@@ -244,7 +252,7 @@ class WorkSelection extends StatelessWidget {
       // print('response edit $measurement_set_list');
 
       Response response =
-          await Dio().get(url, options: Options(headers: headers));
+          await dio.get(url, options: Options(headers: headers));
       //write code here to action for no work code error code -1 display error etc
 
       if (response.data['result_data'] != null &&
@@ -294,10 +302,11 @@ class WorkSelection extends StatelessWidget {
     } on Exception catch (e) {
       if (context != -1) {
         debugger(when: true);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('This is a SnackBar!'),
-            duration: Duration(seconds: 2),
+            content: Text(e.toString()),
+            duration: Duration(seconds: 10),
           ),
         );
 

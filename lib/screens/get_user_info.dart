@@ -1,21 +1,21 @@
-
 import 'package:dio/dio.dart';
 import 'package:samagra/environmental_config.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 
 Future getUserInfo(String accessToken, _ssoLoginLoading) async {
   Dio dio = Dio();
 
   EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-  String url = '${config.liveServiceUrl}/auth/getUserInfo';
+  String url = '${config.liveServiceUrlLogin}/auth/getUserInfo';
 
   String apiKey = '${config.apiKey}';
 
   try {
     // EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
     // Set up headers with the access token and API key
-    dio.options.headers['Authorization'] = 'Bearer $accessToken';
-    dio.options.headers['x-api-key'] =
-        '$apiKey'; // Replace with your actual API key
+
+    setDioAccessokenAndApiKey(
+        dio, accessToken, config); // Replace with your actual API key
 
     Response response = await dio.post(url);
     // debugger(when: true);
