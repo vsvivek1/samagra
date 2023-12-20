@@ -1033,7 +1033,7 @@ String extractTokenFromLink(String inputString) {
 
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "config.liveServiceUrllogin";
+  final String _url = "${config.liveServiceUrl}login";
 
   Future login(String email, String password, String showPhoto, context) async {
     final Map<String, String> data = {

@@ -5,7 +5,7 @@ EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "config.liveServiceUrllogin";
+  final String _url = "${config.liveServiceUrl}login";
 
   Future<Map<String, dynamic>> login(
       String email, String password, String showPhoto) async {

@@ -1,8 +1,14 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
+
+import '../common.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class MeasurementDataToWorkModule {
   String? wrk_measurement_set_id;
@@ -143,11 +149,12 @@ class MeasurementDataToWorkModule {
     bool retVal = false;
     try {
       String baseUrl =
-          "config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       Dio dio = new Dio();
 
       dio = await setAccessTockenToDio(dio);
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
       Response response = await dio.get(baseUrl);
       if (response.statusCode == 200) {

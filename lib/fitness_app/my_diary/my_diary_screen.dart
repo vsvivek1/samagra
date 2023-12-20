@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 
 EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
@@ -126,8 +127,8 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
     _officeName = loginDetailsMap['seat_details']['office']['disp_name'];
 
     final dio = Dio();
-
-    final url = 'config.liveServiceUrlloadOrumaTotalDetails';
+    setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    final url = '${config.liveServiceUrl}loadOrumaTotalDetails';
 
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
     final body = {"selectkey": "HT", " mainmen": "consumercount"};

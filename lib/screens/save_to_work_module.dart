@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/server_message_widget.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+import 'package:samagra/screens/work_name_widget.dart';
 import 'package:samagra/screens/work_selection.dart';
 import 'measurement_data_to_work_module.dart';
 
@@ -17,10 +19,13 @@ class SaveToWorkModule extends StatefulWidget {
   int workId; // Initialize these fields
   String workScheduleGroupId;
 
+  String workName = '';
+
   SaveToWorkModule({
     required this.dataFromPreviousScreen,
     required this.workId, // Initialize this field in the constructor
-    required this.workScheduleGroupId, // Initialize this field in the constructor
+    required this.workScheduleGroupId,
+    required workName, // Initialize this field in the constructor
   });
 
   @override
@@ -103,6 +108,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           key: _formKey,
           child: ListView(
             children: [
+              WorkNameWidget(
+                  workName: widget.workName, workId: widget.workId.toString()),
               CheckboxListTile(
                 title: Text('Is this a  Premeasurement ?'),
                 value: _measurementDataToWorkModule.is_premeasurement,
@@ -270,6 +277,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
 
       // Perform the POST request using Dio
       Dio dio = Dio();
+
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       try {
         var dataToSend = _measurementDataToWorkModule.toMap();
 
@@ -302,11 +311,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           // data.fields.add(MapEntry(key, value.toString()));
         });
 
-        dataToSend['plg_work_id'] = "28552";
-        dataToSend['wrk_schedule_group_id'] = "16114";
+        // dataToSend['plg_work_id'] = "28552";
+        // dataToSend['wrk_schedule_group_id'] = "16114";
         var dio = Dio();
+
+        setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
         var response = await dio.request(
-          'config.liveServiceUrlwrk/saveMeasurementWithPolevar',
+          '${config.liveServiceUrl}wrk/saveMeasurementWithPolevar',
           options: Options(
             method: 'POST',
             headers: headers,

@@ -41,7 +41,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
     final officeId = currentSeatDetails['office_id'];
     // final officeCode = 1234;
     final url =
-        'config.liveServiceUrlwrk/getScheduleListForNormalMeasurement/$officeId';
+        '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     try {

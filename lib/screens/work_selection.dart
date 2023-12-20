@@ -24,6 +24,8 @@ import 'get_work_details.dart';
 import 'measurement_option.dart';
 import 'package:samagra/environmental_config.dart';
 
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+
 class WorkSelection extends StatelessWidget {
   final storage = SecureStorage();
 
@@ -137,6 +139,8 @@ class WorkSelection extends StatelessWidget {
       final response = await dio.get(url, options: Options(headers: headers));
 
       // print('lab  called');
+
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       final responseMaterial =
           await dio.get(url2, options: Options(headers: headers));
 //
@@ -227,7 +231,7 @@ class WorkSelection extends StatelessWidget {
     try {
       String seatId = await getSeatId();
 
-      var u = config.liveServiceUrl;
+      // var u = ${config.liveServiceUrl;};
 
       // debugger(when: true);
       final urlEdit =
@@ -250,7 +254,7 @@ class WorkSelection extends StatelessWidget {
       var res2 = responseEdit.data['result_data'];
       List measurementSetList = res2['measurement_set_list'];
       // print('response edit $measurement_set_list');
-
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       Response response =
           await dio.get(url, options: Options(headers: headers));
       //write code here to action for no work code error code -1 display error etc
@@ -301,7 +305,7 @@ class WorkSelection extends StatelessWidget {
       }
     } on Exception catch (e) {
       if (context != -1) {
-        debugger(when: true);
+        // debugger(when: true);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

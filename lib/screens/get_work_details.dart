@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/common.dart';
+import 'package:samagra/environmental_config.dart';
 
 import 'log_functions.dart';
 import 'package:dio/dio.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 Future<Map<dynamic, dynamic>?> getWorkDetails(String workId,
     {measurementsetListId = '-1'}) async {
@@ -61,7 +64,7 @@ getWorkDertailsFromServer(measurementsetListId) async {
 
   final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
   String url =
-      "config.liveServiceUrlwrk/getPolevarMeasurementDetails/$measurementsetListId";
+      "${config.liveServiceUrl}wrk/getPolevarMeasurementDetails/$measurementsetListId";
 
   Response<Map<String, dynamic>> res = await Dio().get(
     url,

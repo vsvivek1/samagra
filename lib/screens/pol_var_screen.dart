@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
 
 import 'get_work_details.dart';
@@ -29,6 +31,8 @@ import 'dart:core';
 import 'dart:developer';
 
 import 'measurement_property_copier_screen.dart';
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class PolVarScreen extends StatefulWidget {
   @override
@@ -616,16 +620,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //wrong function
     try {
       String baseUrlOld =
-          "config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       String baseUrl =
-          "config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+          "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
       print("BASE UR mdtwm 136L $baseUrl");
 
       Dio dio = new Dio();
 
       dio = await setAccessTockenToDio(dio);
+
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
       Response response = await dio.get(baseUrl);
       if (response.statusCode == 200) {
@@ -817,6 +823,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => SaveToWorkModule(
+            workName: widget.workName,
             dataFromPreviousScreen: apiDataForSamagra,
             workId: widget.workId,
             workScheduleGroupId: widget.workScheduleGroupId),
@@ -2270,10 +2277,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
       String taskId = task['id'].toString();
 
       final url =
-          "config.liveServiceUrlwrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
+          "${config.liveServiceUrl}wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
 
-      final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
-
+      String accessToken = await getAccessToken();
+      final headers = {'Authorization': 'Bearer ${accessToken}'};
+      setDioAccessokenAndApiKey(dio, accessToken, config);
       Response<dynamic> response;
       try {
         final response1 = await dio
@@ -2643,12 +2651,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
 // config.liveServiceUrlwrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
       final url =
-          'config.liveServiceUrlwrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
+          '${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
       print("url called $url");
+
+      Dio dio = Dio();
       final headers = {'Authorization': 'Bearer $accessToken'};
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+
       Response response =
-          await Dio().get(url, options: Options(headers: headers));
+          await dio.get(url, options: Options(headers: headers));
 
       if (response.statusCode != 200) {
         return Future.value([-1]);

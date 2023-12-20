@@ -467,7 +467,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   // final String _url = "config.liveServiceUrlswitchUserSeat";
-  final String _url = "config.liveServiceUrlswitchUserSeat";
+  final String _url = "${config.liveServiceUrl}switchUserSeat";
   final Dio _dio = new Dio();
 // final FlutterSecureStorage _secureStorage = new FlutterSecureStorage();
 

@@ -1,10 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:samagra/common.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+import 'package:samagra/environmental_config.dart';
+
+Dio dio = Dio();
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 class HttpHelper {
-  Dio dio = Dio();
-
   Future<Response> get(String url) async {
     try {
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       return await dio.get(url);
     } catch (e) {
       rethrow;
