@@ -396,11 +396,36 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
   var isAudioMuted = false;
 
+  getStoredWorkDetails(workId) async {
+    final storage = new FlutterSecureStorage();
+
+    String? jsonDetails = await storage.read(key: 'measurementDetails');
+
+    if (jsonDetails != null) {
+      List<dynamic> details = jsonDecode(jsonDetails);
+
+      Map<dynamic, dynamic> matchingDetail = details
+          .firstWhere((detail) => detail['workId'] == workId, orElse: () => {});
+
+      bool hasStarted = matchingDetail.isNotEmpty;
+
+      return {
+        'matchingDetail': matchingDetail,
+        'detailsList': details,
+        hasStarted: hasStarted
+      };
+    }
+    return {'matchingDetail': {}, 'detailsList': []};
+  }
+
   setWorKdetails(_filteredItems) async {
     _filteredItems.forEach((i) async {
-      if (i == "-1") {
-        return;
-      }
+      // bool hasStarted = await getStoredWorkDetails(i['plg_work_id']).hasStarted;
+
+      // i.hasStarted = hasStarted;
+      // if (i == "-1") {
+      //   return;
+      // }
 
       var vd = await getWorkDetails(i["workId"].toString());
 
@@ -417,6 +442,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
         }
       }
     });
+
+    setState(() {});
   }
 
   @override
@@ -517,10 +544,16 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
                     Map workDetail = item['wrk_work_detail'];
 
+                    print("$item item");
+
                     // int hasTakenback=
 
                     // int workId = workDetail?['id'];
                     int workId = item?['workId'];
+
+                    // var hasStarted = await getStoredWorkDetails(workId); //
+
+                    // print('has started $hasStarted');
 
                     int workScheduleGroupId = item?['wrk_schedule_group_id'];
 
@@ -554,8 +587,8 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                           workDetails.workId = workId;
                           workDetails.isAudioMuted = true;
 
-                          print(
-                              "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
+                          // print(
+                          //     "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
 
                           // debugger(when: true);
 
@@ -582,7 +615,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                               children: [
                                 CircleAvatar(
                                   child: Text(sl.toString()),
-                                  radius: 1,
+                                  radius: 10,
                                 ),
                                 Spacer(),
                                 Text('WorkId :$workId'),
@@ -599,15 +632,21 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                                 tileColor: (status != 'CREATED')
                                     ? Color.fromARGB(255, 33, 194, 151)
                                     : Colors.white,
-                                subtitle: item['started'] == true
-                                    ? Text(
-                                        "No of Locations Mdeasures ${item['noOflocationMeasured']}")
-                                    : Text(
-                                        'Measurements Not Started ${item['noOflocationMeasured']}'),
-                                title: Text('\n\n' +
-                                    item['wrk_work_detail']['work_name'] +
-                                    '\n' +
-                                    '\n WorkCode: $workCode'),
+                                // subtitle: item['started'] == true
+                                //     ? Text(
+                                //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
+                                //     : Text(
+                                //         'Measurements Not Started ${item['hasStarted']}'),
+                                title: Text(
+                                  '\n' +
+                                      item['wrk_work_detail']['work_name'] +
+                                      '\n WorkCode: $workCode',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      wordSpacing: 3,
+                                      color: const Color.fromARGB(
+                                          255, 89, 76, 175)),
+                                ),
                               ),
                             ),
                           ),

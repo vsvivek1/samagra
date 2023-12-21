@@ -2024,8 +2024,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 }
 
                 tasklist1[panelIndex]['isExpanded'] = isExpanded;
-                print(
-                    'expansion panel index $panelIndex  and isExpanded is $isExpanded && ${tasklist1[panelIndex]['isExpanded']}');
 
                 //
               });
@@ -2036,8 +2034,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
               var structures = t['structures'];
               // print(t);
               // print('tabove');
-
-              print('is  yyy  expanded ${t['isExpanded']}');
 
               counter++;
               return ExpansionPanel(
@@ -2054,6 +2050,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 },
                 body: Column(
                     children: structures.map<Widget>((st) {
+                  // debugger(when: true);
                   return GestureDetector(
                     onDoubleTap: () => _showBottomSheet(context),
                     child: Card(
@@ -2073,31 +2070,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   ),
                                 ],
                               )),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.remove),
-                                onPressed: () {
-                                  // Decrement task quantity
-                                },
-                              ),
-                              Text((st['quantity'] ?? 0)
-                                  .toString()), // Display task quantity
-                              IconButton(
-                                icon: Icon(Icons.add),
-                                onPressed: () async {
-                                  await this.getMasterEstimateForStructureItem(
-                                      widget.workId, t, st);
-
-                                  // st["id"], st['qty'] ?? 0, st);
-
-                                  // _showBottomSheet(context);
-
-                                  // Increment task quantity
-                                },
-                              ),
-                            ],
-                          ),
+                          setStructureQuantityWidget(st, t),
                         ],
                       ),
                     ),
@@ -2116,6 +2089,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     ),
               );
             }).toList()),
+      ],
+    );
+  }
+
+  Row setStructureQuantityWidget(st, t) {
+    // debugger(when: true);
+    return Row(
+      children: [
+        IconButton(
+          icon: Icon(Icons.remove),
+          onPressed: () {
+            // Decrement task quantity
+          },
+        ),
+        Text((st['quantity'] ?? 0).toString()), // Display task quantity
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () async {
+            await this.getMasterEstimateForStructureItem(widget.workId, t, st);
+
+            // st["id"], st['qty'] ?? 0, st);
+
+            // _showBottomSheet(context);
+
+            // Increment task quantity
+          },
+        ),
       ],
     );
   }
@@ -2319,7 +2319,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return;
       }
 
-      print("LOCATION NUMBER $_selectedLocationIndex $response.data");
+      // print("LOCATION NUMBER $_selectedLocationIndex $response.data");
 
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
@@ -2379,18 +2379,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
               task['structures'] = [];
             }
 
+            // debugger(when: true);
             if (task['structures'].any((s) => s['id'] == mstStructureId)) {
               var structure = task['structures'].firstWhere(
                   (s) => s['id'] == mstStructureId,
                   orElse: () => {});
-              structure['quantity'] = structure['quantity'] + 1;
+
+              setState(() {
+                structure['quantity'] = structure['quantity'] + 1;
+              });
+              // debugger(when: true);
             } else {
               var selectedStructure = {};
               selectedStructure['materials'] = [];
               selectedStructure['labour'] = [];
               selectedStructure['takenBack'] = [];
 
-              selectedStructure['quantity'] = 1;
+              setState(() {
+                selectedStructure['quantity'] = 1;
+              });
+
               selectedStructure['structure_name'] =
                   structureName ?? 'str Name Not Found';
               selectedStructure['id'] = mstStructureId;
@@ -2418,6 +2426,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               }
 
               task['structures'].add(selectedStructure);
+              debugger(when: true);
             }
 
             updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
