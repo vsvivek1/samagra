@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/app_theme.dart';
+import 'package:samagra/extras/nasa_image_of_day.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
@@ -325,7 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             context)),
                                                     Spacer(),
                                                     changeUserButton(context),
-                                                    Spacer()
+                                                    Spacer(),
                                                   ],
                                                 ),
                                               ],
@@ -387,7 +388,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                           });
                                         },
                                         title: Text('Remember me'),
-                                      )
+                                      ),
+
+                                      SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .9,
+                                          child: NasaImageOfTheDay())
                                     ],
                                   ),
                                 ),

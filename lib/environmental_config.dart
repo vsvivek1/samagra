@@ -13,6 +13,8 @@ class EnvironmentConfig {
   final String liveServiceUrlLogin; // New variable
   final bool isDebug;
 
+  String nasaApiKey;
+
   EnvironmentConfig({
     required this.apiKey,
     required this.erpUrl,
@@ -26,6 +28,7 @@ class EnvironmentConfig {
     required String apiKeyProd,
     required this.liveServiceUrlGroup1,
     required this.liveServiceUrlLogin,
+    required this.nasaApiKey,
   }) {
     var a = loadEnv();
 
@@ -64,6 +67,7 @@ class EnvironmentConfig {
 
     // debugger(when: true);
     return EnvironmentConfig(
+      nasaApiKey: dotenv.env['NASA_API_KEY'] ?? '',
       liveServiceUrlLogin: dotenv.env['LIVE_SERVICE_URL_LOGIN'] ?? '',
       liveServiceUrlGroup1: dotenv.env['LIVE_SERVICE_URL_GROUP1'] ?? '',
       apiKey: dotenv.env['API_KEY'] ?? '',
