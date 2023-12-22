@@ -2103,7 +2103,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             // Decrement task quantity
           },
         ),
-        Text((st['quantity'] ?? 0).toString()), // Display task quantity
+        Text((st['quantity'] ?? 'E').toString()), // Display task quantity
         IconButton(
           icon: Icon(Icons.add),
           onPressed: () async {
@@ -2276,6 +2276,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       String taskId = task['id'].toString();
 
+      // debugger(when: true);
+
       final url =
           "${config.liveServiceUrl}wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
 
@@ -2348,7 +2350,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           });
         }
 
-        print("SELCTD LOCATION TAKS $_selectedLocationDetails");
+        // print("SELCTD LOCATION TAKS $_selectedLocationDetails");
         measurementDetails.forEach((location) {
           int locationNumber = _selectedLocationIndex + 1;
 
@@ -2380,6 +2382,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             }
 
             // debugger(when: true);
+
             if (task['structures'].any((s) => s['id'] == mstStructureId)) {
               var structure = task['structures'].firstWhere(
                   (s) => s['id'] == mstStructureId,
@@ -2402,6 +2405,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
               selectedStructure['structure_name'] =
                   structureName ?? 'str Name Not Found';
               selectedStructure['id'] = mstStructureId;
+
+              // debugger(when: true);
+              strcuture['quantity'] == null
+                  ? strcuture['quantity'] = 1
+                  : strcuture['quantity'] = strcuture['quantity'] + 1;
+
+              // debugger(when: true);
 
               if (issuedMaterialsForSelectedStructure != null &&
                   responseDataForStructureDetails != null) {
@@ -2426,7 +2436,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               }
 
               task['structures'].add(selectedStructure);
-              debugger(when: true);
+              // debugger(when: true);
             }
 
             updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
