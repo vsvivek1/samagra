@@ -242,13 +242,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                           var user = login["user"];
 
-                                          var storedLogin = json.decode(
-                                              snapshot.data['storedLogin']);
+                                          // String json=
 
-                                          var storedPassword =
-                                              storedLogin['password'];
+                                          if (snapshot.data['storedLogin'] !=
+                                              null) {
+                                            var storedLogin =
+                                                snapshot.data['storedLogin'] !=
+                                                        null
+                                                    ? json.decode(snapshot
+                                                        .data['storedLogin'])
+                                                    : '';
 
-                                          _password = storedPassword;
+                                            var storedPassword =
+                                                (storedLogin != "")
+                                                    ? storedLogin['password']
+                                                    : '';
+                                            _password = storedPassword;
+                                          }
 
                                           passwordInitialValue = _password;
 

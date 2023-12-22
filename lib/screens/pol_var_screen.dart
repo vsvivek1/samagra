@@ -2100,7 +2100,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         IconButton(
           icon: Icon(Icons.remove),
           onPressed: () {
-            // Decrement task quantity
+            reduceStructureQuantity(widget.workId, t, st);
           },
         ),
         Text((st['quantity'] ?? 'E').toString()), // Display task quantity
@@ -3131,4 +3131,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   reflectQuantityDetails() {}
+
+  void reduceStructureQuantity(int workId, t, st) {
+    print('hi');
+    // print();
+
+    /// get tasks of location
+    /// get structures
+    /// remove the structure
+  }
 }
