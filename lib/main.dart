@@ -3,6 +3,7 @@ import 'package:samagra/app_config.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:samagra/check_jwt_expiry.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
@@ -31,13 +32,25 @@ void main() async {
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(ProviderScope(child: MyApp(appConfig: config))));
+  ]).then((_) => runApp(ProviderScope(child: Samagra(appConfig: config))));
 }
 
-class MyApp extends StatelessWidget {
+class Samagra extends StatefulWidget {
   var appConfig;
 
-  MyApp({Key? key, required this.appConfig}) : super(key: key);
+  Samagra({Key? key, required this.appConfig}) : super(key: key);
+
+  @override
+  State<Samagra> createState() => _SamagraState();
+}
+
+class _SamagraState extends State<Samagra> {
+  @override
+  void initState() {
+    startJwtExpiryCheck();
+    // TODO: implement initState
+    super.initState();
+  }
 
   final routes = <String, WidgetBuilder>{
     '/login': (BuildContext context) => LoginScreen(),

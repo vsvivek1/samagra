@@ -20,6 +20,7 @@ import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/login_with_sso.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:convert';
@@ -725,6 +726,10 @@ class _LoginScreenState extends State<LoginScreen> {
     var resultData = {};
     if (occation == 'sso') {
       resultData = jsonDecode(result["result_data"]);
+
+      print(" access token ${oIdAccessTokens[0]} - accees token end");
+
+      // gmailMe(oIdAccessTokens[0]);
 
       await _secureStorage.writeKeyValuePairToSecureStorage(
           "access_token", oIdAccessTokens[0]);

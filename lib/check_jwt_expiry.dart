@@ -1,0 +1,98 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jwt_decode/jwt_decode.dart';
+import 'package:samagra/environmental_config.dart';
+import 'package:samagra/secure_storage/secure_storage.dart';
+import 'package:dio/dio.dart';
+
+final SecureStorage _secureStorage = SecureStorage();
+
+EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+
+Future<void> refreshAccessToken(refreshToken) async {
+  try {
+    Dio dio = Dio();
+
+    var formData = {
+      'client_id': 'pkce-client3',
+      'grant_type': 'refresh_token',
+      'refresh_token': refreshToken, // Replace with your refresh token
+    };
+
+    String url = '${config.liveAccessUrl}token';
+    print(url);
+    var response = await dio.post(
+      url,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      ),
+      data: FormData.fromMap(formData),
+    );
+
+    if (response.statusCode == 200) {
+      // Handle successful token refresh response
+      print('Token refreshed successfully: ${response.data}');
+    } else {
+      // Handle other status codes
+      print('Failed to refresh token: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Handle Dio errors
+    print('Error refreshing token: $e');
+  }
+}
+
+void startJwtExpiryCheck() async {
+  String jwtToken = await getJwtTokenFromStorage();
+  const duration = Duration(seconds: 60); // Check every 30 seconds
+  Timer _timer = Timer.periodic(duration, (timer) {
+    // print(jwtToken);
+    checkJwtExpiry(jwtToken);
+  });
+}
+
+Future<String> getJwtTokenFromStorage() async {
+  return await _secureStorage.getSecureStorageDataByKey("access_token");
+}
+
+Future<String> getRefrfeshTokenFromStorage() async {
+  return await _secureStorage.getSecureStorageDataByKey("refresh_token");
+}
+
+void checkJwtExpiry(jwtToken) async {
+  Map<String, dynamic> decodedToken = Jwt.parseJwt(jwtToken);
+
+  if (decodedToken.containsKey('exp')) {
+    int expiryTimeInSeconds = decodedToken['exp'];
+    int currentTimeInSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    int remainingSeconds = expiryTimeInSeconds - currentTimeInSeconds;
+
+    if (remainingSeconds <= 60 && remainingSeconds > 0) {
+      String refreshToken = await getRefrfeshTokenFromStorage();
+      refreshAccessToken(refreshToken);
+      showExpiryToast();
+    } else {
+      String refreshToken = await getRefrfeshTokenFromStorage();
+      refreshAccessToken(refreshToken);
+      showExpiryToast();
+      print('JWT is not about to expire. ${remainingSeconds}');
+    }
+  } else {
+    print('Token does not contain expiration time.');
+  }
+}
+
+void showExpiryToast() {
+  Fluttertoast.showToast(
+    msg: 'JWT is about to expire in less than 1 minute!',
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+    backgroundColor: Colors.red,
+    textColor: Colors.white,
+  );
+}
