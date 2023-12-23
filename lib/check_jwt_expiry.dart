@@ -74,12 +74,12 @@ void checkJwtExpiry(jwtToken) async {
 
     if (remainingSeconds <= 60 && remainingSeconds > 0) {
       String refreshToken = await getRefrfeshTokenFromStorage();
-      refreshAccessToken(refreshToken);
+      // refreshAccessToken(refreshToken);
       showExpiryToast();
     } else {
       String refreshToken = await getRefrfeshTokenFromStorage();
-      refreshAccessToken(refreshToken);
-      showExpiryToast();
+      // refreshAccessToken(refreshToken);
+      // showExpiryToast();
       print('JWT is not about to expire. ${remainingSeconds}');
     }
   } else {

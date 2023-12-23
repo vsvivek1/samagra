@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_config.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +121,7 @@ class _SamagraState extends State<Samagra> {
         textTheme: AppTheme.textTheme,
         platform: TargetPlatform.iOS,
       ),
-      home: LoginScreen(), // //SplashScreen(),
+      home: UpdateCheck(), // //SplashScreen(),
     );
   }
 }

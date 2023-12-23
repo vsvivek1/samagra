@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/environmental_config.dart';
+import 'package:path_provider/path_provider.dart';
 
 EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
@@ -22,6 +25,22 @@ class _NasaImageOfTheDayState extends State<NasaImageOfTheDay> {
     fetchNasaImage();
   }
 
+  saveImageToDirectory(imageUrl) async {
+    Dio dio = Dio();
+
+    Response response = await dio.get(imageUrl,
+        options: Options(responseType: ResponseType.bytes));
+
+    final Directory appDir = await getApplicationDocumentsDirectory();
+    final String filePath = '${appDir.path}/image.jpg';
+
+    File file = File(filePath);
+    await file.writeAsBytes(response.data!); // No need for e
+
+    // Show a message or perform other actions after saving the image
+    print('Image saved to $filePath');
+  }
+
   Future<void> fetchNasaImage() async {
     try {
       final dio = Dio();
@@ -35,6 +54,8 @@ class _NasaImageOfTheDayState extends State<NasaImageOfTheDay> {
           imageUrl = data['url'];
           title = data['title'] ?? '';
           explanation = data['explanation'] ?? '';
+
+          // saveImageToDirectory(imageUrl);
         });
       } else {
         throw Exception('Failed to load image');

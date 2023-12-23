@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'package:android_package_installer/android_package_installer.dart';
+// import 'package:android_package_installer/android_package_installer.dart';
 
 class UpdateAndInstall extends StatelessWidget {
   final String apkUrl =
@@ -21,13 +21,14 @@ class UpdateAndInstall extends StatelessWidget {
 
       // Use package_installer or url_launcher to launch the installation process
       // For example using package_installer:
-      int? statusCode =
-          await AndroidPackageInstaller.installApk(apkFilePath: '$dir/app.apk');
-      if (statusCode != null) {
-        PackageInstallerStatus installationStatus =
-            PackageInstallerStatus.byCode(statusCode);
-        print(installationStatus.name);
-      } // Make sure to include required permissions
+      // int? statusCode =
+      //     await AndroidPackageInstaller.installApk(apkFilePath: '$dir/app.apk');
+      // if (statusCode != null) {
+      //   PackageInstallerStatus installationStatus =
+      //       PackageInstallerStatus.byCode(statusCode);
+      //   print(installationStatus.name);
+
+      // } // Make sure to include required permissions
 
       // For url_launcher:
       // Launch the file path (Note: For Android, you need an intent to start the installation)

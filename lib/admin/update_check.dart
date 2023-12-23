@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-
-void main() {
-  runApp(MyApp());
-}
+import 'package:samagra/screens/login_screen.dart';
 
 class UpdateCheck extends StatefulWidget {
   @override
@@ -11,7 +8,7 @@ class UpdateCheck extends StatefulWidget {
 }
 
 class _UpdateCheckState extends State<UpdateCheck> {
-  String _currentVersion = '';
+  String _currentVersion = '1.0.0';
   String _latestVersion =
       '1.0.0'; // Replace with the latest version from the server
 
@@ -29,31 +26,39 @@ class _UpdateCheckState extends State<UpdateCheck> {
   }
 
   bool _needsUpdate() {
+    return false;
     // Compare the current version with the latest version
+    //  print("$_currentVersion _currentVersion ${packageInfo.version}");
+
     return _currentVersion != _latestVersion;
   }
 
   void _showUpdateDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Update Available'),
-          content: Text(
-              'A new version of M-samagra is available. Please update to the latest version.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Add logic to redirect users to the app store for update
-                // For example: launch('URL_TO_APP_STORE');
-                Navigator.pop(context);
-              },
-              child: Text('Update'),
-            ),
-          ],
-        );
-      },
-    );
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Update Available'),
+            content: Text(
+                'A new version of M-samagra is available. Please update to the latest version.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  // Add logic to redirect users to the app store for update
+                  // For example: launch('URL_TO_APP_STORE');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
+                child: Text('Update'),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   @override
@@ -61,13 +66,6 @@ class _UpdateCheckState extends State<UpdateCheck> {
     if (_currentVersion.isNotEmpty && _needsUpdate()) {
       _showUpdateDialog();
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Update Check'),
-      ),
-      body: Center(
-        child: Text('Current Version: $_currentVersion'),
-      ),
-    );
+    return LoginScreen();
   }
 }
