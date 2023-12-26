@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
@@ -6,7 +8,7 @@ import 'dart:io';
 
 class UpdateAndInstall extends StatelessWidget {
   final String apkUrl =
-      'YOUR_SERVER_URL/api/FetchUpdatedApk'; // Replace with your server URL
+      'https://drive.google.com/file/d/1r5mNTr5_Z_ie0JckYpxDgI0UEFoWCQfF/view?usp=sharing'; // Replace with your server URL
 
   Future<void> _downloadAndInstallApk() async {
     Dio dio = Dio();
@@ -19,6 +21,7 @@ class UpdateAndInstall extends StatelessWidget {
       final File file = File('$dir/app.apk');
       await file.writeAsBytes(response.data as List<int>);
 
+      debugger(when: true);
       // Use package_installer or url_launcher to launch the installation process
       // For example using package_installer:
       // int? statusCode =
