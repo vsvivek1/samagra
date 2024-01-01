@@ -56,7 +56,8 @@ void startJwtExpiryCheck() async {
 }
 
 Future<String> getJwtTokenFromStorage() async {
-  return await _secureStorage.getSecureStorageDataByKey("access_token");
+  var res = await _secureStorage.getSecureStorageDataByKey("access_token");
+  return res ?? '';
 }
 
 Future<String> getRefrfeshTokenFromStorage() async {
