@@ -92,15 +92,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                     animationController: animationController,
                                     listData: homeList[index],
                                     callBack: () {
-                                      NavigationHomeScreen.setScreenView(
-                                          WorkSelection());
-                                      // Navigator.push<dynamic>(
-                                      //   context,
-                                      //   MaterialPageRoute<dynamic>(
-                                      //     builder: (BuildContext context) =>
-                                      //         homeList[index].navigateScreen!,
-                                      //   ),
-                                      // );
+                                      // NavigationHomeScreen.setScreenView(
+                                      //     WorkSelection());
+                                      Navigator.push<dynamic>(
+                                        context,
+                                        MaterialPageRoute<dynamic>(
+                                          builder: (BuildContext context) =>
+                                              homeList[index].navigateScreen!,
+                                        ),
+                                      );
                                     },
                                   );
                                 },

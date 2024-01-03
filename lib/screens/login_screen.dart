@@ -305,7 +305,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         MemoryImage(bytes),
                                                   ),
                                                 ),
-                                                Text('Welcome Back '),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Text(
+                                                    'Welcome Back ',
+                                                    style:
+                                                        TextStyle(fontSize: 20),
+                                                  ),
+                                                ),
                                                 Text(
                                                   '$username ',
                                                   style: TextStyle(
@@ -502,17 +510,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       children: [
         SizedBox(
-          width: 125,
+          width: 250,
           child: Image(image: AssetImage('assets/images/kseb.jpg')),
         ),
-        Container(
-          padding: EdgeInsets.all(20),
-          child: Text('KERALA STATE ELECTRICTY BOARD LIMITED',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline,
-                  fontSize: 14,
-                  color: Color.fromARGB(255, 16, 87, 161))),
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Container(
+            // clipBehavior: Clip.hardEdge,
+            color: Color.alphaBlend(
+                Colors.white70, Color.fromARGB(255, 197, 203, 219)),
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.all(20),
+            child: Text('KERALA STATE ELECTRICTY BOARD LIMITED',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,
+                    fontSize: 18,
+                    color: Color.fromARGB(255, 16, 87, 161))),
+          ),
         ),
       ],
     );
