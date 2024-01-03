@@ -1,5 +1,5 @@
-import 'package:samagra/design_course/design_course_app_theme.dart';
-import 'package:samagra/design_course/models/category.dart';
+import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
+import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';
 

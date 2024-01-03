@@ -1,6 +1,6 @@
-import 'package:samagra/design_course/category_list_view.dart';
-import 'package:samagra/design_course/course_info_screen.dart';
-import 'package:samagra/design_course/popular_course_list_view.dart';
+import 'package:samagra/samagra_home_screen/category_list_view.dart';
+import 'package:samagra/samagra_home_screen/course_info_screen.dart';
+import 'package:samagra/samagra_home_screen/popular_course_list_view.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';
 import 'design_course_app_theme.dart';
@@ -31,7 +31,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
                   height: MediaQuery.of(context).size.height,
                   child: Column(
                     children: <Widget>[
-                      getSearchBarUI(),
+                      // getSearchBarUI(),
                       getCategoryUI(),
                       Flexible(
                         child: getPopularCourseUI(),
@@ -55,7 +55,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
           child: Text(
-            'Category1',
+            'Categories',
             textAlign: TextAlign.left,
             style: TextStyle(
               fontWeight: FontWeight.w600,
@@ -139,11 +139,11 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
   Widget getButtonUI(CategoryType categoryTypeData, bool isSelected) {
     String txt = '';
     if (CategoryType.ui == categoryTypeData) {
-      txt = 'Ui/Ux';
+      txt = 'Work';
     } else if (CategoryType.coding == categoryTypeData) {
-      txt = 'Coding';
+      txt = 'Utilities';
     } else if (CategoryType.basic == categoryTypeData) {
-      txt = 'Basic UI';
+      txt = 'My Profile';
     }
     return Expanded(
       child: Container(
@@ -261,7 +261,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
 
   Widget getAppBarUI() {
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 18),
+      padding: const EdgeInsets.only(top: 8.0, left: 125, right: 18),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -269,18 +269,18 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                // Text(
+                //   'Choose your',
+                //   textAlign: TextAlign.left,
+                //   style: TextStyle(
+                //     fontWeight: FontWeight.w400,
+                //     fontSize: 14,
+                //     letterSpacing: 0.2,
+                //     color: DesignCourseAppTheme.grey,
+                //   ),
+                // ),
                 Text(
-                  'Choose your',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 14,
-                    letterSpacing: 0.2,
-                    color: DesignCourseAppTheme.grey,
-                  ),
-                ),
-                Text(
-                  'Design Course',
+                  'Quick Board',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
@@ -295,7 +295,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
           Container(
             width: 60,
             height: 60,
-            child: Image.asset('assets/design_course/userImage.png'),
+            child: Image.asset('assets/samagra_home_screen/userImage.png'),
           )
         ],
       ),

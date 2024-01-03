@@ -47,7 +47,7 @@ class Category {
   static List<Category> popularCourseList = <Category>[
     Category(
       imagePath: 'assets/design_course/interFace3.png',
-      title: 'App Design Course',
+      title: 'Polevar Measurement',
       lessonCount: 12,
       money: 25,
       rating: 4.8,
