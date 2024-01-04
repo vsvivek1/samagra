@@ -12,6 +12,9 @@ final SecureStorage _secureStorage = SecureStorage();
 EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
 
 Future<void> refreshAccessToken(refreshToken) async {
+  if (!config.deploymentMode.contains('SSO')) {
+    return;
+  }
   try {
     Dio dio = Dio();
 
@@ -47,10 +50,15 @@ Future<void> refreshAccessToken(refreshToken) async {
 }
 
 void startJwtExpiryCheck() async {
+  if (!config.deploymentMode.contains('SSO')) {
+    return;
+  }
   String jwtToken = await getJwtTokenFromStorage();
   const duration = Duration(seconds: 60); // Check every 30 seconds
   Timer _timer = Timer.periodic(duration, (timer) {
     // print(jwtToken);
+
+    //  if(deplo)
     checkJwtExpiry(jwtToken);
   });
 }
@@ -65,6 +73,9 @@ Future<String> getRefrfeshTokenFromStorage() async {
 }
 
 void checkJwtExpiry(jwtToken) async {
+  if (!config.deploymentMode.contains('SSO')) {
+    return;
+  }
   Map<String, dynamic> decodedToken = Jwt.parseJwt(jwtToken);
 
   if (decodedToken.containsKey('exp')) {
@@ -89,6 +100,9 @@ void checkJwtExpiry(jwtToken) async {
 }
 
 void showExpiryToast() {
+  if (!config.deploymentMode.contains('SSO')) {
+    return;
+  }
   Fluttertoast.showToast(
     msg: 'JWT is about to expire in less than 1 minute!',
     toastLength: Toast.LENGTH_LONG,
