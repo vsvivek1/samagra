@@ -29,6 +29,7 @@ import '../internet_connectivity.dart';
 import 'package:samagra/environmental_config.dart';
 
 EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+final String DEPLOYEMENT_MODE = config.deployementMode;
 
 // import 'package:samagra/secure_storage/common_functions.dart';
 String addPaddingToBase64UrlEncodedString(String base64String) {
@@ -100,6 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    _BtnAndPassForSmagraDirect = !(DEPLOYEMENT_MODE.contains('SSO'));
+
     initUniLinks();
     super.initState();
   }
@@ -340,12 +343,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                                           context),
                                                       Spacer(),
                                                     ],
-                                                    Center(
-                                                        child: ssoLoginButton(
-                                                            context)),
-                                                    Spacer(),
-                                                    changeUserButton(context),
-                                                    Spacer(),
+                                                    if (DEPLOYEMENT_MODE
+                                                        .contains('SSO')) ...[
+                                                      Center(
+                                                          child: ssoLoginButton(
+                                                              context)),
+                                                      Spacer(),
+                                                      changeUserButton(context),
+                                                      Spacer(),
+                                                    ]
                                                   ],
                                                 ),
                                               ],
@@ -553,14 +559,24 @@ class _LoginScreenState extends State<LoginScreen> {
       visible: true,
       child: _isLoggingIn == 1
           ? CircularProgressIndicator()
-          : ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(ksebColor),
+          : Container(
+              width: MediaQuery.sizeOf(context).width * .8,
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(ksebColor),
+                    ),
+                    onPressed: () async {
+                      await proceedForLogin(context, 'regular');
+                    },
+                    child: Text('Login $DEPLOYEMENT_MODE'),
+                  ),
+                  Spacer(),
+                  changeUserButton(context)
+                ],
               ),
-              onPressed: () async {
-                await proceedForLogin(context, 'regular');
-              },
-              child: Text('Login'),
             ),
     );
   }
