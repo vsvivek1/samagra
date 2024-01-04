@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/screens/work_selection.dart';
 
 class PopularCourseListView extends StatefulWidget {
   const PopularCourseListView({Key? key, this.callBack}) : super(key: key);
@@ -43,6 +46,8 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
               children: List<Widget>.generate(
                 Category.popularCourseList.length,
                 (int index) {
+                  // print(Category.popularCourseList[index].target);
+                  // debugger(when: true);
                   final int count = Category.popularCourseList.length;
                   final Animation<double> animation =
                       Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -101,7 +106,20 @@ class CategoryView extends StatelessWidget {
                 0.0, 50 * (1.0 - animation!.value), 0.0),
             child: InkWell(
               splashColor: Colors.transparent,
-              onTap: callback,
+              // onTap: category?.target(),
+
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WorkSelection()),
+                );
+              },
+              // onTap: () {
+              //   Widget? destinationScreen = category?.target();
+              //   if (destinationScreen != null) {
+              //     category?.gotToTarget(context, destinationScreen);
+              //   }
+              // },
               child: SizedBox(
                 height: 280,
                 child: Stack(
@@ -153,44 +171,44 @@ class CategoryView extends StatelessWidget {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: <Widget>[
-                                                Text(
-                                                  '${category!.lessonCount} lesson',
-                                                  textAlign: TextAlign.left,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w200,
-                                                    fontSize: 12,
-                                                    letterSpacing: 0.27,
-                                                    color: DesignCourseAppTheme
-                                                        .grey,
-                                                  ),
-                                                ),
-                                                Container(
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        '${category!.rating}',
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w200,
-                                                          fontSize: 18,
-                                                          letterSpacing: 0.27,
-                                                          color:
-                                                              DesignCourseAppTheme
-                                                                  .grey,
-                                                        ),
-                                                      ),
-                                                      Icon(
-                                                        Icons.star,
-                                                        color:
-                                                            DesignCourseAppTheme
-                                                                .nearlyBlue,
-                                                        size: 20,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
+                                                // Text(
+                                                //   '${category!.lessonCount} Pending',
+                                                //   textAlign: TextAlign.left,
+                                                //   style: TextStyle(
+                                                //     fontWeight: FontWeight.w200,
+                                                //     fontSize: 12,
+                                                //     letterSpacing: 0.27,
+                                                //     color: DesignCourseAppTheme
+                                                //         .grey,
+                                                //   ),
+                                                // ),
+                                                // Container(
+                                                //   child: Row(
+                                                //     children: <Widget>[
+                                                //       Text(
+                                                //         '${category!.rating}',
+                                                //         textAlign:
+                                                //             TextAlign.left,
+                                                //         style: TextStyle(
+                                                //           fontWeight:
+                                                //               FontWeight.w200,
+                                                //           fontSize: 18,
+                                                //           letterSpacing: 0.27,
+                                                //           color:
+                                                //               DesignCourseAppTheme
+                                                //                   .grey,
+                                                //         ),
+                                                //       ),
+                                                //       Icon(
+                                                //         Icons.star,
+                                                //         color:
+                                                //             DesignCourseAppTheme
+                                                //                 .nearlyBlue,
+                                                //         size: 20,
+                                                //       ),
+                                                //     ],
+                                                //   ),
+                                                // )
                                               ],
                                             ),
                                           ),
