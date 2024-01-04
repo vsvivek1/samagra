@@ -29,7 +29,7 @@ import '../internet_connectivity.dart';
 import 'package:samagra/environmental_config.dart';
 
 EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-final String DEPLOYEMENT_MODE = config.deployementMode;
+final String DEPLOYEMENT_MODE = config.deploymentMode;
 
 // import 'package:samagra/secure_storage/common_functions.dart';
 String addPaddingToBase64UrlEncodedString(String base64String) {
