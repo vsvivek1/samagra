@@ -131,7 +131,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
     Navigator.push<dynamic>(
       context,
       MaterialPageRoute<dynamic>(
-        builder: (BuildContext context) => CourseInfoScreen(),
+        builder: (BuildContext context) => SamagraHomeScreen(),
       ),
     );
   }

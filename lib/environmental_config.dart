@@ -98,7 +98,7 @@ class EnvironmentConfig {
         break;
     }
 
-    // debugger(when: true);
+    debugger(when: true);
     return EnvironmentConfig(
       deploymentMode: dotenv.env['DEPLOYMENT_MODE'] ?? '',
       nasaApiKey: dotenv.env['NASA_API_KEY'] ?? '',
