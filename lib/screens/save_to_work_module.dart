@@ -12,8 +12,6 @@ import 'measurement_data_to_work_module.dart';
 
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class SaveToWorkModule extends StatefulWidget {
   final Map dataFromPreviousScreen;
   int workId; // Initialize these fields
@@ -261,6 +259,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
   }
 
   void _submitForm() async {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     String token = await getAccessToken();
     // widget.dataFromPreviousScreen.forEach((key, value) {
     //   print("$key --> $value");

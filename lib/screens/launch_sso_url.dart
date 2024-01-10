@@ -1,4 +1,3 @@
-
 import 'package:samagra/environmental_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
@@ -27,7 +26,7 @@ launchSSOUrl(codeVerifier, codeChallenge, empcode) async {
     empcode = '';
   }
   const CLIENT_ID = "pkce-client3";
-  EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+  EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
 
   // const REDIRECT_URI = "m-samagra://kseb.in/sso";
   // const REDIRECT_URI = "m-samagra%3A%2F%2Fkseb.in%2Fsso";

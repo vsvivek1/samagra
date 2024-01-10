@@ -5,8 +5,6 @@ import 'package:samagra/screens/tree_cutting_walk.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class TreeCuttingCompensation extends StatefulWidget {
   @override
   _TreeCuttingCompensationState createState() =>
@@ -40,6 +38,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
     // final officeCode = currentSeatDetails['office']['office_code'];
     final officeId = currentSeatDetails['office_id'];
     // final officeCode = 1234;
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     final url =
         '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};

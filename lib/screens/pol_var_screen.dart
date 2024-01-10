@@ -32,8 +32,6 @@ import 'dart:developer';
 
 import 'measurement_property_copier_screen.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class PolVarScreen extends StatefulWidget {
   @override
   final int workId;
@@ -615,6 +613,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<List> getScheduleDetailsForMeasurement(String workId) async {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     // bool retVal = false;
 
     //wrong function
@@ -2277,6 +2276,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       String taskId = task['id'].toString();
 
       // debugger(when: true);
+      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
 
       final url =
           "${config.liveServiceUrl}wrk/getScheduleForMobilePolevar/$_wrk_schedule_group_id/$taskId/$mstStructureId";
@@ -2669,6 +2669,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // final officeId = currentSeatDetails['office_id'];
 
 // config.liveServiceUrlwrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
+      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
       final url =
           '${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 

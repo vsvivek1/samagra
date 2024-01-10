@@ -1,11 +1,9 @@
-
 import 'package:dio/dio.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 Future<List<String>> getOidcAccessTokens(
     String codeVerifier, String code) async {
+  EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
   Dio dio = Dio();
   // String url =
   //     'https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/token';

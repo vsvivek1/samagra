@@ -7,8 +7,6 @@ import 'package:samagra/environmental_config.dart';
 import 'log_functions.dart';
 import 'package:dio/dio.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 Future<Map<dynamic, dynamic>?> getWorkDetails(String workId,
     {measurementsetListId = '-1'}) async {
   // debugger(when: true);
@@ -60,6 +58,7 @@ Future<Map<dynamic, dynamic>?> getWorkDetails(String workId,
 }
 
 getWorkDertailsFromServer(measurementsetListId) async {
+  EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
   // String seatId = await getSeatId();
 
   final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};

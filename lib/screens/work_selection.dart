@@ -24,8 +24,6 @@ import 'get_work_details.dart';
 import 'measurement_option.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class WorkSelection extends StatelessWidget {
   final storage = SecureStorage();
 
@@ -124,6 +122,7 @@ class WorkSelection extends StatelessWidget {
 
   Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
     try {
+      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
       final dio = Dio();
       final url = '${config.liveServiceUrl}wrk/getLabourMaster/0';
       final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
@@ -224,6 +223,7 @@ class WorkSelection extends StatelessWidget {
     // final officeCode = currentSeatDetails['office']['office_code'];
     final officeId = currentSeatDetails['office_id'];
     // final officeCode = 1234;
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     final url =
         '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
@@ -448,7 +448,6 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
   @override
   void initState() {
-    EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
     audioCache = AudioCache(prefix: 'assets/audio/');
     _filteredItems = List.from(widget.schGrpList);
     setWorKdetails(_filteredItems);

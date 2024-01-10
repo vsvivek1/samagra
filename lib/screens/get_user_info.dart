@@ -5,7 +5,7 @@ import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 Future getUserInfo(String accessToken, _ssoLoginLoading) async {
   Dio dio = Dio();
 
-  EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+  EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
   String url = '${config.liveServiceUrlLogin}/auth/getUserInfo';
 
   String apiKey = '${config.apiKey}';

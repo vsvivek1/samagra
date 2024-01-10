@@ -8,8 +8,6 @@ import 'package:samagra/screens/set_access_token_to_dio.dart';
 
 import '../common.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class MeasurementDataToWorkModule {
   String? wrk_measurement_set_id;
   String? user_id;
@@ -146,6 +144,7 @@ class MeasurementDataToWorkModule {
   // Private method to fetch the API data using Dio and set parameters from the response
   Future<bool> fetchScheduleDetailsAndSetParams(
       String workId, dataFromPolvarScreen) async {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     bool retVal = false;
     try {
       String baseUrl =

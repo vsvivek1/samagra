@@ -28,9 +28,6 @@ import 'dart:convert';
 import '../internet_connectivity.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-final String DEPLOYEMENT_MODE = config.deploymentMode;
-
 // import 'package:samagra/secure_storage/common_functions.dart';
 String addPaddingToBase64UrlEncodedString(String base64String) {
   // Add padding to the base64 URL-safe encoded string
@@ -46,6 +43,9 @@ String codeVerifier = generateRandomString();
 //     addPaddingToBase64UrlEncodedString(generateCodeChallenge(codeVerifier));
 
 String codeChallenge = 'MWlv47S554VAgCBkUNgxWacyRGG0Gg1TkTAShA_okW8';
+
+late EnvironmentConfig config;
+String DEPLOYEMENT_MODE = '';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen();
@@ -99,8 +99,23 @@ class _LoginScreenState extends State<LoginScreen> {
   // get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
   //  bool _showFirstTimePasswordField;
 
+  Future<void> loadConfig() async {
+    // Initialize environment configuration
+    config = await EnvironmentConfig.fromEnvFile();
+
+    // After configuration is loaded, setState to rebuild the widget
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
+    loadConfig();
+    // config = EnvironmentConfig.fromEnvFile();
+    DEPLOYEMENT_MODE = config.deploymentMode;
+
+    debugger(when: true);
     _BtnAndPassForSmagraDirect = !(DEPLOYEMENT_MODE.contains('SSO'));
 
     initUniLinks();
