@@ -1,5 +1,4 @@
 import 'package:samagra/samagra_home_screen/category_list_view.dart';
-import 'package:samagra/samagra_home_screen/course_info_screen.dart';
 import 'package:samagra/samagra_home_screen/popular_course_list_view.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';

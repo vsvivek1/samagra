@@ -1,8 +1,6 @@
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
-import 'package:samagra/navigation_home_screen.dart';
-import 'package:samagra/screens/work_selection.dart';
 import 'model/homelist.dart';
 
 class MyHomePage extends StatefulWidget {

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:android_package_installer/android_package_installer.dart';
@@ -80,7 +79,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
   }
 
   void _showUpdateDialog() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       showDialog(
         context: context,
         builder: (BuildContext context) {

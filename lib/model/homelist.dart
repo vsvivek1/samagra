@@ -1,7 +1,4 @@
-import 'package:samagra/design_course/home_design_course.dart';
-import 'package:samagra/fitness_app/fitness_app_home_screen.dart';
 import 'package:flutter/widgets.dart';
-import 'package:samagra/hotel_booking/hotel_home_screen.dart';
 import 'package:samagra/samagra_home_screen/samagra_home_screen.dart';
 import 'package:samagra/screens/work_selection.dart';
 

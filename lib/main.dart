@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:samagra/admin/update_check.dart';
-import 'package:samagra/app_config.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

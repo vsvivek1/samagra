@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';

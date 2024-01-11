@@ -13,7 +13,7 @@ class Category {
         context,
         MaterialPageRoute(builder: (context) => destinationScreen),
       );
-    } on Exception catch (e) {
+    } on Exception {
       return Text('Err');
     }
     return Text('Err');
