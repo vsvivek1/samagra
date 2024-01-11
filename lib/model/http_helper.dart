@@ -5,10 +5,9 @@ import 'package:samagra/environmental_config.dart';
 
 Dio dio = Dio();
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class HttpHelper {
   Future<Response> get(String url) async {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     try {
       setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       return await dio.get(url);

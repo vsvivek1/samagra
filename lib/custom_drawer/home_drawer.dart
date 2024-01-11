@@ -12,7 +12,13 @@ import 'dart:convert';
 import 'package:samagra/secure_storage/common_functions.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+late EnvironmentConfig config;
+
+Future<void> initializeConfigIfNeeded() async {
+  if (config == null) {
+    config = await EnvironmentConfig.fromEnvFile();
+  }
+}
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -42,6 +48,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   var _secureStorage = SecureStorage();
   @override
   void initState() {
+    initializeConfigIfNeeded();
     setDrawerListArray();
 
     super.initState();

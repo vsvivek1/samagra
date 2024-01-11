@@ -9,9 +9,18 @@ import 'package:dio/dio.dart';
 
 final SecureStorage _secureStorage = SecureStorage();
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
+late EnvironmentConfig config;
+
+Future<void> initializeConfigIfNeeded() async {
+  config = await EnvironmentConfig.fromEnvFile();
+  if (config == null) {
+    config = await EnvironmentConfig.fromEnvFile();
+  }
+}
 
 Future<void> refreshAccessToken(refreshToken) async {
+  initializeConfigIfNeeded();
+
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
@@ -50,6 +59,7 @@ Future<void> refreshAccessToken(refreshToken) async {
 }
 
 void startJwtExpiryCheck() async {
+  initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
@@ -73,6 +83,7 @@ Future<String> getRefrfeshTokenFromStorage() async {
 }
 
 void checkJwtExpiry(jwtToken) async {
+  initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
@@ -100,6 +111,7 @@ void checkJwtExpiry(jwtToken) async {
 }
 
 void showExpiryToast() {
+  initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }

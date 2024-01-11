@@ -7,12 +7,14 @@ import 'package:flutter/services.dart';
 import 'package:samagra/check_jwt_expiry.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
+import 'package:samagra/providers/config_provider.dart';
 import 'package:samagra/screens/login_screen.dart';
 // import 'package:samagra/spalsh_screen.dart';
 // import 'navigation_home_screen.dart';
+import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
 
@@ -21,7 +23,7 @@ void main() async {
   // lib/main.dart
 
   // .env
-  AppConfig config = await AppConfig.fromEnvFile();
+
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
     return SizedBox(
       height: 1000,
@@ -33,13 +35,11 @@ void main() async {
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(ProviderScope(child: Samagra(appConfig: config))));
+  ]).then((_) => runApp(Samagra()));
 }
 
 class Samagra extends StatefulWidget {
-  var appConfig;
-
-  Samagra({Key? key, required this.appConfig}) : super(key: key);
+  Samagra({Key? key}) : super(key: key);
 
   @override
   State<Samagra> createState() => _SamagraState();
@@ -82,46 +82,53 @@ class _SamagraState extends State<Samagra> {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MaterialApp(
-      onGenerateRoute: (settings) {
-        // Handle incoming deep links here
-        if (settings.name == '/sso_screen') {
-          // Extract parameters from the deep link
-          // You might want to get the latest deep link and check its format
-          // For instance, using getInitialLink() from uni_links
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ConfigProvider>(create: (_) => ConfigProvider()),
 
-          return MaterialPageRoute(
-            builder: (context) {
-              return SSO(); // Return the SSO screen with parameters if needed
-            },
-          );
-        }
-        // Handle other routes if needed
-        return null;
-      },
-      title: 'm-Samagra',
-      initialRoute: '/',
-      routes: {
-        // '/': (context) => NavigationHomeScreen(),
-        '/redirected': (context) => NavigationHomeScreen(),
-        '/sso_screen': (context) => SSO(), // SSO screen
-      },
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        tabBarTheme: TabBarTheme(
-          labelColor:
-              Colors.white, // Set the text color of the selected tab to white
-          unselectedLabelColor:
-              ksebColor, // Set the text color of unselected tabs to grey
-          indicator: BoxDecoration(
-            color: ksebMaterialColor, // Set the indicator color to grey
+// <ConfigProvider>(
+      ],
+      child: MaterialApp(
+        onGenerateRoute: (settings) {
+          // Handle incoming deep links here
+          if (settings.name == '/sso_screen') {
+            // Extract parameters from the deep link
+            // You might want to get the latest deep link and check its format
+            // For instance, using getInitialLink() from uni_links
+
+            return MaterialPageRoute(
+              builder: (context) {
+                return SSO(); // Return the SSO screen with parameters if needed
+              },
+            );
+          }
+          // Handle other routes if needed
+          return null;
+        },
+        title: 'm-Samagra',
+        initialRoute: '/',
+        routes: {
+          // '/': (context) => NavigationHomeScreen(),
+          '/redirected': (context) => NavigationHomeScreen(),
+          '/sso_screen': (context) => SSO(), // SSO screen
+        },
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          tabBarTheme: TabBarTheme(
+            labelColor:
+                Colors.white, // Set the text color of the selected tab to white
+            unselectedLabelColor:
+                ksebColor, // Set the text color of unselected tabs to grey
+            indicator: BoxDecoration(
+              color: ksebMaterialColor, // Set the indicator color to grey
+            ),
           ),
+          primarySwatch: ksebMaterialColor,
+          textTheme: AppTheme.textTheme,
+          platform: TargetPlatform.iOS,
         ),
-        primarySwatch: ksebMaterialColor,
-        textTheme: AppTheme.textTheme,
-        platform: TargetPlatform.iOS,
+        home: UpdateCheck(), // //SplashScreen(),
       ),
-      home: UpdateCheck(), // //SplashScreen(),
     );
   }
 }

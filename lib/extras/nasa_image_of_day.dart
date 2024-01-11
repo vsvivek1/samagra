@@ -5,10 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:path_provider/path_provider.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
-String nasaApiKey = config.nasaApiKey;
-
 class NasaImageOfTheDay extends StatefulWidget {
   @override
   _NasaImageOfTheDayState createState() => _NasaImageOfTheDayState();
@@ -43,6 +39,9 @@ class _NasaImageOfTheDayState extends State<NasaImageOfTheDay> {
 
   Future<void> fetchNasaImage() async {
     try {
+      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+
+      String nasaApiKey = config.nasaApiKey;
       final dio = Dio();
 
       String url = "https://api.nasa.gov/planetary/apod?api_key=$nasaApiKey";

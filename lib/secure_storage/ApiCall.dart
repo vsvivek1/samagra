@@ -1,11 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "${config.liveServiceUrl}login";
 
   Future<Map<String, dynamic>> login(
       String email, String password, String showPhoto) async {
@@ -16,6 +13,8 @@ class MyAPI {
     };
 
     try {
+      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+      final String _url = "${config.liveServiceUrl}login";
       final Response response = await _dio.post(_url, data: data);
       return response.data;
     } on DioError catch (e) {

@@ -4,8 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:dio/dio.dart';
 import 'package:samagra/environmental_config.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class InternetConnectivity {
   static Future<bool> checkInternetConnectivity() async {
     //return true;
@@ -20,7 +18,7 @@ class InternetConnectivity {
   static Future<bool> checkServerConnectivity() async {
     try {
       //return true;
-
+      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
       final Map<String, String> data = {
         "email": '1064767@kseberp.in',
         "password": 'uat123',

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class EnvironmentConfig {
@@ -9,14 +7,13 @@ class EnvironmentConfig {
   final String ssoProductionServiceUrl;
   final String ssoTestAccessUrl;
   final String ssoProductionAccessUrl;
-  final String liveAccessUrl; // New variable
-  final String liveServiceUrl; // New variable
-  final String liveServiceUrlGroup1; // New variable
-  final String liveServiceUrlLogin; // New variable
+  final String liveAccessUrl;
+  final String liveServiceUrl;
+  final String liveServiceUrlGroup1;
+  final String liveServiceUrlLogin;
   final bool isDebug;
 
   String nasaApiKey;
-
   String deploymentMode;
 
   EnvironmentConfig({
@@ -34,37 +31,15 @@ class EnvironmentConfig {
     required this.liveServiceUrlLogin,
     required this.nasaApiKey,
     required this.deploymentMode,
-  }) {
-    var a = loadEnv();
-  }
+  });
 
-  // static final EnvironmentConfig _instance = EnvironmentConfig._internal();
-
-  // factory EnvironmentConfig() {
-  //   return _instance;
-  // }
-
-  // EnvironmentConfig._internal();
-
-  Future<void> loadEnv() async {
+  static Future<EnvironmentConfig> fromEnvFile() async {
     try {
       await dotenv.load(fileName: ".env");
     } catch (e) {
       print("Error loading .env file: $e");
+      // Handle the error appropriately (throw/recover)
     }
-  }
-
-// Access variables after loading the .env file
-  void useEnvVariables() {
-    String apiKey = dotenv.env['API_KEY'] ?? 'default_value';
-    // Use the extracted variables as needed
-    // print("API Key: $apiKey");
-  }
-
-  factory EnvironmentConfig.fromEnvFile() {
-    // ignore: unused_local_variable
-
-    // print(dotenv);
 
     String liveServiceUrl = '';
     String liveServiceUrlLogin = '';
@@ -79,7 +54,6 @@ class EnvironmentConfig {
         liveServiceUrlLogin = dotenv.env['UAT'] ?? '';
         liveAccessUrl = dotenv.env['UAT'] ?? '';
         liveServiceUrlGroup1 = dotenv.env['UAT'] ?? '';
-
         break;
       case 'MOD_UAT_SSO':
         // Additional logic if needed
@@ -98,9 +72,8 @@ class EnvironmentConfig {
         break;
     }
 
-    // debugger(when: true);
     return EnvironmentConfig(
-      deploymentMode: dotenv.env['DEPLOYMENT_MODE'] ?? '',
+      deploymentMode: MODE,
       nasaApiKey: dotenv.env['NASA_API_KEY'] ?? '',
       liveServiceUrlLogin: liveServiceUrlLogin,
       liveServiceUrlGroup1: liveServiceUrlGroup1,

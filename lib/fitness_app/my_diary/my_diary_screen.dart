@@ -9,8 +9,6 @@ import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 
-EnvironmentConfig config = EnvironmentConfig.fromEnvFile();
-
 class MyDiaryScreen extends StatefulWidget {
   const MyDiaryScreen({Key? key, this.animationController}) : super(key: key);
 
@@ -119,6 +117,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
   }
 
   Future<void> getDashBoard() async {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     final _loginDetails = await getUserLoginDetails();
 
     Map<dynamic, dynamic> loginDetailsMap =
