@@ -19,7 +19,7 @@ Future<void> initializeConfigIfNeeded() async {
 }
 
 Future<void> refreshAccessToken(refreshToken) async {
-  initializeConfigIfNeeded();
+  await initializeConfigIfNeeded();
 
   if (!config.deploymentMode.contains('SSO')) {
     return;
@@ -59,7 +59,7 @@ Future<void> refreshAccessToken(refreshToken) async {
 }
 
 void startJwtExpiryCheck() async {
-  initializeConfigIfNeeded();
+  await initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
@@ -83,7 +83,7 @@ Future<String> getRefrfeshTokenFromStorage() async {
 }
 
 void checkJwtExpiry(jwtToken) async {
-  initializeConfigIfNeeded();
+  await initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
@@ -110,8 +110,8 @@ void checkJwtExpiry(jwtToken) async {
   }
 }
 
-void showExpiryToast() {
-  initializeConfigIfNeeded();
+void showExpiryToast() async {
+  await initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
