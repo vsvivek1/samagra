@@ -104,7 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // After configuration is loaded, setState to rebuild the widget
     if (mounted) {
-      setState(() {});
+      setState(() {
+        DEPLOYEMENT_MODE = config.deploymentMode;
+
+        // debugger(when: true);
+        _BtnAndPassForSmagraDirect = !(DEPLOYEMENT_MODE.contains('SSO'));
+      });
     }
   }
 
@@ -112,10 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     loadConfig();
     // config = EnvironmentConfig.fromEnvFile();
-    DEPLOYEMENT_MODE = config.deploymentMode;
-
-    debugger(when: true);
-    _BtnAndPassForSmagraDirect = !(DEPLOYEMENT_MODE.contains('SSO'));
 
     initUniLinks();
     super.initState();
