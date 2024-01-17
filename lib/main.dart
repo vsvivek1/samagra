@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ void main() async {
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(Samagra()));
+  ]).then((_) => runApp(ProviderScope(child: Samagra())));
 }
 
 class Samagra extends StatefulWidget {
@@ -81,53 +82,54 @@ class _SamagraState extends State<Samagra> {
       systemNavigationBarDividerColor: Colors.transparent,
       systemNavigationBarIconBrightness: Brightness.dark,
     ));
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<ConfigProvider>(create: (_) => ConfigProvider()),
 
-// <ConfigProvider>(
-      ],
-      child: MaterialApp(
-        onGenerateRoute: (settings) {
-          // Handle incoming deep links here
-          if (settings.name == '/sso_screen') {
-            // Extract parameters from the deep link
-            // You might want to get the latest deep link and check its format
-            // For instance, using getInitialLink() from uni_links
+// return MultiProvider(
+//       providers: [
+//         ChangeNotifierProvider<ConfigProvider>(create: (_) => ConfigProvider()),
 
-            return MaterialPageRoute(
-              builder: (context) {
-                return SSO(); // Return the SSO screen with parameters if needed
-              },
-            );
-          }
-          // Handle other routes if needed
-          return null;
-        },
-        title: 'm-Samagra',
-        initialRoute: '/',
-        routes: {
-          // '/': (context) => NavigationHomeScreen(),
-          '/redirected': (context) => NavigationHomeScreen(),
-          '/sso_screen': (context) => SSO(), // SSO screen
-        },
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          tabBarTheme: TabBarTheme(
-            labelColor:
-                Colors.white, // Set the text color of the selected tab to white
-            unselectedLabelColor:
-                ksebColor, // Set the text color of unselected tabs to grey
-            indicator: BoxDecoration(
-              color: ksebMaterialColor, // Set the indicator color to grey
-            ),
+// // <ConfigProvider>(
+//       ],
+
+    return MaterialApp(
+      onGenerateRoute: (settings) {
+        // Handle incoming deep links here
+        if (settings.name == '/sso_screen') {
+          // Extract parameters from the deep link
+          // You might want to get the latest deep link and check its format
+          // For instance, using getInitialLink() from uni_links
+
+          return MaterialPageRoute(
+            builder: (context) {
+              return SSO(); // Return the SSO screen with parameters if needed
+            },
+          );
+        }
+        // Handle other routes if needed
+        return null;
+      },
+      title: 'm-Samagra',
+      initialRoute: '/',
+      routes: {
+        // '/': (context) => NavigationHomeScreen(),
+        '/redirected': (context) => NavigationHomeScreen(),
+        '/sso_screen': (context) => SSO(), // SSO screen
+      },
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        tabBarTheme: TabBarTheme(
+          labelColor:
+              Colors.white, // Set the text color of the selected tab to white
+          unselectedLabelColor:
+              ksebColor, // Set the text color of unselected tabs to grey
+          indicator: BoxDecoration(
+            color: ksebMaterialColor, // Set the indicator color to grey
           ),
-          primarySwatch: ksebMaterialColor,
-          textTheme: AppTheme.textTheme,
-          platform: TargetPlatform.iOS,
         ),
-        home: UpdateCheck(), // //SplashScreen(),
+        primarySwatch: ksebMaterialColor,
+        textTheme: AppTheme.textTheme,
+        platform: TargetPlatform.iOS,
       ),
+      home: UpdateCheck(), // //SplashScreen(),
     );
   }
 }
