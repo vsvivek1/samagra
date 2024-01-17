@@ -714,8 +714,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _handleServerLoginError(BuildContext context, Object e, occation) {
+    String msg =
+        'Error in connectecing With Server. Please Report or try after Some time';
     ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-        content: Text(e.toString()), duration: Duration(seconds: 5))));
+        content: Text(
+          msg,
+          style: TextStyle(
+              color: Color.alphaBlend(
+                  Color.fromARGB(255, 235, 79, 58), ksebColor)),
+        ),
+        duration: Duration(seconds: 15))));
     print('exception hit');
     print(e);
 

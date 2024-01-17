@@ -15,9 +15,10 @@ import 'package:samagra/environmental_config.dart';
 late EnvironmentConfig config;
 
 Future<void> initializeConfigIfNeeded() async {
-  if (config == null) {
-    config = await EnvironmentConfig.fromEnvFile();
-  }
+  config = await EnvironmentConfig.fromEnvFile();
+  // if (config == null) {
+  //   config = await EnvironmentConfig.fromEnvFile();
+  // }
 }
 
 class HomeDrawer extends StatefulWidget {
