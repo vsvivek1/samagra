@@ -90,10 +90,11 @@ void checkJwtExpiry(jwtToken) async {
   Map<String, dynamic> decodedToken = Jwt.parseJwt(jwtToken);
 
   if (decodedToken.containsKey('exp')) {
-    int expiryTimeInSeconds = decodedToken['exp'];
-    int currentTimeInSeconds = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    double expiryTimeInSeconds = decodedToken['exp'];
+    double currentTimeInSeconds =
+        (DateTime.now().millisecondsSinceEpoch ~/ 1000).toDouble();
 
-    int remainingSeconds = expiryTimeInSeconds - currentTimeInSeconds;
+    double remainingSeconds = expiryTimeInSeconds - currentTimeInSeconds;
 
     if (remainingSeconds <= 60 && remainingSeconds > 0) {
       String refreshToken = await getRefrfeshTokenFromStorage();
