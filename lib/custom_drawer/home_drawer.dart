@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/custom_drawer/drawer_list.dart';
 
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/login_screen.dart';
@@ -11,15 +12,6 @@ import 'dart:convert';
 
 import 'package:samagra/secure_storage/common_functions.dart';
 import 'package:samagra/environmental_config.dart';
-
-late EnvironmentConfig config;
-
-Future<void> initializeConfigIfNeeded() async {
-  config = await EnvironmentConfig.fromEnvFile();
-  // if (config == null) {
-  //   config = await EnvironmentConfig.fromEnvFile();
-  // }
-}
 
 class HomeDrawer extends StatefulWidget {
   const HomeDrawer(
@@ -38,6 +30,20 @@ class HomeDrawer extends StatefulWidget {
 }
 
 class _HomeDrawerState extends State<HomeDrawer> {
+  late EnvironmentConfig config;
+  final Dio _dio = new Dio();
+  String _url = '';
+
+  Future<void> initializeConfigIfNeeded() async {
+    config = await EnvironmentConfig.fromEnvFile();
+
+    String _url = "${config.liveServiceUrl}switchUserSeat";
+    ;
+    // if (config == null) {
+    //   config = await EnvironmentConfig.fromEnvFile();
+    // }
+  }
+
   List<DrawerList>? drawerList;
 
   dynamic _loginDetails1;
@@ -49,7 +55,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
   var _secureStorage = SecureStorage();
   @override
   void initState() {
-    initializeConfigIfNeeded();
+    if (_url == '') {
+      initializeConfigIfNeeded();
+    }
+
     setDrawerListArray();
 
     super.initState();
@@ -475,8 +484,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   // final String _url = "config.liveServiceUrlswitchUserSeat";
-  final String _url = "${config.liveServiceUrl}switchUserSeat";
-  final Dio _dio = new Dio();
+
 // final FlutterSecureStorage _secureStorage = new FlutterSecureStorage();
 
   Future<Map> switchUserRoles(String seatId) async {
@@ -730,20 +738,4 @@ enum DrawerIndex {
   Testing,
   PhoneBook,
   FrtuInspection
-}
-
-class DrawerList {
-  DrawerList({
-    this.isAssetsImage = false,
-    this.labelName = '',
-    this.icon,
-    this.index,
-    this.imageName = '',
-  });
-
-  String labelName;
-  Icon? icon;
-  bool isAssetsImage;
-  String imageName;
-  DrawerIndex? index;
 }

@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+// import 'package:fluttertoast/fluttertoast.dart';
 import 'package:samagra/environmental_config.dart';
 
 Future<List<String>> getOidcAccessTokens(
@@ -36,6 +38,9 @@ Future<List<String>> getOidcAccessTokens(
       throw Exception('Failed to get token: ${response.statusCode}');
     }
   } catch (e) {
+    SnackBar(
+      content: Text('Some Error'),
+    );
     throw Exception('Error: $e');
   }
 }
