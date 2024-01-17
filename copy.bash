@@ -1,1 +1,1 @@
-cp -R /Users/vivekvs/samagra/build/app/outputs/flutter-apk/* ~/Downloads/msamagraApk/
+cp -R ./build/app/outputs/flutter-apk/app-release.apk* ~/Downloads/msamagraApk/

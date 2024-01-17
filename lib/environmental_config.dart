@@ -56,6 +56,12 @@ class EnvironmentConfig {
         liveServiceUrlGroup1 = dotenv.env['UAT'] ?? '';
         break;
       case 'MOD_UAT_SSO':
+        liveServiceUrl = dotenv.env['TEST_SERVICE_URL'] ?? '';
+        liveServiceUrlLogin = dotenv.env['TEST_SERVICE_URL_LOGIN'] ?? '';
+        liveAccessUrl = dotenv.env['TEST_ACCESS_URL'] ?? '';
+        liveServiceUrlGroup1 = dotenv.env['TEST_SERVICE_URL_GROUP1'] ?? '';
+
+        // MOD_UAT_SSO
         // Additional logic if needed
         break;
       case 'MOD_PRODUCTION':
