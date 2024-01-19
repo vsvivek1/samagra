@@ -64,6 +64,10 @@ void startJwtExpiryCheck() async {
     return;
   }
   String jwtToken = await getJwtTokenFromStorage();
+
+  if (jwtToken == null || jwtToken.isEmpty) {
+    return;
+  }
   const duration = Duration(seconds: 60); // Check every 30 seconds
   Timer _timer = Timer.periodic(duration, (timer) {
     // print(jwtToken);
@@ -83,10 +87,15 @@ Future<String> getRefrfeshTokenFromStorage() async {
 }
 
 void checkJwtExpiry(jwtToken) async {
+  if (jwtToken == '' || jwtToken == null) {
+    return;
+  }
+
   await initializeConfigIfNeeded();
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
+
   Map<String, dynamic> decodedToken = Jwt.parseJwt(jwtToken);
 
   if (decodedToken.containsKey('exp')) {
