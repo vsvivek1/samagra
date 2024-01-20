@@ -1,4 +1,5 @@
 import 'dart:async';
+// import 'dart:js_util';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,7 +10,8 @@ import 'package:dio/dio.dart';
 
 final SecureStorage _secureStorage = SecureStorage();
 
-late EnvironmentConfig config;
+late EnvironmentConfig
+    config; //=instanceof(config, EnvironmentConfig) as EnvironmentConfig;
 
 Future<void> initializeConfigIfNeeded() async {
   config = await EnvironmentConfig.fromEnvFile();

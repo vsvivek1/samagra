@@ -19,7 +19,7 @@ class _SSOState extends State<SSO> {
     try {
       final initialUri = await getInitialUri();
 
-      debugger(when: true);
+      // debugger(when: true);
     } on PlatformException {
       // Handle any exceptions that occur.
     }

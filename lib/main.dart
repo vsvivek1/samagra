@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/admin/update_check.dart';
@@ -5,6 +6,7 @@ import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:samagra/check_jwt_expiry.dart';
+import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/providers/config_provider.dart';
@@ -19,6 +21,7 @@ import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
 
 void main() async {
+  // EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
   // lib/.env
   // lib/main.dart
 
@@ -38,6 +41,30 @@ void main() async {
   ]).then((_) => runApp(ProviderScope(child: Samagra())));
 }
 
+methodChanel() {
+  const MethodChannel channel = MethodChannel('samagra_sso');
+
+  // Handle incoming messages from the native side
+  channel.setMethodCallHandler((MethodCall call) async {
+    // Handle the method call
+    if (call.method == 'openScreen') {
+      // Extract parameters if needed
+      String screenName = call.arguments['screenName'];
+
+      // Navigate to the specified screen in your Flutter code
+      if (screenName == 'samagra_sso') {
+        return MaterialPageRoute(
+          builder: (context) {
+            return SSO(); // Return the SSO screen with parameters if needed
+          },
+        );
+        // Navigate to your Flutter screen
+        // You may use Navigator to navigate to the desired screen
+      }
+    }
+  });
+}
+
 class Samagra extends StatefulWidget {
   Samagra({Key? key}) : super(key: key);
 
@@ -46,11 +73,25 @@ class Samagra extends StatefulWidget {
 }
 
 class _SamagraState extends State<Samagra> {
+  late EnvironmentConfig config;
+
   @override
   void initState() {
+    initializeConfigIfNeeded();
     startJwtExpiryCheck();
     // TODO: implement initState
     super.initState();
+  }
+
+  //
+
+  Future<void> initializeConfigIfNeeded() async {
+    config = await EnvironmentConfig.fromEnvFile();
+
+    debugger(when: true);
+    if (config == null) {
+      config = await EnvironmentConfig.fromEnvFile();
+    }
   }
 
   final routes = <String, WidgetBuilder>{
@@ -114,7 +155,7 @@ class _SamagraState extends State<Samagra> {
         '/redirected': (context) => NavigationHomeScreen(),
         '/sso_screen': (context) => SSO(), // SSO screen
       },
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: config.deploymentMode.contains('UAT'),
       theme: ThemeData(
         tabBarTheme: TabBarTheme(
           labelColor:
