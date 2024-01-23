@@ -67,7 +67,7 @@ void startJwtExpiryCheck() async {
   }
   String jwtToken = await getJwtTokenFromStorage();
 
-  if (jwtToken == null || jwtToken.isEmpty) {
+  if (jwtToken.isEmpty) {
     return;
   }
   const duration = Duration(seconds: 60); // Check every 30 seconds

@@ -1,19 +1,15 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:samagra/check_jwt_expiry.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
-import 'package:samagra/providers/config_provider.dart';
 import 'package:samagra/screens/login_screen.dart';
 // import 'package:samagra/spalsh_screen.dart';
 // import 'navigation_home_screen.dart';
-import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,12 +71,14 @@ class Samagra extends StatefulWidget {
 class _SamagraState extends State<Samagra> {
   late EnvironmentConfig config;
 
+  bool showDebugbanner = false;
+
   @override
   void initState() {
-    initializeConfigIfNeeded();
-    startJwtExpiryCheck();
-    // TODO: implement initState
     super.initState();
+    initializeConfigIfNeeded();
+    // startJwtExpiryCheck();
+    // TODO: implement initState
   }
 
   //
@@ -88,7 +86,13 @@ class _SamagraState extends State<Samagra> {
   Future<void> initializeConfigIfNeeded() async {
     config = await EnvironmentConfig.fromEnvFile();
 
-    debugger(when: true);
+    if (config.deploymentMode.contains('UAT')) {
+      setState(() {
+        showDebugbanner = true;
+      });
+    }
+
+    // debugger(when: true);
     if (config == null) {
       config = await EnvironmentConfig.fromEnvFile();
     }
@@ -155,7 +159,7 @@ class _SamagraState extends State<Samagra> {
         '/redirected': (context) => NavigationHomeScreen(),
         '/sso_screen': (context) => SSO(), // SSO screen
       },
-      debugShowCheckedModeBanner: config.deploymentMode.contains('UAT'),
+      debugShowCheckedModeBanner: showDebugbanner,
       theme: ThemeData(
         tabBarTheme: TabBarTheme(
           labelColor:
