@@ -44,7 +44,11 @@ class InternetConnectivity {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-    } else if (!isServerConnected) {
+    }
+
+    // else if (!isServerConnected) {
+    else if (false) {
+//have to implement new url  logic
       Fluttertoast.showToast(
           msg: "Server Connection Failed!",
           toastLength: Toast.LENGTH_LONG,

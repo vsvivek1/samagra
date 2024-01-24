@@ -753,17 +753,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _handlServerLogin(result, occation, BuildContext context,
       {oIdAccessTokens}) async {
+    String errorMsg = 'SERVER ERROR';
+
     if (!(result is Map) && result.response.statusCode != 200) {
-      String errorMsg = result.response.data['error'];
+      var data = result.response.data;
+
+      if (data.containsKey('error')) {
+        errorMsg = result.response.data['error'];
+      } else if (data.containsKey('wsDisplayMessage')) {
+        errorMsg = result.response.data['wsDisplayMessage'];
+        // debugger(when: true);
+      }
+
       // debugger(when: true);
 
       Fluttertoast.showToast(
         msg: errorMsg,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 2,
+        timeInSecForIosWeb: 10,
         backgroundColor: Colors.black,
-        textColor: Colors.white,
+        textColor: const Color.fromARGB(255, 244, 3, 3),
         fontSize: 16.0,
       );
 

@@ -10,7 +10,9 @@ Future<List<String>> getOidcAccessTokens(
   // String url =
   //     'https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/token';
 
-  String url = '${config.liveAccessUrl}/token';
+  String url = '${config.liveAccessUrl}token';
+
+  print(url);
 
   try {
     Response response = await dio.post(
