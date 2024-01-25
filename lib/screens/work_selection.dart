@@ -228,6 +228,7 @@ class WorkSelection extends StatelessWidget {
         '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
 
+    debugger(when: true);
     try {
       String seatId = await getSeatId();
 
@@ -420,6 +421,10 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
 
   setWorKdetails(_filteredItems) async {
     _filteredItems.forEach((i) async {
+      if (i == '-1') {
+        return;
+      }
+
       // bool hasStarted = await getStoredWorkDetails(i['plg_work_id']).hasStarted;
 
       // i.hasStarted = hasStarted;
@@ -471,14 +476,14 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
       // debugger(when: true);
       return WillPopScope(
         onWillPop: () {
-          debugger(when: true);
+          // debugger(when: true);
           return Future.value(false);
         },
         child: SafeArea(
           child: Column(
             children: [
               IconButton(
-                iconSize: 40,
+                iconSize: 10,
                 icon: isAudioMuted
                     ? Icon(Icons.volume_up_rounded)
                     : Icon(Icons.volume_mute_sharp),
