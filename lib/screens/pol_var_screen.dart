@@ -272,19 +272,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
         workDetails[0]['wrk_schedule_group_structures'];
 
     wrk_schedule_group_structures = wrkScheduleGroupStructures;
-    // print(workDetails);
-    // print('workDetails above');
+    // debugPrint(workDetails);
+    // debugPrint('workDetails above');
 
     _taskByName = getTasksByName(wrkScheduleGroupStructures).toList();
 
     // var c = getTasksByName(workDetails).toList();
 
     _tasks = _taskByName;
-    // print(c);
+    // debugPrint(c);
 
     var taskln = _taskByName.length;
 
-    // print(' $taskln TASK LENGTH task list structure s see abobe 215');
+    // debugPrint(' $taskln TASK LENGTH task list structure s see abobe 215');
 
     return Future.value(_taskByName.toList());
   }
@@ -294,7 +294,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     await _updateWorkDetailsOnLoading();
     audioCache = AudioCache(prefix: 'assets/audio/');
 
-    print('$_numberOfLocations is numberof locations at 230');
+    debugPrint('$_numberOfLocations is numberof locations at 230');
 
     if (_enableEntryOfLocationDetails) {
       setState(() {
@@ -356,9 +356,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     final data = await getWorkDetails(widget.workId.toString(),
         measurementsetListId: widget.measurementSetId.toString());
 
-    // print(data);
+    // debugPrint(data);
 
-    print('data above 277');
+    debugPrint('data above 277');
 
     // return;
 
@@ -380,8 +380,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ? 999
             : int.parse(data['noOfLocations']!);
 
-        // print(data['measurementDetails']);
-        // print('measurementDetails above 111111');
+        // debugPrint(data['measurementDetails']);
+        // debugPrint('measurementDetails above 111111');
 
         if (data['measurementDetails'] != null &&
                 data['measurementDetails']?.length != 0
@@ -416,9 +416,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // }
 
-        // print(_workDetails);
+        // debugPrint(_workDetails);
 
-        print('work details abobve $_numberOfLocations');
+        debugPrint('work details abobve $_numberOfLocations');
 
         _enableEntryOfLocationDetails = false;
       }
@@ -433,13 +433,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
   ) {
     final resultData = jsonData;
 
-    // print(jsonData['unit_master']);
+    // debugPrint(jsonData['unit_master']);
 
-    // print('printing unit master abovbe $jsonData["unit_master"]');
+    // debugPrint('debugPrinting unit master abovbe $jsonData["unit_master"]');
 
-    print('getting into unit qty function');
+    debugPrint('getting into unit qty function');
 
-    print("type is $type unit master $resultData['unit_master']");
+    debugPrint("type is $type unit master $resultData['unit_master']");
 
     if (resultData.containsKey('unit_master')) {
       final unitMaster = resultData['unit_master'];
@@ -447,9 +447,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (unitMaster.containsKey(type)) {
         final laboursOrMaterials = unitMaster[type];
 
-        print(laboursOrMaterials);
+        debugPrint(laboursOrMaterials);
 
-        print('laboursOrMaterials above');
+        debugPrint('laboursOrMaterials above');
 
         if (laboursOrMaterials is List) {
           final matchingItem = laboursOrMaterials.firstWhere(
@@ -475,33 +475,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // var url =
     //     'http://192.168.1.215/api/send-object'; // Replace with your server endpoint
 
-    // print(obj);
+    // debugPrint(obj);
 
-    // print(obj.runtimeType);
+    // debugPrint(obj.runtimeType);
 
     var o = List.from(obj);
 
     var ts = [];
 
-    // print("TASk measurements $taskMeasurements");
+    // debugPrint("TASk measurements $taskMeasurements");
 
     Map<dynamic, dynamic> a =
         Map<String, dynamic>.from(await getMeasurementObjForApi(obj));
 
-    print("A is $a");
+    debugPrint("A is $a");
 
     // var strcutreMeasurements =
     //     (await getMeasurementObjForApi(obj)) as Future<Map<dynamic, dynamic>>;
 
     return;
 
-    // print(strcutreMeasurements);
+    // debugPrint(strcutreMeasurements);
 
     // var tasks = obj.forEach((o) => {
     //       o['tasks'].forEach((t) => {ts.add(t['task_name'])})
     //     });
 
-    // print(ts.length);
+    // debugPrint(ts.length);
 
     // sendObjectViaEmail(obj);
 
@@ -516,12 +516,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //   var response = await Dio().post(url, data: obj);
 
     //   if (response.statusCode == 200) {
-    //     print('Object sent successfully!');
+    //     debugPrint('Object sent successfully!');
     //   } else {
-    //     print('Request failed with status: ${response.statusCode}');
+    //     debugPrint('Request failed with status: ${response.statusCode}');
     //   }
     // } catch (e) {
-    //   print('Error: $e');
+    //   debugPrint('Error: $e');
     // }
   }
 
@@ -549,10 +549,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     }
 
-    // print('Task Counts:');
+    // debugPrint('Task Counts:');
 
     taskCounts.forEach((taskId, count) {
-      // print("TASK NAME FROm $taskId");
+      // debugPrint("TASK NAME FROm $taskId");
       Map taskMeasurement = {};
       Map<String, dynamic> taskMeasurementDetails = {};
 
@@ -560,7 +560,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       taskMeasurementDetails["mst_task_id"] = taskId;
       taskMeasurementDetails["plg_work_id"] = widget.workId;
 
-      print('this is tm $taskMeasurementDetails');
+      debugPrint('this is tm $taskMeasurementDetails');
 
       // taskMeasurement[taskId] = taskMeasurementDetails;
 
@@ -602,7 +602,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       result['mst_task_id'] = taskId;
       result['wrk_schedule_group_structure_id'] = wrkScheduleGroupStructureId;
 
-      print("wrkScheduleGroupStructureId $wrkScheduleGroupStructureId");
+      debugPrint("wrkScheduleGroupStructureId $wrkScheduleGroupStructureId");
 
       structureMeasurements[targetId.toString()] = result;
 
@@ -624,7 +624,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       String baseUrl =
           "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
 
-      print("BASE UR mdtwm 136L $baseUrl");
+      debugPrint("BASE UR mdtwm 136L $baseUrl");
 
       Dio dio = new Dio();
 
@@ -636,18 +636,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.statusCode == 200) {
         Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
 
-        print("api @693 $apiData");
+        debugPrint("api @693 $apiData");
 
         debugger(when: true);
 
         ///34843
         return apiData['wrk_schedule_group_structures'];
-        // print("apidata at mdtwm $apiData");
+        // debugPrint("apidata at mdtwm $apiData");
       } else {
         return Future.value([]);
       }
     } catch (e) {
-      print('error at 672 polvar screen $e');
+      debugPrint('error at 672 polvar screen $e');
 
       return Future.value([]);
     }
@@ -661,7 +661,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     await getWorkSheduleGroupStructuresfromSamgra();
 
-    print("wrk_schedule_group_structures 693 $wrk_schedule_group_structures");
+    debugPrint(
+        "wrk_schedule_group_structures 693 $wrk_schedule_group_structures");
 
     // Map taskMeasurements = getTaskMeasurementList(obj);
     List taskMeasurements = getTaskMeasurementList(obj);
@@ -676,7 +677,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Map<String, int> taskCounts = {};
     Map<String, dynamic> structureCounts = {};
 
-    // print(obj);
+    // debugPrint(obj);
 
     // List structureMeasurements = [];
     Map<String, Map<String, dynamic>> structureMeasurements = {};
@@ -690,7 +691,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Set<Map<String, dynamic>> totalMaterialList = {};
 
     for (var location in obj) {
-      print('location $location');
+      debugPrint('location $location');
 
       List<Map<dynamic, dynamic>> tasks =
           List<Map<dynamic, dynamic>>.from(location['tasks'] ?? []);
@@ -711,7 +712,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         for (var structure in structures) {
           // gmailMe(structure);
-          // print("STRCUTRE ID $structure is str id");
+          // debugPrint("STRCUTRE ID $structure is str id");
 
           var mstStructureId = structure['id'];
 
@@ -737,7 +738,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           List<Map<dynamic, dynamic>> labours =
               List<Map<dynamic, dynamic>>.from(structure['labour'] ?? []);
-          // print(structure['labour']);
+          // debugPrint(structure['labour']);
 
           // debugger;
 
@@ -750,7 +751,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           if (materials.length > 0) {
             Map<String, dynamic> mat = {};
 
-            print('materialx $materials');
+            debugPrint('materialx $materials');
 
             materials.forEach((mat1) {
               mat['material_name'] = mat1['material_name'];
@@ -772,7 +773,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
 
           if (labours.length > 0) {
-            // print("LABOURS IS $labours");
+            // debugPrint("LABOURS IS $labours");
 
             updateLabourmeasurements(labourMeasurements, labours);
           }
@@ -782,7 +783,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 materialTakenBackMeasurements, takenBacks);
           }
 
-          // print("LABOURr  $labours");
+          // debugPrint("LABOURr  $labours");
           // debugger;
         }
 
@@ -802,11 +803,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     apiDataForSamagra['materialTakenBackMeasurements'] =
         materialTakenBackMeasurements;
 
-    // print("qqqmaterialTakenBackMeasurements $materialTakenBackMeasurements");
-    // print("qqqSTR  MEASUREMENT $structureMeasurements");
-    // print("qqqLABOUR MEASUREMENT $labourMeasurements");
-    // print("qqqmaterial  MEASUREMENT $materialMeasurements");
-    // print("qqqtasks  MEASUREMENT $taskMeasurements");
+    // debugPrint("qqqmaterialTakenBackMeasurements $materialTakenBackMeasurements");
+    // debugPrint("qqqSTR  MEASUREMENT $structureMeasurements");
+    // debugPrint("qqqLABOUR MEASUREMENT $labourMeasurements");
+    // debugPrint("qqqmaterial  MEASUREMENT $materialMeasurements");
+    // debugPrint("qqqtasks  MEASUREMENT $taskMeasurements");
 
     // debugger;
 
@@ -814,7 +815,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // Map labourMeasurements = {};
     // Map materialTakenBackMeasurements
 
-    print('all materials $totalMaterialList');
+    debugPrint('all materials $totalMaterialList');
     // debugger(when: true);
 
     apiDataForSamagra['workId'] = widget.workId;
@@ -829,17 +830,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
       ),
     );
 
-    print('test');
+    debugPrint('test');
     // debugger;
     return Future.value({});
 
-    // print("Strcutre measurement  is this $structureMeasurements");
+    // debugPrint("Strcutre measurement  is this $structureMeasurements");
 
     // speakText('നമസ്കാരം, ഇത് മലയാളം ആവാസം ആണ്‌.');
 
     // await flutterTts.speak('നമസ്കാരം, ഇത് മലയാളം ആവാസം ആണ്‌.');
 
-    // print(obj.length);
+    // debugPrint(obj.length);
   }
 
   Future<void> getWorkSheduleGroupStructuresfromSamgra() async {
@@ -851,7 +852,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   dynamic updateMeasurementDetails(
       String locationNo, Map<dynamic, dynamic> newObject) {
-    print("from parent function $newObject");
+    debugPrint("from parent function $newObject");
     setState(() {
       // Find the index of the locationNo in measurementDetails
       int index = measurementDetails.indexWhere((details) =>
@@ -860,16 +861,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (index != -1) {
         // Update the object at the specified location
 
-        print('updating');
+        debugPrint('updating');
         measurementDetails[index] = newObject;
       } else {
-        print('ading');
+        debugPrint('ading');
         measurementDetails.add(newObject);
       }
     });
 
     measurementDetails.forEach((element) {
-      print("LOCS NEW ${element['locationNo']} $element");
+      debugPrint("LOCS NEW ${element['locationNo']} $element");
     });
     _saveMeasurementDetails();
     setState(() {
@@ -887,7 +888,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _openedMeasurementCopier = !_openedMeasurementCopier;
     });
     measurementDetails.forEach((element) {
-      print("current m dstails $element");
+      debugPrint("current m dstails $element");
     });
 
     showDialog(
@@ -916,7 +917,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
               onPressed: () {
                 measurementDetails.forEach(
                   (element) {
-                    print("MEASURESMENT LIST loc ${element["locationNo"]}");
+                    debugPrint(
+                        "MEASURESMENT LIST loc ${element["locationNo"]}");
                   },
                 );
 
@@ -953,10 +955,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ...locDetails
           };
 
-          print(existingMeasurementDetails);
+          debugPrint(existingMeasurementDetails);
         }
 
-        print('new exiasting details above');
+        debugPrint('new exiasting details above');
         int locationNumber = _selectedLocationIndex + 1;
         int indexToUpdate = measurementDetails
             .indexWhere((details) => details['locationNo'] == locationNumber);
@@ -967,7 +969,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 Map<String, dynamic>.from(existingMeasurementDetails);
           });
         } else {
-          print('adding new');
+          debugPrint('adding new');
 
           setState(() {
             measurementDetails
@@ -976,14 +978,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           int ln = measurementDetails.length;
 
-          print('measurement details length $ln');
+          debugPrint('measurement details length $ln');
         }
       }
 
-      print(existingMeasurementDetails);
-      print('existing mesr detaiks above');
+      debugPrint(existingMeasurementDetails);
+      debugPrint('existing mesr detaiks above');
 
-      print('from parent location details just above as map');
+      debugPrint('from parent location details just above as map');
 
       // widget.latitude = p1;
       // widget.longitude = p2;
@@ -995,7 +997,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // // widget.locationDetails['name'] = name.toString();
     });
 
-    // print(measurementDetails[2]);
+    // debugPrint(measurementDetails[2]);
     await Future.delayed(Duration(seconds: 1));
 
     setState(() {
@@ -1008,9 +1010,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
     if (!isAudioMuted) {
       audioCache.play('select_structure.wav');
     }
-    // print(this._workDetails);
+    // debugPrint(this._workDetails);
 
-    // print(' measurementDetails above');
+    // debugPrint(' measurementDetails above');
   }
 
   //
@@ -1132,7 +1134,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   onPressed: () {
                     _gotToAnotherLocation();
                     // Add functionality for when the button is pressed
-                    // print('Button pressed!');
+                    // debugPrint('Button pressed!');
                   },
                 ),
                 appBar: AppBar(
@@ -1438,7 +1440,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   _updateLocationDetailsArray(arr) async {
     logCurrentFunction();
-    print('$arr @ 556');
+    debugPrint('$arr @ 556');
 
     if (arr != null && this._workDetails != null) {
       if (this._workDetails!['locations'] == null) {
@@ -1457,7 +1459,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       //     'NOW Select Task and then correct structure inside it ';
       // audioCache.play('select_structure.wav');
 
-      // print(this._workDetails);
+      // debugPrint(this._workDetails);
     }
 
 // this.
@@ -1699,15 +1701,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
         itemBuilder: (BuildContext context, int index) {
           var status = _getLocationMeasuredStatus(index);
 
-          // print("STATUS OF LOC $index $status");
+          // debugPrint("STATUS OF LOC $index $status");
 
           bool hasGeoLocations = status['hasGeoLocations'] as bool;
           bool hasMeasurements = status['hasMeasurements'] as bool;
 
           // bool completed = hasGeoLocations && hasMeasurements;
 
-          // print(status);
-          // print('status above at 1076');
+          // debugPrint(status);
+          // debugPrint('status above at 1076');
 
           var geoCordinates;
 
@@ -1721,8 +1723,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 status['geoCordinatesEnd'] as Map<dynamic, dynamic>;
           }
 
-          // print("viii this is status $status");
-          // print(
+          // debugPrint("viii this is status $status");
+          // debugPrint(
           //     'geocordinates above @1095 is location ${index + 1} $geoCordinatesEnd and $geoCordinates');
 
           String distanceText = '0 Meters';
@@ -1745,9 +1747,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 endLongitude,
               );
 
-              // print(geoCordinates.runtimeType);
-              // print(geoCordinatesEnd.runtimeType);
-              // print('geocordinates above @1081 is location ${index + 1}');
+              // debugPrint(geoCordinates.runtimeType);
+              // debugPrint(geoCordinatesEnd.runtimeType);
+              // debugPrint('geocordinates above @1081 is location ${index + 1}');
 
               distanceText = ' ${distance.toStringAsFixed(2)} mtrs';
             }
@@ -1930,8 +1932,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Visibility viewTasksAndStructures(tasklist1) {
-    // print(tasklist1);
-    // print('taskList abobve  polvar911');
+    // debugPrint(tasklist1);
+    // debugPrint('taskList abobve  polvar911');
     return Visibility(
       visible: viewStructures,
       child: Expanded(flex: 4, child: expansionPanelOfTask(tasklist1)),
@@ -2028,11 +2030,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
               });
             },
             children: tasklist1.map<ExpansionPanel>((t) {
-              // print('$ind is ind');
+              // debugPrint('$ind is ind');
 
               var structures = t['structures'];
-              // print(t);
-              // print('tabove');
+              // debugPrint(t);
+              // debugPrint('tabove');
 
               counter++;
               return ExpansionPanel(
@@ -2124,14 +2126,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return [Text('No tasks found.')];
     }
 
-    print(tasks);
+    debugPrint(tasks);
 
-    print('tasks above from panel  childern inside');
+    debugPrint('tasks above from panel  childern inside');
 
     return [Text('t1'), Text('t2')];
 
     return tasks.map<Widget>((struct) {
-      // print(t);
+      // debugPrint(t);
 
       var currentItem = measurementDetails.firstWhere(
         (element) => element['locationNo'] == _selectedLocationIndex + 1,
@@ -2147,7 +2149,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       var mstStructureId = struct['structure_code'];
 
-      // print(mstStructureId);
+      // debugPrint(mstStructureId);
 
       if (str == null) {
         return Text('Invalid task.');
@@ -2321,7 +2323,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return;
       }
 
-      // print("LOCATION NUMBER $_selectedLocationIndex $response.data");
+      // debugPrint("LOCATION NUMBER $_selectedLocationIndex $response.data");
 
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
@@ -2350,7 +2352,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           });
         }
 
-        // print("SELCTD LOCATION TAKS $_selectedLocationDetails");
+        // debugPrint("SELCTD LOCATION TAKS $_selectedLocationDetails");
         measurementDetails.forEach((location) {
           int locationNumber = _selectedLocationIndex + 1;
 
@@ -2376,7 +2378,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               location['tasks'].add(task);
             }
 
-// print(tasks)
+// debugPrint(tasks)
             if (task['structures'] == null) {
               task['structures'] = [];
             }
@@ -2442,7 +2444,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
             _showSaveMeasurementDetailsButton = true;
 
-            print("BEFORE CALLING SAVE MEASUREMENT DETAILS");
+            debugPrint("BEFORE CALLING SAVE MEASUREMENT DETAILS");
             _saveMeasurementDetails();
             return;
           }
@@ -2451,7 +2453,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         });
       }
     } catch (e) {
-      print("$e is the try cathc error at 1975 of polvar");
+      debugPrint("$e is the try cathc error at 1975 of polvar");
     }
 
     setState(() {
@@ -2478,13 +2480,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
       //   orElse: () {},
       // );
 
-      // print(str1);
-      // print('str1 above @1488');
+      // debugPrint(str1);
+      // debugPrint('str1 above @1488');
       // structureName = str1['structure_name'];
 
-      print('---------------------------$structureName');
+      debugPrint('---------------------------$structureName');
     } else {
-      print('some issue with selectedTask name $selectedTask');
+      debugPrint('some issue with selectedTask name $selectedTask');
       task['task_name'] = 'Issue with task name';
     }
     // return structureName;
@@ -2500,8 +2502,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       var s = t['structures'].firstWhere(
           (ele) => ele['id'].toString() == mstStructureId.toString());
 
-      print(s);
-      print('s above 2068');
+      debugPrint(s);
+      debugPrint('s above 2068');
 
       // s['quantity'] = s['quantity'] + 1;
 
@@ -2511,7 +2513,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   void setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
       int mstStructureId, Map<dynamic, dynamic> structure) {
-    print("this is issued materials $totalIssuedMaterialDetails");
+    debugPrint("this is issued materials $totalIssuedMaterialDetails");
     if (totalIssuedMaterialDetails.length != 0) {
       totalIssuedMaterialDetails.forEach((item) {
         int mstMaterialId = item['mst_labour_id'] ?? 0;
@@ -2521,7 +2523,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             jsonData, 'material', mstMaterialId, mstStructureId);
         item['quantity'] = quantity;
 
-        print("this is unit of labour quantity $quantity");
+        debugPrint("this is unit of labour quantity $quantity");
       });
 
       structure['materials'].addAll(totalIssuedMaterialDetails);
@@ -2542,9 +2544,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       //function to add new labour to existing labour in the structure
       Map<dynamic, dynamic> structure) {
     if (totalLabourDetails != null && totalLabourDetails.length != 0) {
-      print("TOITAL LABOUR DETAILS ${totalLabourDetails.length}");
+      debugPrint("TOITAL LABOUR DETAILS ${totalLabourDetails.length}");
 
-      // print()
+      // debugPrint()
 
       // totalLabourDetails.forEach((Map<dynamic, dynamic> item) {
 
@@ -2566,7 +2568,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void setTakenBacks(takenBacks, Map<dynamic, dynamic> structure) {
     // funcgtion to append taken backs of a strcuture to a strcutre
 
-    print("this is from taken backs 1991 $takenBacks");
+    debugPrint("this is from taken backs 1991 $takenBacks");
     if (takenBacks.length != 0) {
       if (structure['takenBacks'] == null) {
         structure['takenBacks'] = [];
@@ -2581,7 +2583,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       //   //       jsonData, 'labour', mstLabourId, mstStructureId);
       //   //   item['quantity'] = quantity;
 
-      //   //   print("this is unit of labour quantity $quantity");
+      //   //   debugPrint("this is unit of labour quantity $quantity");
       //   // });
 
       //   if (structure['takenBacks'] == null) {
@@ -2593,9 +2595,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   // measurementDetails[_selectedLocationIndex][]
 
-  // print(response.data['result_data']);
+  // debugPrint(response.data['result_data']);
 
-  // print(response.runtimeType);
+  // debugPrint(response.runtimeType);
 
   // var tmp = Map.from(response);
 
@@ -2654,7 +2656,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Future<List<dynamic>> _fetchWorkDetails() async {
     try {
       logCurrentFunction();
-      print('FETCHING WORK DETAILS CALLED');
+      debugPrint('FETCHING WORK DETAILS CALLED');
       final accessToken1 =
           await storage.getSecureAllStorageDataByKey("access_token");
 
@@ -2673,7 +2675,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       final url =
           '${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
-      print("url called $url");
+      debugPrint("url called $url");
 
       Dio dio = Dio();
       final headers = {'Authorization': 'Bearer $accessToken'};
@@ -2689,7 +2691,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
-        print("response polvar 2504 $res");
+        debugPrint("response polvar 2504 $res");
 
         _wrk_schedule_group_id = res['data']['id'];
 
@@ -2698,7 +2700,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return Future.value([-1]);
       }
     } on Exception catch (e) {
-      print("$e  is the error in _fetchWorkDetails()");
+      debugPrint("$e  is the error in _fetchWorkDetails()");
 
       return Future.value([-1]);
 
@@ -2708,7 +2710,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   _viewLocationDetail(int index, status) async {
     logCurrentFunction();
-    print("this is new index of locations $index");
+    debugPrint("this is new index of locations $index");
 
     if (index != -1) {
       _previoslySelectedIndex = _selectedLocationIndex;
@@ -2722,7 +2724,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       getTasksofSelectedLocation();
 
-      print('storeing location details');
+      debugPrint('storeing location details');
     }
 
     if (_workDetails != null &&
@@ -2761,7 +2763,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (_selectedLocationHasGeoLocations) {
         _handleEmitLocDetailsToPolVarWidget({});
 
-        print("HAS GEO LOCATIONS $_selectedLocationHasMeasurements ");
+        debugPrint("HAS GEO LOCATIONS $_selectedLocationHasMeasurements ");
         // _showAnotherLocationButton = true;
         // _showSaveMeasurementDetailsButton = true;
         // viewStructures = true;
@@ -2782,16 +2784,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       _tappedIndex = index;
 
-      // print(s);
-      // print('s aprinted above');
+      // debugPrint(s);
+      // debugPrint('s adebugPrinted above');
     });
   }
 
   void getTasksofSelectedLocation() {
     String locationNo = (_selectedLocationIndex + 1).toString();
 
-    print("MEASUREMENT DETAILS $measurementDetails");
-    print("LOCATION NO $locationNo");
+    debugPrint("MEASUREMENT DETAILS $measurementDetails");
+    debugPrint("LOCATION NO $locationNo");
 
     setState(() {
       _selectedLocationDetails =
@@ -2801,7 +2803,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             Map<String, dynamic>(), // Return an empty map of the correct type
       ));
 
-      print("_selectedLocationDetails $_selectedLocationDetails");
+      debugPrint("_selectedLocationDetails $_selectedLocationDetails");
 
       if (_selectedLocationDetails.isNotEmpty) {
         if (_selectedLocationDetails['tasks'] == null) {
@@ -2812,7 +2814,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     });
 
-    print("SELECTED LOCATION DR $_selectedLocationDetails");
+    debugPrint("SELECTED LOCATION DR $_selectedLocationDetails");
   }
 
   void saveFromAndTwoLocation() {
@@ -2844,7 +2846,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     noOFLocationsMeasured = measurementDetails.length;
 
-    // print('Number of locations now is noOFLocationsMeasured');
+    // debugPrint('Number of locations now is noOFLocationsMeasured');
     var a = await getWorkDetails(widget.workId.toString(),
         measurementsetListId: widget.measurementSetId.toString());
 
@@ -2855,9 +2857,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       getTasksofSelectedLocation();
     });
 
-    // print(a);
+    // debugPrint(a);
 
-    // print('work details as retrived');
+    // debugPrint('work details as retrived');
     return;
 
     final storage = SecureStorage();
@@ -2875,13 +2877,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
               // detail['locationNumber'] == locationNumber,
               orElse: () => {});
 
-      print(matchingDetail);
+      debugPrint(matchingDetail);
 
-      print('matching details above');
+      debugPrint('matching details above');
 
-      print(measurementDetails);
+      debugPrint(measurementDetails);
 
-      print('measurementDetailsdetails above');
+      debugPrint('measurementDetailsdetails above');
 
       // matchingDetail = measurementDetails;
 
@@ -2902,7 +2904,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     var measured = measurementDetails.length;
 
-    // print("location no is ${locationNo} &&  measured is  ${measured}");
+    // debugPrint("location no is ${locationNo} &&  measured is  ${measured}");
 
     if (locationNo <= measured) {
       var locationEnd = measurementDetails.firstWhere(
@@ -2911,17 +2913,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
         orElse: () => Map<String, dynamic>(),
       );
 
-      // print("$locationEnd is location ebnd");
+      // debugPrint("$locationEnd is location ebnd");
       if (locationEnd['geoCordinates'] != null) {
         retObj['geoCordinatesEnd'] = locationEnd['geoCordinates'];
       }
     } else {
-      print('masured is $measured');
+      debugPrint('masured is $measured');
     }
 
-    // print(location['geoCordinates']);
-    // print(location['geoCordinates']);
-    // print('location above at 1942');
+    // debugPrint(location['geoCordinates']);
+    // debugPrint(location['geoCordinates']);
+    // debugPrint('location above at 1942');
 
     if (location.isEmpty) {
       retObj['hasGeoLocations'] = false;
@@ -2935,7 +2937,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     if (location['tasks'] == null || location['tasks'].length == 0) {
       if (location['geoCordinates'] == null ||
           location['geoCordinates'].isEmpty) {
-        print(
+        debugPrint(
             '@2150 ${location['geoCordinates']} ${location['geoCordinates'].isBlank}');
 
         retObj['text'] = ' \n Not started2';
@@ -2945,7 +2947,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       } else {
         retObj['geoCordinates'] = location['geoCordinates'];
 
-        // print(
+        // debugPrint(
         //     '@2158 ${location['geoCordinates']} ${location['geoCordinates'].isEmpty}');
 
         retObj['text'] = ' \n No measurements';
@@ -3009,13 +3011,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
     int materialLen = materials.length;
 
     for (Map material in materials) {
-      // print("Material $material");
+      // debugPrint("Material $material");
 
       Map<dynamic, dynamic> result = createMaterialMeasurementObject(material);
 
       // speakText('result oflogin request below');
 
-      // print("RESULT $result");
+      // debugPrint("RESULT $result");
 
 //aug 23  22 heado oof  aadhar pan card mcc road jayalakshmi
       // debugger;
@@ -3026,7 +3028,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // Destructuring the 'result' map
       String key = result["key"];
 
-      // print("KEY $key");
+      // debugPrint("KEY $key");
 
       // String materialId = material['mst_material_id'].toString();
       // if (materialMeasurements.containsKey(materialId)) {
@@ -3040,13 +3042,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // }
     }
 
-    // print('NOW FROM HERE ${materialMeasurements.length}');
-    // print("MATERIAL MEASUREMENTS $materialMeasurements");
+    // debugPrint('NOW FROM HERE ${materialMeasurements.length}');
+    // debugPrint("MATERIAL MEASUREMENTS $materialMeasurements");
     // debugger;
 
-    // print("MATERIALmeasurements only $materialMeasurements");
+    // debugPrint("MATERIALmeasurements only $materialMeasurements");
 
-    // print("This is materials $materials");
+    // debugPrint("This is materials $materials");
   }
 
   Map<dynamic, dynamic> createMaterialMeasurementObject(
@@ -3054,7 +3056,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     String key =
         "${materialObject["wrk_execution_material_schedule_id"]}_${materialObject["mst_material_id"]}_${materialObject["mst_uom_id"]}";
 
-// print()
+// debugPrint()
     Map<String, dynamic> materialMeasurement = {
       "wrk_execution_schedule_id": materialObject["wrk_execution_schedule_id"],
       "wrk_execution_material_schedule_id":
@@ -3083,7 +3085,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void appendToMaterialMeasurements(Map materialMeasurements, Map result) {
     String key = result["key"].toString();
 
-    // print("result key $result");
+    // debugPrint("result key $result");
     Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
 
     if (materialMeasurements.containsKey(key)) {
@@ -3092,17 +3094,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
       int updatedQuantity = currentQuantity + additionalQuantity;
       materialMeasurements[key]['quantity'] = updatedQuantity.toString();
 
-      print("new quantity ${materialMeasurements[key]['quantity']}");
+      debugPrint("new quantity ${materialMeasurements[key]['quantity']}");
     } else {
       materialMeasurements[key] = materialMeasurement;
     }
 
-    // print("Materrial measuremetn from $materialMeasurements");
+    // debugPrint("Materrial measuremetn from $materialMeasurements");
   }
 
   void updateLabourmeasurements(Map labourMeasurements, List<Map> labours) {
     labours.forEach((element) {
-      // print('qqq1 labour ${element}');
+      // debugPrint('qqq1 labour ${element}');
       var key = element['wrk_execution_labour_schedule_id'].toString();
 
       if (labourMeasurements.containsKey(element[key])) {
@@ -3117,7 +3119,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void updateMaterialTakenBackMeasurements(
       Map materialTakenBackMeasurements, List<Map> takenBacks) {
     takenBacks.forEach((element) {
-      // print('qqq1 taken back ${element}');
+      // debugPrint('qqq1 taken back ${element}');
       // var key = element['wrk_execution_schedule_id'];
       var key = element['wrk_material_field_return_item_id'].toString();
 
@@ -3134,8 +3136,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   reflectQuantityDetails() {}
 
   void reduceStructureQuantity(int workId, t, st) {
-    print('hi');
-    // print();
+    debugPrint('hi');
+    // debugPrint();
 
     /// get tasks of location
     /// get structures

@@ -157,6 +157,7 @@ class _SamagraState extends State<Samagra> {
       routes: {
         // '/': (context) => NavigationHomeScreen(),
         '/redirected': (context) => NavigationHomeScreen(),
+        '/home': (context) => NavigationHomeScreen(),
         '/sso_screen': (context) => SSO(), // SSO screen
       },
       debugShowCheckedModeBanner: showDebugbanner,

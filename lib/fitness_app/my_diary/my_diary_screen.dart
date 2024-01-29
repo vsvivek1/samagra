@@ -156,7 +156,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
 
     // await getDashBoard();
 
-    // print(_dashBoardData);
+    // debugPrint(_dashBoardData);
 
     scrollController.addListener(() {
       if (scrollController.offset >= 24) {
@@ -202,9 +202,9 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
       ),
     );
 
-    print(_dashBoardData);
+    debugPrint(_dashBoardData);
 
-    print('dashboard before list vieq');
+    debugPrint('dashboard before list vieq');
     listViews.add(
       MediterranesnDietView(
           animation: Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -361,7 +361,7 @@ class _MyDiaryScreenState extends State<MyDiaryScreen>
               }
 
               _dashBoardData = snapshot.data;
-              // print(snapshot.data);
+              // debugPrint(snapshot.data);
               assignValues(Map<String, dynamic>.from(snapshot.data));
 
               addAllListData();

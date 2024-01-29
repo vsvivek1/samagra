@@ -101,14 +101,14 @@ class _LocationButtonState extends State<LocationButton> {
                         };
                       }).toList();
 
-                      // print(placemarks.runtimeType)
+                      // debugPrint(placemarks.runtimeType)
                       //
                       // ;
 
                       // if (placemarks != null) {
-                      //   print(placemarks[0]);
+                      //   debugPrint(placemarks[0]);
 
-                      //   print('placemark above');
+                      //   debugPrint('placemark above');
                       // }
 
                       if (placemarks.isEmpty) {

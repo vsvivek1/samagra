@@ -61,7 +61,8 @@ class HotelListView extends StatelessWidget {
                             ),
                             Container(
                               color: HotelAppTheme.buildLightTheme()
-                                  .colorScheme.background,
+                                  .colorScheme
+                                  .background,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,7 +158,7 @@ class HotelListView extends StatelessWidget {
                                                     itemPadding:
                                                         EdgeInsets.zero,
                                                     onRatingUpdate: (rating) {
-                                                      print(rating);
+                                                      debugPrint(rating);
                                                     },
                                                   ),
                                                   Text(

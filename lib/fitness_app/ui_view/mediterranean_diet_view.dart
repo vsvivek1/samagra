@@ -104,8 +104,8 @@ class _MediterranesnDietViewState extends State<MediterranesnDietView> {
   void initState() {
     // TODO: implement initState
 
-    print(widget.dashBoardData);
-    print('from med init state');
+    debugPrint(widget.dashBoardData);
+    debugPrint('from med init state');
 
     assignValues(Map<String, dynamic>.from(widget.dashBoardData));
     super.initState();

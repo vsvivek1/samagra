@@ -61,7 +61,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
     // workId = widget.wo
     polvar_data = widget.dataFromPreviousScreen['polevar_data'];
     initialiseMeasurementObject().then((_) {
-      // print('MDATA ${_measurementDataToWorkModule.toMap()}');
+      // debugPrint('MDATA ${_measurementDataToWorkModule.toMap()}');
     });
     polVarMeasurementObject = widget.dataFromPreviousScreen;
   }
@@ -87,11 +87,11 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             widget.workId.toString(), widget.dataFromPreviousScreen)
         .then(
       (value) {
-        print("VALUE line 60 stwm ${value.toString()}");
+        debugPrint("VALUE line 60 stwm ${value.toString()}");
       },
     );
 
-    print('MDATA stwm 64 ${_measurementDataToWorkModule.toMap()}');
+    debugPrint('MDATA stwm 64 ${_measurementDataToWorkModule.toMap()}');
   }
 
   @override
@@ -262,7 +262,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
     EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     String token = await getAccessToken();
     // widget.dataFromPreviousScreen.forEach((key, value) {
-    //   print("$key --> $value");
+    //   debugPrint("$key --> $value");
     // });
 
     // return;
@@ -289,7 +289,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
 
         FormData formData = FormData();
 
-        // print('here2');
+        // debugPrint('here2');
 
         // return;
         var headers = {
@@ -305,7 +305,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           if (value.runtimeType != String) {
             value = value.toString();
           }
-          print("$key  ->> $value");
+          debugPrint("$key  ->> $value");
 
           // data.fields.add(MapEntry(key, value.toString()));
         });
@@ -325,7 +325,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           data: dataToSend,
         );
 
-        print("error ${response.data}");
+        debugPrint("error ${response.data}");
         if (response.statusCode == 200) {
           if (response.data['result_flag'] == -1) {
             // final snackBar = SnackBar(
@@ -344,7 +344,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             // ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
 
-          print(json.encode(response.data));
+          debugPrint(json.encode(response.data));
 
           setState(() {
             _isSubmitting = false;
@@ -365,10 +365,10 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             vsync: this,
           );
         } else {
-          print(response.statusMessage);
+          debugPrint(response.statusMessage);
         }
       } catch (e) {
-        print(e);
+        debugPrint(e);
         setState(() {
           _isSubmitting = false;
           _apiResult = 'Error: $e';

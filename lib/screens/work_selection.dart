@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/screens/print_widget_tree.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/warning_message.dart';
 import 'package:samagra/screens/work_details.dart';
@@ -46,7 +47,7 @@ class WorkSelection extends StatelessWidget {
         debugger(when: true);
 
         // Navigator.of(context).pushReplacementNamed('/redirected');
-        return false; // Prevent default back button behavior
+        return true; // Prevent default back button behavior
 
         // Navigator.of(context).pushReplacement(
         //   MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
@@ -57,57 +58,84 @@ class WorkSelection extends StatelessWidget {
         // // );
         // return false;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: null,
-          automaticallyImplyLeading: false,
-          backgroundColor: AppTheme.grey.withOpacity(0.7),
-          title: Row(
-            children: [
-              Spacer(),
-              Text('Select a Work'),
-              Spacer(),
-              IconButton(
-                  color: Colors.red,
-                  onPressed: refreshWorkList(),
-                  icon: Icon(Icons.refresh))
-            ],
+      child: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! > 0) {
+            printWidgetTree(context);
+
+            Navigator.pushNamed(context, '/home');
+
+            // Navigator.pushReplacementNamed(context, '/home');
+            // Swiped from left to right (right to left motion)
+            print('Swipe back detected!');
+            // Your custom handling for swipe back
+          }
+        },
+        onHorizontalDragStart: (details) {
+          // if (details.primaryVelocity! > 0) {
+          if (true) {
+            printWidgetTree(context);
+
+            Navigator.pop(context);
+
+            // Navigator.pushReplacementNamed(context, '/home');
+            // Swiped from left to right (right to left motion)
+            print('Swipe back detected!');
+            // Your custom handling for swipe back
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            leading: null,
+            automaticallyImplyLeading: false,
+            backgroundColor: AppTheme.grey.withOpacity(0.7),
+            title: Row(
+              children: [
+                Spacer(),
+                Text('Select a Work'),
+                Spacer(),
+                IconButton(
+                    color: Colors.red,
+                    onPressed: refreshWorkList(),
+                    icon: Icon(Icons.refresh))
+              ],
+            ),
           ),
-        ),
-        body: Theme(
-          data: ThemeData(),
-          child: FutureBuilder(
-            future: _fetchWorkListList(context: context),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data != "-1") {
-                final workListList = snapshot.data;
+          body: Theme(
+            data: ThemeData(),
+            child: FutureBuilder(
+              future: _fetchWorkListList(context: context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != "-1") {
+                  final workListList = snapshot.data;
 
-                // print("worklist $workListList");
+                  // print("worklist $workListList");
 
-                // debugger(when: true);
+                  // debugger(when: true);
 
-                // p(WorkListList);
-                // p(workListList.runtimeType);
+                  // p(WorkListList);
+                  // p(workListList.runtimeType);
 
-                // return Text(WorkListList.toString());
+                  // return Text(WorkListList.toString());
 
-                return SchGrpListWidget(workListList);
+                  return SchGrpListWidget(workListList);
 
-                // return MaterialApp(
-                //   title: 'List of Works',
-                //   home: Scaffold(
-                //     appBar: AppBar(
-                //       title: Text('Square Tiles Demo'),
-                //     ),
-                //     body: WorkListListWidget(WorkListList),
-                //   ),
-                // );
-              } else if (snapshot.hasError || snapshot.data == '-1') {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return rotatingProgress();
-              }
-            },
+                  // return MaterialApp(
+                  //   title: 'List of Works',
+                  //   home: Scaffold(
+                  //     appBar: AppBar(
+                  //       title: Text('Square Tiles Demo'),
+                  //     ),
+                  //     body: WorkListListWidget(WorkListList),
+                  //   ),
+                  // );
+                } else if (snapshot.hasError || snapshot.data == '-1') {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return rotatingProgress();
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -228,7 +256,7 @@ class WorkSelection extends StatelessWidget {
         '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
 
-    debugger(when: true);
+    // debugger(when: true);
     try {
       String seatId = await getSeatId();
 

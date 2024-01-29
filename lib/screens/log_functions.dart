@@ -1,5 +1,5 @@
 void logFunctionInfo(String functionName, String className, String lineNumber) {
-  print('Function: $functionName, Class: $className, Line: $lineNumber');
+  debugPrint('Function: $functionName, Class: $className, Line: $lineNumber');
 }
 
 void logCurrentFunction() {

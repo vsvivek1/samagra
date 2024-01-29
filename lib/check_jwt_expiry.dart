@@ -36,7 +36,7 @@ Future<void> refreshAccessToken(refreshToken) async {
     };
 
     String url = '${config.liveAccessUrl}token';
-    print(url);
+    debugPrint(url);
     var response = await dio.post(
       url,
       options: Options(
@@ -49,14 +49,14 @@ Future<void> refreshAccessToken(refreshToken) async {
 
     if (response.statusCode == 200) {
       // Handle successful token refresh response
-      print('Token refreshed successfully: ${response.data}');
+      debugPrint('Token refreshed successfully: ${response.data}');
     } else {
       // Handle other status codes
-      print('Failed to refresh token: ${response.statusCode}');
+      debugPrint('Failed to refresh token: ${response.statusCode}');
     }
   } catch (e) {
     // Handle Dio errors
-    print('Error refreshing token: $e');
+    debugPrint('Error refreshing token: $e');
   }
 }
 
@@ -72,7 +72,7 @@ void startJwtExpiryCheck() async {
   }
   const duration = Duration(seconds: 60); // Check every 30 seconds
   Timer _timer = Timer.periodic(duration, (timer) {
-    // print(jwtToken);
+    // debugPrint(jwtToken);
 
     //  if(deplo)
     checkJwtExpiry(jwtToken);
@@ -115,10 +115,10 @@ void checkJwtExpiry(jwtToken) async {
       String refreshToken = await getRefrfeshTokenFromStorage();
       // refreshAccessToken(refreshToken);
       // showExpiryToast();
-      print('JWT is not about to expire. ${remainingSeconds}');
+      debugPrint('JWT is not about to expire. ${remainingSeconds}');
     }
   } else {
-    print('Token does not contain expiration time.');
+    debugPrint('Token does not contain expiration time.');
   }
 }
 

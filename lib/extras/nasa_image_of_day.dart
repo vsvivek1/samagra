@@ -34,7 +34,7 @@ class _NasaImageOfTheDayState extends State<NasaImageOfTheDay> {
     await file.writeAsBytes(response.data!); // No need for e
 
     // Show a message or perform other actions after saving the image
-    print('Image saved to $filePath');
+    debugPrint('Image saved to $filePath');
   }
 
   Future<void> fetchNasaImage() async {
@@ -60,7 +60,7 @@ class _NasaImageOfTheDayState extends State<NasaImageOfTheDay> {
         throw Exception('Failed to load image');
       }
     } catch (e) {
-      print('Error: $e');
+      debugPrint('Error: $e');
     }
   }
 

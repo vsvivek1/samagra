@@ -9,7 +9,7 @@ getLoginDetails() async {
       await storage.getSecureAllStorageDataByKey('loginDetails');
   final loginDetails = loginDetails1['loginDetails'];
 
-  // print("LOGIN DETAILS $loginDetails");
+  // debugPrint("LOGIN DETAILS $loginDetails");
   return loginDetails;
 }
 
@@ -38,7 +38,7 @@ getSeatDetails() async {
       await storage.getSecureAllStorageDataByKey('loginDetails');
   final loginDetails = loginDetails1['loginDetails'];
 
-  // print(loginDetails);
+  // debugPrint(loginDetails);
 
   return getCurrentSeatDetails(loginDetails);
   // return loginDetails;

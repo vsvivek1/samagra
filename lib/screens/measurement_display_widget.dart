@@ -9,8 +9,8 @@ getTaskNodes(tasks) {
 
 // ignore: non_constant_identifier_names
 ListView MeasurementDisplayWidget(measurementDetails) {
-  // print(measurementDetails);
-  // print('measurementDetails above');
+  // debugPrint(measurementDetails);
+  // debugPrint('measurementDetails above');
 
   return ListView.builder(
     itemCount: measurementDetails.length,

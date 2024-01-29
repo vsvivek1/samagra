@@ -125,7 +125,7 @@ class LocationListScreen extends StatelessWidget {
   void onQuantityChanged(int locationIndex, int taskIndex, int structureIndex,
       String newQuantity) {
     // Implement your logic to handle the quantity change here
-    print(
+    debugPrint(
         'Quantity changed: Location $locationIndex, Task $taskIndex, Structure $structureIndex, New Quantity: $newQuantity');
   }
 }

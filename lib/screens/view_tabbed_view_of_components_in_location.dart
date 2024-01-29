@@ -7,7 +7,7 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(this.componentsMap.keys);
+    debugPrint(this.componentsMap.keys);
     return ElevatedButton(
       onPressed: () {
         _showComponentPopup(context, componentsMap);
@@ -18,7 +18,7 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
 
   void _showComponentPopup(
       BuildContext context, Map<dynamic, dynamic> componentsMap) {
-    // print("this is componenet map $componentsMap");
+    // debugPrint("this is componenet map $componentsMap");
     showDialog(
       context: context,
       builder: (context) {
@@ -72,44 +72,44 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
 
     List<dynamic> tasks = components["tasks"];
     tasks.forEach((task) {
-      // print("T $task ");
+      // debugPrint("T $task ");
       if (task != null && task["structures"] != null) {
         List<dynamic> structures = task["structures"];
         structures.forEach((structure) {
-          // print("s $structure ");
+          // debugPrint("s $structure ");
 
-          // print("type $type");
-          // print("structure $structure");
+          // debugPrint("type $type");
+          // debugPrint("structure $structure");
           if (structure != null && structure[type] != null) {
-            // print("type ${structure[type]} ");
+            // debugPrint("type ${structure[type]} ");
 
             List<dynamic> typeList = structure[type];
             // items.addAll(typeList as Iterable<String>);
 
-            // print("TYPE $type STRUCTURE $structure");
-            print("TYPE $type typeListx $typeList");
-            print("typeListxrun  ${typeList.runtimeType}");
+            // debugPrint("TYPE $type STRUCTURE $structure");
+            debugPrint("TYPE $type typeListx $typeList");
+            debugPrint("typeListxrun  ${typeList.runtimeType}");
 
             items.addAll(typeList);
-            print("items $items");
+            debugPrint("items $items");
           }
         });
       }
     });
 
-    print("ITEMS $items");
+    debugPrint("ITEMS $items");
     return items;
   }
 
   Widget _buildListComponent(Map<dynamic, dynamic>? components1, type) {
     List components = _getFullListOfComponsnts(components1, type);
 
-    print("components $components");
+    debugPrint("components $components");
 
     return ListView.builder(
       itemCount: components.length ?? 0,
       itemBuilder: (context, index) {
-        // print("CONTEXT $context");
+        // debugPrint("CONTEXT $context");
 
         if (components[index] != null)
           return ListTile(

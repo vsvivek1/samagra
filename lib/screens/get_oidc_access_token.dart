@@ -12,7 +12,7 @@ Future<List<String>> getOidcAccessTokens(
 
   String url = '${config.liveAccessUrl}token';
 
-  print(url);
+  debugPrint(url);
 
   try {
     Response response = await dio.post(

@@ -37,7 +37,7 @@ class EnvironmentConfig {
     try {
       await dotenv.load(fileName: ".env");
     } catch (e) {
-      print("Error loading .env file: $e");
+      debugPrint("Error loading .env file: $e");
       // Handle the error appropriately (throw/recover)
     }
 

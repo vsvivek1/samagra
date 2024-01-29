@@ -321,7 +321,7 @@ class _FiltersScreenState extends State<FiltersScreen> {
             break;
           }
         } catch (e) {
-          print(e);
+          debugPrint(e);
         }
       }
       noList.add(Row(

@@ -14,6 +14,7 @@ class UpdateCheck extends StatefulWidget {
 }
 
 class _UpdateCheckState extends State<UpdateCheck> {
+  getLatestVersionFromServer() {}
   String _currentVersion = '1.0.0';
   String _latestVersion =
       '2.5.0'; // Replace with the latest version from the server
@@ -37,7 +38,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
     return false;
     return true;
     // Compare the current version with the latest version
-    //  print("$_currentVersion _currentVersion ${packageInfo.version}");
+    //  debugPrint("$_currentVersion _currentVersion ${packageInfo.version}");
 
     return _currentVersion != _latestVersion;
   }
@@ -59,22 +60,22 @@ class _UpdateCheckState extends State<UpdateCheck> {
       // Use package_installer or url_launcher to launch the installation process
       // For example using package_installer:
 
-      print("file $file");
+      debugPrint("file $file");
       int? statusCode = await AndroidPackageInstaller.installApk(
           apkFilePath: '$dir/app1.apk');
-      print(file.runtimeType);
-      print("status code $statusCode");
+      debugPrint(file.runtimeType);
+      debugPrint("status code $statusCode");
 
       if (statusCode != null) {
         PackageInstallerStatus installationStatus =
             PackageInstallerStatus.byCode(statusCode);
-        print(installationStatus.name);
+        debugPrint(installationStatus.name);
       } // Make sure to include required permissions
 
       // For url_launcher:
       // Launch the file path (Note: For Android, you need an intent to start the installation)
     } catch (e) {
-      print("Error downloading APK: $e");
+      debugPrint("Error downloading APK: $e");
     }
   }
 

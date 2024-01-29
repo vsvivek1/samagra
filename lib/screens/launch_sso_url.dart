@@ -53,13 +53,13 @@ launchSSOUrl(codeVerifier, codeChallenge, empcode) async {
       // "https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=${codeChallenge}&code_challenge_method=S256&scope=openid%20offline_access%20erp_work";
       "${config.liveAccessUrl}auth?response_type=code&client_id=pkce-client3&redirect_uri=m-samagra%3A%2F%2Fkseb.in%2Fsso&code_challenge=$codeChallenge&code_challenge_method=S256&scope=openid%20offline_access%20erp_work&login_hint=$empcode";
 
-  // print(url);
+  // debugPrint(url);
 
   final Uri _url = Uri.parse(url);
 
   // debugger(when: true);
 
-  // print(url);
+  // debugPrint(url);
   // launchUrl(url, mode: LaunchMode.externalApplication);
   if (!await launchUrl(_url, mode: LaunchMode.externalApplication)) {
     throw Exception('Could not launch $_url');

@@ -40,19 +40,19 @@ class CustomButtonRow extends StatelessWidget {
 
   void showAbstractOfLabor(int locationNumber, int workId) {
     // Add your logic here to show the abstract of labor
-    print(
+    debugPrint(
         'Showing abstract of labor for Location $locationNumber and Work ID $workId');
   }
 
   void showAbstractOfMaterial(int locationNumber, int workId) {
     // Add your logic here to show the abstract of material
-    print(
+    debugPrint(
         'Showing abstract of material for Location $locationNumber and Work ID $workId');
   }
 
   void showAbstractOfTakenBacks(int locationNumber, int workId) {
     // Add your logic here to show the abstract of taken backs
-    print(
+    debugPrint(
         'Showing abstract of taken backs for Location $locationNumber and Work ID $workId');
   }
 }

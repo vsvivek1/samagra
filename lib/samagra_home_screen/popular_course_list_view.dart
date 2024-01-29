@@ -1,8 +1,13 @@
-
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/screens/work_selection.dart';
+
+import 'package:samagra/frtu/frtu_inspection.dart';
+import 'package:samagra/ib_booking/ib_booking.dart';
+import 'package:samagra/screens/phone_book.dart';
+import 'package:samagra/screens/tree_cutting_compensation.dart';
 import 'package:samagra/screens/work_selection.dart';
 
 class PopularCourseListView extends StatefulWidget {
@@ -28,6 +33,16 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
     return true;
   }
 
+  // const DestinationScreen({Key? key}) : super(key: key);
+
+  // Method to perform navigation
+  // static void navigateTo(BuildContext context) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => DestinationScreen()),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -45,7 +60,7 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
               children: List<Widget>.generate(
                 Category.popularCourseList.length,
                 (int index) {
-                  // print(Category.popularCourseList[index].target);
+                  // debugPrint(Category.popularCourseList[index].target);
                   // debugger(when: true);
                   final int count = Category.popularCourseList.length;
                   final Animation<double> animation =
@@ -80,6 +95,24 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
 }
 
 class CategoryView extends StatelessWidget {
+  Widget getTargetWidget(target) {
+    switch (target) {
+      case 'WorkSelection':
+        return WorkSelection();
+      case 'PhoneBook':
+        return PhoneBook(); // Assuming PhoneBook is another widget class
+      case 'FrtuInspection':
+        return FrtuInspection();
+      case 'IbBooking':
+        return IbBooking();
+      case 'TreeCuttingCompensation':
+        return TreeCuttingCompensation();
+      // Add more cases as needed
+      default:
+        throw ArgumentError('Invalid target: $target');
+    }
+  }
+
   const CategoryView(
       {Key? key,
       this.category,
@@ -110,7 +143,12 @@ class CategoryView extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WorkSelection()),
+                  MaterialPageRoute(builder: (context) {
+                    return getTargetWidget(category!.target);
+                  }
+                      // PhoneBook
+
+                      ),
                 );
               },
               // onTap: () {

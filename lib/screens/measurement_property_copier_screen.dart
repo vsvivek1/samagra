@@ -119,7 +119,7 @@ class _MeasurementPropertyCopierScreenState
     // return sourceDetails.keys.map((property) {
     return s.map((property) {
       // p = p + "${property},";
-      // print(p);
+      // debugPrint(p);
       return MultiSelectItem(
         value: property,
         label: property,
@@ -136,7 +136,7 @@ class _MeasurementPropertyCopierScreenState
       },
     );
 
-    // print("SOURCE DETAILS $sourceDetails");
+    // debugPrint("SOURCE DETAILS $sourceDetails");
     // Copy properties to selected target MeasurementDetails
     for (String targetLocation in selectedTargetLocations) {
       // Find the target MeasurementDetails
@@ -145,7 +145,7 @@ class _MeasurementPropertyCopierScreenState
         (details) =>
             details["locationNo"].toString() == targetLocation.toString(),
         orElse: () {
-          print("NO LOCation $targetLocation");
+          debugPrint("NO LOCation $targetLocation");
           return {'locationNo': targetLocation};
         },
       );
@@ -157,12 +157,12 @@ class _MeasurementPropertyCopierScreenState
       }
 
       // widget.measurementDetails.forEach((element) {
-      //   print(element['locationNo']);
+      //   debugPrint(element['locationNo']);
       // });
 
-      print("M details $targetDetails");
+      debugPrint("M details $targetDetails");
 
-      print("TARGET LOC  ${targetLocation.toString()}");
+      debugPrint("TARGET LOC  ${targetLocation.toString()}");
 
       widget.updateMeasurementDetails(targetLocation, targetDetails);
     }
@@ -173,15 +173,15 @@ class _MeasurementPropertyCopierScreenState
   }
 
   void onPressedTest() {
-    print(widget.measurementDetails.length);
+    debugPrint(widget.measurementDetails.length);
 
     int ln = widget.measurementDetails.length;
 
     widget.measurementDetails.map((details) {
-      print("details $details");
+      debugPrint("details $details");
     });
 
-    print("end");
+    debugPrint("end");
   }
 }
 

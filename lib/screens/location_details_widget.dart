@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/location_button.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -28,8 +27,8 @@ class LocationDetailsWidget extends StatefulWidget {
       required this.emitLocDetailsToPolVarWidget,
       required this.hasLocationDetailsInStorage})
       : super(key: key) {
-    // print(this.measurements);
-    // print('this.measurementsabove  loc det widget line 28');
+    // debugPrint(this.measurements);
+    // debugPrint('this.measurementsabove  loc det widget line 28');
   }
 
   @override
@@ -193,7 +192,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
 
     locationDetails['locationName'] = this.locationName;
 
-    // print('this is location name here ${locationDetails['name']}');
+    // debugPrint('this is location name here ${locationDetails['name']}');
 
     locationDetails['geoCordinates'] = {};
     locationDetails['geoCordinates']['lattitude'] = widget.latitude;
@@ -216,7 +215,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
 
       this.locationNameController.text = value;
 
-      // print(value);
+      // debugPrint(value);
     });
 
     return {value};
@@ -259,11 +258,11 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       _gotLocation = true;
     });
 
-    print(
+    debugPrint(
         'line 251 selected from loc det widget taking from loc det widget $p1');
-    // print(widget.latitude);
-    // print(widget.longitude);
-    //  print('abo');
+    // debugPrint(widget.latitude);
+    // debugPrint(widget.longitude);
+    //  debugPrint('abo');
 
     widget.updateLocationDetailsArray(widget.locationDetails);
   }
@@ -278,7 +277,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       //   // this.locationName = this.locationNameController.text;
       // }
 
-      // print(widget.locationName);
+      // debugPrint(widget.locationName);
     });
   }
 }

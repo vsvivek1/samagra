@@ -18,8 +18,8 @@ class MeasurementOptionScreen extends StatelessWidget {
 
   MeasurementOptionScreen(this.workId, this.workName, this.workCode,
       this.measurementSetId, this.workScheduleGroupId, this.isMuted) {
-    // print(this.workId);
-    // print('workid above');
+    // debugPrint(this.workId);
+    // debugPrint('workid above');
   }
   void initState() {}
 

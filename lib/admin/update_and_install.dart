@@ -29,14 +29,14 @@ class UpdateAndInstall extends StatelessWidget {
       // if (statusCode != null) {
       //   PackageInstallerStatus installationStatus =
       //       PackageInstallerStatus.byCode(statusCode);
-      //   print(installationStatus.name);
+      //   debugPrint(installationStatus.name);
 
       // } // Make sure to include required permissions
 
       // For url_launcher:
       // Launch the file path (Note: For Android, you need an intent to start the installation)
     } catch (e) {
-      print("Error downloading APK: $e");
+      debugPrint("Error downloading APK: $e");
     }
   }
 

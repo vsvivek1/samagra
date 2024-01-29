@@ -125,40 +125,42 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: 'Home',
         icon: Icon(Icons.home),
       ),
-      DrawerList(
-        index: DrawerIndex.PhoneBook,
-        labelName: 'Phone Book',
-        isAssetsImage: true,
-        imageName: 'assets/images/supportIcon.png',
-      ),
-      DrawerList(
-        index: DrawerIndex.WorkMeasurement,
-        labelName: 'Work Measurement',
-        isAssetsImage: true,
-        imageName: 'assets/images/supportIcon.png',
-      ),
-      DrawerList(
-        index: DrawerIndex.IbBooking,
-        labelName: 'Ib Booking',
-        isAssetsImage: true,
-        imageName: 'assets/images/supportIcon.png',
-      ),
-      DrawerList(
-        index: DrawerIndex.TreeCuttingCompensation,
-        labelName: 'TreeCuttingCompensation',
-        icon: Icon(
-          Icons.forest,
-          color: Color.fromARGB(255, 2, 56, 30),
-        ),
-      ),
-      DrawerList(
-        index: DrawerIndex.FrtuInspection,
-        labelName: 'RMU/FRTU Inspection',
-        icon: Icon(
-          Icons.loop_outlined,
-          color: Color.fromARGB(255, 2, 56, 30),
-        ),
-      ),
+
+      // DrawerList(
+      //   index: DrawerIndex.PhoneBook,
+      //   labelName: 'Phone Book',
+      //   isAssetsImage: true,
+      //   imageName: 'assets/images/supportIcon.png',
+      // ),
+      // DrawerList(
+      //   index: DrawerIndex.WorkMeasurement,
+      //   labelName: 'Work Measurement',
+      //   isAssetsImage: true,
+      //   imageName: 'assets/images/supportIcon.png',
+      // ),
+      // DrawerList(
+      //   index: DrawerIndex.IbBooking,
+      //   labelName: 'Ib Booking',
+      //   isAssetsImage: true,
+      //   imageName: 'assets/images/supportIcon.png',
+      // ),
+      // DrawerList(
+      //   index: DrawerIndex.TreeCuttingCompensation,
+      //   labelName: 'TreeCuttingCompensation',
+      //   icon: Icon(
+      //     Icons.forest,
+      //     color: Color.fromARGB(255, 2, 56, 30),
+      //   ),
+      // ),
+      // DrawerList(
+      //   index: DrawerIndex.FrtuInspection,
+      //   labelName: 'RMU/FRTU Inspection',
+      //   icon: Icon(
+      //     Icons.loop_outlined,
+      //     color: Color.fromARGB(255, 2, 56, 30),
+      //   ),
+      // ),
+
       // DrawerList(
       //   index: DrawerIndex.Invite,
       //   labelName: 'Invite Friend',
@@ -324,7 +326,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                         ),
                                       ],
                                     ),
-                                    Row(
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
                                         Text(
                                           designation,
@@ -392,6 +398,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                 //   ),
                                 // ),
 
+                                Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Text('Select here to Switch Seats'),
+                                ),
                                 createSelectionBox(
                                     user["seats"],
                                     user["seats"]
@@ -464,10 +474,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
   Object _getCurrentSeatDetailsFromSeatsArray(seats, currentSeatId) {
     return 'hi';
 
-    print(seats
+    debugPrint(seats
         .firstWhere((seat) => seat["mst_seat_id"] == currentSeatId)
         .runtimeType);
-    // print(currentSeatId);
+    // debugPrint(currentSeatId);
 
     // return 'hi';
     // // return seats[0];
@@ -560,20 +570,27 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
     return DropdownButton(
       value: selectedItem,
-      hint: Row(
-        children: [
-          if (switchingInProgress) CircularProgressIndicator(),
-          Text(hint),
-        ],
+      hint: SizedBox(
+        width: MediaQuery.of(context).size.width * .5,
+        child: Row(
+          children: [
+            if (switchingInProgress) CircularProgressIndicator(),
+            Text(hint),
+          ],
+        ),
       ),
       items: items.map((item) {
         return DropdownMenuItem<dynamic>(
           value: item,
           child: SingleChildScrollView(
-              child: Text(item["seat_code"] +
-                  ' ' +
-                  ' of ' +
-                  getInitials(item["office"]["disp_name"]))),
+              child: Text(item["seat_code"]
+
+                  // +
+                  //     ' ' +
+                  //     ' of ' +
+                  //     getInitials(item["office"]["disp_name"])
+
+                  )),
         );
       }).toList(),
       onChanged: (newValue) async {
@@ -605,7 +622,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void onTapped() {
-    print('Doing Something...'); // Print to console.
+    debugPrint('Doing Something...'); // debugPrint to console.
   }
 
   Widget inkwell(DrawerList listData) {

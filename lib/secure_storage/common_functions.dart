@@ -20,8 +20,8 @@ Future<String> _getUserLoginDetails() async {
 }
 
 void p(msg) {
-  print('-----------------------');
+  debugPrint('-----------------------');
 
-  print(msg);
-  print('-----------------------');
+  debugPrint(msg);
+  debugPrint('-----------------------');
 }

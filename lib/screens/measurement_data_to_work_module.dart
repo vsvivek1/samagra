@@ -173,7 +173,7 @@ class MeasurementDataToWorkModule {
         polevar_data = jsonEncode(ob);
 
         dataFromPolvarScreen.keys.forEach((key) {
-          print("keyfrom 182 of mdtw $key");
+          debugPrint("keyfrom 182 of mdtw $key");
         });
 
         taskMeasurements =

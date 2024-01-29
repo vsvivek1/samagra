@@ -19,13 +19,13 @@ class MyAPI {
       return response.data;
     } on DioError catch (e) {
       if (e.response != null) {
-        print(e.response);
+        debugPrint(e.response);
 
-        // print(e.response.headers);
-        // print(e.response.request);
+        // debugPrint(e.response.headers);
+        // debugPrint(e.response.request);
       } else {
-        // print(e.request);
-        print(e.message);
+        // debugPrint(e.request);
+        debugPrint(e.message);
       }
       throw e;
     }

@@ -72,7 +72,7 @@ class Category {
 
   static List<Category> popularCourseList = <Category>[
     Category(
-      target: WorkSelection,
+      target: 'WorkSelection',
       imagePath: 'assets/samagra_home_screen/polevar1.jpeg',
       title: 'Polevar Measurement',
       lessonCount: 12,
@@ -81,7 +81,7 @@ class Category {
     ),
     Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
-      target: PhoneBook,
+      target: 'PhoneBook',
       title: 'Phone Book',
       lessonCount: 28,
       money: 208,
@@ -97,7 +97,7 @@ class Category {
     ),
     Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
-      target: IbBooking,
+      target: 'IbBooking',
       title: 'IB Booking',
       lessonCount: 28,
       money: 208,
@@ -105,7 +105,7 @@ class Category {
     ),
     Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
-      target: TreeCuttingCompensation,
+      target: 'TreeCuttingCompensation',
       title: 'Tree Cutting Compensation',
       lessonCount: 28,
       money: 208,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 
-
 class AuthenticationBottomSheet extends StatefulWidget {
   const AuthenticationBottomSheet({super.key});
 
@@ -18,15 +17,15 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
   // function to authenticate with biometrics
   Future<void> _authenticate() async {
     try {
-      print(_auth);
+      debugPrint(_auth);
       bool authenticated = await _auth.authenticate(
-        localizedReason: 'Scan your fingerprint to authenticate',
+        localizedReason: 'Scan your fingerdebugPrint to authenticate',
       );
       setState(() {
         _authenticated = authenticated;
       });
     } on PlatformException catch (e) {
-      print(e);
+      debugPrint(e);
     }
   }
 
@@ -39,7 +38,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
           // add your other content here
 
           Text(
-            "Place your finger on FingerPrint for Loggin in ",
+            "Place your finger on FingerdebugPrint for Loggin in ",
             style: TextStyle(
                 color: Color.fromARGB(92, 10, 161, 226), fontSize: 15),
           ),
@@ -48,7 +47,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
           ),
           IconButton(
             iconSize: 60,
-            icon: Icon(Icons.fingerprint),
+            icon: Icon(Icons.fingerdebugPrint),
             onPressed: () {
               _authenticate();
             },
@@ -57,7 +56,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
             ElevatedButton(
               child: Text('Login'),
               onPressed: () {
-                print('pressed');
+                debugPrint('pressed');
                 // handle login action here
               },
             ),
