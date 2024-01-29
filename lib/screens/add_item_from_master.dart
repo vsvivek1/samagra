@@ -107,7 +107,7 @@ class _AddNewItemFromMasterState extends State<AddNewItemFromMaster> {
                 // You can add your logic to save the selected item and its quantity
                 debugPrint('Add to Cart: $itemName');
               },
-              child: Text('Add to Cart'),
+              child: Text('Add to Cart2'),
             ),
           ],
         ),
