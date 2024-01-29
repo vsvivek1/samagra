@@ -26,6 +26,23 @@ Future<String> getAccessToken() async {
   return Future.value(accessToken);
 }
 
+Future<String> getMaterialmasterDataFromSecureStorage() async {
+  final secureStorage = FlutterSecureStorage();
+  final data =
+      await secureStorage.read(key: 'getMaterialGroupmaster') as String;
+
+  final outPutJson = jsonDecode(data);
+  return Future.value(outPutJson);
+}
+
+Future<String> getLabourGroupMasterDataFromSecureStorage() async {
+  final secureStorage = FlutterSecureStorage();
+  final data = await secureStorage.read(key: 'getLabourGroupMaster') as String;
+
+  final outPutJson = jsonDecode(data);
+  return Future.value(outPutJson);
+}
+
 Map getCurrentSeatDetails(loginDeatails1) {
   Map loginDetails = json.decode(loginDeatails1);
 

@@ -160,7 +160,7 @@ class WorkSelection extends StatelessWidget {
       String accessToken = await getAccessToken();
       setDioAccessokenAndApiKey(dio, accessToken, config);
 
-      print(url);
+      // print(url);
 
       // debugger(when: true);
       final response = await dio.get(url, options: Options(headers: headers));
