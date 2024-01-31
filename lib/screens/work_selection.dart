@@ -279,8 +279,13 @@ class WorkSelection extends StatelessWidget {
       );
 
 // await Dio().get(queryParameters:
+      List measurementSetList;
       var res2 = responseEdit.data['result_data'];
-      List measurementSetList = res2['measurement_set_list'];
+      if (res2 != null) {
+        measurementSetList = res2['measurement_set_list'];
+      } else {
+        measurementSetList = [];
+      }
       // print('response edit $measurement_set_list');
       setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       Response response =

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 // import 'package:samagra/home_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/app_theme.dart';
@@ -94,6 +95,8 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _BtnAndPassForSmagraDirect = false;
 
   bool _showBiometricLoginButtton = false;
+
+  bool externalLinkActivated = false;
 
   // get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
   //  bool _showFirstTimePasswordField;
@@ -206,7 +209,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
 
-    if (_isLoggingIn == -2 || _ssoLoginLoading) {
+    if (_isLoggingIn == -2 || _ssoLoginLoading || externalLinkActivated) {
       return createLoadingSpinner();
     } else {
       return ScaffoldMessenger(
@@ -755,14 +758,22 @@ class _LoginScreenState extends State<LoginScreen> {
       {oIdAccessTokens}) async {
     String errorMsg = 'SERVER ERROR';
 
-    if (!(result is Map) && result.response.statusCode != 200) {
-      var data = result.response.data;
+    if (!(result is Map) &&
+        result.response == null &&
+        result.response.statusCode != 200) {
+      if (result.error != null) {
+        errorMsg = result.error;
+      }
 
-      if (data.containsKey('error')) {
-        errorMsg = result.response.data['error'];
-      } else if (data.containsKey('wsDisplayMessage')) {
-        errorMsg = result.response.data['wsDisplayMessage'];
-        // debugger(when: true);
+      if (result.resoponse != null) {
+        var data = result.response.data;
+
+        if (data.containsKey('error')) {
+          errorMsg = result.response.data['error'];
+        } else if (data.containsKey('wsDisplayMessage')) {
+          errorMsg = result.response.data['wsDisplayMessage'];
+          // debugger(when: true);
+        }
       }
 
       // debugger(when: true);
@@ -779,6 +790,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() {
         _ssoLoginLoading = false;
+        externalLinkActivated = false;
       });
       print(result.response);
       showErrorMessage(
@@ -1000,11 +1012,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget createLoadingSpinner() {
     return Center(
-      child: CircularProgressIndicator(
-        backgroundColor: Colors.grey,
-        strokeWidth: 5.0,
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-      ),
+      child: SpinKitFadingCube(color: ksebColor),
+      // child: CircularProgressIndicator(
+      //   backgroundColor: Colors.grey,
+      //   strokeWidth: 5.0,
+      //   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+      // ),
     );
   }
 
@@ -1030,11 +1043,16 @@ class _LoginScreenState extends State<LoginScreen> {
       final initialLink = await getInitialLink();
       late StreamSubscription _sub;
 
+      print('$initialLink initial link');
+
       _sub = linkStream.listen((String? link) async {
         if (link == '') {
           return;
         }
         // print("link $link");
+        setState(() {
+          externalLinkActivated = true;
+        });
 
         String token = extractTokenFromLink(link!);
 
@@ -1051,6 +1069,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
 
             // debugger(when: true);
+
+            setState(() {
+              externalLinkActivated = false;
+            });
 
             // debugger(when: true);
             String occation = 'sso';
