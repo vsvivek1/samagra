@@ -49,7 +49,7 @@ class BackgroundImage extends StatelessWidget {
 
       return file;
     } catch (e) {
-      debugPrint('Error downloading image: $e');
+      print('Error downloading image: $e');
       throw e;
     }
   }

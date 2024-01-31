@@ -13,7 +13,7 @@ class ConfigProvider extends ChangeNotifier {
       _config = await EnvironmentConfig.fromEnvFile();
       notifyListeners(); // Notify listeners about the new config
     } catch (e) {
-      debugPrint("Error loading .env file: $e");
+      print("Error loading .env file: $e");
       // Handle the error appropriately (throw/recover)
     }
   }

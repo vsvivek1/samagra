@@ -38,7 +38,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
     return false;
     return true;
     // Compare the current version with the latest version
-    //  debugPrint("$_currentVersion _currentVersion ${packageInfo.version}");
+    //  print("$_currentVersion _currentVersion ${packageInfo.version}");
 
     return _currentVersion != _latestVersion;
   }
@@ -60,22 +60,22 @@ class _UpdateCheckState extends State<UpdateCheck> {
       // Use package_installer or url_launcher to launch the installation process
       // For example using package_installer:
 
-      debugPrint("file $file");
+      print("file $file");
       int? statusCode = await AndroidPackageInstaller.installApk(
           apkFilePath: '$dir/app1.apk');
-      debugPrint(file.runtimeType);
-      debugPrint("status code $statusCode");
+      print(file.runtimeType);
+      print("status code $statusCode");
 
       if (statusCode != null) {
         PackageInstallerStatus installationStatus =
             PackageInstallerStatus.byCode(statusCode);
-        debugPrint(installationStatus.name);
+        print(installationStatus.name);
       } // Make sure to include required permissions
 
       // For url_launcher:
       // Launch the file path (Note: For Android, you need an intent to start the installation)
     } catch (e) {
-      debugPrint("Error downloading APK: $e");
+      print("Error downloading APK: $e");
     }
   }
 

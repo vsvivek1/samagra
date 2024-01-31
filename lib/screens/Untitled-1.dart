@@ -43,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       String password = jsonDecode(_loginDetails1["storedLogin"])["password"];
 
-      // debugPrint(empcode);
+      // print(empcode);
 
       _empcode = empcode;
       _password = password;
@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint("this is is logging in $_isLoggingIn");
+    // print("this is is logging in $_isLoggingIn");
 
     if (_isLoggingIn == -2) {
       return createLoadingSpinner();
@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 future: _getSavedUsernameAndPassword(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
-                    // debugPrint(snapshot.data);
+                    // print(snapshot.data);
 
                     // _inittializeLoginCredentials(snapshot);
 
@@ -169,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            // debugPrint(value);
+                            // print(value);
                             // value ??= '';
                             // _empcode = value;
                           },
@@ -214,7 +214,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             return null;
                           },
                           onSaved: (value) {
-                            // debugPrint(value);
+                            // print(value);
                             value ??= '';
 
                             // _password = value.toString();
@@ -293,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         try {
                                           MyAPI api = new MyAPI();
 
-                                          // debugPrint("empcode is $_empcode");
+                                          // print("empcode is $_empcode");
 
                                           String ext = "@kseberp.in";
 
@@ -313,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                               await api.login(
                                                   email, _password, showPhoto);
 
-                                          // debugPrint(result["result_data"]["token"]
+                                          // print(result["result_data"]["token"]
                                           //     ["access_token"]);
 
                                           await _secureStorage
@@ -332,11 +332,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                             _isLoggingIn = 0;
                                           });
 
-                                          // debugPrint(result["result_data"]);
+                                          // print(result["result_data"]);
                                           // dynamic re = await _secureStorage
                                           //     .getSecureAllStorageDataByKey('loginDetails');
 
-                                          // debugPrint(re.toString());
+                                          // print(re.toString());
 
                                           // showAlert(context);
 
@@ -347,8 +347,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     NavigationHomeScreen()),
                                           );
                                         } on Exception catch (e) {
-                                          debugPrint('exception hit');
-                                          debugPrint(e);
+                                          print('exception hit');
+                                          print(e);
                                           setState(() {
                                             _isLoggingIn = -1;
                                           });
@@ -373,7 +373,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             // code to be executed after 2 seconds
                                           });
 
-                                          // debugPrint(e);
+                                          // print(e);
 
                                           // return Future(computation)
                                           // TODO
@@ -450,13 +450,13 @@ class MyAPI {
       return response.data;
     } on DioError catch (e) {
       if (e.response != null) {
-        debugPrint(e.response);
+        print(e.response);
 
-        // debugPrint(e.response.headers);
-        // debugPrint(e.response.request);
+        // print(e.response.headers);
+        // print(e.response.request);
       } else {
-        // debugPrint(e.request);
-        debugPrint(e.message);
+        // print(e.request);
+        print(e.message);
       }
       throw e;
     }

@@ -724,8 +724,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Color.fromARGB(255, 235, 79, 58), ksebColor)),
         ),
         duration: Duration(seconds: 15))));
-    debugPrint('exception hit');
-    debugPrint(e);
+    print('exception hit');
+    print(e);
 
     if (occation == 'regular') {
       setState(() {
@@ -780,7 +780,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _ssoLoginLoading = false;
       });
-      debugPrint(result.response);
+      print(result.response);
       showErrorMessage(
           'Error fetching data. Status code: ${result.response.data['error']}',
           context);
@@ -792,7 +792,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (occation == 'sso') {
       resultData = jsonDecode(result["result_data"]);
 
-      debugPrint(" access token ${oIdAccessTokens[0]} - accees token end");
+      print(" access token ${oIdAccessTokens[0]} - accees token end");
 
       // gmailMe(oIdAccessTokens[0]);
 
@@ -1034,12 +1034,12 @@ class _LoginScreenState extends State<LoginScreen> {
         if (link == '') {
           return;
         }
-        // debugPrint("link $link");
+        // print("link $link");
 
         String token = extractTokenFromLink(link!);
 
         if (token != '') {
-          // debugPrint(token);
+          // print(token);
 
           List<String> oIdAccessTokens =
               await getOidcAccessTokens(codeVerifier, token);
@@ -1063,19 +1063,19 @@ class _LoginScreenState extends State<LoginScreen> {
             /// 1063736
             // debugger(when: true);
 
-            // debugPrint(result);
+            // print(result);
           } on Exception catch (e) {
             String occation = 'regular';
 
             debugger(when: true);
             _handleServerLoginError(context, e, occation);
-            debugPrint(e);
+            print(e);
             // TODO
           } finally {
-            debugPrint('OidcAccessTokenxyx ');
+            print('OidcAccessTokenxyx ');
           }
         }
-        // debugPrint(_sub);
+        // print(_sub);
         // Parse the link and warn the user, if it is not correct
       }, onError: (err) {
         // Handle exception by warning the user their action did not succeed
@@ -1101,7 +1101,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void showErrorMessage(String s, context) {
-    debugPrint(s);
+    print(s);
     // ScaffoldMessenger.of(context).showSnackBar(
     //   SnackBar(
     //     content: Text(s),
@@ -1161,7 +1161,7 @@ class MyAPI {
     } on DioError catch (e) {
       if (e.response != null) {
       } else {
-        // debugPrint(e.request);
+        // print(e.request);
       }
       throw e;
     }

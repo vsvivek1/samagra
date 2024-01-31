@@ -172,10 +172,10 @@ class _TreeCuttingSurveyWidgetState extends State<TreeCuttingSurveyWidget> {
 
   void _processTreeCuttingSurvey(TreeCuttingSurvey survey) {
     // Process the captured tree cutting survey data here
-    debugPrint('Tree Cutting Survey Data:');
-    debugPrint('Between Towers: ${survey.betweenTowers}');
-    debugPrint('Survey Number: ${survey.surveyNumber}');
-    debugPrint('Village: ${survey.village}');
+    print('Tree Cutting Survey Data:');
+    print('Between Towers: ${survey.betweenTowers}');
+    print('Survey Number: ${survey.surveyNumber}');
+    print('Village: ${survey.village}');
     // ... debugPrint other survey data properties or perform any desired operations
   }
 

@@ -49,7 +49,7 @@ class _AddNewItemFromMasterState extends State<AddNewItemFromMaster> {
               .toString()
               .toLowerCase()
               .contains(query.toLowerCase()))
-          .toList());
+          .toList()) as List<Map<String, dynamic>>;
     });
   }
 
@@ -97,7 +97,7 @@ class _AddNewItemFromMasterState extends State<AddNewItemFromMaster> {
                 onChanged: (value) {
                   // Handle the quantity change
                   // You can add your logic to save quantity to the desired place
-                  debugPrint('Quantity: $value');
+                  print('Quantity: $value');
                 },
               ),
             ),
@@ -105,7 +105,7 @@ class _AddNewItemFromMasterState extends State<AddNewItemFromMaster> {
               onPressed: () {
                 // Handle the button press
                 // You can add your logic to save the selected item and its quantity
-                debugPrint('Add to Cart: $itemName');
+                print('Add to Cart: $itemName');
               },
               child: Text('Add to Cart2'),
             ),

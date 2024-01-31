@@ -39,7 +39,7 @@ class AppConfig {
         isDebug: dotenv.env['DEBUG'] == 'true',
       );
     } catch (e) {
-      debugPrint("Error loading .env file: $e");
+      print("Error loading .env file: $e");
       // Handle the error or return a default configuration
       return AppConfig(
         apiKey: '',

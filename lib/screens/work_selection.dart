@@ -9,7 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
-import 'package:samagra/screens/print_widget_tree.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/warning_message.dart';
 import 'package:samagra/screens/work_details.dart';
@@ -61,7 +60,7 @@ class WorkSelection extends StatelessWidget {
       child: GestureDetector(
         onHorizontalDragEnd: (details) {
           if (details.primaryVelocity! > 0) {
-            printWidgetTree(context);
+            // printWidgetTree(context);
 
             Navigator.pushNamed(context, '/home');
 
@@ -74,7 +73,7 @@ class WorkSelection extends StatelessWidget {
         onHorizontalDragStart: (details) {
           // if (details.primaryVelocity! > 0) {
           if (true) {
-            printWidgetTree(context);
+            // printWidgetTree(context);
 
             Navigator.pop(context);
 

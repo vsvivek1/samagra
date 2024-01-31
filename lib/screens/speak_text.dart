@@ -15,7 +15,7 @@
 
 //   List<dynamic> voices = await flutterTts.getVoices;
 
-//   debugPrint(voices);
+//   print(voices);
 
 //   // gmailMe(voices);
 

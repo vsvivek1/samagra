@@ -8,7 +8,6 @@ import 'package:samagra/frtu/frtu_inspection.dart';
 import 'package:samagra/ib_booking/ib_booking.dart';
 import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';
-import 'package:samagra/screens/work_selection.dart';
 
 class PopularCourseListView extends StatefulWidget {
   const PopularCourseListView({Key? key, this.callBack}) : super(key: key);
@@ -60,7 +59,7 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
               children: List<Widget>.generate(
                 Category.popularCourseList.length,
                 (int index) {
-                  // debugPrint(Category.popularCourseList[index].target);
+                  // print(Category.popularCourseList[index].target);
                   // debugger(when: true);
                   final int count = Category.popularCourseList.length;
                   final Animation<double> animation =

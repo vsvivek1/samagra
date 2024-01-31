@@ -17,7 +17,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
   // function to authenticate with biometrics
   Future<void> _authenticate() async {
     try {
-      debugPrint(_auth);
+      print(_auth);
       bool authenticated = await _auth.authenticate(
         localizedReason: 'Scan your fingerdebugPrint to authenticate',
       );
@@ -25,7 +25,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
         _authenticated = authenticated;
       });
     } on PlatformException catch (e) {
-      debugPrint(e);
+      print(e);
     }
   }
 
@@ -47,7 +47,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
           ),
           IconButton(
             iconSize: 60,
-            icon: Icon(Icons.fingerdebugPrint),
+            icon: Icon(Icons.print),
             onPressed: () {
               _authenticate();
             },
@@ -56,7 +56,7 @@ class _AuthenticationBottomSheetState extends State<AuthenticationBottomSheet> {
             ElevatedButton(
               child: Text('Login'),
               onPressed: () {
-                debugPrint('pressed');
+                print('pressed');
                 // handle login action here
               },
             ),

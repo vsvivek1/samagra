@@ -474,10 +474,10 @@ class _HomeDrawerState extends State<HomeDrawer> {
   Object _getCurrentSeatDetailsFromSeatsArray(seats, currentSeatId) {
     return 'hi';
 
-    debugPrint(seats
+    print(seats
         .firstWhere((seat) => seat["mst_seat_id"] == currentSeatId)
         .runtimeType);
-    // debugPrint(currentSeatId);
+    // print(currentSeatId);
 
     // return 'hi';
     // // return seats[0];
@@ -622,7 +622,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
   }
 
   void onTapped() {
-    debugPrint('Doing Something...'); // debugPrint to console.
+    print('Doing Something...'); // debugPrint to console.
   }
 
   Widget inkwell(DrawerList listData) {

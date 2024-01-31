@@ -27,7 +27,7 @@ import Flutter
         // Check if the URL matches the expected scheme, host, and path prefix
         if url.scheme == "m-samagra", url.host == "kseb.in", url.path.hasPrefix("/sso") {
             // Your code to handle the URL
-            debugPrint("Received URL: \(url)")
+            print("Received URL: \(url)")
         }
     }
 }

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/frtu/frtu_inspection.dart';
-import 'package:samagra/ib_booking/ib_booking.dart';
-import 'package:samagra/screens/phone_book.dart';
-import 'package:samagra/screens/tree_cutting_compensation.dart';
 import 'package:samagra/screens/work_selection.dart';
 
 class Category {

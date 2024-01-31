@@ -66,7 +66,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
           isLoading = false;
         });
 
-        // debugPrint(res);
+        // print(res);
         // this.callApiAndSaveLabourGroupMasterInSecureStorage();
 
         return;
@@ -76,7 +76,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
           isLoading = false;
         });
 
-        debugPrint('some error');
+        print('some error');
         // return [];
       }
     } on Exception catch (e) {
@@ -87,7 +87,7 @@ class _TreeCuttingCompensationState extends State<TreeCuttingCompensation> {
 // var wrk=Work(workDetail:{'test':0})
       return; //Future.value(k);
 
-      debugPrint(e); // TODO
+      print(e); // TODO
     }
   }
 

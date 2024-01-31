@@ -7,7 +7,7 @@ String username = 'samagramobile@gmail.com';
 String password = 'rbjjsxhxpdmgxbtq';
 
 void gmailMe(dynamic object) async {
-  // debugPrint()
+  // print()
   final smtpServer = gmail(username, password);
   //  final smtpServer = gmail(username, password);
   // Use the SmtpServer class to configure an SMTP server:
@@ -17,7 +17,7 @@ void gmailMe(dynamic object) async {
 
   // Create our message.
 
-  debugPrint('hi object   $object');
+  print('hi object   $object');
   final message = Message()
     ..from = Address(username, 'from Vivek')
     ..recipients.add('vs.vivek1@gmail.com')
@@ -29,11 +29,11 @@ void gmailMe(dynamic object) async {
 
   try {
     final sendReport = await send(message, smtpServer);
-    debugPrint('Message sent: ' + sendReport.toString());
+    print('Message sent: ' + sendReport.toString());
   } on MailerException catch (e) {
-    debugPrint('Message not sent.');
+    print('Message not sent.');
     for (var p in e.problems) {
-      debugPrint('Problem: ${p.code}: ${p.msg}');
+      print('Problem: ${p.code}: ${p.msg}');
     }
   }
 }
