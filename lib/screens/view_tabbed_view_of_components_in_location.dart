@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
@@ -40,7 +42,8 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
                     ],
                   ),
                   SizedBox(
-                    height: 300, // Adjust the height as needed
+                    height: MediaQuery.of(context).size.height *
+                        .5, // Adjust the height as needed
                     child: TabBarView(
                       children: [
                         _buildListComponent(componentsMap, 'materials'),
@@ -87,29 +90,53 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
             // items.addAll(typeList as Iterable<String>);
 
             // print("TYPE $type STRUCTURE $structure");
-            print("TYPE $type typeListx $typeList");
-            print("typeListxrun  ${typeList.runtimeType}");
+            // print("TYPE $type typeListx $typeList");
+            // print("typeListxrun  ${typeList.runtimeType}");
 
             items.addAll(typeList);
-            print("items $items");
+            // print("items $items");
           }
         });
       }
     });
 
-    print("ITEMS $items");
+    // print("ITEMS $items");
     return items;
   }
 
-  Widget _buildListComponent(Map<dynamic, dynamic>? components1, type) {
+  Widget _buildListComponent(Map<dynamic, dynamic>? components1, expenseType) {
+    String type = expenseType;
+
+    // print("$type is type");
+
+    String typeName = '';
+    switch (expenseType) {
+      case 'labour':
+        typeName = 'labour_name';
+        break;
+      case 'materials':
+        typeName = 'material_name';
+        break;
+      case 'takenBacks':
+        typeName = 'taken_back_name';
+        break;
+    }
+
     List components = _getFullListOfComponsnts(components1, type);
 
-    print("components $components");
+    // print("components $components");
 
     return ListView.builder(
       itemCount: components.length ?? 0,
       itemBuilder: (context, index) {
         // print("CONTEXT $context");
+
+        var type1 = type;
+
+        var name = components[index][type];
+        print("name $name");
+        // debugger(when: true);
+        print("$components[index] comp $name");
 
         if (components[index] != null)
           return ListTile(
@@ -119,9 +146,9 @@ class ViewTabbedViewOfComponentsInLocation extends StatelessWidget {
             contentPadding: EdgeInsets.only(left: 0.0),
             leading: CircleAvatar(
               maxRadius: 10,
-              child: Text(index.toString()),
+              child: Text((index + 1).toString()),
             ),
-            title: Text(components[index]['material_name'].toString() ?? ''),
+            title: Text(components[index][typeName].toString() ?? ''),
           );
         return null;
       },

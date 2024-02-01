@@ -7,8 +7,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/warning_message.dart';
 import 'package:samagra/screens/work_details.dart';
@@ -131,7 +133,9 @@ class WorkSelection extends StatelessWidget {
                 } else if (snapshot.hasError || snapshot.data == '-1') {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return rotatingProgress();
+                  return Center(
+                      child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
+                  // return rotatingProgress();
                 }
               },
             ),
