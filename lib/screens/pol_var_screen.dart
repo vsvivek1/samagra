@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
+import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
@@ -2098,7 +2099,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             headerBuilder: (BuildContext context, bool isExpanded) {
               return ListTile(
                 tileColor: t['hasStructure'] ?? false
-                    ? Colors.greenAccent
+                    ? const Color.fromARGB(255, 167, 241, 206)
                     : Colors.white10,
                 title: Text(
                   softWrap: true,
@@ -2919,6 +2920,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   _saveMeasurementDetails() async {
+    polvarProcessLocationData(measurementDetails);
     logCurrentFunction();
     this.saveWorkDetails(
         workId: widget.workId.toString(),

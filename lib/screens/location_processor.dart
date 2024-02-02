@@ -1,8 +1,12 @@
 class LocationProcessor {
-  Map<String, int> getTotalMaterialQuantities(List<Location> locations) {
+  Map<String, int> getTotalMaterialQuantities(List<Map<dynamic,dynamic>>locations) {
+    
+    
     Map<String, int> materialTotals = {};
 
-    for (var location in locations) {
+    for (var location1 in locations) {
+
+      Location location=Location(location1)
       for (var material in location.materials) {
         materialTotals.update(
             material.materialName, (value) => value + material.quantity,
@@ -97,92 +101,92 @@ class LocationProcessor {
   }
 }
 
-void main() {
-  List<Location> locations = [
-    Location(
-      locationNo: 1,
-      coordinates: [12.345, 67.890],
-      materials: [Material(materialName: 'Material1', quantity: 10)],
-      takenbacks: [TakenBack(takenBackName: 'TakenBack1', quantity: 5)],
-      labors: [Labor(laborName: 'Labor1', quantity: 3)],
-    ),
+// void main() {
+//   List<Location> locations = [
+//     Location(
+//       locationNo: 1,
+//       coordinates: [12.345, 67.890],
+//       materials: [Material(materialName: 'Material1', quantity: 10)],
+//       takenbacks: [TakenBack(takenBackName: 'TakenBack1', quantity: 5)],
+//       labors: [Labor(laborName: 'Labor1', quantity: 3)],
+//     ),
 
-    Location(
-      locationNo: 2,
-      coordinates: [12.345, 67.890],
-      materials: [
-        Material(materialName: 'Material2', quantity: 12),
-        Material(materialName: 'Material3', quantity: 12)
-      ],
-      takenbacks: [TakenBack(takenBackName: 'TakenBack21', quantity: 5)],
-      labors: [Labor(laborName: 'Labor12', quantity: 3)],
-    ),
+//     Location(
+//       locationNo: 2,
+//       coordinates: [12.345, 67.890],
+//       materials: [
+//         Material(materialName: 'Material2', quantity: 12),
+//         Material(materialName: 'Material3', quantity: 12)
+//       ],
+//       takenbacks: [TakenBack(takenBackName: 'TakenBack21', quantity: 5)],
+//       labors: [Labor(laborName: 'Labor12', quantity: 3)],
+//     ),
 
-    // Add more locations as needed
-  ];
+//     // Add more locations as needed
+//   ];
 
-  LocationProcessor locationProcessor = LocationProcessor();
+//   LocationProcessor locationProcessor = LocationProcessor();
 
-  Map<String, int> totalMaterialQuantities =
-      locationProcessor.getTotalMaterialQuantities(locations);
-  Map<String, int> totalTakenBackQuantities =
-      locationProcessor.getTotalTakenBackQuantities(locations);
-  Map<String, int> totalLaborQuantities =
-      locationProcessor.getTotalLaborQuantities(locations);
+//   Map<String, int> totalMaterialQuantities =
+//       locationProcessor.getTotalMaterialQuantities(locations);
+//   Map<String, int> totalTakenBackQuantities =
+//       locationProcessor.getTotalTakenBackQuantities(locations);
+//   Map<String, int> totalLaborQuantities =
+//       locationProcessor.getTotalLaborQuantities(locations);
 
-  print('Total Material Quantities:');
-  totalMaterialQuantities.forEach((name, quantity) {
-    print('$name: $quantity');
-  });
+//   print('Total Material Quantities:');
+//   totalMaterialQuantities.forEach((name, quantity) {
+//     print('$name: $quantity');
+//   });
 
-  print('\nTotal TakenBack Quantities:');
-  totalTakenBackQuantities.forEach((name, quantity) {
-    print('$name: $quantity');
-  });
+//   print('\nTotal TakenBack Quantities:');
+//   totalTakenBackQuantities.forEach((name, quantity) {
+//     print('$name: $quantity');
+//   });
 
-  print('\nTotal Labor Quantities:');
-  totalLaborQuantities.forEach((name, quantity) {
-    print('$name: $quantity');
-  });
+//   print('\nTotal Labor Quantities:');
+//   totalLaborQuantities.forEach((name, quantity) {
+//     print('$name: $quantity');
+//   });
 
-  Map<int, Map<String, int>> locationWiseMaterialTotals =
-      locationProcessor.getLocationWiseMaterialTotals(locations);
-  Map<int, Map<String, int>> locationWiseTakenBackTotals =
-      locationProcessor.getLocationWiseTakenBackTotals(locations);
-  Map<int, Map<String, int>> locationWiseLaborTotals =
-      locationProcessor.getLocationWiseLaborTotals(locations);
+//   Map<int, Map<String, int>> locationWiseMaterialTotals =
+//       locationProcessor.getLocationWiseMaterialTotals(locations);
+//   Map<int, Map<String, int>> locationWiseTakenBackTotals =
+//       locationProcessor.getLocationWiseTakenBackTotals(locations);
+//   Map<int, Map<String, int>> locationWiseLaborTotals =
+//       locationProcessor.getLocationWiseLaborTotals(locations);
 
-  print('\nLocation-wise Material Totals:');
-  locationWiseMaterialTotals.forEach((locationNo, materialTotals) {
-    print('Location $locationNo:');
-    materialTotals.forEach((name, quantity) {
-      print('$name: $quantity');
-    });
-  });
+//   print('\nLocation-wise Material Totals:');
+//   locationWiseMaterialTotals.forEach((locationNo, materialTotals) {
+//     print('Location $locationNo:');
+//     materialTotals.forEach((name, quantity) {
+//       print('$name: $quantity');
+//     });
+//   });
 
-  print('\nLocation-wise TakenBack Totals:');
-  locationWiseTakenBackTotals.forEach((locationNo, takenBackTotals) {
-    print('Location $locationNo:');
-    takenBackTotals.forEach((name, quantity) {
-      print('$name: $quantity');
-    });
-  });
+//   print('\nLocation-wise TakenBack Totals:');
+//   locationWiseTakenBackTotals.forEach((locationNo, takenBackTotals) {
+//     print('Location $locationNo:');
+//     takenBackTotals.forEach((name, quantity) {
+//       print('$name: $quantity');
+//     });
+//   });
 
-  print('\nLocation-wise Labor Totals:');
-  locationWiseLaborTotals.forEach((locationNo, laborTotals) {
-    print('Location $locationNo:');
-    laborTotals.forEach((name, quantity) {
-      print('$name: $quantity');
-    });
-  });
-}
+//   print('\nLocation-wise Labor Totals:');
+//   locationWiseLaborTotals.forEach((locationNo, laborTotals) {
+//     print('Location $locationNo:');
+//     laborTotals.forEach((name, quantity) {
+//       print('$name: $quantity');
+//     });
+//   });
+// }
 
 class Location {
   int locationNo;
-  List<double> coordinates;
-  List<Material> materials;
-  List<TakenBack> takenbacks;
-  List<Labor> labors;
+  List<dynamic> coordinates;
+  List<dynamic> materials;
+  List<dynamic> takenbacks;
+  List<dynamic> labors;
 
   Location({
     required this.locationNo,
@@ -191,6 +195,29 @@ class Location {
     required this.takenbacks,
     required this.labors,
   });
+
+
+  factory Location.fromMap(Map<String, dynamic> map) {
+    return Location(
+      locationNo: map['locationNo'] ?? 0,
+      coordinates: (map['coordinates'] as List<dynamic>?)
+              ?.map((dynamic item) => item.toDouble())
+              .toList() ??
+          [],
+      materials: (map['materials'] as List<dynamic>?)
+              ?.map((dynamic item) => item.toString())
+              .toList() ??
+          [],
+      takenbacks: (map['takenbacks'] as List<dynamic>?)
+              ?.map((dynamic item) => item.toString())
+              .toList() ??
+          [],
+      labors: (map['labors'] as List<dynamic>?)
+              ?.map((dynamic item) => item.toString())
+              .toList() ??
+          [],
+    );
+  }
 }
 
 class Material {
