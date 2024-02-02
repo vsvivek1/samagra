@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
-import 'package:samagra/screens/curved_text_fab.dart';
+import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
@@ -2097,43 +2097,73 @@ class _PolVarScreenState extends State<PolVarScreen> {
             isExpanded: t['isExpanded'] ?? false,
             headerBuilder: (BuildContext context, bool isExpanded) {
               return ListTile(
+                tileColor: t['hasStructure'] ?? false
+                    ? Colors.greenAccent
+                    : Colors.white10,
                 title: Text(
                   softWrap: true,
                   t['task_name'].toString(),
                 ),
               );
             },
-            body: Column(
-                children: structures.map<Widget>((st) {
-              // debugger(when: true);
-              return GestureDetector(
-                onDoubleTap: () => _showBottomSheet(context),
-                child: Card(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Column(
-                            children: [
-                              Text(
-                                st["structure_name"] ?? 'ERROR',
-                                style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blueAccent),
-                              ),
-                            ],
-                          )),
-                      setStructureQuantityWidget(st, t),
-                    ],
-                  ),
-                ),
-              );
+            body: Column(children: [
+              ...structures.map<Widget>(
+                (st) {
+                  // debugger(when: true);
+                  return GestureDetector(
+                    onDoubleTap: () => _showBottomSheet(context),
+                    child: Card(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    st["structure_name"] ?? 'ERROR',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blueAccent),
+                                  ),
+                                ],
+                              )),
+                          setStructureQuantityWidget(st, t),
+                        ],
+                      ),
+                    ),
+                  );
 
-              // Text(st["structure_name"]);
-            }).toList()
+                  // Text(st["structure_name"]);
+                },
+              ).toList(),
+              ElevatedButton(
+                /// save for a dummy save to collapse the expansion panel and
+                ///  check whetehr there is any structure has quantity
+                onPressed: () {
+                  setState(() {
+                    for (int i = 0; i < tasklist1.length; i++) {
+                      tasklist1[i]['isExpanded'] = false;
 
+                      bool hasStr = checkAnyStructureHasQuantity(tasklist1[i]);
+
+                      tasklist1[i]['hasStructure'] = hasStr;
+
+                      // if (tasklist1[i].isEmpty) {}
+
+                      print(hasStr);
+                      // tasklist1[i]['isExpanded'] = !tasklist1[i]['isExpanded'];
+                    }
+
+                    //
+                  });
+                  // Handle button press
+                  // _handleButtonPress(context);
+                },
+                child: Text('Save and Select Next task'),
+              ),
+            ]
                 //  [Text(counter.toString(), Text('2')]
 
                 //  tasklist1[ind]['tasks']
@@ -2141,6 +2171,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 //     .toList()
 
                 // children: getStructuresOfTask(tasklist1[ind]['tasks']),
+
                 ),
           );
         }).toList());
@@ -2178,9 +2209,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       return [Text('No tasks found.')];
     }
 
-    print(tasks);
+    // print(tasks);
 
-    print('tasks above from panel  childern inside');
+    // print('tasks above from panel  childern inside');
 
     return [Text('t1'), Text('t2')];
 

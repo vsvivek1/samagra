@@ -12,7 +12,6 @@ import 'package:samagra/screens/login_screen.dart';
 // import 'navigation_home_screen.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:samagra/screens/pol_var_screen.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
