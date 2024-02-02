@@ -2152,7 +2152,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                       // if (tasklist1[i].isEmpty) {}
 
-                      print(hasStr);
+                      // print(hasStr);
                       // tasklist1[i]['isExpanded'] = !tasklist1[i]['isExpanded'];
                     }
 
