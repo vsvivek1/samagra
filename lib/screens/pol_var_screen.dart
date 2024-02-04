@@ -3068,9 +3068,27 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return retObj;
   }
 
+  void resetStructureQuantities(List tasks) {
+    for (var task in tasks) {
+      var structures = task['structures'];
+
+      if (structures != null) {
+        for (var structure in structures) {
+          structure['quantity'] = 0;
+        }
+      }
+    }
+  }
+
   _gotToAnotherLocation() {
     // _show
 
+    print(_taskList);
+
+    resetStructureQuantities(_taskList);
+    print(_taskList);
+
+    // debugger(when: true);
     setState(() {
       _selectedLocationIndex = -1;
       _showAnotherLocationButton = true;

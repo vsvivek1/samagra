@@ -1,7 +1,8 @@
 #!/bin/bash
 
-
-
+adb pair adb-cde43bc9-oRNuYB;
+adb connect adb-cde43bc9-oRNuYB;
+exit;
 # Retrieve the default gateway
 gateway=$(route -n get default | grep 'gateway' | awk '{debugPrint $2}')
 
