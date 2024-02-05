@@ -35,6 +35,36 @@ import 'dart:developer';
 import 'measurement_property_copier_screen.dart';
 
 class PolVarScreen extends StatefulWidget {
+// # Fetching estimate from the work module
+// # - Identify the work module for estimate retrieval
+// # - Access the necessary APIs securely
+// # - Handle errors gracefully, log if needed
+
+// # Finding out and making an abstract of tasks
+// # - Analyze fetched estimate data for individual tasks
+// # - Create a suitable data structure for task abstraction
+// # - Implement algorithms for task identification and abstraction
+
+// # List structures under the expansion model
+// # - Determine structure for representing tasks
+// # - Choose a suitable data structure for efficient storage
+// # - Consider hierarchical relationships among tasks
+
+// # Fetch standard estimate
+// # - Determine source/method for fetching standard estimate
+// # - Access necessary data/module for retrieval
+// # - Consider any parameters affecting the standard estimate
+
+// # Make changes in quantity in fetched material
+// # - Identify material data within fetched estimate
+// # - Modify quantity of materials as required
+// # - Implement validation checks and error handling for quantity changes
+
+// # Save
+// # - Determine target location/system for saving modified estimate data
+// # - Implement functions/methods for saving data
+// # - Include error handling and confirmation messages on successful saving
+
   @override
   final int workId;
   final String workName;
