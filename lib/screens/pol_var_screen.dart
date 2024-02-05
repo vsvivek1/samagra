@@ -178,6 +178,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<Map<String, dynamic>> getMeasurementDetails(
       String workId, int locationNumber) async {
+    // fetch stored measurement detais from local storage
     logCurrentFunction();
     final storage = new FlutterSecureStorage();
     String? jsonDetails = await storage.read(key: 'measurementDetails');
@@ -620,6 +621,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       structureMeasurements[targetId]['quantity'] =
           structureMeasurements[targetId]['quantity'] + 1;
 
+      _taskList.forEach((element) {
+        print("element is $element");
+      });
+
       // structureMeasurements
       //     .firstWhere((structure) => structure['id'] == targetId)
       //     .update('quantity', (value) => value + 1);
@@ -759,6 +764,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
               wrkScheduleGroupStructure?['id'] ?? -1;
 
           // workScheduleGroupId
+          // debugger(when: true);
+
           // debugger(when: true);
 
           updateStructureMeasurements(structureMeasurements, structure['id'],
@@ -2209,6 +2216,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Row setStructureQuantityWidget(st, t) {
+    /// to add and delete strucutres
     // debugger(when: true);
     return Row(
       children: [
@@ -2224,6 +2232,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
           onPressed: () async {
             await this.getMasterEstimateForStructureItem(widget.workId, t, st);
 
+            setState(() {
+              if (st['quantity'] == null) {
+                st['quantity'] = 1;
+              } else {
+                st['quantity'] = st['quantity'] + 1;
+              }
+            });
             // st["id"], st['qty'] ?? 0, st);
 
             // _showBottomSheet(context);
@@ -2506,6 +2521,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
               setState(() {
                 structure['quantity'] = structure['quantity'] + 1;
+
+                Map dispTask =
+                    _taskList.firstWhere((task) => task['id'] == taskId);
+
+                Map dispStr = dispTask['structures'].firstWhere(
+                    (structure) => structure['id'] == mstStructureId);
+
+                if (dispStr['quantity'] != null) {
+                  dispStr['quantity'] = dispStr['quantity'] + 1;
+                } else {
+                  dispStr['quantity'] = 1;
+                }
               });
               // debugger(when: true);
             } else {
@@ -2969,6 +2996,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       this._showSaveMeasurementDetailsButton = false;
       this._showAnotherLocationButton = true;
 
+// _taskList.f
       getTasksofSelectedLocation();
     });
 
