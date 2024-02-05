@@ -3297,6 +3297,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
   reflectQuantityDetails() {}
 
   void reduceStructureQuantity(int workId, t, st) {
+    /// redmeove actual later oending
+    setState(() {
+      /// this is just display purpose
+      if (st['quantity'] == null) {
+        st['quantity'] = 0;
+      } else {
+        st['quantity'] = st['quantity'] - 1;
+      }
+    });
+    //
     print('hi');
     // print();
 
