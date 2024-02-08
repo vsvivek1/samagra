@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:samagra/coming_soon.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
@@ -1042,6 +1043,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       viewStructures = true;
     });
 
+    //// if going for a new page start from here
+    // Route route = MaterialPageRoute(builder: (context) => ComingSoon());
+
+    // Navigator.push(context, route);
     this.userDirections =
         'NOW Select Task and then correct structure inside it ';
     if (!isAudioMuted) {
@@ -2907,7 +2912,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         print("HAS GEO LOCATIONS $_selectedLocationHasMeasurements ");
         // _showAnotherLocationButton = true;
         // _showSaveMeasurementDetailsButton = true;
-        // viewStructures = true;
+
         // _enableEntryOfLocationDetails = false;
 
         // _selectedLocationTasks = [];
@@ -2915,7 +2920,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // _selectedLocationDetails = {};
 
         // // _gotToAnotherLocation();
-        // // viewStructures = true;
+
         // _enableEntryOfLocationDetails = false;
         // // _fetchingMasterEstimate = false;
       }

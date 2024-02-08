@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:samagra/kseb_color.dart';
 
 class ComingSoon extends StatefulWidget {
   const ComingSoon({super.key});
@@ -14,8 +15,9 @@ class _ComingSoonState extends State<ComingSoon> {
     return Scaffold(
       body: Column(
         children: [
-          SpinKitChasingDots(),
-          SpinKitCircle(),
+          Center(child: SpinKitFadingCube(color: ksebColor)),
+          // SpinKitChasingDots(),
+          // SpinKitCircle(),
           Text('Work in Progress')
         ],
       ),
