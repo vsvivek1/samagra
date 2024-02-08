@@ -42,103 +42,85 @@ class WorkSelection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
-    return WillPopScope(
-      onWillPop: () async {
-        print('this callsed');
-        debugger(when: true);
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity! > 0) {
+          // printWidgetTree(context);
 
-        // Navigator.of(context).pushReplacementNamed('/redirected');
-        return true; // Prevent default back button behavior
+          Navigator.pushNamed(context, '/home');
 
-        // Navigator.of(context).pushReplacement(
-        //   MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
-        // );
-        // // Navigator.push(
-        // //   context,
-        // //   MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
-        // // );
-        // return false;
+          // Navigator.pushReplacementNamed(context, '/home');
+          // Swiped from left to right (right to left motion)
+          print('Swipe back detected!');
+          // Your custom handling for swipe back
+        }
       },
-      child: GestureDetector(
-        onHorizontalDragEnd: (details) {
-          if (details.primaryVelocity! > 0) {
-            // printWidgetTree(context);
+      onHorizontalDragStart: (details) {
+        // if (details.primaryVelocity! > 0) {
+        if (true) {
+          // printWidgetTree(context);
 
-            Navigator.pushNamed(context, '/home');
+          Navigator.pop(context);
 
-            // Navigator.pushReplacementNamed(context, '/home');
-            // Swiped from left to right (right to left motion)
-            print('Swipe back detected!');
-            // Your custom handling for swipe back
-          }
-        },
-        onHorizontalDragStart: (details) {
-          // if (details.primaryVelocity! > 0) {
-          if (true) {
-            // printWidgetTree(context);
-
-            Navigator.pop(context);
-
-            // Navigator.pushReplacementNamed(context, '/home');
-            // Swiped from left to right (right to left motion)
-            print('Swipe back detected!');
-            // Your custom handling for swipe back
-          }
-        },
-        child: Scaffold(
-          appBar: AppBar(
-            leading: null,
-            automaticallyImplyLeading: false,
-            backgroundColor: AppTheme.grey.withOpacity(0.7),
-            title: Row(
-              children: [
-                Spacer(),
-                Text('Select a Work'),
-                Spacer(),
-                IconButton(
-                    color: Colors.red,
-                    onPressed: refreshWorkList(),
-                    icon: Icon(Icons.refresh))
-              ],
-            ),
+          // Navigator.pushReplacementNamed(context, '/home');
+          // Swiped from left to right (right to left motion)
+          print('Swipe back detected!');
+          // Your custom handling for swipe back
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: null,
+          automaticallyImplyLeading: false,
+          backgroundColor: AppTheme.grey.withOpacity(0.7),
+          title: Row(
+            children: [
+              Spacer(),
+              Text('Select a Work'),
+              Spacer(),
+              IconButton(
+                  color: Colors.red,
+                  onPressed: refreshWorkList(),
+                  icon: Icon(Icons.refresh))
+            ],
           ),
-          body: Theme(
-            data: ThemeData(),
-            child: FutureBuilder(
-              future: _fetchWorkListList(context: context),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != "-1") {
-                  final workListList = snapshot.data;
+        ),
+        body: Theme(
+          data: ThemeData(),
+          child: FutureBuilder(
+            future: _fetchWorkListList(context: context),
+            builder: (context, snapshot) {
+              if (snapshot.hasData && snapshot.data != "-1") {
+                final workListList = snapshot.data;
 
-                  // print("worklist $workListList");
+                // print("worklist $workListList");
 
-                  // debugger(when: true);
+                // debugger(when: true);
 
-                  // p(WorkListList);
-                  // p(workListList.runtimeType);
+                // p(WorkListList);
+                // p(workListList.runtimeType);
 
-                  // return Text(WorkListList.toString());
+                // return Text(WorkListList.toString());
 
-                  return SchGrpListWidget(workListList);
+                return SchGrpListWidget(workListList);
 
-                  // return MaterialApp(
-                  //   title: 'List of Works',
-                  //   home: Scaffold(
-                  //     appBar: AppBar(
-                  //       title: Text('Square Tiles Demo'),
-                  //     ),
-                  //     body: WorkListListWidget(WorkListList),
-                  //   ),
-                  // );
-                } else if (snapshot.hasError || snapshot.data == '-1') {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Center(
-                      child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
-                  // return rotatingProgress();
-                }
-              },
-            ),
+                // return MaterialApp(
+                //   title: 'List of Works',
+                //   home: Scaffold(
+                //     appBar: AppBar(
+                //       title: Text('Square Tiles Demo'),
+                //     ),
+                //     body: WorkListListWidget(WorkListList),
+                //   ),
+                // );
+              } else if (snapshot.hasError || snapshot.data == '-1') {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Center(
+                    child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
+                // return rotatingProgress();
+              }
+            },
           ),
         ),
       ),
@@ -510,192 +492,184 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
       final workDetails = ref.watch(workDetailsProvider);
 
       // debugger(when: true);
-      return WillPopScope(
-        onWillPop: () {
-          // debugger(when: true);
-          return Future.value(false);
-        },
-        child: SafeArea(
-          child: Column(
-            children: [
-              IconButton(
-                iconSize: 10,
-                icon: isAudioMuted
-                    ? Icon(Icons.volume_up_rounded)
-                    : Icon(Icons.volume_mute_sharp),
-                onPressed: toggleMute,
-                tooltip: isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
-              ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search by Work code or Work Name',
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: IconButton(
-                        icon: Icon(Icons.search),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _filteredItems = List.from(widget.schGrpList);
-                          });
-                        },
-                      ),
+      return SafeArea(
+        child: Column(
+          children: [
+            IconButton(
+              iconSize: 10,
+              icon: isAudioMuted
+                  ? Icon(Icons.volume_up_rounded)
+                  : Icon(Icons.volume_mute_sharp),
+              onPressed: toggleMute,
+              tooltip: isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search by Work code or Work Name',
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _filteredItems = List.from(widget.schGrpList);
+                        });
+                      },
                     ),
                   ),
-                  onChanged: (value) {
-                    List<dynamic> schGrpList = List.from(widget.schGrpList);
-                    setState(() {
-                      _filteredItems = schGrpList
-                          .where((item) =>
-                              item['wrk_work_detail']['work_name']
-                                  .toLowerCase()
-                                  .contains(value.toLowerCase()) ||
-                              item['wrk_work_detail']['work_code']
-                                  .toLowerCase()
-                                  .contains(value.toLowerCase()))
-                          .toList();
-                    });
-                  },
                 ),
+                onChanged: (value) {
+                  List<dynamic> schGrpList = List.from(widget.schGrpList);
+                  setState(() {
+                    _filteredItems = schGrpList
+                        .where((item) =>
+                            item['wrk_work_detail']['work_name']
+                                .toLowerCase()
+                                .contains(value.toLowerCase()) ||
+                            item['wrk_work_detail']['work_code']
+                                .toLowerCase()
+                                .contains(value.toLowerCase()))
+                        .toList();
+                  });
+                },
               ),
-              Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 2,
-                  ),
-                  itemCount: _filteredItems.length,
-                  itemBuilder: (context, index) {
-                    final item = _filteredItems[index];
+            ),
+            Expanded(
+              child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 1,
+                  childAspectRatio: 2,
+                ),
+                itemCount: _filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = _filteredItems[index];
 
-                    if (item == "-1") {
-                      return WarningMessage(
-                          message: 'No work Found For Measurement');
-                      // return Text(
-                      //     'some error -1 in item Failed to load List of Works');
-                      // showErrorSnackBar(context);
-                    }
+                  if (item == "-1") {
+                    return WarningMessage(
+                        message: 'No work Found For Measurement');
+                    // return Text(
+                    //     'some error -1 in item Failed to load List of Works');
+                    // showErrorSnackBar(context);
+                  }
 
-                    int sl = index + 1;
+                  int sl = index + 1;
 
-                    Map workDetail = item['wrk_work_detail'];
+                  Map workDetail = item['wrk_work_detail'];
 
-                    print("$item item");
+                  print("$item item");
 
-                    // int hasTakenback=
+                  // int hasTakenback=
 
-                    // int workId = workDetail?['id'];
-                    int workId = item?['workId'];
+                  // int workId = workDetail?['id'];
+                  int workId = item?['workId'];
 
-                    // var hasStarted = await getStoredWorkDetails(workId); //
+                  // var hasStarted = await getStoredWorkDetails(workId); //
 
-                    // print('has started $hasStarted');
+                  // print('has started $hasStarted');
 
-                    int workScheduleGroupId = item?['wrk_schedule_group_id'];
+                  int workScheduleGroupId = item?['wrk_schedule_group_id'];
 
-                    final workName = workDetail['work_name'];
-                    final workCode = workDetail['work_code'];
-                    final status = item['status'];
-                    final measurementSetId =
-                        (status == 'CREATED') ? -1 : item['id'];
+                  final workName = workDetail['work_name'];
+                  final workCode = workDetail['work_code'];
+                  final status = item['status'];
+                  final measurementSetId =
+                      (status == 'CREATED') ? -1 : item['id'];
 
-                    // debugger(when: workCode == 'CW-6661-202223-15');
-                    // print(work)
+                  // debugger(when: workCode == 'CW-6661-202223-15');
+                  // print(work)
 
-                    if (workName == null || workId == -1 || item == "-1") {
-                      showErrorSnackBar(context);
-                    }
+                  if (workName == null || workId == -1 || item == "-1") {
+                    showErrorSnackBar(context);
+                  }
 
-                    ///temporary
+                  ///temporary
 
-                    //  'workId' : workId,
-                    //             'workName': workName,
+                  //  'workId' : workId,
+                  //             'workName': workName,
 
-                    // return Text('hi');
-                    return GestureDetector(
-                        onTap: () {
-                          ///setting global work details
-                          WorkDetails workDetails = WorkDetails();
+                  // return Text('hi');
+                  return GestureDetector(
+                      onTap: () {
+                        ///setting global work details
+                        WorkDetails workDetails = WorkDetails();
 
-                          // Setting properties
-                          workDetails.workName = workName;
-                          workDetails.workCode = workCode;
-                          workDetails.workId = workId;
-                          workDetails.isAudioMuted = true;
+                        // Setting properties
+                        workDetails.workName = workName;
+                        workDetails.workCode = workCode;
+                        workDetails.workId = workId;
+                        workDetails.isAudioMuted = true;
 
-                          // print(
-                          //     "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
+                        // print(
+                        //     "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
 
-                          // debugger(when: true);
+                        // debugger(when: true);
 
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => MeasurementOptionScreen(
-                                workId,
-                                workName,
-                                workCode,
-                                measurementSetId.toString(),
-                                workScheduleGroupId.toString(),
-                                isAudioMuted,
-                              ),
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => MeasurementOptionScreen(
+                              workId,
+                              workName,
+                              workCode,
+                              measurementSetId.toString(),
+                              workScheduleGroupId.toString(),
+                              isAudioMuted,
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey, width: 2.0),
                           ),
-                          child: GridTile(
-                            header: Row(
-                              children: [
-                                CircleAvatar(
-                                  child: Text(sl.toString()),
-                                  radius: 10,
-                                ),
-                                Spacer(),
-                                Text('WorkId :$workId'),
-                                Spacer(),
-                                Text('SchGrp :$workScheduleGroupId'),
-                                Spacer(),
-                                (status != 'UNDR_MSR')
-                                    ? Text(status)
-                                    : Text('k'),
-                              ],
-                            ),
-                            child: Center(
-                              child: ListTile(
-                                tileColor: (status != 'CREATED')
-                                    ? Color.fromARGB(255, 33, 194, 151)
-                                    : Colors.white,
-                                // subtitle: item['started'] == true
-                                //     ? Text(
-                                //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
-                                //     : Text(
-                                //         'Measurements Not Started ${item['hasStarted']}'),
-                                title: Text(
-                                  '\n' +
-                                      item['wrk_work_detail']['work_name'] +
-                                      '\n WorkCode: $workCode',
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      wordSpacing: 3,
-                                      color: const Color.fromARGB(
-                                          255, 89, 76, 175)),
-                                ),
+                        );
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey, width: 2.0),
+                        ),
+                        child: GridTile(
+                          header: Row(
+                            children: [
+                              CircleAvatar(
+                                child: Text(sl.toString()),
+                                radius: 10,
+                              ),
+                              Spacer(),
+                              Text('WorkId :$workId'),
+                              Spacer(),
+                              Text('SchGrp :$workScheduleGroupId'),
+                              Spacer(),
+                              (status != 'UNDR_MSR') ? Text(status) : Text('k'),
+                            ],
+                          ),
+                          child: Center(
+                            child: ListTile(
+                              tileColor: (status != 'CREATED')
+                                  ? Color.fromARGB(255, 33, 194, 151)
+                                  : Colors.white,
+                              // subtitle: item['started'] == true
+                              //     ? Text(
+                              //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
+                              //     : Text(
+                              //         'Measurements Not Started ${item['hasStarted']}'),
+                              title: Text(
+                                '\n' +
+                                    item['wrk_work_detail']['work_name'] +
+                                    '\n WorkCode: $workCode',
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    wordSpacing: 3,
+                                    color:
+                                        const Color.fromARGB(255, 89, 76, 175)),
                               ),
                             ),
                           ),
-                        ));
-                  },
-                ),
+                        ),
+                      ));
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     });

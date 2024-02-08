@@ -8,6 +8,7 @@ import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
+
 // import 'package:samagra/spalsh_screen.dart';
 // import 'navigation_home_screen.dart';
 
@@ -135,48 +136,58 @@ class _SamagraState extends State<Samagra> {
 // // <ConfigProvider>(
 //       ],
 
-    return MaterialApp(
-      onGenerateRoute: (settings) {
-        // Handle incoming deep links here
-        if (settings.name == '/sso_screen') {
-          // Extract parameters from the deep link
-          // You might want to get the latest deep link and check its format
-          // For instance, using getInitialLink() from uni_links
+    return WillPopScope(
+      onWillPop: () async {
+        // Handle back button press logic here
+        print('Back button pressed');
+        return false; // Prevent back navigation
+      },
+      child: MaterialApp(
+        // showSemanticsDebugger: true,
 
-          return MaterialPageRoute(
-            builder: (context) {
-              return SSO(); // Return the SSO screen with parameters if needed
-            },
-          );
-        }
-        // Handle other routes if needed
-        return null;
-      },
-      title: 'm-Samagra',
-      initialRoute: '/',
-      routes: {
-        // '/polevar': (context) => PolVarScreen(),
-        // '/': (context) => NavigationHomeScreen(),
-        '/redirected': (context) => NavigationHomeScreen(),
-        '/home': (context) => NavigationHomeScreen(),
-        '/sso_screen': (context) => SSO(), // SSO screen
-      },
-      debugShowCheckedModeBanner: showDebugbanner,
-      theme: ThemeData(
-        tabBarTheme: TabBarTheme(
-          labelColor:
-              Colors.white, // Set the text color of the selected tab to white
-          unselectedLabelColor:
-              ksebColor, // Set the text color of unselected tabs to grey
-          indicator: BoxDecoration(
-            color: ksebMaterialColor, // Set the indicator color to grey
+        // debugShowMaterialGrid: true,
+        onGenerateRoute: (settings) {
+          // Handle incoming deep links here
+          if (settings.name == '/sso_screen') {
+            // Extract parameters from the deep link
+            // You might want to get the latest deep link and check its format
+            // For instance, using getInitialLink() from uni_links
+
+            return MaterialPageRoute(
+              builder: (context) {
+                return SSO(); // Return the SSO screen with parameters if needed
+              },
+            );
+          }
+          // Handle other routes if needed
+          return null;
+        },
+        title: 'm-Samagra',
+        initialRoute: '/',
+        routes: {
+          // '/polevar': (context) => PolVarScreen(),
+          // '/': (context) => NavigationHomeScreen(),
+          '/redirected': (context) => NavigationHomeScreen(),
+          '/home': (context) => NavigationHomeScreen(),
+          '/sso_screen': (context) => SSO(), // SSO screen
+        },
+        debugShowCheckedModeBanner: showDebugbanner,
+        theme: ThemeData(
+          tabBarTheme: TabBarTheme(
+            labelColor:
+                Colors.white, // Set the text color of the selected tab to white
+            unselectedLabelColor:
+                ksebColor, // Set the text color of unselected tabs to grey
+            indicator: BoxDecoration(
+              color: ksebMaterialColor, // Set the indicator color to grey
+            ),
           ),
+          primarySwatch: ksebMaterialColor,
+          textTheme: AppTheme.textTheme,
+          platform: TargetPlatform.iOS,
         ),
-        primarySwatch: ksebMaterialColor,
-        textTheme: AppTheme.textTheme,
-        platform: TargetPlatform.iOS,
+        home: UpdateCheck(), // //SplashScreen(),
       ),
-      home: UpdateCheck(), // //SplashScreen(),
     );
   }
 }
