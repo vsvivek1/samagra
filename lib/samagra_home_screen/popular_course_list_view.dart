@@ -1,3 +1,4 @@
+import 'package:samagra/coming_soon.dart';
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
@@ -108,7 +109,8 @@ class CategoryView extends StatelessWidget {
         return TreeCuttingCompensation();
       // Add more cases as needed
       default:
-        throw ArgumentError('Invalid target: $target');
+        return ComingSoon();
+      // return throw ArgumentError('Invalid target: $target');
     }
   }
 

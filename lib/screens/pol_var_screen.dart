@@ -2930,6 +2930,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
     });
   }
 
+  void populateExistingMeasurementToSelectedLocation() {
+    // getTasksofSelectedLocation();
+
+    _taskList.forEach((dispTask) {
+      var matchingLocationTask = _selectedLocationTasks.firstWhere(
+        (locationTask) => locationTask['structures']
+            .any((structure) => structure == dispTask['structure']),
+        orElse: () => null,
+      );
+
+      if (matchingLocationTask != null) {
+        dispTask.quantity = matchingLocationTask.quantity;
+      }
+
+      print("element task $dispTask");
+    });
+
+    setState(() {});
+  }
+
   void getTasksofSelectedLocation() {
     String locationNo = (_selectedLocationIndex + 1).toString();
 
@@ -2955,6 +2975,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       }
     });
 
+    populateExistingMeasurementToSelectedLocation();
     print("SELECTED LOCATION DR $_selectedLocationDetails");
   }
 

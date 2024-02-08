@@ -1,5 +1,7 @@
 #!/bin/bash
 
+adb kill-server
+adb start-server
 adb pair adb-cde43bc9-oRNuYB;
 adb connect adb-cde43bc9-oRNuYB;
 exit;
