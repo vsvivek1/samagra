@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:samagra/coming_soon.dart';
+import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
@@ -1125,10 +1126,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           ElevatedButton.icon(
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all<Color>(ksebColor),
-                            ),
+                            style: ksebButtonStyle(),
                             icon: Icon(
                               Icons.copy,
                             ),
@@ -1142,11 +1140,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           _savedToSamagra
                               ? CircularProgressIndicator()
                               : ElevatedButton.icon(
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            ksebColor),
-                                  ),
+                                  style: ksebButtonStyle(),
                                   // color: Colors.green,
                                   icon: Icon(Icons.send_sharp),
                                   onPressed: () =>
@@ -1156,10 +1150,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     style: TextStyle(fontSize: 10),
                                   )),
                           ElevatedButton.icon(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(ksebColor),
-                              ),
+                              style: ksebButtonStyle(),
                               icon: Icon(Icons.remove_red_eye),
                               onPressed: () => {
                                     setState(
@@ -1180,9 +1171,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   ),
                   floatingActionButton: FloatingActionButton(
                     elevation: 100,
-                    backgroundColor: ksebColor,
+                    backgroundColor: Colors.white,
                     autofocus: true,
-                    focusColor: Colors.greenAccent,
+                    focusColor: ksebColor,
                     tooltip: 'Go to another Location',
                     child: Column(
                       children: [
@@ -1191,6 +1182,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           color: Colors.greenAccent,
                         ),
                         Text(
+                          style: TextStyle(
+                              backgroundColor: Colors.white, color: ksebColor),
                           'Next',
                           selectionColor: Colors.red,
                         ),
