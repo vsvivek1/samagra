@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
 
@@ -16,5 +17,20 @@ ksebButtonStyle() {
     // backgroundColor:
 
     //     MaterialStateProperty.all<Color>(ksebColor),
+  );
+}
+
+getKsebImages() async {
+  // Dio dio = Dio();
+
+  // var images = await dio.get('https://kseb.in/uploads/Galleryitemsuppy/');
+  // print(images);
+  // print('image pri nting');
+}
+
+NetworkImage getKsebNetWorkImageOfDay() {
+  getKsebImages();
+  return NetworkImage(
+    'https://kseb.in/gallerydetails/eyJpdiI6IkI2eGJ1Q1BaN1U3WmtvaVlmZkhJV2c9PSIsInZhbHVlIjoiM2FVSnp2ci9peUhtbUI5U0dLTDhZdz09IiwibWFjIjoiZTNmNmQzNDU5MDkyMjg2ZWI0MWVjNGE5ZTZiNmYwYTM0ZmIyYjk3MTU0OTI2NDQxMWQyZGU3OGE4MTJhNzM1MiIsInRhZyI6IiJ9',
   );
 }

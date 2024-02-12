@@ -1844,11 +1844,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 child: Container(
                   padding: EdgeInsets.all(5),
                   decoration: BoxDecoration(
+                    border: Border.all(color: ksebColor),
+                    backgroundBlendMode: BlendMode.colorDodge,
+                    // boxShadow:[] ,
                     borderRadius: BorderRadius.circular(20),
                     color: (index == _tappedIndex)
                         ? Color.fromARGB(255, 56, 96, 58)
                         : (hasGeoLocations && hasMeasurements)
-                            ? Color.fromARGB(74, 10, 54, 229)
+                            // ? Color.fromARGB(74, 10, 54, 229)
+                            ? Colors.white70
                             : Color.fromRGBO(241, 78, 3, 0.6),
                   ),
                   margin: EdgeInsets.all(8.0),
@@ -1856,7 +1860,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     child: Column(
                       textBaseline: TextBaseline.alphabetic,
                       children: [
-                        CircleAvatar(child: Text('L  ${(index + 1)}')),
+                        // ImageIcon(image)
+                        CircleAvatar(
+                            radius: 20, // Adjust radius as needed
+                            backgroundImage: getKsebNetWorkImageOfDay(),
+                            child: Text('L  ${(index + 1)}')),
 
                         SizedBox(
                           height: 5,
@@ -2228,7 +2236,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         IconButton(
           icon: Icon(Icons.add),
           onPressed: () async {
-            await this.getMasterEstimateForStructureItem(widget.workId, t, st);
+            await this
+                .fetchMasterEstimateForSelectedStructure(widget.workId, t, st);
 
             setState(() {
               if (st['quantity'] == null) {
@@ -2313,7 +2322,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   IconButton(
                     icon: Icon(Icons.add),
                     onPressed: () async {
-                      await this.getMasterEstimateForStructureItem(
+                      await this.fetchMasterEstimateForSelectedStructure(
                           mstStructureId, 2, struct);
                       // _showBottomSheet(context);
 
@@ -2386,7 +2395,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return Future.value(accessToken);
   }
 
-  Future<void> getMasterEstimateForStructureItem(
+  Future<void> fetchMasterEstimateForSelectedStructure(
     workId,
     task,
     strcuture,
@@ -2414,6 +2423,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       final headers = {'Authorization': 'Bearer ${accessToken}'};
       setDioAccessokenAndApiKey(dio, accessToken, config);
       Response<dynamic> response;
+
       try {
         final response1 = await dio
             .get(
@@ -2428,24 +2438,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // debugger(when: true);
       } catch (e) {
-        final snackBar = SnackBar(
-          content: Text('Internet error $e'),
-          duration:
-              Duration(seconds: 3), // How long the snackBar will be displayed
-          action: SnackBarAction(
-            label: 'Close',
-            onPressed: () {
-              // Code to execute when 'Close' is pressed
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
-          ),
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-        setState(() {
-          _fetchingMasterEstimate = false;
-        });
+        showSnackBarForMasterDataForStructureFetchError(e);
 
         return;
       }
@@ -2480,116 +2473,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
         }
 
         // print("SELCTD LOCATION TAKS $_selectedLocationDetails");
-        measurementDetails.forEach((location) {
-          int locationNumber = _selectedLocationIndex + 1;
 
-          if (location['locationNo'] != locationNumber) {
-            return;
-          }
-
-          if (location['locationNo'] == locationNumber) {
-            if (location['tasks'] == null) {
-              location['tasks'] = [];
-            }
-
-            bool isTaskPresent =
-                location['tasks'].any((task) => task['id'] == taskId);
-
-            var task;
-            if (isTaskPresent) {
-              task =
-                  location['tasks'].firstWhere((task) => task['id'] == taskId);
-            } else {
-              task = {};
-              initiateTaskDetails(task, taskId, mstStructureId, structureName);
-              location['tasks'].add(task);
-            }
-
-// print(tasks)
-            if (task['structures'] == null) {
-              task['structures'] = [];
-            }
-
-            // debugger(when: true);
-
-            if (task['structures'].any((s) => s['id'] == mstStructureId)) {
-              var structure = task['structures'].firstWhere(
-                  (s) => s['id'] == mstStructureId,
-                  orElse: () => {});
-
-              setState(() {
-                structure['quantity'] = structure['quantity'] + 1;
-
-                Map dispTask =
-                    _taskList.firstWhere((task) => task['id'] == taskId);
-
-                Map dispStr = dispTask['structures'].firstWhere(
-                    (structure) => structure['id'] == mstStructureId);
-
-                if (dispStr['quantity'] != null) {
-                  dispStr['quantity'] = dispStr['quantity'] + 1;
-                } else {
-                  dispStr['quantity'] = 1;
-                }
-              });
-              // debugger(when: true);
-            } else {
-              var selectedStructure = {};
-              selectedStructure['materials'] = [];
-              selectedStructure['labour'] = [];
-              selectedStructure['takenBack'] = [];
-
-              setState(() {
-                selectedStructure['quantity'] = 1;
-              });
-
-              selectedStructure['structure_name'] =
-                  structureName ?? 'str Name Not Found';
-              selectedStructure['id'] = mstStructureId;
-
-              // debugger(when: true);
-              strcuture['quantity'] == null
-                  ? strcuture['quantity'] = 1
-                  : strcuture['quantity'] = strcuture['quantity'] + 1;
-
-              // debugger(when: true);
-
-              if (issuedMaterialsForSelectedStructure != null &&
-                  responseDataForStructureDetails != null) {
-                setIssuedmaterials(
-                    issuedMaterialsForSelectedStructure,
-                    responseDataForStructureDetails,
-                    mstStructureId,
-                    selectedStructure);
-              }
-
-              if (totalLabourDetails != null &&
-                  responseDataForStructureDetails != null) {
-                setLabourDetails(
-                    totalLabourDetails,
-                    responseDataForStructureDetails,
-                    mstStructureId,
-                    selectedStructure);
-              }
-
-              if (takenBacksOfSelectedStructure != null) {
-                setTakenBacks(takenBacksOfSelectedStructure, selectedStructure);
-              }
-
-              task['structures'].add(selectedStructure);
-              // debugger(when: true);
-            }
-
-            updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
-            _showSaveMeasurementDetailsButton = true;
-
-            print("BEFORE CALLING SAVE MEASUREMENT DETAILS");
-            _saveMeasurementDetails();
-            return;
-          }
-
-          return;
-        });
+        updateMeasurementDetailsWithStructureMasterData(
+            taskId,
+            mstStructureId,
+            structureName,
+            strcuture,
+            issuedMaterialsForSelectedStructure,
+            responseDataForStructureDetails,
+            totalLabourDetails,
+            takenBacksOfSelectedStructure);
       }
     } catch (e) {
       print("$e is the try cathc error at 1975 of polvar");
@@ -2600,6 +2493,144 @@ class _PolVarScreenState extends State<PolVarScreen> {
     });
 
     // getTasksofSelectedLocation();
+  }
+
+  void updateMeasurementDetailsWithStructureMasterData(
+      String taskId,
+      int mstStructureId,
+      String structureName,
+      strcuture,
+      issuedMaterialsForSelectedStructure,
+      responseDataForStructureDetails,
+      totalLabourDetails,
+      takenBacksOfSelectedStructure) {
+    measurementDetails.forEach((location) {
+      int locationNumber = _selectedLocationIndex + 1;
+
+      if (location['locationNo'] != locationNumber) {
+        return;
+      }
+
+      if (location['locationNo'] == locationNumber) {
+        if (location['tasks'] == null) {
+          location['tasks'] = [];
+        }
+
+        bool isTaskPresent =
+            location['tasks'].any((task) => task['id'] == taskId);
+
+        var task;
+        if (isTaskPresent) {
+          task = location['tasks'].firstWhere((task) => task['id'] == taskId);
+        } else {
+          task = {};
+          initiateTaskDetails(task, taskId, mstStructureId, structureName);
+          location['tasks'].add(task);
+        }
+
+        // print(tasks)
+        if (task['structures'] == null) {
+          task['structures'] = [];
+        }
+
+        // debugger(when: true);
+
+        if (task['structures'].any((s) => s['id'] == mstStructureId)) {
+          var structure = task['structures']
+              .firstWhere((s) => s['id'] == mstStructureId, orElse: () => {});
+
+          setState(() {
+            structure['quantity'] = structure['quantity'] + 1;
+
+            Map dispTask = _taskList.firstWhere((task) => task['id'] == taskId);
+
+            Map dispStr = dispTask['structures']
+                .firstWhere((structure) => structure['id'] == mstStructureId);
+
+            if (dispStr['quantity'] != null) {
+              dispStr['quantity'] = dispStr['quantity'] + 1;
+            } else {
+              dispStr['quantity'] = 1;
+            }
+          });
+          // debugger(when: true);
+        } else {
+          var selectedStructure = {};
+          selectedStructure['materials'] = [];
+          selectedStructure['labour'] = [];
+          selectedStructure['takenBack'] = [];
+
+          setState(() {
+            selectedStructure['quantity'] = 1;
+          });
+
+          selectedStructure['structure_name'] =
+              structureName ?? 'str Name Not Found';
+          selectedStructure['id'] = mstStructureId;
+
+          // debugger(when: true);
+          strcuture['quantity'] == null
+              ? strcuture['quantity'] = 1
+              : strcuture['quantity'] = strcuture['quantity'] + 1;
+
+          // debugger(when: true);
+
+          if (issuedMaterialsForSelectedStructure != null &&
+              responseDataForStructureDetails != null) {
+            setIssuedmaterials(
+                issuedMaterialsForSelectedStructure,
+                responseDataForStructureDetails,
+                mstStructureId,
+                selectedStructure);
+          }
+
+          if (totalLabourDetails != null &&
+              responseDataForStructureDetails != null) {
+            setLabourDetails(
+                totalLabourDetails,
+                responseDataForStructureDetails,
+                mstStructureId,
+                selectedStructure);
+          }
+
+          if (takenBacksOfSelectedStructure != null) {
+            setTakenBacks(takenBacksOfSelectedStructure, selectedStructure);
+          }
+
+          task['structures'].add(selectedStructure);
+          // debugger(when: true);
+        }
+
+        updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
+        _showSaveMeasurementDetailsButton = true;
+
+        print("BEFORE CALLING SAVE MEASUREMENT DETAILS");
+        _saveMeasurementDetails();
+        return;
+      }
+
+      return;
+    });
+  }
+
+  void showSnackBarForMasterDataForStructureFetchError(Object e) {
+    final snackBar = SnackBar(
+      content: Text('Internet error $e'),
+      duration: Duration(seconds: 3), // How long the snackBar will be displayed
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {
+          // Code to execute when 'Close' is pressed
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+    setState(() {
+      _fetchingMasterEstimate = false;
+    });
   }
 
   initiateTaskDetails(Map<dynamic, dynamic> task, String taskId,
@@ -3103,7 +3134,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             '@2150 ${location['geoCordinates']} ${location['geoCordinates'].isBlank}');
 
         retObj['text'] = ' \n Not started2';
-        color = Color.fromARGB(255, 82, 111, 255);
+        // color = Color.fromARGB(255, 82, 111, 255);
+        color = Colors.white;
         retObj['color'] = color;
         return retObj;
       } else {
@@ -3116,7 +3148,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         retObj['hasGeoLocations'] = true;
         retObj['hasMeasurements'] = false;
-        color = Color.fromARGB(255, 255, 82, 229);
+        // color = Color.fromARGB(255, 255, 82, 229);
+        color = Colors.white;
         retObj['color'] = color;
         return retObj;
       }
@@ -3140,7 +3173,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         retObj['geoCordinatesEnd'] = locationEnd['geoCordinatesEnd'];
       }
     }
-    color = Color.fromARGB(255, 22, 29, 230);
+    // color = Color.fromARGB(255, 22, 29, 230);
+    color = Colors.white;
     retObj['color'] = color;
     return retObj;
   }
