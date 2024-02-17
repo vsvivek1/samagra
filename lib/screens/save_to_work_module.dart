@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -73,9 +74,9 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
       workId: widget.workId.toString(),
       is_premeasurement: false,
       part_or_final: true,
-      measurement_set_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-      commencement_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
-      completion_date: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+      measurement_set_date: DateTime.now(),
+      commencement_date: DateTime.now(),
+      completion_date: DateTime.now(),
       plg_work_id: widget.workId,
       taskMeasurements: [],
     );
@@ -133,12 +134,14 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                 trailing: IconButton(
                   icon: Icon(Icons.calendar_today),
                   onPressed: () => _selectDate(
-                      context,
-                      _measurementDataToWorkModule.commencement_date
-                          as DateTime, (newDate) {
+                      context, _measurementDataToWorkModule.commencement_date,
+                      (newDate) {
                     setState(() {
-                      _measurementDataToWorkModule.commencement_date =
-                          newDate as String?;
+                      if (newDate is DateTime) {
+                        _measurementDataToWorkModule.commencement_date =
+                            newDate;
+                        // DateFormat('dd-MM-yy').format(newDate);
+                      }
                     });
                   }),
                 ),
@@ -149,12 +152,11 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                     _measurementDataToWorkModule.completion_date.toString()),
                 trailing: IconButton(
                   icon: Icon(Icons.calendar_today),
-                  onPressed: () => _selectDate(context,
-                      _measurementDataToWorkModule.completion_date as DateTime,
+                  onPressed: () => _selectDate(
+                      context, _measurementDataToWorkModule.completion_date,
                       (newDate) {
                     setState(() {
-                      _measurementDataToWorkModule.completion_date =
-                          newDate as String?;
+                      _measurementDataToWorkModule.completion_date = newDate;
                     });
                   }),
                 ),
@@ -238,14 +240,20 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
     );
   }
 
-  void _selectDate(BuildContext context, DateTime initialDate,
+  void _selectDate(BuildContext context, initialDate,
       Function(DateTime) onDateSelected) async {
+    if (!(initialDate is DateTime)) {
+      initialDate = DateTime.parse(initialDate);
+    }
+
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
     );
+
+    // debugger(when: true);
     if (pickedDate != null && pickedDate != initialDate) {
       onDateSelected(pickedDate);
     }

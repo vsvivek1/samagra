@@ -3182,6 +3182,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   void resetStructureQuantities(List tasks) {
     for (var task in tasks) {
+      task['hasStructure'] = false;
       var structures = task['structures'];
 
       if (structures != null) {

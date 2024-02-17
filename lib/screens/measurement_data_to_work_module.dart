@@ -16,9 +16,9 @@ class MeasurementDataToWorkModule {
   String? wrk_schedule_group_id;
   bool? is_premeasurement;
   bool? part_or_final;
-  String? measurement_set_date;
-  String? commencement_date;
-  String? completion_date;
+  var measurement_set_date;
+  var commencement_date;
+  var completion_date;
   // Map<dynamic, dynamic>? polevar_data;
   String? polevar_data;
   Map<dynamic, dynamic>? structureMeasurements;

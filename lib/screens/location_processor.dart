@@ -3,10 +3,10 @@ import 'dart:developer';
 class LocationProcessor {
   double parseAndAdd(String value, String quantityIn) {
     // Parsing the string value to double
-    double parsedValue = double.parse(value);
+    double parsedValue = double.parse(value.toString());
 
     // Accessing quantity from the material map and parsing it to double
-    double quantity = double.parse(quantityIn);
+    double quantity = double.parse(quantityIn.toString());
 
     // Adding parsedValue and quantity and returning the result
     return parsedValue + quantity;
@@ -37,7 +37,8 @@ class LocationProcessor {
                       material['material_name'],
                       (value) =>
                           parseAndAdd(value.toString(), material['quantity']),
-                      ifAbsent: () => double.parse(material['quantity']),
+                      ifAbsent: () =>
+                          double.parse(material['quantity'].toString()),
                     );
                   }
                 }
@@ -74,8 +75,10 @@ class LocationProcessor {
                       takenback['quantity'] != null) {
                     takenBackTotals.update(
                       takenback['taken_back_name'],
-                      (value) => (value + double.parse(takenback['quantity'])),
-                      ifAbsent: () => double.parse(takenback['quantity']),
+                      (value) => (value +
+                          double.parse(takenback['quantity'].toString())),
+                      ifAbsent: () =>
+                          double.parse(takenback['quantity'].toString()),
                     );
                   }
                 }
@@ -112,8 +115,10 @@ class LocationProcessor {
                       labor['quantity'] != null) {
                     laborTotals.update(
                       labor['labour_name'],
-                      (value) => (value + double.parse(labor['quantity'])),
-                      ifAbsent: () => double.parse(labor['quantity']),
+                      (value) =>
+                          (value + double.parse(labor['quantity'].toString())),
+                      ifAbsent: () =>
+                          double.parse(labor['quantity'].toString()),
                     );
 
                     print(laborTotals);
@@ -154,8 +159,10 @@ class LocationProcessor {
                       material['quantity'] != null) {
                     materialTotals.update(
                       material['material_name'],
-                      (value) => (value + double.parse(material['quantity'])),
-                      ifAbsent: () => double.parse(material['quantity']),
+                      (value) => (value +
+                          double.parse(material['quantity'].toString())),
+                      ifAbsent: () =>
+                          double.parse(material['quantity'].toString()),
                     );
                   }
                 }
@@ -164,8 +171,8 @@ class LocationProcessor {
           }
 
           // Convert location['locationNo'] to double before using it as the key
-          locationWiseMaterialTotals[double.parse(location['locationNo'])] =
-              materialTotals;
+          locationWiseMaterialTotals[
+              double.parse(location['locationNo'].toString())] = materialTotals;
         }
       }
     }
@@ -197,8 +204,10 @@ class LocationProcessor {
                       takenback['quantity'] != null) {
                     takenBackTotals.update(
                       takenback['taken_back_name'],
-                      (value) => (value + double.parse(takenback['quantity'])),
-                      ifAbsent: () => double.parse(takenback['quantity']),
+                      (value) => (value +
+                          double.parse(takenback['quantity'].toString())),
+                      ifAbsent: () =>
+                          double.parse(takenback['quantity'].toString()),
                     );
                   }
                 }
@@ -206,7 +215,8 @@ class LocationProcessor {
             }
           }
 
-          locationWiseTakenBackTotals[double.parse(location['locationNo'])] =
+          locationWiseTakenBackTotals[
+                  double.parse(location['locationNo'].toString())] =
               takenBackTotals;
         }
       }
@@ -239,8 +249,10 @@ class LocationProcessor {
                       labor['quantity'] != null) {
                     laborTotals.update(
                       labor['labour_name'],
-                      (value) => (value + double.parse(labor['quantity'])),
-                      ifAbsent: () => double.parse(labor['quantity']),
+                      (value) =>
+                          (value + double.parse(labor['quantity'].toString())),
+                      ifAbsent: () =>
+                          double.parse(labor['quantity'].toString()),
                     );
                   }
                 }
@@ -248,8 +260,8 @@ class LocationProcessor {
             }
           }
 
-          locationWiseLaborTotals[double.parse(location['locationNo'])] =
-              laborTotals;
+          locationWiseLaborTotals[
+              double.parse(location['locationNo'].toString())] = laborTotals;
         }
       }
     }

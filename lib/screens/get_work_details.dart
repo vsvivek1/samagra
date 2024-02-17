@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 
@@ -65,17 +67,30 @@ getWorkDertailsFromServer(measurementsetListId) async {
   String url =
       "${config.liveServiceUrl}wrk/getPolevarMeasurementDetails/$measurementsetListId";
 
-  Response<Map<String, dynamic>> res = await Dio().get(
-    url,
-    options: Options(headers: headers),
-  );
+  try {
+    Response<Map<String, dynamic>> res = await Dio().get(
+      url,
+      options: Options(headers: headers),
+    );
 
-  var dta = res.data;
-  if (dta!["result_flag"] == 1) {
-    // debugger(when: true);
-    return dta['result_data']['data'];
-  } else {
-    return [];
+    var dta = res.data;
+    if (dta!["result_flag"] == 1) {
+      // debugger(when: true);
+      return dta['result_data']['data'];
+    } else {
+      return [];
+    }
+  } on Exception catch (e) {
+    Fluttertoast.showToast(
+      msg: e.toString(),
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 10,
+      backgroundColor: Colors.black,
+      textColor: const Color.fromARGB(255, 244, 3, 3),
+      fontSize: 16.0,
+    );
+    // TODO
   }
 
   // debugger(when: true);
