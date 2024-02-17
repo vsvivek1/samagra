@@ -74,7 +74,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       child: (widget.locationNo == '-1')
           ? Text("Select a Location to View details")
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -84,12 +84,6 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                         editMode: this.editMode &&
                             _gotLocation &&
                             locationName != ''),
-                    Visibility(
-                      visible: _gotLocation && locationName != '',
-                      child: ElevatedButton(
-                          onPressed: () => saveLocDetailsToPolVarWidget(),
-                          child: Text('save ')),
-                    )
                   ],
                   RichText(
                     text: TextSpan(
@@ -126,18 +120,35 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                   ],
                   if (editMode) ...[
                     Text('Enter Location Name'),
-                    SizedBox(
-                      height: 50,
-                      width: 150,
-                      child: TextFormField(
-                        initialValue: locationName,
-                        onChanged: ((value) => updateLocationText(value)),
-                        // controller: this.locationNameController,
-                        // decoration: InputDecoration(
-                        //   labelText: 'Enter Location Name',
-                        //   hintText: 'Enter location name',
-                        // )
-                      ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 50,
+                          width: 150,
+                          child: TextFormField(
+                            initialValue: locationName,
+                            onChanged: ((value) => updateLocationText(value)),
+                            // controller: this.locationNameController,
+                            // decoration: InputDecoration(
+                            //   labelText: 'Enter Location Name',
+                            //   hintText: 'Enter location name',
+                            // )
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Visibility(
+                            visible: _gotLocation && locationName != '',
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                  onPressed: () =>
+                                      saveLocDetailsToPolVarWidget(),
+                                  child: Text('save ')),
+                            ),
+                          ),
+                        )
+                      ],
                     )
                   ],
                   if (widget.latitude != null && widget.longitude != null) ...[

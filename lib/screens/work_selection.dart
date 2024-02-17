@@ -480,7 +480,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
     super.initState();
 
     if (!isAudioMuted) {
-      audioCache.play('select_work.wav');
+      // audioCache.play('select_work.wav');
     }
   }
 

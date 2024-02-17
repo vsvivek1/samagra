@@ -806,6 +806,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     var resultData = {};
     if (occation == 'sso') {
+      if (!(result is Map) && result.error != null) {
+        return;
+      }
       resultData = jsonDecode(result["result_data"]);
 
       print(" access token ${oIdAccessTokens[0]} - accees token end");

@@ -45,17 +45,23 @@ class _LocationButtonState extends State<LocationButton> {
             visible: enableLocationButton,
             child: _loading
                 ? Center(child: CircularProgressIndicator.adaptive())
-                : ShowLocationButton(context),
+                : Row(
+                    children: [
+                      ShowLocationButton(context),
+                      Visibility(
+                        visible: !enableLocationButton,
+                        child: ElevatedButton(
+                          child: Text('To retry Location'),
+                          onPressed: () {
+                            setState(() {
+                              enableLocationButton = true;
+                            });
+                          },
+                        ),
+                      )
+                    ],
+                  ),
           ),
-          Visibility(
-            visible: !enableLocationButton,
-            child: ElevatedButton(
-              child: Text('Edit'),
-              onPressed: () {
-                enableLocationButton = true;
-              },
-            ),
-          )
         ]);
       },
     );
