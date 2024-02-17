@@ -136,12 +136,14 @@ class _SamagraState extends State<Samagra> {
 // // <ConfigProvider>(
 //       ],
 
-    return WillPopScope(
-      onWillPop: () async {
-        // Handle back button press logic here
-        print('Back button pressed');
-        return false; // Prevent back navigation
-      },
+    return PopScope(
+      canPop: false,
+
+      // onWillPop: () async {
+      //   // Handle back button press logic here
+      //   print('Back button pressed');
+      //   return false; // Prevent back navigation
+      // },
       child: MaterialApp(
         // showSemanticsDebugger: true,
 

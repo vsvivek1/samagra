@@ -17,7 +17,7 @@ class InternetConnectivity {
 
   static Future<bool> checkServerConnectivity() async {
     try {
-      //return true;
+      return true;
       EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
       final Map<String, String> data = {
         "email": '1064767@kseberp.in',

@@ -5,7 +5,7 @@ LocationProcessor locationProcessor = LocationProcessor();
 polvarProcessLocationData(measurementDetails1) {
   List<Map<String, dynamic>> measurementDetails =
       List<Map<String, dynamic>>.from(measurementDetails1);
-  print('------------');
+  print('-----polvarProcessLocationData FUNCTION -------');
 
   Map<String, double> totalMaterialQuantities =
       locationProcessor.getTotalMaterialQuantities(measurementDetails);

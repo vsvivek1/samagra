@@ -94,7 +94,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
                   // Add logic to redirect users to the app store for update
                   // For example: launch('URL_TO_APP_STORE');
 
-                  _downloadAndInstallApk();
+                  // _downloadAndInstallApk();
                   // Navigator.push(
                   //   context,
                   //   MaterialPageRoute(builder: (context) => LoginScreen()),

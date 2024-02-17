@@ -20,6 +20,7 @@ import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
+import 'package:samagra/screens/launch_sso_url.dart';
 import 'package:samagra/screens/login_with_sso.dart';
 import 'package:samagra/screens/on_will_pop.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
@@ -122,7 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
     loadConfig();
     // config = EnvironmentConfig.fromEnvFile();
 
-    initUniLinks();
+    // initUniLinks(); //moved to sso login screen
+
     super.initState();
   }
 
@@ -1038,10 +1040,28 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(context: context, builder: (context) => alert);
   }
 
+  loginUsingSso(context, _ssoLoginLoading, setLoginState, empcode) {
+    initUniLinks();
+    setLoginState();
+
+    launchSSOUrl(codeVerifier, codeChallenge, empcode);
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => SSOLogin()),
+    // );
+  }
+
   void initUniLinks() async {
     // Handle the initial URL when the app is opened with a URL
     try {
       final initialLink = await getInitialLink();
+
+      if (initialLink == null) {
+        return;
+
+        /// added because initla null lik causing error
+      }
+
       late StreamSubscription _sub;
 
       print('$initialLink initial link');
@@ -1158,6 +1178,7 @@ class MyAPI {
     };
 
     try {
+      print(_url);
       Response response = await _dio.post(_url, data: data);
 
       if (response.statusCode != 200) {
@@ -1183,6 +1204,7 @@ class MyAPI {
       return response.data;
     } on DioError catch (e) {
       if (e.response != null) {
+        print(e);
       } else {
         // print(e.request);
       }

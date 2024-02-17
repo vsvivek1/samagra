@@ -3,6 +3,7 @@ import 'dart:developer';
 class LocationProcessor {
   Map<String, double> getTotalMaterialQuantities(
       List<Map<String, dynamic>> locations) {
+    print('-----etTotalMaterialQuantities -------');
     Map<String, double> materialTotals = {};
 
     for (var location in locations) {
@@ -40,6 +41,7 @@ class LocationProcessor {
 
   Map<String, double> getTotalTakenBackQuantities(
       List<Map<String, dynamic>> locations) {
+    print('-----getTotalTakenBackQuantities -------');
     Map<String, double> takenBackTotals = {};
 
     for (var location in locations) {
@@ -60,7 +62,7 @@ class LocationProcessor {
                       takenback['quantity'] != null) {
                     takenBackTotals.update(
                       takenback['taken_back_name'],
-                      (value) => (value + takenback['quantity']).toDouble(),
+                      (value) => (value + double.parse(takenback['quantity'])),
                       ifAbsent: () => takenback['quantity'].toDouble(),
                     );
                   }
@@ -77,6 +79,7 @@ class LocationProcessor {
 
   Map<String, double> getTotalLaborQuantities(
       List<Map<String, dynamic>> locations) {
+    print('-----getTotalLaborQuantities -------');
     Map<String, double> laborTotals = {};
 
     for (var location in locations) {
@@ -97,7 +100,7 @@ class LocationProcessor {
                       labor['quantity'] != null) {
                     laborTotals.update(
                       labor['labour_name'],
-                      (value) => (value + labor['quantity']).toDouble(),
+                      (value) => (value + double.parse(labor['quantity'])),
                       ifAbsent: () => labor['quantity'].toDouble(),
                     );
 
@@ -139,7 +142,7 @@ class LocationProcessor {
                       material['quantity'] != null) {
                     materialTotals.update(
                       material['material_name'],
-                      (value) => (value + material['quantity']).toDouble(),
+                      (value) => (value + double.parse(material['quantity'])),
                       ifAbsent: () => material['quantity'].toDouble(),
                     );
                   }
@@ -149,7 +152,7 @@ class LocationProcessor {
           }
 
           // Convert location['locationNo'] to double before using it as the key
-          locationWiseMaterialTotals[location['locationNo'].toDouble()] =
+          locationWiseMaterialTotals[double.parse(location['locationNo'])] =
               materialTotals;
         }
       }
@@ -182,7 +185,7 @@ class LocationProcessor {
                       takenback['quantity'] != null) {
                     takenBackTotals.update(
                       takenback['taken_back_name'],
-                      (value) => (value + takenback['quantity']).toDouble(),
+                      (value) => (value + double.parse(takenback['quantity'])),
                       ifAbsent: () => (takenback['quantity']).toDouble(),
                     );
                   }
@@ -224,7 +227,7 @@ class LocationProcessor {
                       labor['quantity'] != null) {
                     laborTotals.update(
                       labor['labour_name'],
-                      (value) => (value + labor['quantity']).toDouble(),
+                      (value) => (value + double.parse(labor['quantity'])),
                       ifAbsent: () => labor['quantity'].toDouble(),
                     );
                   }
@@ -233,7 +236,7 @@ class LocationProcessor {
             }
           }
 
-          locationWiseLaborTotals[location['locationNo'].toDouble()] =
+          locationWiseLaborTotals[double.parse(location['locationNo'])] =
               laborTotals;
         }
       }
