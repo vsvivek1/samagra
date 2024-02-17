@@ -1118,7 +1118,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             },
             child: SafeArea(
               child: Container(
-                padding: EdgeInsets.all(1),
+                padding: EdgeInsets.all(.5),
                 child: Scaffold(
                   bottomNavigationBar: BottomAppBar(
                     shape: CircularNotchedRectangle(),
@@ -1134,7 +1134,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 _showMeasurementCopierDialog(context),
                             label: Text(
                               'M-Copier',
-                              style: TextStyle(fontSize: 10),
+                              style: TextStyle(fontSize: 9),
                             ),
                           ),
                           _savedToSamagra
@@ -1162,7 +1162,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   },
                               label: Text(
                                   style: TextStyle(
-                                    fontSize: 9,
+                                    fontSize: 6,
                                   ),
                                   _viewFullLocationList
                                       ? 'Hide Detailed \n View of Locations'
