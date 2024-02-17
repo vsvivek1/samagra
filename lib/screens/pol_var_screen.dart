@@ -1321,7 +1321,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 child: IntrinsicHeight(
                                   child: SizedBox(
                                     // height: 200,
-                                    width: 500,
+                                    width:
+                                        MediaQuery.of(context).size.width * .9,
                                     child: Row(children: [
                                       Column(
                                         children: [

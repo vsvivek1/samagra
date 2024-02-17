@@ -543,7 +543,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1,
-                  childAspectRatio: 2,
+                  childAspectRatio: 1.7,
                 ),
                 itemCount: _filteredItems.length,
                 itemBuilder: (context, index) {
@@ -652,15 +652,36 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                               //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
                               //     : Text(
                               //         'Measurements Not Started ${item['hasStarted']}'),
-                              title: Text(
-                                '\n' +
-                                    item['wrk_work_detail']['work_name'] +
-                                    '\n WorkCode: $workCode',
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    wordSpacing: 3,
-                                    color:
-                                        const Color.fromARGB(255, 89, 76, 175)),
+                              title: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      '\n' +
+                                          item['wrk_work_detail']['work_name'],
+                                      style: TextStyle(
+                                          textBaseline:
+                                              TextBaseline.ideographic,
+                                          fontSize: 20,
+                                          wordSpacing: 5,
+                                          color: const Color.fromARGB(
+                                              255, 89, 76, 175)),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'WorkCode: $workCode',
+                                        style: TextStyle(
+                                            textBaseline:
+                                                TextBaseline.ideographic,
+                                            fontSize: 14,
+                                            wordSpacing: 5,
+                                            color: Color.fromARGB(
+                                                255, 236, 143, 11)),
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),

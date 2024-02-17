@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uni_links/uni_links.dart';
@@ -26,7 +25,7 @@ class _SSOState extends State<SSO> {
 
   void initState() {
     super.initState();
-    initUniLinks();
+    // initUniLinks();
   }
 
   Widget build(BuildContext context) {
