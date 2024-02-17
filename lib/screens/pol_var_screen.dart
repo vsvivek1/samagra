@@ -337,20 +337,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
         if (_numberOfLocations == 0) {
           this.userDirections = 'Enter Number of Locations';
           if (!isAudioMuted) {
-            audioCache.play('no_of_loc.mp3');
+            // audioCache.play('no_of_loc.mp3');
           }
         } else if (!(_numberOfLocations > 0) && _fromLocation == '' ||
             _toLocation == '') {
           this.userDirections = 'Please Enter From and To Locations';
           if (!isAudioMuted) {
-            audioCache.play('enter_from_to_location_name.wav');
+            // audioCache.play('enter_from_to_location_name.wav');
           }
         } else if (_fromLocation != '' &&
             _toLocation != '' &&
             _numberOfLocations != 0) {
           this.userDirections = 'Select a Location';
           if (!isAudioMuted) {
-            audioCache.play('select_location.wav');
+            // audioCache.play('select_location.wav');
           }
         }
 
@@ -367,7 +367,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           this.userDirections =
               'Now Select any Location to Starting with  L, Ensure correct location ';
           if (!isAudioMuted) {
-            audioCache.play('select_location.wav');
+            // audioCache.play('select_location.wav');
           }
         }
 
@@ -1051,7 +1051,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     this.userDirections =
         'NOW Select Task and then correct structure inside it ';
     if (!isAudioMuted) {
-      audioCache.play('select_structure.wav');
+      // audioCache.play('select_structure.wav');
     }
     // print(this._workDetails);
 
@@ -1581,8 +1581,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             this.userDirections =
                                 'NOW ENTER FROM AND TO LOCATIONS';
                             if (!isAudioMuted) {
-                              audioCache
-                                  .play('enter_from_to_location_name.wav');
+                              // audioCache
+                              //     .play('enter_from_to_location_name.wav');
                             }
                           }
                           this.steps = this.steps++;
@@ -3016,7 +3016,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       this.userDirections =
           'Now Select any Location to Starting with  L, Ensure correct location ';
       if (!isAudioMuted) {
-        audioCache.play('select_location.wav');
+        // audioCache.play('select_location.wav');
       }
 
       this.saveWorkDetails(

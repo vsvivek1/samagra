@@ -169,7 +169,7 @@ class _LocationButtonState extends State<LocationButton> {
             _loading = false;
 
             if (!isAudioMuted) {
-              audioCache.play('press_save_location_button.wav');
+              // audioCache.play('press_save_location_button.wav');
             }
 
             enableLocationButton = false;
@@ -195,13 +195,13 @@ class _LocationButtonState extends State<LocationButton> {
     _permissionStatus = await Permission.location.status;
     if (_permissionStatus != PermissionStatus.granted) {
       if (!isAudioMuted) {
-        audioCache.play('provide_permision.wav');
+        // audioCache.play('provide_permision.wav');
       }
     }
 
     if (_permissionStatus == PermissionStatus.granted) {
       if (isAudioMuted) {
-        audioCache.play('press_get_location.wav');
+        // audioCache.play('press_get_location.wav');
       }
     }
 

@@ -25,7 +25,7 @@ class _SSOState extends State<SSO> {
 
   void initState() {
     super.initState();
-    // initUniLinks();
+    initUniLinks();
   }
 
   Widget build(BuildContext context) {
