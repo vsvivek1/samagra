@@ -529,7 +529,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       onPressed: () =>
           {loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode)},
-      child: Text('Login with SSO'),
+      child:
+          Text(style: TextStyle(color: Colors.orangeAccent), 'Login with SSO'),
     );
   }
 
