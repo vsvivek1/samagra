@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
     loadConfig();
     // config = EnvironmentConfig.fromEnvFile();
 
-    // initUniLinks(); //moved to sso login screen
+    initUniLinks(); //moved to sso login screen
 
     super.initState();
   }
