@@ -12,6 +12,8 @@ class EnvironmentConfig {
   final String liveServiceUrlGroup1;
   final String liveServiceUrlLogin;
   final bool isDebug;
+  String iosVersionCheckUrl;
+  String androidVersionCheckUrl;
 
   String nasaApiKey;
   String deploymentMode;
@@ -31,6 +33,8 @@ class EnvironmentConfig {
     required this.liveServiceUrlLogin,
     required this.nasaApiKey,
     required this.deploymentMode,
+    required this.iosVersionCheckUrl,
+    required this.androidVersionCheckUrl,
   });
 
   static Future<EnvironmentConfig> fromEnvFile() async {
@@ -84,6 +88,8 @@ class EnvironmentConfig {
     }
 
     return EnvironmentConfig(
+      iosVersionCheckUrl: dotenv.env['IOS_VERSION_CHECK_URL'] ?? '',
+      androidVersionCheckUrl: dotenv.env['ANDROID_VERSION_CHECK_URL'] ?? '',
       deploymentMode: MODE,
       nasaApiKey: dotenv.env['NASA_API_KEY'] ?? '',
       liveServiceUrlLogin: liveServiceUrlLogin,
