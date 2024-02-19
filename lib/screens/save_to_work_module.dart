@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/server_message_widget.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
@@ -137,12 +135,10 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                       context, _measurementDataToWorkModule.commencement_date,
                       (newDate) {
                     setState(() {
-                      if (newDate is DateTime) {
-                        _measurementDataToWorkModule.commencement_date =
-                            newDate;
-                        // DateFormat('dd-MM-yy').format(newDate);
-                      }
-                    });
+                      _measurementDataToWorkModule.commencement_date =
+                          newDate;
+                      // DateFormat('dd-MM-yy').format(newDate);
+                                        });
                   }),
                 ),
               ),

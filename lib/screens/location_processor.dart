@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 class LocationProcessor {
   double parseAndAdd(String value, String quantityIn) {

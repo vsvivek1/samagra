@@ -92,11 +92,6 @@ class _SamagraState extends State<Samagra> {
         showDebugbanner = true;
       });
     }
-
-    // debugger(when: true);
-    if (config == null) {
-      config = await EnvironmentConfig.fromEnvFile();
-    }
   }
 
   final routes = <String, WidgetBuilder>{

@@ -85,7 +85,6 @@ class MeasurementDataToWorkModule {
     if (commencement_date == null) unsetVariables.add('commencement_date');
     if (completion_date == null) unsetVariables.add('completion_date');
     if (polevar_data == null) unsetVariables.add('polevar_data');
-    if (taskMeasurements == null) unsetVariables.add('taskMeasurements');
     if (structureMeasurements == null)
       unsetVariables.add('structureMeasurements');
     if (materialMeasurements == null)

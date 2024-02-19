@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LocationListScreen extends StatelessWidget {
+  /// class to update materials labour and takenb backs
+
   final List<dynamic> measurementDetails;
 
   LocationListScreen({required this.measurementDetails});

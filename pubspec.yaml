@@ -61,8 +61,12 @@ dependencies:
     android_package_installer: ^0.0.2
     flare_flutter: ^3.0.2
     flutter_spinkit: ^5.2.0
+    vector_math: any
+    crypto: any
+    path_provider: ^2.1.2
 
 
+    
 dev_dependencies:
     flutter_test:
         sdk: flutter

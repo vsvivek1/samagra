@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:samagra/coming_soon.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/location_list_screen.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
@@ -2095,6 +2095,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     int counter = 0;
     return Column(
       children: [
+        LocationListScreen(measurementDetails: this.measurementDetails),
         Container(
           padding: EdgeInsets.all(16.0),
           child: Text(
@@ -2286,12 +2287,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       var mstStructureId = struct['structure_code'];
 
-      // print(mstStructureId);
-
-      if (str == null) {
-        return Text('Invalid task.');
-      }
-
       return GestureDetector(
         onDoubleTap: () => _showBottomSheet(context),
         child: Card(
@@ -2345,11 +2340,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
 
     var a = tasks.map((t) {
-      var str = t['structure_name'] as String; // cast to String
-
-      if (str == null) {
-        return Text('hi');
-      }
+      var str = t['structure_name'] as String;
 
       // ignore: unnecessary_cast
       return Card(

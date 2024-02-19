@@ -15,9 +15,6 @@ late EnvironmentConfig
 
 Future<void> initializeConfigIfNeeded() async {
   config = await EnvironmentConfig.fromEnvFile();
-  if (config == null) {
-    config = await EnvironmentConfig.fromEnvFile();
-  }
 }
 
 Future<void> refreshAccessToken(refreshToken) async {
