@@ -46,6 +46,17 @@ String codeVerifier = generateRandomString();
 String codeChallenge = 'MWlv47S554VAgCBkUNgxWacyRGG0Gg1TkTAShA_okW8';
 
 late EnvironmentConfig config;
+
+Future<void> initializeConfig() async {
+  config = await EnvironmentConfig.fromEnvFile();
+}
+
+Future initializeConfigFuture() async {
+  config = await EnvironmentConfig.fromEnvFile();
+
+  return config;
+}
+
 String DEPLOYEMENT_MODE = '';
 
 class LoginScreen extends StatefulWidget {
@@ -119,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    initializeConfig();
     loadConfig();
     // config = EnvironmentConfig.fromEnvFile();
 
@@ -131,6 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
     var loginDetails1 =
         await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
 
+    await initializeConfig();
 // storedLogin
 
     var slogin =
@@ -218,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Scaffold(
           body: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
+            initializeConfig();
             return Container(
               height: 1000,
               child: SingleChildScrollView(
@@ -230,6 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         future: _getUserLoginDetails(),
                         builder:
                             (BuildContext context, AsyncSnapshot snapshot) {
+                          initializeConfig();
                           if (!(snapshot.hasData) ||
                               snapshot.data == '' ||
                               snapshot.data['seat_details'] == -1) {
@@ -238,8 +253,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             return Column(
                               children: [
-                                if (config.deploymentMode.contains("UAT"))
-                                  noStoredLoginDetailsSoFirstLoginScreen(),
+                                FutureBuilder(
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot snapshot) {
+                                    if (snapshot.hasData) {
+                                      config = snapshot.data;
+                                      return noStoredLoginDetailsSoFirstLoginScreen();
+                                    } else {
+                                      return SpinKitFadingCube(
+                                          color: ksebColor);
+                                    }
+                                  },
+                                  future: initializeConfig(),
+                                ),
                               ],
                             );
                           } else {
@@ -1166,6 +1192,7 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 String extractTokenFromLink(String inputString) {
+  initializeConfig();
   List<String> splitList = inputString.split('code=');
 
   if (splitList.length > 1) {
@@ -1179,9 +1206,10 @@ String extractTokenFromLink(String inputString) {
 
 class MyAPI {
   final Dio _dio = Dio();
-  final String _url = "${config.liveServiceUrl}login";
 
   Future login(String email, String password, String showPhoto, context) async {
+    initializeConfig();
+    final String _url = "${config.liveServiceUrl}login";
     final Map<String, String> data = {
       "email": email,
       "password": password,
