@@ -21,6 +21,7 @@ import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
+import 'package:samagra/screens/uat_test_display_widget.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:convert';
@@ -235,7 +236,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             // no stored data or stored data is null or seat details -1
                             /// show fist time login screen
 
-                            return noStoredLoginDetailsSoFirstLoginScreen();
+                            return Column(
+                              children: [
+                                if (config.deploymentMode.contains("UAT"))
+                                  noStoredLoginDetailsSoFirstLoginScreen(),
+                              ],
+                            );
                           } else {
                             try {
                               var loginDetails;
@@ -304,6 +310,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
+                                                if (config.deploymentMode
+                                                    .contains("UAT"))
+                                                  UATTestWidget(
+                                                      isUATTest: true),
                                                 ksebMainEmblemAndName(),
                                                 Visibility(
                                                   visible: bytes.isEmpty,
@@ -435,15 +445,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                       ),
 
                                       SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9,
-                                          child: NasaImageOfTheDay())
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .5,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .9,
+                                        // child: NasaImageOfTheDay()
+                                      )
                                     ],
                                   ),
                                 ),

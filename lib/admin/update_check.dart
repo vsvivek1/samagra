@@ -20,8 +20,9 @@ class _UpdateCheckState extends State<UpdateCheck> {
   String _currentVersion = '1.0.0';
   String _latestVersion =
       '2.5.0'; // Replace with the latest version from the server
-  final String apkUrl =
-      'https://ws.kseb.in/resource/api/erp/group1/api/erp/group1/app_versions';
+  final String apkUrl = 'https://hris.kseb.in/osvtest/tmp/msamagra-8.apk';
+
+  // String ap
 
   @override
   void initState() {
@@ -38,35 +39,9 @@ class _UpdateCheckState extends State<UpdateCheck> {
   }
 
   Future<bool> _needsUpdateCheck() async {
-    Dio dio = new Dio();
+    return Future.value(true);
 
-    var headers = {
-      'Authorization':
-          'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI2IiwianRpIjoiODAxMGMzZTNkMmU4MTJhNjZiZWZiYmI5NjcxZmRmYzM4ZmFjZjI2YWJhMTY2ZTc1YWQxYzY5Y2JjNzdkYjgzM2EyOGQ2MjUzMmVmYjhkYTMiLCJpYXQiOjE3MDgzMzMzNzUsIm5iZiI6MTcwODMzMzM3NSwiZXhwIjoxNzA4MzM2OTc1LCJzdWIiOiIyMTcwMSIsInNjb3BlcyI6W119.RF9kIsVzwMMwapRQb9QvflLsB6xouPZakPmhNi5VktoPEPM0t1eShyzskHQDTg6YC82C5a0-81xrL5SYTMOvCS54kMu-80HwcdXoEHuqF1IN8lEjfqLeMBN6dCFWvllUp22TMgGgYj5JmUIBjyXwz60Pw-ZJhVHKrqrSJd3B7BQKbLgaMS2pHrgWKelLw9tUBlzOulXJQ5_UtLef2c8aHVcobx4XdXGCrTkLSwlGDTbmijRcSX5z1w9fWnlLTGoIu5Yuft2dGwkBIyUof-9dUcLG6gQCXVtdbrJIhg2bJmOQaIdAADRxg1CYZ4xQw9sp7msQcb8BeRvKfpmYx2Ar9Fyib65qfThBD5JrE5dLMhXf5QsbclR-MuD5oOTCQSMXh6v4trE7pXRQwAkmiZAxUkugRJIYe2Gc7sAUWwe3bQVTCM1XTGTwURNVaSRrOwnigjI2HYrr4PhikYXFVfUP7rXls5bkNwLhshAmywd8CBZrHj0XO89gco_FO03Z24H0g7oaP4jL8Dvg7vQoarpOfMFSwAxNJ3-CSUyTgrwYdkFj8AZxdErJQ5oL27grOW6080Udy3nKU56VGvETrNZWbFxPU75wF3zu8zVwTZFU9eGQdJCRDl5nvHBkEVwWcgyR7dnfiPr_uevLj8DFZuJMlbye4pM62sR6GeCgROVY4_g"',
-      'Cookie': 'laravel_session=6O2cN4jz3kwzpWd3ecL92Q7eknNmM7fiEVzUr7fG'
-    };
-// var dio = Dio();
-    var response = await dio.request(
-      apkUrl,
-      options: Options(
-        method: 'GET',
-        headers: headers,
-      ),
-    );
-
-    if (response.statusCode == 200) {
-      print(json.encode(response.data));
-    } else {
-      print(response.statusMessage);
-    }
-
-    // print(a);
-
-    return Future.value(false);
-    return true;
-    // Compare the current version with the latest version
-    //  print("$_currentVersion _currentVersion ${packageInfo.version}");
-
+//implement getLatest version from samagra
     return _currentVersion != _latestVersion;
   }
 
@@ -74,6 +49,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
     Dio dio = Dio();
 
     try {
+      // apkUrl
       Response response = await dio.get(apkUrl,
           options: Options(responseType: ResponseType.bytes));
 
@@ -121,7 +97,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
                   // Add logic to redirect users to the app store for update
                   // For example: launch('URL_TO_APP_STORE');
 
-                  // _downloadAndInstallApk();
+                  _downloadAndInstallApk();
                   // Navigator.push(
                   //   context,
                   //   MaterialPageRoute(builder: (context) => LoginScreen()),

@@ -1620,7 +1620,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   this.userDirections = 'Now Press save ';
 
                                   if (!isAudioMuted) {
-                                    audioCache.play('press_save_button.mp3');
+                                    // audioCache.play('press_save_button.mp3');
                                   }
                                 } else {
                                   from = _fromLocation;
@@ -1651,7 +1651,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 if (_fromLocation != '' && _toLocation != '') {
                                   this.userDirections = 'Now Press save ';
                                   if (!isAudioMuted) {
-                                    audioCache.play('press_save_button.mp3');
+                                    // audioCache.play('press_save_button.mp3');
                                   }
                                   this.steps = this.steps++; //3
                                 }
@@ -1864,7 +1864,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         // ImageIcon(image)
                         CircleAvatar(
                             radius: 20, // Adjust radius as needed
-                            backgroundImage: getKsebNetWorkImageOfDay(),
+                            // backgroundImage: getKsebNetWorkImageOfDay(),
                             child: Text('L  ${(index + 1)}')),
 
                         SizedBox(
@@ -2095,7 +2095,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
     int counter = 0;
     return Column(
       children: [
-        LocationListScreen(measurementDetails: this.measurementDetails),
+        // SizedBox(
+        //     width: 900,
+        //     height: 90,
+        //     child: LocationListScreen(
+        //         measurementDetails: this.measurementDetails)),
+        measurementPreviewWidget(context),
         Container(
           padding: EdgeInsets.all(16.0),
           child: Text(
