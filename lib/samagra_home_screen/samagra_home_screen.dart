@@ -31,7 +31,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
                   child: Column(
                     children: <Widget>[
                       // getSearchBarUI(),
-                      getCategoryUI(),
+                      // getCategoryUI(),
                       Flexible(
                         child: getPopularCourseUI(),
                       ),

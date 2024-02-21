@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -25,8 +28,15 @@ import 'get_work_details.dart';
 import 'measurement_option.dart';
 import 'package:samagra/environmental_config.dart';
 
-class WorkSelection extends StatelessWidget {
+class WorkSelection extends StatefulWidget {
+  @override
+  State<WorkSelection> createState() => _WorkSelectionState();
+}
+
+class _WorkSelectionState extends State<WorkSelection> {
   final storage = SecureStorage();
+
+  var _loaded = false;
 
   void p(name, [String from = '']) {
     print('-----------------------');
@@ -71,7 +81,7 @@ class WorkSelection extends StatelessWidget {
         appBar: AppBar(
           leading: null,
           automaticallyImplyLeading: false,
-          backgroundColor: AppTheme.grey.withOpacity(0.7),
+          backgroundColor: ksebMaterialColor,
           title: Row(
             children: [
               Spacer(),
@@ -101,7 +111,15 @@ class WorkSelection extends StatelessWidget {
 
                 // return Text(WorkListList.toString());
 
-                return SchGrpListWidget(workListList);
+                return AnimatedContainer(
+                  width: _loaded ? 0 : MediaQuery.of(context).size.width * .9,
+                  curve: Curves.bounceIn,
+                  duration: Duration(seconds: 1),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SchGrpListWidget(workListList),
+                  ),
+                );
 
                 // return MaterialApp(
                 //   title: 'List of Works',
@@ -264,16 +282,24 @@ class WorkSelection extends StatelessWidget {
       );
 
       List measurementSetList;
+
       var res2 = responseEdit.data['result_data'];
       if (res2 != null) {
+        setState(() {
+          _loaded = !_loaded;
+        });
+
         measurementSetList = res2['measurement_set_list'];
       } else {
         measurementSetList = [];
       }
+
       // print('response edit $measurement_set_list');
       setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
       Response response =
           await dio.get(url, options: Options(headers: headers));
+
+      print(response);
       //write code here to action for no work code error code -1 display error etc
 
       if (response.data['result_data'] != null &&
@@ -313,20 +339,29 @@ class WorkSelection extends StatelessWidget {
 
         // print("WD this is WD $wd");
 
-        this.callApiAndSaveLabourGroupMasterInSecureStorage();
+        // this.callApiAndSaveLabourGroupMasterInSecureStorage();
+
         // debugger(when: true);
         return res;
       } else {
         p('some error');
         return [];
       }
-    } on Exception catch (e) {
-      if (context != -1) {
+    } on Exception catch (e, stackTrace) {
+      // Added stackTrace parameter for better error reporting
+      if (context != null && context != -1) {
+        // Checking if context is not null
         // debugger(when: true);
 
+        print(e);
+
+        // debugger(when: true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString()),
+            content: Text(
+                style: TextStyle(backgroundColor: ksebMaterialColor),
+                'Some Error  in Accesing Servor Retrying '
+                    .toString()), // Accessing exception using e.toString() instead of e['message']
             duration: Duration(seconds: 10),
           ),
         );
@@ -334,7 +369,8 @@ class WorkSelection extends StatelessWidget {
         // print(context);
       }
 
-      print(e); // TODO
+      // print(e); // Logging the exception
+      print(stackTrace); // Logging the stack trace for better debugging
       return Future.value(['-1']);
     }
   }
@@ -342,8 +378,6 @@ class WorkSelection extends StatelessWidget {
   refreshWorkList() {
     _fetchWorkListList();
   }
-
-  ///SchGrp is WorkList for readability
 }
 
 class rotatingProgress extends StatelessWidget {
