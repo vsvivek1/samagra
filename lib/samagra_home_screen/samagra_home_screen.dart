@@ -104,14 +104,17 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            'Quick Links',
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 22,
-              letterSpacing: 0.27,
-              color: DesignCourseAppTheme.darkerText,
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Quick Links Click on any item',
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 20,
+                letterSpacing: 0.27,
+                color: DesignCourseAppTheme.darkerText,
+              ),
             ),
           ),
           Flexible(
