@@ -1764,7 +1764,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           _fetchingMasterEstimate
               ? Center(
                   child: SizedBox(
-                  width: MediaQuery.of(context).size.width * .5,
+                  width: MediaQuery.of(context).size.width * 5,
                   child: LinearProgressIndicator(
                     minHeight: 5,
                     semanticsValue: AutofillHints.photo,
@@ -1780,230 +1780,237 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
 // ...
 
-  SizedBox showLocationButtons() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * .3,
-      // width: MediaQuery.of(context).size.height * 1.4,
-      child: ListView.builder(
-        itemCount: _numberOfLocations,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (BuildContext context, int index) {
-          var status = _getLocationMeasuredStatus(index);
+  Column showLocationButtons() {
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * .25,
+          // width: MediaQuery.of(context).size.height * .5,
+          child: ListView.builder(
+            itemCount: _numberOfLocations,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              var status = _getLocationMeasuredStatus(index);
 
-          // print("STATUS OF LOC $index $status");
+              // print("STATUS OF LOC $index $status");
 
-          bool hasGeoLocations = status['hasGeoLocations'] as bool;
-          bool hasMeasurements = status['hasMeasurements'] as bool;
+              bool hasGeoLocations = status['hasGeoLocations'] as bool;
+              bool hasMeasurements = status['hasMeasurements'] as bool;
 
-          // bool completed = hasGeoLocations && hasMeasurements;
+              // bool completed = hasGeoLocations && hasMeasurements;
 
-          // print(status);
-          // print('status above at 1076');
+              // print(status);
+              // print('status above at 1076');
 
-          var geoCordinates;
+              var geoCordinates;
 
-          if (status['geoCordinates'] != null) {
-            geoCordinates = status['geoCordinates'] as Map<dynamic, dynamic>;
-          }
+              if (status['geoCordinates'] != null) {
+                geoCordinates =
+                    status['geoCordinates'] as Map<dynamic, dynamic>;
+              }
 
-          var geoCordinatesEnd;
-          if (status['geoCordinatesEnd'] != null) {
-            geoCordinatesEnd =
-                status['geoCordinatesEnd'] as Map<dynamic, dynamic>;
-          }
+              var geoCordinatesEnd;
+              if (status['geoCordinatesEnd'] != null) {
+                geoCordinatesEnd =
+                    status['geoCordinatesEnd'] as Map<dynamic, dynamic>;
+              }
 
-          // print("viii this is status $status");
-          // print(
-          //     'geocordinates above @1095 is location ${index + 1} $geoCordinatesEnd and $geoCordinates');
+              // print("viii this is status $status");
+              // print(
+              //     'geocordinates above @1095 is location ${index + 1} $geoCordinatesEnd and $geoCordinates');
 
-          String distanceText = '0 Meters';
+              String distanceText = '0 Meters';
 
-          if (geoCordinates != null) {
-            double startLatitude =
-                (geoCordinates['latitude'] ?? 0.0).toDouble();
-            double startLongitude =
-                (geoCordinates['longitude'] ?? 0.0).toDouble();
+              if (geoCordinates != null) {
+                double startLatitude =
+                    (geoCordinates['latitude'] ?? 0.0).toDouble();
+                double startLongitude =
+                    (geoCordinates['longitude'] ?? 0.0).toDouble();
 
-            // Replace `endLatitude` and `endLongitude` with the coordinates of the other location
-            if (geoCordinatesEnd != null) {
-              double endLatitude = geoCordinatesEnd['latitude'] ?? 0.0;
-              double endLongitude = geoCordinatesEnd['longitude'] ?? 0.0;
+                // Replace `endLatitude` and `endLongitude` with the coordinates of the other location
+                if (geoCordinatesEnd != null) {
+                  double endLatitude = geoCordinatesEnd['latitude'] ?? 0.0;
+                  double endLongitude = geoCordinatesEnd['longitude'] ?? 0.0;
 
-              double distance = Geolocator.distanceBetween(
-                startLatitude,
-                startLongitude,
-                endLatitude,
-                endLongitude,
-              );
+                  double distance = Geolocator.distanceBetween(
+                    startLatitude,
+                    startLongitude,
+                    endLatitude,
+                    endLongitude,
+                  );
 
-              // print(geoCordinates.runtimeType);
-              // print(geoCordinatesEnd.runtimeType);
-              // print('geocordinates above @1081 is location ${index + 1}');
+                  // print(geoCordinates.runtimeType);
+                  // print(geoCordinatesEnd.runtimeType);
+                  // print('geocordinates above @1081 is location ${index + 1}');
 
-              distanceText = ' ${distance.toStringAsFixed(2)} mtrs';
-            }
-          }
+                  distanceText = ' ${distance.toStringAsFixed(2)} mtrs';
+                }
+              }
 
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              GestureDetector(
-                onTap: () => _viewLocationDetail(index, status),
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ksebColor),
-                    backgroundBlendMode: BlendMode.colorDodge,
-                    // boxShadow:[] ,
-                    borderRadius: BorderRadius.circular(20),
-                    color: (index == _tappedIndex)
-                        ? Color.fromARGB(255, 56, 96, 58)
-                        : (hasGeoLocations && hasMeasurements)
-                            // ? Color.fromARGB(74, 10, 54, 229)
-                            ? Colors.white70
-                            : Color.fromRGBO(241, 78, 3, 0.6),
-                  ),
-                  margin: EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Column(
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        // ImageIcon(image)
-                        CircleAvatar(
-                            radius: 20, // Adjust radius as needed
-                            // backgroundImage: getKsebNetWorkImageOfDay(),
-                            child: Text('L  ${(index + 1)}')),
-
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Visibility(
-                          visible: hasMeasurements,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Map obj = measurementDetails.firstWhere(
-                                (element) => element['locationNo'] == index + 1,
-                                orElse: () => {},
-                              );
-                              viewMeasurementExtract(context, obj);
-                            },
-                            child: Text('Details'),
-                          ),
-                        ),
-
-                        // CustomButtonRow(
-                        //     locationNumber: (index + 1), workId: widget.workId),
-
-                        SizedBox(
-                          height: 5,
-                        ),
-
-                        Row(
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    onTap: () => _viewLocationDetail(index, status),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: ksebColor),
+                        backgroundBlendMode: BlendMode.colorDodge,
+                        // boxShadow:[] ,
+                        borderRadius: BorderRadius.circular(20),
+                        color: (index == _tappedIndex)
+                            ? Color.fromARGB(255, 56, 96, 58)
+                            : (hasGeoLocations && hasMeasurements)
+                                // ? Color.fromARGB(74, 10, 54, 229)
+                                ? Colors.white70
+                                : Color.fromRGBO(241, 78, 3, 0.6),
+                      ),
+                      margin: EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Column(
+                          textBaseline: TextBaseline.alphabetic,
                           children: [
-                            IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.redAccent,
+                            // ImageIcon(image)
+                            CircleAvatar(
+                                radius: 20, // Adjust radius as needed
+                                // backgroundImage: getKsebNetWorkImageOfDay(),
+                                child: Text('L  ${(index + 1)}')),
+
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Visibility(
+                              visible: hasMeasurements,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Map obj = measurementDetails.firstWhere(
+                                    (element) =>
+                                        element['locationNo'] == index + 1,
+                                    orElse: () => {},
+                                  );
+                                  viewMeasurementExtract(context, obj);
+                                },
+                                child: Text('Details'),
                               ),
-                              onPressed: () {
-                                // Get the location number from the index.
-                                // int locationNo = measurementDetails[index];
+                            ),
 
-                                var locationNo = index + 1;
+                            // CustomButtonRow(
+                            //     locationNumber: (index + 1), workId: widget.workId),
 
-                                // Show a confirmation dialog.
-                                showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text('Delete Location?'),
-                                      content: Text(
-                                          'Are you sure you want to delete location number $locationNo?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            // Remove the location from the list.
-                                            measurementDetails.removeWhere(
-                                                (element) =>
-                                                    element['locationNo']
-                                                        .toString() ==
-                                                    locationNo.toString());
+                            SizedBox(
+                              height: 5,
+                            ),
 
-                                            setState(() {});
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Delete'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            // Dismiss the dialog.
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Cancel'),
-                                        ),
-                                      ],
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.delete,
+                                    color: Colors.redAccent,
+                                  ),
+                                  onPressed: () {
+                                    // Get the location number from the index.
+                                    // int locationNo = measurementDetails[index];
+
+                                    var locationNo = index + 1;
+
+                                    // Show a confirmation dialog.
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text('Delete Location?'),
+                                          content: Text(
+                                              'Are you sure you want to delete location number $locationNo?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                // Remove the location from the list.
+                                                measurementDetails.removeWhere(
+                                                    (element) =>
+                                                        element['locationNo']
+                                                            .toString() ==
+                                                        locationNo.toString());
+
+                                                setState(() {});
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Delete'),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                // Dismiss the dialog.
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('Cancel'),
+                                            ),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
+                                ),
+                                IconButton(
+                                  color: Colors.amber,
+                                  icon: Icon(Icons.view_agenda),
+                                  onPressed: () {
+                                    _viewLocationDetail(index, status);
+                                    // Handle the button press
+                                    // You can add the logic to navigate to the location detail
+                                  },
+                                  tooltip: 'GO',
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              color: Colors.amber,
-                              icon: Icon(Icons.view_agenda),
-                              onPressed: () {
-                                _viewLocationDetail(index, status);
-                                // Handle the button press
-                                // You can add the logic to navigate to the location detail
-                              },
-                              tooltip: 'GO',
-                            ),
+
+                            Container(
+                                alignment: AlignmentDirectional.bottomStart,
+                                width: MediaQuery.of(context).size.width / 2.5,
+                                child: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width / 1.5,
+                                    child: LocationMeasurementProgress(
+                                        hasGeoLocations: hasGeoLocations,
+                                        hasMeasurements: hasMeasurements)
+
+                                    //  Text(
+                                    //   status['text'].toString(),
+                                    //   style: TextStyle(
+                                    //     color: status['color'] as Color,
+                                    //   ),
+                                    // )
+                                    //
+                                    )),
+
+                            // Container(
+                            //   width: MediaQuery.of(context).size.width / 3,
+                            //   child: Flexible(
+                            //     child: Text(
+                            //       distanceText,
+                            //       style: TextStyle(
+                            //         color: status['color'] as Color,
+                            //       ),
+                            //       maxLines: null, // Allow unlimited lines
+                            //       overflow: TextOverflow.visible,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
-
-                        Container(
-                            alignment: AlignmentDirectional.bottomStart,
-                            width: MediaQuery.of(context).size.width / 2.5,
-                            child: SizedBox(
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                child: LocationMeasurementProgress(
-                                    hasGeoLocations: hasGeoLocations,
-                                    hasMeasurements: hasMeasurements)
-
-                                //  Text(
-                                //   status['text'].toString(),
-                                //   style: TextStyle(
-                                //     color: status['color'] as Color,
-                                //   ),
-                                // )
-                                //
-                                )),
-
-                        // Container(
-                        //   width: MediaQuery.of(context).size.width / 3,
-                        //   child: Flexible(
-                        //     child: Text(
-                        //       distanceText,
-                        //       style: TextStyle(
-                        //         color: status['color'] as Color,
-                        //       ),
-                        //       maxLines: null, // Allow unlimited lines
-                        //       overflow: TextOverflow.visible,
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-              if (geoCordinatesEnd != null) ...[
-                Container(
-                    margin: EdgeInsets.all(1.0), child: Text(distanceText))
-              ]
-            ],
-          );
-        },
-      ),
+                  if (geoCordinatesEnd != null) ...[
+                    Container(
+                        margin: EdgeInsets.all(1.0), child: Text(distanceText))
+                  ]
+                ],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -2119,13 +2126,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
           ),
         ),
         SizedBox(
-            width: MediaQuery.of(context).size.width * .7,
-            child: taskSelectionWidget(tasklist1, counter)),
+            width: MediaQuery.of(context).size.width * .9,
+            child: SingleChildScrollView(
+                clipBehavior: Clip.hardEdge,
+                child: taskSelectionWidget(tasklist1, counter))),
       ],
     );
   }
 
   ExpansionPanelList taskSelectionWidget(tasklist1, int counter) {
+    int taskNo = 0;
     return ExpansionPanelList(
         key: GlobalKey(),
         expansionCallback: (int panelIndex, bool isExpanded) {
@@ -2154,7 +2164,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
             isExpanded: t['isExpanded'] ?? false,
             headerBuilder: (BuildContext context, bool isExpanded) {
+              taskNo++;
               return ListTile(
+                leading: CircleAvatar(
+                  radius: 20,
+                  child: Text('T $taskNo'),
+                ),
                 tileColor: t['hasStructure'] ?? false
                     ? const Color.fromARGB(255, 167, 241, 206)
                     : Colors.white10,
@@ -2221,16 +2236,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 },
                 child: Text('Save and Select Next task'),
               ),
-            ]
-                //  [Text(counter.toString(), Text('2')]
-
-                //  tasklist1[ind]['tasks']
-                //     .map((structure) => {Text(structure['structure_name'])})
-                //     .toList()
-
-                // children: getStructuresOfTask(tasklist1[ind]['tasks']),
-
-                ),
+            ]),
           );
         }).toList());
   }
