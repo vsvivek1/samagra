@@ -1672,11 +1672,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      IconButton(
-                        onPressed: saveFromAndTwoLocation,
-                        icon: Icon(Icons.save),
-                        color: Color.fromARGB(255, 33, 33, 33),
-                        tooltip: 'Save Location Details',
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          onPressed: saveFromAndTwoLocation,
+                          child: Row(
+                            children: [
+                              Text("Save And Proceed For Measurement"),
+                              SizedBox(width: 20),
+                              Icon(color: Colors.blueAccent, Icons.save),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),

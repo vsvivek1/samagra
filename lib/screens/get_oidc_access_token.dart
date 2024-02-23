@@ -12,7 +12,7 @@ Future<List<String>> getOidcAccessTokens(
 
   String url = '${config.liveAccessUrl}token';
 
-  print(url);
+  // print(url);
 
   try {
     Response response = await dio.post(
@@ -41,7 +41,7 @@ Future<List<String>> getOidcAccessTokens(
     }
   } catch (e) {
     SnackBar(
-      content: Text('Some Error $e'),
+      content: Text('Some Error $url'),
     );
 
 // Future<List<String>>

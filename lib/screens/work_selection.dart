@@ -4,6 +4,8 @@ import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
@@ -14,6 +16,7 @@ import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+import 'package:samagra/screens/show_work_code.dart';
 import 'package:samagra/screens/warning_message.dart';
 import 'package:samagra/screens/work_details.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -37,6 +40,7 @@ class _WorkSelectionState extends State<WorkSelection> {
   final storage = SecureStorage();
 
   var _loaded = false;
+  List measurementSetList = [];
 
   void p(name, [String from = '']) {
     print('-----------------------');
@@ -94,50 +98,48 @@ class _WorkSelectionState extends State<WorkSelection> {
             ],
           ),
         ),
-        body: Theme(
-          data: ThemeData(),
-          child: FutureBuilder(
-            future: _fetchWorkListList(context: context),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data != "-1") {
-                final workListList = snapshot.data;
+        body: Hero(
+          tag: 'Works',
+          child: Theme(
+            data: ThemeData(),
+            child: FutureBuilder(
+              future: _fetchWorkListList(context: context),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data != "-1") {
+                  final workListList = snapshot.data;
 
-                // print("worklist $workListList");
+                  // print("worklist $workListList");
 
-                // debugger(when: true);
+                  // debugger(when: true);
 
-                // p(WorkListList);
-                // p(workListList.runtimeType);
+                  // p(WorkListList);
+                  // p(workListList.runtimeType);
 
-                // return Text(WorkListList.toString());
+                  // return Text(WorkListList.toString());
 
-                return AnimatedContainer(
-                  width: _loaded ? 0 : MediaQuery.of(context).size.width * .9,
-                  curve: Curves.bounceIn,
-                  duration: Duration(seconds: 1),
-                  child: Padding(
+                  return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SchGrpListWidget(workListList),
-                  ),
-                );
+                  );
 
-                // return MaterialApp(
-                //   title: 'List of Works',
-                //   home: Scaffold(
-                //     appBar: AppBar(
-                //       title: Text('Square Tiles Demo'),
-                //     ),
-                //     body: WorkListListWidget(WorkListList),
-                //   ),
-                // );
-              } else if (snapshot.hasError || snapshot.data == '-1') {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return Center(
-                    child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
-                // return rotatingProgress();
-              }
-            },
+                  // return MaterialApp(
+                  //   title: 'List of Works',
+                  //   home: Scaffold(
+                  //     appBar: AppBar(
+                  //       title: Text('Square Tiles Demo'),
+                  //     ),
+                  //     body: WorkListListWidget(WorkListList),
+                  //   ),
+                  // );
+                } else if (snapshot.hasError || snapshot.data == '-1') {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Center(
+                      child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
+                  // return rotatingProgress();
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -240,6 +242,10 @@ class _WorkSelectionState extends State<WorkSelection> {
   }
 
   Future<List<dynamic>> _fetchWorkListList({context = -1}) async {
+    if (_loaded) {
+      return measurementSetList;
+    }
+
     final accessToken1 =
         await storage.getSecureAllStorageDataByKey("access_token");
 
@@ -257,6 +263,7 @@ class _WorkSelectionState extends State<WorkSelection> {
     final url =
         '${config.liveServiceUrl}wrk/getScheduleListForNormalMeasurement/$officeId';
     final headers = {'Authorization': 'Bearer $accessToken'};
+    Dio dio = Dio();
 
     // debugger(when: true);
     try {
@@ -265,30 +272,15 @@ class _WorkSelectionState extends State<WorkSelection> {
       // var u = ${config.liveServiceUrl;};
 
       // debugger(when: true);
-      final urlEdit =
-          "${config.liveServiceUrl}wrk/getPolevarMeasurementSetListForEdit";
 
-      // print(urlEdit);
+      ;
 
-      // debugger(when: true);
-
-      Dio dio = Dio();
-      setDioAccessokenAndApiKey(dio, accessToken, config);
-
-      Response responseEdit = await dio.get(
-        queryParameters: Map.from({'seat_id': seatId}),
-        urlEdit,
-        options: Options(headers: headers),
-      );
-
-      List measurementSetList;
+      Response<dynamic> responseEdit = await fetchStoredEditListFromSamagra(
+          config, dio, accessToken, seatId, headers);
 
       var res2 = responseEdit.data['result_data'];
-      if (res2 != null) {
-        setState(() {
-          _loaded = !_loaded;
-        });
 
+      if (res2 != null) {
         measurementSetList = res2['measurement_set_list'];
       } else {
         measurementSetList = [];
@@ -299,7 +291,11 @@ class _WorkSelectionState extends State<WorkSelection> {
       Response response =
           await dio.get(url, options: Options(headers: headers));
 
-      print(response);
+      // print(response);
+
+      // debugger(when: true);
+
+      // debugger(when: true);
       //write code here to action for no work code error code -1 display error etc
 
       if (response.data['result_data'] != null &&
@@ -312,7 +308,7 @@ class _WorkSelectionState extends State<WorkSelection> {
 
             //  element['wrk_schedule_group_id'] = element['wrk_schedule_group_id'];
 
-            print('element measurement_set_list  work id ${element['workId']}');
+            // print('element measurement_set_list  work id ${element['workId']}');
           },
         );
 
@@ -342,9 +338,19 @@ class _WorkSelectionState extends State<WorkSelection> {
         // this.callApiAndSaveLabourGroupMasterInSecureStorage();
 
         // debugger(when: true);
+
+        // setState(() {
+        //   _loaded = !_loaded;
+        // });
+
         return res;
       } else {
-        p('some error');
+        p('some error $url');
+
+        // setState(() {
+        //   _loaded = !_loaded;
+        // });
+
         return [];
       }
     } on Exception catch (e, stackTrace) {
@@ -354,13 +360,14 @@ class _WorkSelectionState extends State<WorkSelection> {
         // debugger(when: true);
 
         print(e);
+        print(url);
 
         // debugger(when: true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
                 style: TextStyle(backgroundColor: ksebMaterialColor),
-                'Some Error  in Accesing Servor Retrying '
+                'Some Error  in Accesing Servor Retrying $url'
                     .toString()), // Accessing exception using e.toString() instead of e['message']
             duration: Duration(seconds: 10),
           ),
@@ -371,8 +378,32 @@ class _WorkSelectionState extends State<WorkSelection> {
 
       // print(e); // Logging the exception
       print(stackTrace); // Logging the stack trace for better debugging
+
+      // setState(() {
+      //   _loaded = !_loaded;
+      // });
+
       return Future.value(['-1']);
     }
+  }
+
+  Future<Response<dynamic>> fetchStoredEditListFromSamagra(
+      EnvironmentConfig config,
+      Dio dio,
+      accessToken,
+      String seatId,
+      Map<String, String> headers) async {
+    String urlEdit =
+        "${config.liveServiceUrl}wrk/getPolevarMeasurementSetListForEdit";
+
+    setDioAccessokenAndApiKey(dio, accessToken, config);
+
+    Response responseEdit = await dio.get(
+      queryParameters: Map.from({'seat_id': seatId}),
+      urlEdit,
+      options: Options(headers: headers),
+    );
+    return responseEdit;
   }
 
   refreshWorkList() {
@@ -527,16 +558,16 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
       return SafeArea(
         child: Column(
           children: [
-            IconButton(
-              iconSize: 10,
-              icon: isAudioMuted
-                  ? Icon(Icons.volume_up_rounded)
-                  : Icon(Icons.volume_mute_sharp),
-              onPressed: toggleMute,
-              tooltip: isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
-            ),
+            // IconButton(
+            //   iconSize: 10,
+            //   icon: isAudioMuted
+            //       ? Icon(Icons.volume_up_rounded)
+            //       : Icon(Icons.volume_mute_sharp),
+            //   onPressed: toggleMute,
+            //   tooltip: isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
+            // ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(5.0),
               child: TextField(
                 controller: _searchController,
                 decoration: InputDecoration(
@@ -571,161 +602,243 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
               ),
             ),
             Expanded(
-              child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  childAspectRatio: 1.7,
-                ),
-                itemCount: _filteredItems.length,
-                itemBuilder: (context, index) {
-                  final item = _filteredItems[index];
-
-                  if (item == "-1") {
-                    return WarningMessage(
-                        message: 'No work Found For Measurement');
-                    // return Text(
-                    //     'some error -1 in item Failed to load List of Works');
-                    // showErrorSnackBar(context);
-                  }
-
-                  int sl = index + 1;
-
-                  Map workDetail = item['wrk_work_detail'];
-
-                  print("$item item");
-
-                  // int hasTakenback=
-
-                  // int workId = workDetail?['id'];
-                  int workId = item?['workId'];
-
-                  // var hasStarted = await getStoredWorkDetails(workId); //
-
-                  // print('has started $hasStarted');
-
-                  int workScheduleGroupId = item?['wrk_schedule_group_id'];
-
-                  final workName = workDetail['work_name'];
-                  final workCode = workDetail['work_code'];
-                  final status = item['status'];
-                  final measurementSetId =
-                      (status == 'CREATED') ? -1 : item['id'];
-
-                  // debugger(when: workCode == 'CW-6661-202223-15');
-                  // print(work)
-
-                  if (workName == null || workId == -1 || item == "-1") {
-                    showErrorSnackBar(context);
-                  }
-
-                  ///temporary
-
-                  //  'workId' : workId,
-                  //             'workName': workName,
-
-                  // return Text('hi');
-                  return GestureDetector(
-                      onTap: () {
-                        ///setting global work details
-                        WorkDetails workDetails = WorkDetails();
-
-                        // Setting properties
-                        workDetails.workName = workName;
-                        workDetails.workCode = workCode;
-                        workDetails.workId = workId;
-                        workDetails.isAudioMuted = true;
-
-                        // print(
-                        //     "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
-
-                        // debugger(when: true);
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => MeasurementOptionScreen(
-                              workId,
-                              workName,
-                              workCode,
-                              measurementSetId.toString(),
-                              workScheduleGroupId.toString(),
-                              isAudioMuted,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey, width: 2.0),
-                        ),
-                        child: GridTile(
-                          header: Row(
-                            children: [
-                              CircleAvatar(
-                                child: Text(sl.toString()),
-                                radius: 10,
-                              ),
-                              Spacer(),
-                              Text('WorkId :$workId'),
-                              Spacer(),
-                              Text('SchGrp :$workScheduleGroupId'),
-                              Spacer(),
-                              (status != 'UNDR_MSR') ? Text(status) : Text('k'),
-                            ],
-                          ),
-                          child: Center(
-                            child: ListTile(
-                              tileColor: (status != 'CREATED')
-                                  ? Color.fromARGB(255, 33, 194, 151)
-                                  : Colors.white,
-                              // subtitle: item['started'] == true
-                              //     ? Text(
-                              //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
-                              //     : Text(
-                              //         'Measurements Not Started ${item['hasStarted']}'),
-                              title: Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      '\n' +
-                                          item['wrk_work_detail']['work_name'],
-                                      style: TextStyle(
-                                          textBaseline:
-                                              TextBaseline.ideographic,
-                                          fontSize: 20,
-                                          wordSpacing: 5,
-                                          color: const Color.fromARGB(
-                                              255, 89, 76, 175)),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'WorkCode: $workCode',
-                                        style: TextStyle(
-                                            textBaseline:
-                                                TextBaseline.ideographic,
-                                            fontSize: 14,
-                                            wordSpacing: 5,
-                                            color: Color.fromARGB(
-                                                255, 236, 143, 11)),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ));
-                },
-              ),
+              child: normalListView(),
+              // child: normalListWheelScrollView()
             ),
           ],
         ),
       );
     });
+  }
+
+  GridView normalListView() {
+    return GridView.builder(
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 1.7,
+      ),
+      itemCount: _filteredItems.length,
+      itemBuilder: (context, index) {
+        final item = _filteredItems[index];
+
+        if (item == "-1") {
+          return WarningMessage(message: 'No work Found For Measurement');
+          // return Text(
+          //     'some error -1 in item Failed to load List of Works');
+          // showErrorSnackBar(context);
+        }
+
+        int sl = index + 1;
+
+        Map workDetail = item['wrk_work_detail'];
+
+        int workId = item?['workId'];
+
+        int workScheduleGroupId = item?['wrk_schedule_group_id'];
+
+        final workName = workDetail['work_name'];
+        final workCode = workDetail['work_code'];
+        final status = item['status'];
+        final measurementSetId = (status == 'CREATED') ? -1 : item['id'];
+
+        if (workName == null || workId == -1 || item == "-1") {
+          showErrorSnackBar(context);
+        }
+
+        return GestureDetector(
+            onTap: () {
+              ///setting global work details
+              WorkDetails workDetails = WorkDetails();
+
+              // Setting properties
+              workDetails.workName = workName;
+              workDetails.workCode = workCode;
+              workDetails.workId = workId;
+              workDetails.isAudioMuted = true;
+
+              // print(
+              //     "workDetails.isAudioMuted ${workDetails.isAudioMuted}");
+
+              // debugger(when: true);
+
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => MeasurementOptionScreen(
+                    workId,
+                    workName,
+                    workCode,
+                    measurementSetId.toString(),
+                    workScheduleGroupId.toString(),
+                    isAudioMuted,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                border: Border.all(
+                    strokeAlign: BorderSide.strokeAlignOutside,
+                    color: ksebColor,
+                    width: 2,
+                    style: BorderStyle.solid),
+              ),
+              child: GridTile(
+                footer: ShowWorkCode(workCode: workCode),
+                header: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: WorkTitle(
+                      workId: workId,
+                      workScheduleGroupId: workScheduleGroupId,
+                      status: status),
+                ),
+                child: Center(
+                  child: ListTile(
+                    // subtitle: SizedBox(
+                    //     width: 30,
+                    //     height: 30,
+                    //     child: Image.asset('assets/images/kseb.jpg')),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                    visualDensity: VisualDensity.compact,
+                    focusColor: ksebColor,
+                    // title:
+                    leading: CircleAvatar(
+                      child: Text(sl.toString()),
+                      radius: 10,
+                    ),
+                    hoverColor: ksebColor,
+                    splashColor: ksebColor,
+                    tileColor: (status != 'CREATED')
+                        ? Color.fromARGB(255, 33, 194, 151)
+                        : Colors.white,
+                    // subtitle: item['started'] == true
+                    //     ? Text(
+                    //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
+                    //     : Text(
+                    //         'Measurements Not Started ${item['hasStarted']}'),
+                    title: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(25.0),
+                            child: Text(
+                              item['wrk_work_detail']['work_name'],
+                              style: TextStyle(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 255, 255, 255),
+                                  fontFamily: 'verdana',
+                                  textBaseline: TextBaseline.ideographic,
+                                  fontSize: 18,
+                                  wordSpacing: 3,
+                                  color:
+                                      const Color.fromARGB(255, 89, 76, 175)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ));
+      },
+    );
+  }
+
+// ListWheelScrollView(
+
+  ListWheelScrollView normalListWheelScrollView() {
+    return ListWheelScrollView(
+      useMagnifier: true,
+      itemExtent: 150, // Height of each item
+      diameterRatio: 6, // Determines the size of the wheel
+      children: List.generate(
+        _filteredItems.length,
+        (index) {
+          final item = _filteredItems[index];
+
+          if (item == "-1") {
+            return WarningMessage(message: 'No work Found For Measurement');
+          }
+
+          int sl = index + 1;
+
+          Map workDetail = item['wrk_work_detail'];
+          int workId = item?['workId'];
+          int workScheduleGroupId = item?['wrk_schedule_group_id'];
+          final workName = workDetail['work_name'];
+          final workCode = workDetail['work_code'];
+          final status = item['status'];
+          final measurementSetId = (status == 'CREATED') ? -1 : item['id'];
+
+          if (workName == null || workId == -1 || item == "-1") {
+            showErrorSnackBar(context);
+          }
+
+          return GestureDetector(
+            onTap: () {
+              WorkDetails workDetails = WorkDetails();
+              workDetails.workName = workName;
+              workDetails.workCode = workCode;
+              workDetails.workId = workId;
+              workDetails.isAudioMuted = true;
+
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => MeasurementOptionScreen(
+                    workId,
+                    workName,
+                    workCode,
+                    measurementSetId.toString(),
+                    workScheduleGroupId.toString(),
+                    isAudioMuted,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 2.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListTile(
+                  title: Text(
+                    item['wrk_work_detail']['work_name'],
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: const Color.fromARGB(255, 89, 76, 175),
+                    ),
+                  ),
+                  subtitle: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'WorkCode: $workCode',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color.fromARGB(255, 236, 143, 11),
+                      ),
+                    ),
+                  ),
+                  leading: CircleAvatar(
+                    child: Text(sl.toString()),
+                    radius: 20,
+                  ),
+                  trailing: (status != 'UNDR_MSR') ? Text(status) : Text('k'),
+                  tileColor: (status != 'CREATED')
+                      ? Color.fromARGB(255, 33, 194, 151)
+                      : Colors.white,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   void showErrorSnackBar(BuildContext context) {
@@ -740,6 +853,33 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
     print('work_name key not found in map or its value is null');
+  }
+}
+
+class WorkTitle extends StatelessWidget {
+  const WorkTitle({
+    super.key,
+    required this.workId,
+    required this.workScheduleGroupId,
+    required this.status,
+  });
+
+  final int workId;
+  final int workScheduleGroupId;
+  final status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Spacer(),
+        Text('WorkId :$workId'),
+        Spacer(),
+        Text('SchGrp :$workScheduleGroupId'),
+        Spacer(),
+        (status != 'UNDR_MSR') ? Text(status) : Text('k'),
+      ],
+    );
   }
 }
 

@@ -795,6 +795,25 @@ class _LoginScreenState extends State<LoginScreen> {
       {oIdAccessTokens}) async {
     String errorMsg = 'SERVER ERROR';
 
+    if (result is DioException) {
+      Fluttertoast.showToast(
+        msg: errorMsg,
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 10,
+        backgroundColor: Colors.black,
+        textColor: const Color.fromARGB(255, 244, 3, 3),
+        fontSize: 16.0,
+      );
+
+      setState(() {
+        _ssoLoginLoading = false;
+        externalLinkActivated = false;
+      });
+
+      return;
+    }
+
     if (!(result is Map) &&
         result.response == null &&
         result.response.statusCode != 200) {
@@ -815,20 +834,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // debugger(when: true);
 
-      Fluttertoast.showToast(
-        msg: errorMsg,
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 10,
-        backgroundColor: Colors.black,
-        textColor: const Color.fromARGB(255, 244, 3, 3),
-        fontSize: 16.0,
-      );
-
       setState(() {
         _ssoLoginLoading = false;
         externalLinkActivated = false;
       });
+
       print(result.response);
       showErrorMessage(
           'Error fetching data. Status code: ${result.response.data['error']}',

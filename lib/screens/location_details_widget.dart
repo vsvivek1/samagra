@@ -185,6 +185,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                                 onPressed: () => _saveLocationDetails(),
                                 icon: Icon(Icons.edit))
                             : IconButton(
+                                color: Colors.greenAccent,
                                 onPressed: () => _saveLocationDetails(),
                                 icon: Icon(Icons.save))
                       ],

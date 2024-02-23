@@ -61,6 +61,7 @@ class LocationListScreen extends StatelessWidget {
                                   ],
                                 ),
                                 trailing: IconButton(
+                                  color: Colors.green,
                                   icon: Icon(Icons.edit),
                                   onPressed: () {
                                     showDialog(
