@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:samagra/kseb_color.dart';
 
 class LocationMeasurementView extends StatefulWidget {
@@ -195,19 +197,34 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                             // final labour = structure['labour'][materialIndex];
 
                             return ListTile(
-                              contentPadding: EdgeInsets.only(left: 1.0),
-                              title: Text(
-                                  '${materialIndex + 1} : ${material['material_name']}'),
-                              subtitle:
-                                  Text('Quantity: ${material['quantity']}'),
-                              trailing: IconButton(
-                                icon: Icon(Icons.edit),
-                                onPressed: () {
-                                  _editMaterialQuantity(
-                                      materialIndex, structureIndex, index);
-                                },
-                              ),
-                            );
+                                contentPadding: EdgeInsets.only(left: 1.0),
+                                title: SizedBox(
+                                  width: MediaQuery.of(context).size.width * .5,
+                                  child: Wrap(
+                                    children: [
+                                      Text(
+                                          maxLines: 2,
+                                          '${materialIndex + 1} : ${material['material_name']}'),
+                                    ],
+                                  ),
+                                ),
+                                subtitle: materialEditingBox(material)
+
+                                // trailing: ,
+                                // trailing: TextFormField(
+                                //         keyboardType:
+                                //             TextInputType.numberWithOptions(
+                                //                 decimal: true),
+
+                                // trailing: TextField(),
+                                // trailing: IconButton(
+                                //   icon: Icon(Icons.edit),
+                                //   onPressed: () {
+                                //     _editMaterialQuantity(
+                                //         materialIndex, structureIndex, index);
+                                //   },
+                                // ),
+                                );
                           },
                         ),
                 ],
@@ -215,6 +232,65 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
         ],
       );
     });
+  }
+
+  Wrap materialEditingBox(material) {
+    return Wrap(
+      children: [
+        Text('Quantity: ${material['quantity']}'),
+        SizedBox(width: 50),
+        if (material['editing'] == null || material['editing'] == true)
+          SizedBox(
+            width: 100.0,
+            height: 25,
+            child: TextField(
+              onChanged: (value) {
+                print(material);
+                setState(() {
+                  material['quantity'] = value;
+                });
+
+                // print('hi');
+                // _editMaterialQuantity(materialIndex,
+                //     structureIndex, index);
+              },
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                  gapPadding: 10,
+                  borderSide: BorderSide(
+                      strokeAlign: BorderSide.strokeAlignInside,
+                      width: 2.0,
+                      color: Colors.blue), // Border color
+                ),
+              ),
+              onEditingComplete: () {},
+              // focusNode: FocusScope.of(context).parent,
+              cursorColor: Colors.red,
+              // maxLines: 2,
+              // maxLength: 2,
+            ),
+          ),
+        SizedBox(width: 10),
+        if (material['editing'] == null || material['editing'] == true)
+          IconButton(
+              onPressed: (() {
+                setState(() {
+                  material['editing'] = false;
+                });
+              }),
+              icon: Icon(color: Colors.green, Icons.save)),
+        if (material['editing'] != null && material['editing'] == false)
+          IconButton(
+              onPressed: (() {
+                setState(() {
+                  material['editing'] = true;
+                });
+              }),
+              icon: Icon(color: Colors.red, Icons.edit))
+      ],
+    );
   }
 
   Builder LabourView(structure, int structureIndex, int index) {

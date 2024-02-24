@@ -123,7 +123,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                     Row(
                       children: [
                         SizedBox(
-                          height: 50,
+                          height: 100,
                           width: 150,
                           child: TextFormField(
                             initialValue: locationName,

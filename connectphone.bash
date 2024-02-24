@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# adb kill-server
-# adb start-server
+adb kill-server
+adb start-server
+adb shell setprop service.adb.tcp.port
 adb pair adb-cde43bc9-oRNuYB;
 adb connect adb-cde43bc9-oRNuYB;
+
 exit;
 # Retrieve the default gateway
 gateway=$(route -n get default | grep 'gateway' | awk '{debugPrint $2}')

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/widgets.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
@@ -1444,7 +1445,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         decoration:
             BoxDecoration(border: Border.all(width: 1), color: ksebColor),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: LocationMeasurementView(
               tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
               reflectQuantityDetails: reflectQuantityDetails),
@@ -1489,7 +1490,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   SizedBox viewAllLocationDetails(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * .4,
+      height: MediaQuery.of(context).size.height * .6,
       child: ListView.builder(
           // itemCount: _numberOfLocations,
           itemCount: 1,
@@ -1784,7 +1785,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return Column(
       children: [
         SizedBox(
-          height: MediaQuery.of(context).size.height * .25,
+          height: MediaQuery.of(context).size.height * .3,
           // width: MediaQuery.of(context).size.height * .5,
           child: ListView.builder(
             itemCount: _numberOfLocations,
@@ -2137,6 +2138,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
   ExpansionPanelList taskSelectionWidget(tasklist1, int counter) {
     int taskNo = 0;
     return ExpansionPanelList(
+        animationDuration: Duration(seconds: 2),
+        expandedHeaderPadding: EdgeInsets.all(20),
+        expandIconColor: Colors.red,
+        // elevation: 5.0,
+        dividerColor: ksebColor,
         key: GlobalKey(),
         expansionCallback: (int panelIndex, bool isExpanded) {
           setState(() {
@@ -2159,13 +2165,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           counter++;
           return ExpansionPanel(
-            // canTapOnHeader: true,
+            canTapOnHeader: true,
             // isExpanded: true,
 
             isExpanded: t['isExpanded'] ?? false,
             headerBuilder: (BuildContext context, bool isExpanded) {
               taskNo++;
               return ListTile(
+                // trailing: Text('select'),
                 leading: CircleAvatar(
                   radius: 20,
                   child: Text('T $taskNo'),
