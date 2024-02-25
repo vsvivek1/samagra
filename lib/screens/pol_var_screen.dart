@@ -1248,6 +1248,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               workId: widget.workId.toString(),
                             ),
                             enterLocationDetails(),
+                            if (!_enableEntryOfLocationDetails)
+                              addOneMoreLocation(),
                             locationNumberAndLocationPointsEntryScreen(),
                             if (_selectedLocationIndex == -1 &&
                                 !_enableEntryOfLocationDetails) ...[
@@ -1402,6 +1404,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ),
           );
         });
+  }
+
+  Padding addOneMoreLocation() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton.icon(
+          icon: Icon(Icons.plus_one_outlined),
+          onPressed: () {
+            setState(() {
+              _numberOfLocations = _numberOfLocations + 1;
+            });
+          },
+          label: Text('Add more Location if locations are less')),
+    );
   }
 
   Column measurementPreviewWidget(BuildContext context) {
