@@ -208,7 +208,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                                     ],
                                   ),
                                 ),
-                                subtitle: materialEditingBox(material)
+                                subtitle: itemEditingBox(material)
 
                                 // trailing: ,
                                 // trailing: TextFormField(
@@ -234,24 +234,24 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     });
   }
 
-  Wrap materialEditingBox(material) {
+  Wrap itemEditingBox(item) {
     return Wrap(
       children: [
-        Text('Quantity: ${material['quantity']}'),
+        Text('Quantity: ${item['quantity']}'),
         SizedBox(width: 50),
-        if (material['editing'] == null || material['editing'] == true)
+        if (item['editing'] == null || item['editing'] == true)
           SizedBox(
             width: 100.0,
             height: 25,
             child: TextField(
               onChanged: (value) {
-                print(material);
+                print(item);
                 setState(() {
-                  material['quantity'] = value;
+                  item['quantity'] = value;
                 });
 
                 // print('hi');
-                // _editMaterialQuantity(materialIndex,
+                // _edititemQuantity(itemIndex,
                 //     structureIndex, index);
               },
               keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -273,19 +273,19 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
             ),
           ),
         SizedBox(width: 10),
-        if (material['editing'] == null || material['editing'] == true)
+        if (item['editing'] == null || item['editing'] == true)
           IconButton(
               onPressed: (() {
                 setState(() {
-                  material['editing'] = false;
+                  item['editing'] = false;
                 });
               }),
               icon: Icon(color: Colors.green, Icons.save)),
-        if (material['editing'] != null && material['editing'] == false)
+        if (item['editing'] != null && item['editing'] == false)
           IconButton(
               onPressed: (() {
                 setState(() {
-                  material['editing'] = true;
+                  item['editing'] = true;
                 });
               }),
               icon: Icon(color: Colors.red, Icons.edit))
@@ -328,7 +328,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                       contentPadding: EdgeInsets.only(left: 1.0),
                       title:
                           Text('${labourIndex + 1}: ${labour['labour_name']}'),
-                      subtitle: Text('Quantity: ${labour['quantity']}'),
+                      // subtitle: Text('Quantity: ${labour['quantity']}'),
+                      subtitle: itemEditingBox(labour),
+
                       trailing: IconButton(
                         icon: Icon(Icons.edit),
                         onPressed: () {
@@ -394,7 +396,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                         contentPadding: EdgeInsets.only(left: 1.0),
                         title: Text(
                             '${takenBackIndex + 1} : ${takenBacks['material_name']}'),
-                        subtitle: Text('Quantity: ${takenBacks['quantity']}'),
+                        // subtitle: Text('Quantity: ${takenBacks['quantity']}'),
+                        subtitle: itemEditingBox(takenBacks),
                         trailing: IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {

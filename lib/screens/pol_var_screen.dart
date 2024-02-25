@@ -1784,6 +1784,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Column showLocationButtons() {
     return Column(
       children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            textHeightBehavior:
+                TextHeightBehavior(applyHeightToLastDescent: true),
+            textAlign: TextAlign.center,
+            'Click any of the Location to Enter the Measurements',
+            style: TextStyle(
+                // background: Paint(),
+                backgroundColor: Colors.orange,
+                color: ksebColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold),
+          ),
+        ),
         SizedBox(
           height: MediaQuery.of(context).size.height * .3,
           // width: MediaQuery.of(context).size.height * .5,
