@@ -1422,18 +1422,25 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: Container(
             decoration:
                 BoxDecoration(border: Border.all(width: 1), color: ksebColor),
-            child: Text("Task view of This Location\n Enter Mesasured Quantity",
-                style: TextStyle(
-                  shadows: [
-                    Shadow(
-                      blurRadius: 1.0,
-                      color: const Color.fromARGB(255, 158, 158, 158),
-                      offset: Offset(1.0, 1.0),
-                    ),
-                  ],
-                  fontSize: 18,
-                  color: Colors.amber,
-                ))));
+            child: Container(
+              margin: EdgeInsets.all(10),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                    "Task view of This Location\n Enter Mesasured Quantity",
+                    style: TextStyle(
+                      shadows: [
+                        Shadow(
+                          blurRadius: 1.0,
+                          color: const Color.fromARGB(255, 158, 158, 158),
+                          offset: Offset(1.0, 1.0),
+                        ),
+                      ],
+                      fontSize: 18,
+                      color: Colors.amber,
+                    )),
+              ),
+            )));
   }
 
   Visibility invokeLocationMeasurementView(BuildContext context) {
@@ -2274,7 +2281,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             reduceStructureQuantity(widget.workId, t, st);
           },
         ),
-        Text((st['quantity'] ?? 'E').toString()), // Display task quantity
+        Text((st['quantity'] ?? '0').toString()), // Display task quantity
         IconButton(
           icon: Icon(Icons.add),
           onPressed: () async {
@@ -2536,6 +2543,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       responseDataForStructureDetails,
       totalLabourDetails,
       takenBacksOfSelectedStructure) {
+    ///checking existing measuremnt details of the lcoation
     measurementDetails.forEach((location) {
       int locationNumber = _selectedLocationIndex + 1;
 
@@ -2560,12 +2568,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
           location['tasks'].add(task);
         }
 
-        // print(tasks)
         if (task['structures'] == null) {
           task['structures'] = [];
         }
-
-        // debugger(when: true);
 
         if (task['structures'].any((s) => s['id'] == mstStructureId)) {
           var structure = task['structures']
@@ -2728,14 +2733,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
         print("this is unit of labour quantity $quantity");
       });
 
-      structure['materials'].addAll(totalIssuedMaterialDetails);
+      // debugger(when: true);
+
+      structure['materials']
+          .structure['materials']
+          .addAll(totalIssuedMaterialDetails);
     }
 
-    if (totalIssuedMaterialDetails.length != 0) {
-      structure['materials'].addAll(totalIssuedMaterialDetails);
+    ///  bug fix for duplicate material
+    // if (totalIssuedMaterialDetails.length != 0) {
+    //   structure['materials'].addAll(totalIssuedMaterialDetails);
 
-      /// neede looping here for unit qty
-    }
+    ///bug fix
+    //   /// neede looping here for unit qty
+    // }
   }
 
   void setLabourDetails(
@@ -3262,13 +3273,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       Map<dynamic, dynamic> result = createMaterialMeasurementObject(material);
 
-      // speakText('result oflogin request below');
-
-      // print("RESULT $result");
-
-//aug 23  22 heado oof  aadhar pan card mcc road jayalakshmi
-      // debugger;
-
       Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
       appendToMaterialMeasurements(materialMeasurements, result);
 
@@ -3276,17 +3280,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       String key = result["key"];
 
       // print("KEY $key");
-
-      // String materialId = material['mst_material_id'].toString();
-      // if (materialMeasurements.containsKey(materialId)) {
-      //   materialMeasurements[materialId]['quantity'] =
-      //       materialMeasurements[materialId]['quantity'] + 1;
-      // } else {
-      //   Map mat = {};
-      //   materialMeasurements[materialId] = mat;
-      //   mat['material_name'] = material['material_name'];
-      //   mat['quantity'] = 1;
-      // }
     }
 
     // print('NOW FROM HERE ${materialMeasurements.length}');
