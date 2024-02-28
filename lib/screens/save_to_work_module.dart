@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/server_message_widget.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
@@ -135,10 +137,9 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                       context, _measurementDataToWorkModule.commencement_date,
                       (newDate) {
                     setState(() {
-                      _measurementDataToWorkModule.commencement_date =
-                          newDate;
+                      _measurementDataToWorkModule.commencement_date = newDate;
                       // DateFormat('dd-MM-yy').format(newDate);
-                                        });
+                    });
                   }),
                 ),
               ),
@@ -305,20 +306,35 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
         FormData data = FormData();
 
         // Iterate through the structured data and add it to the FormData object
-        dataToSend.forEach((key, value) {
-          if (value.runtimeType != String) {
-            value = value.toString();
-          }
-          print("$key  ->> $value");
 
-          // data.fields.add(MapEntry(key, value.toString()));
+        //
+
+        Map<String, dynamic> modifiedData = {};
+
+// Iterate over the original map
+        dataToSend.forEach((key, value) {
+          // Check if the value is not already a String
+          if (value is! String) {
+            // Check if the value is a DateTime instance
+            if (value is DateTime) {
+              // Convert DateTime to the desired format
+              value = DateFormat('yyyy-MM-dd').format(value);
+            } else {
+              // Convert other types to String
+              value = value.toString();
+            }
+          }
+          // Add the modified value to the new map
+          modifiedData[key] = value;
         });
 
-        // dataToSend['plg_work_id'] = "28552";
-        // dataToSend['wrk_schedule_group_id'] = "16114";
         var dio = Dio();
 
         setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+
+        print(dataToSend);
+
+        // debugger(when: true);
         var response = await dio.request(
           '${config.liveServiceUrl}wrk/saveMeasurementWithPolevar',
           options: Options(
@@ -326,7 +342,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             headers: headers,
           ),
           // data: data,
-          data: dataToSend,
+          //data: dataToSend,
+          data: modifiedData,
         );
 
         print("error ${response.data}");
@@ -354,8 +371,10 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             _isSubmitting = false;
 
             _apiResultFlag = response.data['result_flag'];
+            _apiResultFlag = response.data['result_flag'];
 
-            String inputString = response.data['result_message'][0];
+            String inputString = response.data['result_message'];
+            //[0];
             List<String> parts = inputString.split('<br/>');
             _apiResult = parts.isNotEmpty ? parts[0] : '';
 
@@ -365,7 +384,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           serverMessageWidget(
             context,
             _apiResult,
-            _apiResultFlag.toString() != '-1' ? 1 : 0,
+            response.data['result_message'],
+            //inputString.toString() != '-1' ? 1 : 0,
             vsync: this,
           );
         } else {
