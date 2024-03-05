@@ -2569,6 +2569,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       if (location['locationNo'] == locationNumber) {
         if (location['tasks'] == null) {
+          location['firstUpdated'] = DateTime.now();
+
+          /// if tasks are null its first time update
+          location['lastUpdated'] = location['firstUpdated'];
+
           location['tasks'] = [];
         }
 
@@ -2578,14 +2583,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
         var task;
         if (isTaskPresent) {
           task = location['tasks'].firstWhere((task) => task['id'] == taskId);
+          location['lastUpdated'] = DateTime.now();
         } else {
           task = {};
           initiateTaskDetails(task, taskId, mstStructureId, structureName);
           location['tasks'].add(task);
+          location['lastUpdated'] = DateTime.now();
         }
 
         if (task['structures'] == null) {
           task['structures'] = [];
+          location['lastUpdated'] = DateTime.now();
         }
 
         if (task['structures'].any((s) => s['id'] == mstStructureId)) {
@@ -2662,6 +2670,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return;
       }
 
+      location['lastUpdated'] = DateTime.now();
+
+      print(
+          "location['lastUpdated'] = ${location['lastUpdated']} and location['firstIUpdated'] is $location['firstIUpdated'] ");
+
+      /// finally updating last updated
       return;
     });
   }
