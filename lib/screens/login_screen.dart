@@ -260,8 +260,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       config = snapshot.data;
                                       return noStoredLoginDetailsSoFirstLoginScreen();
                                     } else {
-                                      return SpinKitFadingCube(
-                                          color: ksebColor);
+                                      return noStoredLoginDetailsSoFirstLoginScreen();
+                                      /*   return SpinKitFadingCube(
+                                          color: ksebColor); */
                                     }
                                   },
                                   future: initializeConfig(),
