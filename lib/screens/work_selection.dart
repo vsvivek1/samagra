@@ -800,12 +800,13 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
               );
             },
             child: Container(
+              margin: EdgeInsetsGeometry.infinity,
               padding: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey, width: 2.0),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(10.0),
                 child: ListTile(
                   title: Text(
                     item['wrk_work_detail']['work_name'],
@@ -828,7 +829,9 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     child: Text(sl.toString()),
                     radius: 20,
                   ),
-                  trailing: (status != 'UNDR_MSR') ? Text(status) : Text('k'),
+                  trailing: (status != 'UNDR_MSR')
+                      ? Text(status)
+                      : Text('Status not available'),
                   tileColor: (status != 'CREATED')
                       ? Color.fromARGB(255, 33, 194, 151)
                       : Colors.white,
@@ -870,15 +873,21 @@ class WorkTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Spacer(),
-        Text('WorkId :$workId'),
-        Spacer(),
-        Text('SchGrp :$workScheduleGroupId'),
-        Spacer(),
-        (status != 'UNDR_MSR') ? Text(status) : Text('k'),
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: Container(
+        color: Color.fromARGB(255, 170, 170, 178),
+        child: Wrap(
+          children: [
+            Spacer(),
+            Text('WorkId :$workId'),
+            Spacer(),
+            Text('Work Group Id :$workScheduleGroupId'),
+            Spacer(),
+            (status != 'UNDR_MSR') ? Text('Status: ' + status) : Text('k'),
+          ],
+        ),
+      ),
     );
   }
 }

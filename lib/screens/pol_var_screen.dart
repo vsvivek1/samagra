@@ -624,9 +624,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       structureMeasurements[targetId]['quantity'] =
           structureMeasurements[targetId]['quantity'] + 1;
 
-      _taskList.forEach((element) {
+      /* _taskList.forEach((element) {
         print("element is $element");
-      });
+      }); */
 
       // structureMeasurements
       //     .firstWhere((structure) => structure['id'] == targetId)
@@ -678,7 +678,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         print("api @693 $apiData");
 
-        debugger(when: true);
+        //debugger(when: true);
 
         ///34843
         return apiData['wrk_schedule_group_structures'];
@@ -2304,13 +2304,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
             await this
                 .fetchMasterEstimateForSelectedStructure(widget.workId, t, st);
 
-            setState(() {
+            /* setState(() {
               if (st['quantity'] == null) {
                 st['quantity'] = 1;
               } else {
                 st['quantity'] = st['quantity'] + 1;
               }
-            });
+            }); */
             // st["id"], st['qty'] ?? 0, st);
 
             // _showBottomSheet(context);
@@ -2498,8 +2498,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return;
       }
 
-      // print("LOCATION NUMBER $_selectedLocationIndex $response.data");
-
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
 
@@ -2597,13 +2595,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
         }
 
         if (task['structures'].any((s) => s['id'] == mstStructureId)) {
+          ///structure is present
+
           var structure = task['structures']
               .firstWhere((s) => s['id'] == mstStructureId, orElse: () => {});
 
           setState(() {
             structure['quantity'] = structure['quantity'] + 1;
 
+            /// actual measurement
+
             Map dispTask = _taskList.firstWhere((task) => task['id'] == taskId);
+
+            ///displaying tasks
 
             Map dispStr = dispTask['structures']
                 .firstWhere((structure) => structure['id'] == mstStructureId);
@@ -2616,6 +2620,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           });
           // debugger(when: true);
         } else {
+          ///
           var selectedStructure = {};
           selectedStructure['materials'] = [];
           selectedStructure['labour'] = [];
