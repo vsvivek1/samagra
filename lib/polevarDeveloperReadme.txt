@@ -8,4 +8,8 @@ fetchMasterEstimateForSelectedStructure
             initiateTaskDetails()
 
 
+            _fetchWorkDetails( ) is the function to get work details such as estimate allocations etc from server
+            
+
+
 

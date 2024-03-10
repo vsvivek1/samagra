@@ -7,6 +7,7 @@ import 'package:samagra/screens/location_list_screen.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
 
@@ -2939,7 +2940,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var res = response.data['result_data'];
 
-        print("response polvar 2504 $res");
+        print("response polvar 2504 ${res[wrk_schedule_group_structures]}");
+
+        //gmailMe(res[wrk_schedule_group_structures]);
+        debugger(when: true);
 
         _wrk_schedule_group_id = res['data']['id'];
 

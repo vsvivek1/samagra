@@ -799,43 +799,36 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                 ),
               );
             },
-            child: Container(
-              margin: EdgeInsetsGeometry.infinity,
-              padding: EdgeInsets.all(10.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey, width: 2.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: ListTile(
-                  title: Text(
-                    item['wrk_work_detail']['work_name'],
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: const Color.fromARGB(255, 89, 76, 175),
-                    ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListTile(
+                title: Text(
+                  item['wrk_work_detail']['work_name'],
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: const Color.fromARGB(255, 89, 76, 175),
                   ),
-                  subtitle: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'WorkCode: $workCode',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color.fromARGB(255, 236, 143, 11),
-                      ),
-                    ),
-                  ),
-                  leading: CircleAvatar(
-                    child: Text(sl.toString()),
-                    radius: 20,
-                  ),
-                  trailing: (status != 'UNDR_MSR')
-                      ? Text(status)
-                      : Text('Status not available'),
-                  tileColor: (status != 'CREATED')
-                      ? Color.fromARGB(255, 33, 194, 151)
-                      : Colors.white,
                 ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'WorkCode: $workCode',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color.fromARGB(255, 236, 143, 11),
+                    ),
+                  ),
+                ),
+                leading: CircleAvatar(
+                  child: Text(sl.toString()),
+                  radius: 20,
+                ),
+                trailing: (status != 'UNDR_MSR')
+                    ? Text(status)
+                    : Text('Status not available'),
+                tileColor: (status != 'CREATED')
+                    ? Color.fromARGB(255, 33, 194, 151)
+                    : Colors.white,
               ),
             ),
           );
@@ -876,15 +869,15 @@ class WorkTitle extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: Container(
-        color: Color.fromARGB(255, 170, 170, 178),
-        child: Wrap(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Spacer(),
             Text('WorkId :$workId'),
             Spacer(),
             Text('Work Group Id :$workScheduleGroupId'),
-            Spacer(),
-            (status != 'UNDR_MSR') ? Text('Status: ' + status) : Text('k'),
+            /*  Spacer(),
+            (status != 'UNDR_MSR') ? Text('Status: ' + status) : Text('k'), */
           ],
         ),
       ),
