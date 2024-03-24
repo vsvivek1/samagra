@@ -9,6 +9,7 @@ import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
+import 'package:samagra/screens/warning_message.dart';
 
 import 'get_work_details.dart';
 import 'log_functions.dart';
@@ -167,6 +168,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   String _calledWorkSheduleGroupId = '';
 
+  List workDetails = [];
+
   void togglePlay() {
     setState(() {
       isPlaying = !isPlaying;
@@ -301,13 +304,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Future _sheduleBuilder() async {
     // logCurrentFunction();
     logCurrentFunction();
-    if (_taskByName.length > 0 ||
+
+    print(1);
+    if (workDetails.length > 0 &&
+        _taskByName.length > 0 &&
         (widget.workScheduleGroupId == this._calledWorkSheduleGroupId)) {
-      print('called again');
+      print('called again2 ${_taskByName}');
+
+      //return _taskByName
+
+      return workDetails;
       return _taskByName;
     }
 
+    print(2);
     if (this.wrk_schedule_group_structures.length > 1) {
+      //debugger(when: true);
+      return workDetails;
       return _taskByName;
 
       /// its calling again and again dont know y to prevent that316
@@ -315,7 +328,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
       ///
       return Future.value(-1);
     }
-    var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
+    print(3);
+    workDetails = await _fetchWorkDetails();
+
+    print(4);
+    //debugger(when: true);
+    return workDetails;
+    //.then((workDetails) {
 
     if (workDetails.length == 1 && workDetails[0] == -1) {
       return Future.value(-1);
@@ -1084,31 +1103,58 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return FutureBuilder(
         future: _sheduleBuilder(),
         builder: (context, AsyncSnapshot snapshot) {
-          if ((!snapshot.hasData &&
-              snapshot.data == -1 &&
+          if ((!snapshot.hasData ||
+              snapshot.data == -1 ||
               snapshot.data == null)) {
             return CenteredCircularSpinner();
           }
 
-          var tasklist1 = snapshot.data;
-
-          // ignore: unrelated_type_equality_checks
-          if (tasklist1 == null || tasklist1 == -1) {
-            return Center(
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(),
-              ),
-            );
+          if (snapshot.data.length == 0) {
+            return WarningMessage(message: 'Some issue');
           }
 
+          var workDetails = snapshot.data;
+
+          //var tasklist1 = snapshot.data;
+
+          /*        if (workDetails.length == 1 && workDetails[0] == -1) {
+      return Future.value(-1);
+    } */
+
+          List wrkScheduleGroupStructures =
+              workDetails[0]['wrk_schedule_group_structures'];
+
+          wrk_schedule_group_structures = wrkScheduleGroupStructures;
+
+          // print(workDetails);
+          // print('workDetails above');
+
+          _taskByName = getTasksByName(wrkScheduleGroupStructures).toList();
+
+          //debugger(when: true);
+          //debugger(when: true);
+          // var c = getTasksByName(workDetails).toList();
+
+          _tasks = _taskByName;
+          // print(c);
+
+          var taskln = _taskByName.length;
+
+          // print(' $taskln TASK LENGTH task list structure s see abobe 215');
+
+          // return Future.value(_taskByName.toList());
+
+          // var tasklist1 = snapshot.data;\\
+
+          var tasklist1 = _taskByName.toList();
+          // ignore: unrelated_type_equality_checks
+          /*  if (tasklist1 == null || tasklist1 == -1) {
+            return CenteredCircularSpinner();
+          }
+ */
           int ln = tasklist1.length;
 
           _taskList = tasklist1;
-
-          print(wrk_schedule_group_structures);
-          print('wrk_schedule_group_structures above at polvar 1116');
 
           //  return
           //
@@ -1125,7 +1171,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           //       )
           //     :
 
-          GestureDetector(
+          return GestureDetector(
             onHorizontalDragEnd: (details) {
               Navigator.pop(context);
             },
@@ -2212,9 +2258,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
         children: tasklist1.map<ExpansionPanel>((t) {
           // print('$ind is ind');
 
+          //var structures = Map.from(t['structures']);
           var structures = t['structures'];
-          // print(t);
-          // print('tabove');
+
+          print(structures.runtimeType);
+          print('tabove');
+
+          //debugger(when: true);
 
           counter++;
           return ExpansionPanel(
@@ -2921,18 +2971,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
-  Map<int, Map> aggregateMaterialQuantities(Map<String, dynamic> data) {
+  Map<int, Map> aggregateMaterialQuantities(wrkExecutionSchedules) {
+    if (wrkExecutionSchedules.length == 0) {
+      print('wrkExecutionSchedules length is zero');
+      return {-1: {}};
+    }
     // Map to store materials grouped by name
 
-    // return {-1: {}};
-    //print(data);
-
     Map<int, Map> materialQuantities = {};
-    //  List<Map<String, double>> materialQuantities = [];
-
-    // Accessing the 'wrk_execution_schedules' array
-
-    List<dynamic> wrkExecutionSchedules = data['wrk_execution_schedules'];
 
     // Iterating over 'wrk_execution_schedules' array
     int counter = 0;
@@ -2943,6 +2989,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // Accessing the 'work_execution_material_schedules' array within each schedule
       List<dynamic> materialSchedules =
           schedule['wrk_execution_material_schedules'];
+
+      if (materialSchedules == null) {
+        print('No materials ');
+
+        return {-1: {}};
+      }
 
       // Iterating over 'work_execution_material_schedules' array
 
@@ -3006,7 +3058,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<List<dynamic>> _fetchWorkDetails() async {
     //try {
+
+    print(31);
     if (this.wrk_schedule_group_structures.length != 0) {
+      debugger(when: true);
       return Future.value([]);
     }
     logCurrentFunction();
@@ -3031,7 +3086,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     final url =
         '${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
-    print("url called $url");
+    //print("url called $url");
 
     Dio dio = Dio();
     final headers = {'Authorization': 'Bearer $accessToken'};
@@ -3040,6 +3095,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //debugger(when: true);
     Response response = await dio.get(url, options: Options(headers: headers));
 
+    print(32);
     if (response.statusCode != 200) {
       print('returnning atr 3051 error');
       return Future.value([-1]);
