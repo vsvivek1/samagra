@@ -1,13 +1,11 @@
 import 'dart:convert';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
-import 'package:samagra/screens/location_list_screen.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
-import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
 
@@ -37,6 +35,8 @@ import 'dart:core';
 import 'dart:developer';
 
 import 'measurement_property_copier_screen.dart';
+
+final workInfoProvider = StateProvider<Map<String, String>>((ref) => {});
 
 class PolVarScreen extends StatefulWidget {
 // # Fetching estimate from the work module
@@ -161,6 +161,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
   var _savedToSamagra = false;
 
   bool isAudioMuted = true;
+
+  String currentCalledWorkSheduleGroupid = '';
+
+  String _calledWorkSheduleGroupId = '';
 
   void togglePlay() {
     setState(() {
@@ -296,10 +300,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Future _sheduleBuilder() async {
     // logCurrentFunction();
     logCurrentFunction();
-    if (_taskByName.length > 0) {
+    if (_taskByName.length > 0 ||
+        (widget.workScheduleGroupId == this._calledWorkSheduleGroupId)) {
+      print('called again');
       return _taskByName;
     }
 
+    if (this.wrk_schedule_group_structures.length > 1) {
+      return _taskByName;
+
+      /// its calling again and again dont know y to prevent that316
+      ///
+      ///
+      return Future.value(-1);
+    }
     var workDetails = await _fetchWorkDetails(); //.then((workDetails) {
 
     if (workDetails.length == 1 && workDetails[0] == -1) {
@@ -670,6 +684,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       Dio dio = new Dio();
 
       dio = await setAccessTockenToDio(dio);
+
+      debugger(when: true);
 
       setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
@@ -2446,8 +2462,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future<String> getAccessToken() async {
     logCurrentFunction();
+
     final secureStorage = FlutterSecureStorage();
+
     final accessToken = await secureStorage.read(key: 'access_token');
+
     return Future.value(accessToken);
   }
 
@@ -2480,24 +2499,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
       setDioAccessokenAndApiKey(dio, accessToken, config);
       Response<dynamic> response;
 
-      try {
-        final response1 = await dio
-            .get(
-          url,
-          options: Options(headers: headers),
-        )
-            .catchError((er) {
-          throw Exception('Intert error');
-        });
+      /// try {
+      final response1 = await dio
+          .get(
+        url,
+        options: Options(headers: headers),
+      )
+          .catchError((er) {
+        throw Exception('Intert error');
+      });
 
-        response = response1;
+      response = response1;
 
-        // debugger(when: true);
-      } catch (e) {
+      // debugger(when: true);
+      /*  } catch (e) {
+        print(e);
+        print('e above');
         showSnackBarForMasterDataForStructureFetchError(e);
 
         return;
-      }
+      } */
 
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
@@ -2902,62 +2923,170 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
+  Map<int, Map> aggregateMaterialQuantities(Map<String, dynamic> data) {
+    // Map to store materials grouped by name
+
+    return {-1: {}};
+    //print(data);
+
+    Map<int, Map> materialQuantities = {};
+    //  List<Map<String, double>> materialQuantities = [];
+
+    // Accessing the 'wrk_execution_schedules' array
+
+    List<dynamic> wrkExecutionSchedules = data['wrk_execution_schedules'];
+
+    // Iterating over 'wrk_execution_schedules' array
+    int counter = 0;
+    int loop1 = 0;
+    int loop2 = 0;
+    int loop3 = 0;
+    for (var schedule in wrkExecutionSchedules) {
+      // Accessing the 'work_execution_material_schedules' array within each schedule
+      List<dynamic> materialSchedules =
+          schedule['wrk_execution_material_schedules'];
+
+      // Iterating over 'work_execution_material_schedules' array
+
+      for (Map materialSchedule in materialSchedules) {
+        try {
+          loop1++;
+
+          //print(materialSchedule);
+
+          // Accessing 'updated_quantity' and 'mst_material' for each material schedule
+          print("loop1b4 no ${loop1}");
+          double quantity = double.parse(materialSchedule["updated_quantity"]);
+          print("loop1aftr1 no ${loop1}");
+
+          Map<String, dynamic> material = materialSchedule['mst_material'];
+          print("loop1aftr2 no ${loop1}");
+
+          String materialName = material['material_name'];
+
+          print("loop1aftr3 no ${loop1}");
+
+          print("${material['id'].runtimeType} mat id");
+
+          int materialId = (material['id'].runtimeType != 'int'
+              ? int.parse(material['id'])
+              : material['id']);
+
+          print("loop1aftr4matid no ${loop1} materialId ");
+
+          // Adding quantity to the map or updating if already exists
+          if (materialQuantities.containsKey(materialId)) {
+            //debugger(when: true);
+            materialQuantities['materialId']!['quantity'] =
+                materialQuantities[materialId]!['quantity'] + quantity;
+            //debugger(when: true);
+
+            //materialQuantities[materialId] ?? 0 + quantity;
+          } else {
+            var mat = {};
+            mat['material'] = material;
+
+            mat['quantity'] = materialQuantities[materialId] ?? 0 + quantity;
+
+            print('counter $counter ${materialName} ${mat['quantity']}');
+            counter++;
+
+            materialQuantities[materialId] = mat;
+          }
+        } on Exception catch (e) {
+          print(e);
+          // TODO
+        }
+      }
+
+      print('inner finished ');
+    }
+
+    print('finished');
+    //debugger(when: true);
+    return materialQuantities;
+  }
+
   Future<List<dynamic>> _fetchWorkDetails() async {
-    try {
-      logCurrentFunction();
-      print('FETCHING WORK DETAILS CALLED');
-      final accessToken1 =
-          await storage.getSecureAllStorageDataByKey("access_token");
+    //try {
+    if (this.wrk_schedule_group_structures.length != 0) {
+      return Future.value([]);
+    }
+    logCurrentFunction();
+    print('FETCHING WORK DETAILS CALLED');
+    final accessToken1 =
+        await storage.getSecureAllStorageDataByKey("access_token");
 
-      final accessToken = accessToken1['access_token'];
-      final loginDetails1 =
-          await storage.getSecureAllStorageDataByKey('loginDetails');
-      final loginDetails = loginDetails1['loginDetails'];
+    final accessToken = accessToken1['access_token'];
+    final loginDetails1 =
+        await storage.getSecureAllStorageDataByKey('loginDetails');
+    final loginDetails = loginDetails1['loginDetails'];
 
-      // final currentSeatDetails = getCurrentSeatDetails(loginDetails);
+    // final currentSeatDetails = getCurrentSeatDetails(loginDetails);
 
-      // final officeCode = currentSeatDetails['office']['office_code'];
-      // final officeId = currentSeatDetails['office_id'];
+    // final officeCode = currentSeatDetails['office']['office_code'];
+    // final officeId = currentSeatDetails['office_id'];
 
 // config.liveServiceUrlwrk/getScheduleForMobilePolevar/8147/1474/4010  taken back example
-      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
-      final url =
-          '${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
-      print("url called $url");
+    _calledWorkSheduleGroupId = widget.workScheduleGroupId;
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+    final url =
+        '${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0';
 
-      Dio dio = Dio();
-      final headers = {'Authorization': 'Bearer $accessToken'};
-      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    print("url called $url");
 
-      Response response =
-          await dio.get(url, options: Options(headers: headers));
+    Dio dio = Dio();
+    final headers = {'Authorization': 'Bearer $accessToken'};
 
-      if (response.statusCode != 200) {
-        return Future.value([-1]);
-      }
+    dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    //debugger(when: true);
+    Response response = await dio.get(url, options: Options(headers: headers));
 
-      if (response.data != null && response.data['result_data'] != null) {
-        var res = response.data['result_data'];
+    if (response.statusCode != 200) {
+      print('returnning atr 3051 error');
+      return Future.value([-1]);
+    }
 
-        print("response polvar 2504 ${res[wrk_schedule_group_structures]}");
+    if (response.data != null &&
+        response.data['result_data'] != null &&
+        response.data['result_data']['data']['wrk_schedule_group_structures'] !=
+            null) {
+      var res = response.data['result_data'];
 
-        //gmailMe(res[wrk_schedule_group_structures]);
-        debugger(when: true);
+      print("response polvar 2504 ${res['wrk_schedule_group_structures']}");
 
-        _wrk_schedule_group_id = res['data']['id'];
+      //gmailMe(res[wrk_schedule_group_structures]);
 
-        return Future.value([res['data']]);
-      } else {
-        return Future.value([-1]);
-      }
-    } on Exception catch (e) {
+      var a = aggregateMaterialQuantities(res['data']);
+
+      print(a);
+
+      debugger(when: true);
+
+      //print(a);
+
+      // debugger(when: true);
+      _wrk_schedule_group_id = res['data']['id'];
+
+      return Future.value([res['data']]);
+    } else {
+      print(response.data['result_data']['data'].keys);
+      // print(response.data['result_data']['wrk_schedule_group_structures']);
+      print('else print at 3077');
+      // print(response.data['result_data']);
+      return Future.value([-1]);
+    }
+    /* } on Exception catch (e) {
+      print(e.toString());
+      var stackTrace = StackTrace.current;
+      print(stackTrace);
       print("$e  is the error in _fetchWorkDetails()");
 
       return Future.value([-1]);
 
       // TODO
-    }
+    } */
   }
 
   _viewLocationDetail(int index, status) async {

@@ -13,7 +13,6 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/app_theme.dart';
-import 'package:samagra/extras/nasa_image_of_day.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';

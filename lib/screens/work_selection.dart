@@ -1,18 +1,12 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:samagra/app_theme.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
@@ -30,6 +24,8 @@ import 'get_login_details.dart';
 import 'get_work_details.dart';
 import 'measurement_option.dart';
 import 'package:samagra/environmental_config.dart';
+
+final WorkInfoProvider = StateProvider<Map<String, dynamic>>((ref) => {});
 
 class WorkSelection extends StatefulWidget {
   @override
@@ -640,11 +636,14 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
         final workName = workDetail['work_name'];
         final workCode = workDetail['work_code'];
         final status = item['status'];
+
         final measurementSetId = (status == 'CREATED') ? -1 : item['id'];
 
         if (workName == null || workId == -1 || item == "-1") {
           showErrorSnackBar(context);
         }
+
+        final WorkNameProvider = Provider<String>((ref) => workName);
 
         return GestureDetector(
             onTap: () {

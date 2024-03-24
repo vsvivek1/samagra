@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:samagra/kseb_color.dart';
 
 class LocationMeasurementView extends StatefulWidget {
