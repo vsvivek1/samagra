@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/centered_circular_spinner.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
@@ -1086,13 +1087,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           if ((!snapshot.hasData &&
               snapshot.data == -1 &&
               snapshot.data == null)) {
-            return Center(
-              child: SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return CenteredCircularSpinner();
           }
 
           var tasklist1 = snapshot.data;
@@ -1112,22 +1107,25 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           _taskList = tasklist1;
 
-          return
-              //
-              // _showSpinnerForAsync
-              //     ? Center(
-              //         child: SizedBox(
-              //           width: 50,
-              //           height: 50,
-              //           child: CircularProgressIndicator(
-              //             color: Colors.amberAccent,
-              //             strokeWidth: 20,
-              //           ),
-              //         ),
-              //       )
-              //     :
+          print(wrk_schedule_group_structures);
+          print('wrk_schedule_group_structures above at polvar 1116');
 
-              GestureDetector(
+          //  return
+          //
+          // _showSpinnerForAsync
+          //     ? Center(
+          //         child: SizedBox(
+          //           width: 50,
+          //           height: 50,
+          //           child: CircularProgressIndicator(
+          //             color: Colors.amberAccent,
+          //             strokeWidth: 20,
+          //           ),
+          //         ),
+          //       )
+          //     :
+
+          GestureDetector(
             onHorizontalDragEnd: (details) {
               Navigator.pop(context);
             },
@@ -2926,7 +2924,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Map<int, Map> aggregateMaterialQuantities(Map<String, dynamic> data) {
     // Map to store materials grouped by name
 
-    return {-1: {}};
+    // return {-1: {}};
     //print(data);
 
     Map<int, Map> materialQuantities = {};
@@ -2964,15 +2962,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           String materialName = material['material_name'];
 
-          print("loop1aftr3 no ${loop1}");
-
           print("${material['id'].runtimeType} mat id");
 
           int materialId = (material['id'].runtimeType != 'int'
               ? int.parse(material['id'])
               : material['id']);
 
-          print("loop1aftr4matid no ${loop1} materialId ");
+          print("$materialName is materialName ");
 
           // Adding quantity to the map or updating if already exists
           if (materialQuantities.containsKey(materialId)) {
@@ -2995,6 +2991,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
         } on Exception catch (e) {
           print(e);
+          throw e;
           // TODO
         }
       }
@@ -3003,7 +3000,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     }
 
     print('finished');
-    //debugger(when: true);
+    debugger(when: true);
     return materialQuantities;
   }
 
@@ -3054,15 +3051,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
             null) {
       var res = response.data['result_data'];
 
-      print("response polvar 2504 ${res['wrk_schedule_group_structures']}");
+      wrk_schedule_group_structures =
+          response.data['result_data']['data']['wrk_schedule_group_structures'];
+      //print("response polvar 2504 ${res['wrk_schedule_group_structures']}");
 
       //gmailMe(res[wrk_schedule_group_structures]);
 
-      var a = aggregateMaterialQuantities(res['data']);
-
-      print(a);
-
-      debugger(when: true);
+      /*  */
 
       //print(a);
 
