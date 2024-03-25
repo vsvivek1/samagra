@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
 
@@ -16,6 +18,9 @@ class LocationMeasurementView extends StatefulWidget {
 class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   @override
   Widget build(BuildContext context) {
+    print("${widget.tasks} is tasks");
+
+    //debugger(when: true);
     return Scaffold(
       body: ListView.builder(
         itemCount: widget.tasks.length,

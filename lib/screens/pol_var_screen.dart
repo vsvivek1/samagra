@@ -1810,7 +1810,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           _fetchingMasterEstimate
               ? Center(
                   child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 5,
+                  width: MediaQuery.of(context).size.width * .9,
                   child: LinearProgressIndicator(
                     minHeight: 5,
                     semanticsValue: AutofillHints.photo,
@@ -2528,6 +2528,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       if (response.data != null && response.data['result_data'] != null) {
         var re = response.data['result_data'];
 
+        //var issuedMaterialsForSelectedStructure = re['material_schedule'];
         var issuedMaterialsForSelectedStructure = re['issues'];
 
         var totalLabourDetails =
@@ -2594,7 +2595,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       if (location['locationNo'] == locationNumber) {
         if (location['tasks'] == null) {
-          location['firstUpdated'] = DateTime.now();
+          DateTime dateTime = DateTime.now();
+          String dateTimeString = dateTime.toIso8601String();
+          location['firstUpdated'] = dateTimeString;
 
           /// if tasks are null its first time update
           location['lastUpdated'] = location['firstUpdated'];
@@ -2608,17 +2611,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
         var task;
         if (isTaskPresent) {
           task = location['tasks'].firstWhere((task) => task['id'] == taskId);
-          location['lastUpdated'] = DateTime.now();
+          DateTime dateTime = DateTime.now();
+          String dateTimeString = dateTime.toIso8601String();
+
+          location['lastUpdated'] = dateTimeString;
         } else {
           task = {};
           initiateTaskDetails(task, taskId, mstStructureId, structureName);
           location['tasks'].add(task);
-          location['lastUpdated'] = DateTime.now();
+          DateTime dateTime = DateTime.now();
+          String dateTimeString = dateTime.toIso8601String();
+
+          location['lastUpdated'] = dateTimeString;
         }
 
         if (task['structures'] == null) {
           task['structures'] = [];
-          location['lastUpdated'] = DateTime.now();
+          DateTime dateTime = DateTime.now();
+          String dateTimeString = dateTime.toIso8601String();
+
+          location['lastUpdated'] = dateTimeString;
         }
 
         if (task['structures'].any((s) => s['id'] == mstStructureId)) {
@@ -2780,19 +2792,35 @@ class _PolVarScreenState extends State<PolVarScreen> {
     });
   }
 
+  void updateIssuedMaterialData(Map<String, dynamic> newData) {
+    int mst_material_id = newData['mst_material_id'];
+
+    // Update issuedQuantity in materialData with quantity from newData
+    if (estimatedQuantityOfmaterials.containsKey(mst_material_id)) {
+      estimatedQuantityOfmaterials[mst_material_id]!['issuedQuantity'] =
+          newData['quantity'];
+      //print("updateing material isdued ${estimatedQuantityOfmaterials}");
+    } else {
+      print('Material with mst_material_id $mst_material_id not found.');
+    }
+  }
+
   void setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
       int mstStructureId, Map<dynamic, dynamic> structure) {
-    print("this is issued materials $totalIssuedMaterialDetails");
+    // print("this is issued materials $totalIssuedMaterialDetails");
     if (totalIssuedMaterialDetails.length != 0) {
       totalIssuedMaterialDetails.forEach((item) {
-        int mstMaterialId = item['mst_labour_id'] ?? 0;
+        int mstMaterialId = item['mst_material_id'] ?? 0;
         // int mstStructureId = item['mst_labour_id'];
+
+        updateIssuedMaterialData(item);
+        //  print("$item is issued material");
 
         String quantity = getUnitQuantity(
             jsonData, 'material', mstMaterialId, mstStructureId);
         item['quantity'] = quantity;
 
-        print("this is unit of labour quantity $quantity");
+        // print("this is unit of labour quantity $quantity");
       });
 
       // debugger(when: true);
