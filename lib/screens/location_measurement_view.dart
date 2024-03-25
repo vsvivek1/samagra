@@ -51,6 +51,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
                 contentPadding: EdgeInsets.only(right: 1.0),
                 title: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400], // Background color
+                    borderRadius:
+                        BorderRadius.circular(8.0), // Optional: Border radius
+                  ),
                   padding: EdgeInsets.all(1.0),
                   child: Column(
                     children: [
@@ -58,7 +63,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                         'Task Id: ${task['id']}  \n' +
                             'Task Name : ${task['task_name']}',
                         style: TextStyle(
-                          color: Colors.grey[700],
+                          color: Colors.grey[500],
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -98,55 +103,64 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       itemBuilder: (context, structureIndex) {
         final structure = structureList[structureIndex];
 
-        return Column(
-          children: [
-            ListTile(
-              tileColor: Colors.grey[200],
-              contentPadding: EdgeInsets.only(left: 1.0),
-              leading: CircleAvatar(
-                  maxRadius: 13,
-                  backgroundColor: Colors.blue[100],
-                  child: Text('S' + (structureIndex + 1).toString())),
-              title: structure['structure_name'] != null
-                  ? Text(
-                      'Str Id : ${structure['id']}, ${structure['structure_name']}',
-                      style: TextStyle(
-                          color: Colors.blueGrey,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500),
-                    )
-                  : Text('Structure No: ${structureIndex + 1}'),
-            ),
-            Column(
-              children: [
-                MaterialsView(structure, structureIndex, index),
-                //  Divider({Key? key, double? height, double? thickness, double? indent, double? endIndent, Color? color}))
-                Divider(
-                  color: ksebMaterialColor,
-                  height: 30,
-                  indent: 0,
-                  endIndent: BorderSide.strokeAlignOutside,
-                  thickness: 7,
-                ),
-                LabourView(structure, structureIndex, index),
-                Divider(
-                  color: ksebMaterialColor,
-                  height: 30,
-                  indent: 0,
-                  endIndent: BorderSide.strokeAlignOutside,
-                  thickness: 7,
-                ),
-                TakenBackView(structure, structureIndex, index),
-                Divider(
-                  color: ksebMaterialColor,
-                  height: 30,
-                  indent: 0,
-                  endIndent: BorderSide.strokeAlignOutside,
-                  thickness: 7,
-                ),
-              ],
-            ),
-          ],
+        return Container(
+          margin: EdgeInsets.all(8),
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[300], // Background color
+            borderRadius:
+                BorderRadius.circular(16.0), // Optional: Border radius
+          ),
+          child: Column(
+            children: [
+              ListTile(
+                tileColor: Colors.grey[200],
+                contentPadding: EdgeInsets.only(left: 1.0),
+                leading: CircleAvatar(
+                    maxRadius: 13,
+                    backgroundColor: Colors.blue[100],
+                    child: Text('S' + (structureIndex + 1).toString())),
+                title: structure['structure_name'] != null
+                    ? Text(
+                        'Str Id : ${structure['id']}, ${structure['structure_name']}',
+                        style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500),
+                      )
+                    : Text('Structure No: ${structureIndex + 1}'),
+              ),
+              Column(
+                children: [
+                  MaterialsView(structure, structureIndex, index),
+                  //  Divider({Key? key, double? height, double? thickness, double? indent, double? endIndent, Color? color}))
+                  Divider(
+                    color: ksebMaterialColor,
+                    height: 30,
+                    indent: 0,
+                    endIndent: BorderSide.strokeAlignOutside,
+                    thickness: 7,
+                  ),
+                  LabourView(structure, structureIndex, index),
+                  Divider(
+                    color: ksebMaterialColor,
+                    height: 30,
+                    indent: 0,
+                    endIndent: BorderSide.strokeAlignOutside,
+                    thickness: 7,
+                  ),
+                  TakenBackView(structure, structureIndex, index),
+                  Divider(
+                    color: ksebMaterialColor,
+                    height: 30,
+                    indent: 0,
+                    endIndent: BorderSide.strokeAlignOutside,
+                    thickness: 7,
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
       },
     );
@@ -162,78 +176,87 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     String name = structure['structure_name'];
 
     return Builder(builder: (context) {
-      return Column(
-        children: [
-          if (structure.containsKey('materials'))
-            if (structure != null && structure.containsKey('materials'))
-              Column(
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(5.0),
-                    child: Text(
-                      'Materials',
-                      style: TextStyle(
-                        color: Colors.grey[700],
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
+      return Container(
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200], // Background color
+          borderRadius: BorderRadius.circular(16.0), // Optional: Border radius
+        ),
+        child: Column(
+          children: [
+            if (structure.containsKey('materials'))
+              if (structure != null && structure.containsKey('materials'))
+                Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(5.0),
+                      child: Text(
+                        'Materials',
+                        style: TextStyle(
+                          color: Colors.grey[700],
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  matLen == 0
-                      ? Column(children: [
-                          Text(
-                            'No materials for this Task or Not Issued',
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 234, 12, 12),
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ])
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: ClampingScrollPhysics(),
-                          itemCount: structure['materials'].length,
-                          itemBuilder: (context, materialIndex) {
-                            final material =
-                                structure['materials'][materialIndex];
+                    matLen == 0
+                        ? Column(children: [
+                            Text(
+                              'No materials for this Task or Not Issued',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 234, 12, 12),
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ])
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: structure['materials'].length,
+                            itemBuilder: (context, materialIndex) {
+                              final material =
+                                  structure['materials'][materialIndex];
 
-                            // final labour = structure['labour'][materialIndex];
+                              // final labour = structure['labour'][materialIndex];
 
-                            return ListTile(
-                                contentPadding: EdgeInsets.only(left: 1.0),
-                                title: SizedBox(
-                                  width: MediaQuery.of(context).size.width * .5,
-                                  child: Wrap(
-                                    children: [
-                                      Text(
-                                          maxLines: 2,
-                                          '${materialIndex + 1} : ${material['material_name']}'),
-                                    ],
+                              return ListTile(
+                                  contentPadding: EdgeInsets.only(left: 1.0),
+                                  title: SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * .5,
+                                    child: Wrap(
+                                      children: [
+                                        Text(
+                                            maxLines: 2,
+                                            '${materialIndex + 1} : ${material['material_name']}'),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                subtitle: itemEditingBox(material)
+                                  subtitle: itemEditingBox(material)
 
-                                // trailing: ,
-                                // trailing: TextFormField(
-                                //         keyboardType:
-                                //             TextInputType.numberWithOptions(
-                                //                 decimal: true),
+                                  // trailing: ,
+                                  // trailing: TextFormField(
+                                  //         keyboardType:
+                                  //             TextInputType.numberWithOptions(
+                                  //                 decimal: true),
 
-                                // trailing: TextField(),
-                                // trailing: IconButton(
-                                //   icon: Icon(Icons.edit),
-                                //   onPressed: () {
-                                //     _editMaterialQuantity(
-                                //         materialIndex, structureIndex, index);
-                                //   },
-                                // ),
-                                );
-                          },
-                        ),
-                ],
-              ),
-        ],
+                                  // trailing: TextField(),
+                                  // trailing: IconButton(
+                                  //   icon: Icon(Icons.edit),
+                                  //   onPressed: () {
+                                  //     _editMaterialQuantity(
+                                  //         materialIndex, structureIndex, index);
+                                  //   },
+                                  // ),
+                                  );
+                            },
+                          ),
+                  ],
+                ),
+          ],
+        ),
       );
     });
   }
@@ -304,50 +327,59 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       final labour1 = structure['labour'];
 
       return Builder(builder: (context) {
-        return Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(5.0),
-              child: Text(
-                'Labour',
-                style: TextStyle(
-                  color: Colors.grey[700],
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.bold,
+        return Container(
+          margin: EdgeInsets.all(8),
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[200], // Background color
+            borderRadius:
+                BorderRadius.circular(16.0), // Optional: Border radius
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  'Labour',
+                  style: TextStyle(
+                    color: Colors.grey[700],
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: ClampingScrollPhysics(),
-              itemCount: labour1.length,
-              itemBuilder: (context, labourIndex) {
-                // final material = structure['materials'][labourIndex];
+              ListView.builder(
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                itemCount: labour1.length,
+                itemBuilder: (context, labourIndex) {
+                  // final material = structure['materials'][labourIndex];
 
-                final labour = labour1[labourIndex];
+                  final labour = labour1[labourIndex];
 
-                return Column(
-                  children: [
-                    ListTile(
-                      contentPadding: EdgeInsets.only(left: 1.0),
-                      title:
-                          Text('${labourIndex + 1}: ${labour['labour_name']}'),
-                      // subtitle: Text('Quantity: ${labour['quantity']}'),
-                      subtitle: itemEditingBox(labour),
+                  return Column(
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.only(left: 1.0),
+                        title: Text(
+                            '${labourIndex + 1}: ${labour['labour_name']}'),
+                        // subtitle: Text('Quantity: ${labour['quantity']}'),
+                        subtitle: itemEditingBox(labour),
 
-                      trailing: IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          _editLabourQuantity(
-                              labourIndex, structureIndex, index);
-                        },
+                        trailing: IconButton(
+                          icon: Icon(Icons.edit),
+                          onPressed: () {
+                            _editLabourQuantity(
+                                labourIndex, structureIndex, index);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            )
-          ],
+                    ],
+                  );
+                },
+              )
+            ],
+          ),
         );
       });
     } else {
@@ -361,60 +393,68 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     return Builder(builder: (context) {
       var tb = structure['takenBacks'];
 
-      return Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(5.0),
-            child: Text(
-              'Taken Backs',
-              style: TextStyle(
-                color: Colors.grey[750],
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
+      return Container(
+        margin: EdgeInsets.all(8),
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+        decoration: BoxDecoration(
+          color: Colors.grey[200], // Background color
+          borderRadius: BorderRadius.circular(16.0), // Optional: Border radius
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(5.0),
+              child: Text(
+                'Taken Backs',
+                style: TextStyle(
+                  color: Colors.grey[750],
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Text(
-              structure.containsKey('takenBacks') == false
-                  ? "No Taken backs"
-                  : "${structure['structure_name']}",
-              style: TextStyle(
-                color: ksebColor,
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-              )),
-          if (structure.containsKey('takenBacks'))
-            if (structure != null && structure.containsKey('takenBacks'))
-              ListView.builder(
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemCount: structure['takenBacks'].length,
-                itemBuilder: (context, takenBackIndex) {
-                  final takenBacks = structure['takenBacks'][takenBackIndex];
+            Text(
+                structure.containsKey('takenBacks') == false
+                    ? "No Taken backs"
+                    : "${structure['structure_name']}",
+                style: TextStyle(
+                  color: ksebColor,
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.bold,
+                )),
+            if (structure.containsKey('takenBacks'))
+              if (structure != null && structure.containsKey('takenBacks'))
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: ClampingScrollPhysics(),
+                  itemCount: structure['takenBacks'].length,
+                  itemBuilder: (context, takenBackIndex) {
+                    final takenBacks = structure['takenBacks'][takenBackIndex];
 
-                  // final labour = structure['labour'][materialIndex];
+                    // final labour = structure['labour'][materialIndex];
 
-                  return Column(
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.only(left: 1.0),
-                        title: Text(
-                            '${takenBackIndex + 1} : ${takenBacks['material_name']}'),
-                        // subtitle: Text('Quantity: ${takenBacks['quantity']}'),
-                        subtitle: itemEditingBox(takenBacks),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            _editTakenBackQuantity(
-                                takenBackIndex, structureIndex, index);
-                          },
+                    return Column(
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.only(left: 1.0),
+                          title: Text(
+                              '${takenBackIndex + 1} : ${takenBacks['material_name']}'),
+                          // subtitle: Text('Quantity: ${takenBacks['quantity']}'),
+                          subtitle: itemEditingBox(takenBacks),
+                          trailing: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              _editTakenBackQuantity(
+                                  takenBackIndex, structureIndex, index);
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-        ],
+                      ],
+                    );
+                  },
+                ),
+          ],
+        ),
       );
     });
   }
