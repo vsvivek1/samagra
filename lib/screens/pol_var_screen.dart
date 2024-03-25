@@ -2824,10 +2824,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
       });
 
       // debugger(when: true);
+      structure['materials'].addAll(totalIssuedMaterialDetails);
 
-      structure['materials']
+      //debugger(when: true);
+
+      /* structure['materials']
           .structure['materials']
-          .addAll(totalIssuedMaterialDetails);
+          .addAll(totalIssuedMaterialDetails); */
     }
 
     ///  bug fix for duplicate material

@@ -101,6 +101,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
         return Column(
           children: [
             ListTile(
+              tileColor: Colors.grey[200],
               contentPadding: EdgeInsets.only(left: 1.0),
               leading: CircleAvatar(
                   maxRadius: 13,
@@ -154,8 +155,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   Builder MaterialsView(structure, int structureIndex, int index) {
     // int matLen = structure['materials'].length;
 
-    int matLen = structure['labour'].length;
-    int labLen = structure['materials'].length;
+    int matLen = structure['materials'].length;
+    int labLen = structure['labour'].length;
     int takenLen = structure['takenBacks']?.length ?? 0;
 
     String name = structure['structure_name'];
@@ -181,10 +182,10 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   matLen == 0
                       ? Column(children: [
                           Text(
-                            'Nil',
+                            'No materials for this Task or Not Issued',
                             style: TextStyle(
                               color: Color.fromARGB(255, 234, 12, 12),
-                              fontSize: 10.0,
+                              fontSize: 15.0,
                               fontWeight: FontWeight.bold,
                             ),
                           )
