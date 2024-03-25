@@ -4,6 +4,7 @@ import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/centered_circular_spinner.dart';
+import 'package:samagra/screens/material_details_popup.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
@@ -166,6 +167,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
   String currentCalledWorkSheduleGroupid = '';
 
   String _calledWorkSheduleGroupId = '';
+
+  var wrk_execution_schedules = [];
+
+  var wrk_execution_material_schedules = [];
+
+  Map<int, Map> estimatedQuantityOfmaterials = {};
 
   void togglePlay() {
     setState(() {
@@ -1125,7 +1132,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           //       )
           //     :
 
-          GestureDetector(
+          return GestureDetector(
             onHorizontalDragEnd: (details) {
               Navigator.pop(context);
             },
@@ -2921,7 +2928,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
-  Map<int, Map> aggregateMaterialQuantities(Map<String, dynamic> data) {
+  Map<int, Map> aggregateMaterialQuantities(List<dynamic> materialSchedules) {
     // Map to store materials grouped by name
 
     // return {-1: {}};
@@ -2932,75 +2939,81 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // Accessing the 'wrk_execution_schedules' array
 
-    List<dynamic> wrkExecutionSchedules = data['wrk_execution_schedules'];
-
     // Iterating over 'wrk_execution_schedules' array
     int counter = 0;
     int loop1 = 0;
     int loop2 = 0;
     int loop3 = 0;
-    for (var schedule in wrkExecutionSchedules) {
-      // Accessing the 'work_execution_material_schedules' array within each schedule
-      List<dynamic> materialSchedules =
-          schedule['wrk_execution_material_schedules'];
 
-      // Iterating over 'work_execution_material_schedules' array
+    // Accessing the 'work_execution_material_schedules' array within each schedule
 
-      for (Map materialSchedule in materialSchedules) {
-        try {
-          loop1++;
+    // Iterating over 'work_execution_material_schedules' array
 
-          //print(materialSchedule);
+    for (Map materialSchedule in materialSchedules) {
+      try {
+        loop1++;
 
-          // Accessing 'updated_quantity' and 'mst_material' for each material schedule
-          print("loop1b4 no ${loop1}");
-          double quantity = double.parse(materialSchedule["updated_quantity"]);
-          print("loop1aftr1 no ${loop1}");
+        //print(materialSchedule);
 
-          Map<String, dynamic> material = materialSchedule['mst_material'];
-          print("loop1aftr2 no ${loop1}");
+        // Accessing 'updated_quantity' and 'mst_material' for each material schedule
+        print("loop1b4 no ${loop1}");
+        double quantity = double.parse(materialSchedule["updated_quantity"]);
+        print("loop1aftr1 no ${loop1}");
 
-          String materialName = material['material_name'];
+        Map<String, dynamic> material = materialSchedule['mst_material'];
+        print("loop1aftr2 no ${loop1}");
 
-          print("${material['id'].runtimeType} mat id");
+        String materialName = material['material_name'];
 
-          int materialId = (material['id'].runtimeType != 'int'
-              ? int.parse(material['id'])
-              : material['id']);
+        print("${material['id'].runtimeType} mat id");
 
-          print("$materialName is materialName ");
+        int materialId = material['id'];
+        /* int materialId = (material['id'].runtimeType != 'int'
+            ? int.parse(material['id'])
+            : material['id']); */
 
-          // Adding quantity to the map or updating if already exists
-          if (materialQuantities.containsKey(materialId)) {
-            //debugger(when: true);
-            materialQuantities['materialId']!['quantity'] =
-                materialQuantities[materialId]!['quantity'] + quantity;
-            //debugger(when: true);
+        print("$materialName is materialName ");
 
-            //materialQuantities[materialId] ?? 0 + quantity;
-          } else {
-            var mat = {};
-            mat['material'] = material;
+        //debugger(when: true);
 
-            mat['quantity'] = materialQuantities[materialId] ?? 0 + quantity;
+        // Adding quantity to the map or updating if already exists
+        if (materialQuantities.containsKey(materialId)) {
+          print(
+              "CONTAINS $quantity is materialSchedule ${quantity.runtimeType} ");
 
-            print('counter $counter ${materialName} ${mat['quantity']}');
-            counter++;
+          //print(materialQuantities);
 
-            materialQuantities[materialId] = mat;
-          }
-        } on Exception catch (e) {
-          print(e);
-          throw e;
-          // TODO
+          //    print(materialQuantities[materialId]);
+          //   debugger(when: true);
+          materialQuantities[materialId]!['quantity'] =
+              materialQuantities[materialId]!['quantity'] + quantity;
+          // debugger(when: true);
+
+          //materialQuantities[materialId] ?? 0 + quantity;
+        } else {
+          print(
+              "NOT CONTAINS $quantity is materialSchedule ${quantity.runtimeType} ");
+          var mat = {};
+          mat['material'] = material;
+
+          mat['quantity'] = materialQuantities[materialId] ?? 0 + quantity;
+
+          print('counter $counter ${materialName} ${mat['quantity']}');
+          counter++;
+
+          materialQuantities[materialId] = mat;
         }
+      } on Exception catch (e) {
+        print(e);
+        throw e;
+        // TODO
       }
-
-      print('inner finished ');
     }
+    //debugger(when: true);
 
+    print(materialQuantities);
     print('finished');
-    debugger(when: true);
+    //debugger(when: true);
     return materialQuantities;
   }
 
@@ -3040,11 +3053,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //debugger(when: true);
     Response response = await dio.get(url, options: Options(headers: headers));
 
-    if (response.statusCode != 200) {
+    /*    if (response.statusCode != 200) {
       print('returnning atr 3051 error');
       return Future.value([-1]);
     }
-
+ */
     if (response.data != null &&
         response.data['result_data'] != null &&
         response.data['result_data']['data']['wrk_schedule_group_structures'] !=
@@ -3053,6 +3066,26 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       wrk_schedule_group_structures =
           response.data['result_data']['data']['wrk_schedule_group_structures'];
+
+      wrk_execution_schedules =
+          response.data['result_data']['data']["wrk_execution_schedules"];
+
+      wrk_execution_material_schedules =
+          wrk_execution_schedules[0]["wrk_execution_material_schedules"];
+
+      estimatedQuantityOfmaterials =
+          aggregateMaterialQuantities(wrk_execution_material_schedules);
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return MaterialDetailsPopup(
+                materialData: estimatedQuantityOfmaterials);
+          });
+
+      // print(estimatedQuantityOfmaterials);
+
+      //debugger(when: true);
       //print("response polvar 2504 ${res['wrk_schedule_group_structures']}");
 
       //gmailMe(res[wrk_schedule_group_structures]);
