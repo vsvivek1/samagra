@@ -458,7 +458,41 @@ class SchGrpListWidget extends StatefulWidget {
   _SchGrpListWidgetState createState() => _SchGrpListWidgetState();
 }
 
-class _SchGrpListWidgetState extends State<SchGrpListWidget> {
+class _SchGrpListWidgetState extends State<SchGrpListWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    audioCache = AudioCache(prefix: 'assets/audio/');
+    _filteredItems = List.from(widget.schGrpList);
+    setWorKdetails(_filteredItems);
+
+    // print(_filteredItems);
+
+    super.initState();
+
+    if (!isAudioMuted) {
+      // audioCache.play('select_work.wav');
+    }
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 4), // Adjust the duration as needed
+    );
+
+    _animation = Tween<double>(
+      begin: 0.0, // Start position (off-screen left)
+      end: 0, // End position (center)
+    ).animate(_controller);
+
+    // Start the animation
+    _controller.forward();
+  }
+
   final _searchController = TextEditingController();
   List<dynamic> _filteredItems = [];
   late AudioCache audioCache;
@@ -529,21 +563,6 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
   }
 
   @override
-  void initState() {
-    audioCache = AudioCache(prefix: 'assets/audio/');
-    _filteredItems = List.from(widget.schGrpList);
-    setWorKdetails(_filteredItems);
-
-    // print(_filteredItems);
-
-    super.initState();
-
-    if (!isAudioMuted) {
-      // audioCache.play('select_work.wav');
-    }
-  }
-
-  @override
   Widget build(
     BuildContext context,
   ) {
@@ -562,43 +581,53 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
             //   onPressed: toggleMute,
             //   tooltip: isAudioMuted ? 'Unmute Audio' : 'Mute Audio',
             // ),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search by Work code or Work Name',
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: IconButton(
-                      icon: Icon(Icons.search),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {
-                          _filteredItems = List.from(widget.schGrpList);
-                        });
-                      },
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by Work code or Work Name',
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: IconButton(
+                        icon: Icon(Icons.search),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() {
+                            _filteredItems = List.from(widget.schGrpList);
+                          });
+                        },
+                      ),
                     ),
                   ),
+                  onChanged: (value) {
+                    List<dynamic> schGrpList = List.from(widget.schGrpList);
+                    setState(() {
+                      _filteredItems = schGrpList
+                          .where((item) =>
+                              item['wrk_work_detail']['work_name']
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()) ||
+                              item['wrk_work_detail']['work_code']
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                          .toList();
+                    });
+                  },
                 ),
-                onChanged: (value) {
-                  List<dynamic> schGrpList = List.from(widget.schGrpList);
-                  setState(() {
-                    _filteredItems = schGrpList
-                        .where((item) =>
-                            item['wrk_work_detail']['work_name']
-                                .toLowerCase()
-                                .contains(value.toLowerCase()) ||
-                            item['wrk_work_detail']['work_code']
-                                .toLowerCase()
-                                .contains(value.toLowerCase()))
-                        .toList();
-                  });
-                },
               ),
             ),
             Expanded(
-              child: normalListView(),
+              child: Container(
+                  margin: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.all(Radius.circular(15))),
+                  child: normalListView()),
               // child: normalListWheelScrollView()
             ),
           ],
@@ -683,60 +712,64 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget> {
                     width: 2,
                     style: BorderStyle.solid),
               ),
-              child: GridTile(
-                footer: ShowWorkCode(workCode: workCode),
-                header: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: WorkTitle(
-                      workId: workId,
-                      workScheduleGroupId: workScheduleGroupId,
-                      status: status),
-                ),
-                child: Center(
-                  child: ListTile(
-                    // subtitle: SizedBox(
-                    //     width: 30,
-                    //     height: 30,
-                    //     child: Image.asset('assets/images/kseb.jpg')),
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                    visualDensity: VisualDensity.compact,
-                    focusColor: ksebColor,
-                    // title:
-                    leading: CircleAvatar(
-                      child: Text(sl.toString()),
-                      radius: 10,
-                    ),
-                    hoverColor: ksebColor,
-                    splashColor: ksebColor,
-                    tileColor: (status != 'CREATED')
-                        ? Color.fromARGB(255, 33, 194, 151)
-                        : Colors.white,
-                    // subtitle: item['started'] == true
-                    //     ? Text(
-                    //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
-                    //     : Text(
-                    //         'Measurements Not Started ${item['hasStarted']}'),
-                    title: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(25.0),
-                            child: Text(
-                              item['wrk_work_detail']['work_name'],
-                              style: TextStyle(
-                                  backgroundColor:
-                                      Color.fromARGB(255, 255, 255, 255),
-                                  fontFamily: 'verdana',
-                                  textBaseline: TextBaseline.ideographic,
-                                  fontSize: 18,
-                                  wordSpacing: 3,
-                                  color:
-                                      const Color.fromARGB(255, 89, 76, 175)),
+              child: Container(
+                margin: EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: GridTile(
+                  footer: ShowWorkCode(workCode: workCode),
+                  header: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: WorkTitle(
+                        workId: workId,
+                        workScheduleGroupId: workScheduleGroupId,
+                        status: status),
+                  ),
+                  child: Center(
+                    child: ListTile(
+                      // subtitle: SizedBox(
+                      //     width: 30,
+                      //     height: 30,
+                      //     child: Image.asset('assets/images/kseb.jpg')),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                      visualDensity: VisualDensity.compact,
+                      focusColor: ksebColor,
+                      // title:
+                      leading: CircleAvatar(
+                        child: Text(sl.toString()),
+                        radius: 10,
+                      ),
+                      hoverColor: ksebColor,
+                      splashColor: ksebColor,
+                      tileColor: (status != 'CREATED')
+                          ? Color.fromARGB(255, 33, 194, 151)
+                          : Colors.white,
+                      // subtitle: item['started'] == true
+                      //     ? Text(
+                      //         "No of Locations Mdeasures ${item['noOflocationMeasured']}")
+                      //     : Text(
+                      //         'Measurements Not Started ${item['hasStarted']}'),
+                      title: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(25.0),
+                              child: Text(
+                                item['wrk_work_detail']['work_name'],
+                                style: TextStyle(
+                                    fontFamily: 'verdana',
+                                    textBaseline: TextBaseline.ideographic,
+                                    fontSize: 18,
+                                    wordSpacing: 3,
+                                    color:
+                                        const Color.fromARGB(255, 89, 76, 175)),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
