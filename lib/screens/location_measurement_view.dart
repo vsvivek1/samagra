@@ -7,8 +7,12 @@ class LocationMeasurementView extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
   final Function reflectQuantityDetails;
 
+  final estimatedQuantityOfmaterials;
+
   LocationMeasurementView(
-      {required this.tasks, required this.reflectQuantityDetails});
+      {required this.tasks,
+      required this.reflectQuantityDetails,
+      required this.estimatedQuantityOfmaterials});
 
   @override
   _LocationMeasurementViewState createState() =>
@@ -31,7 +35,16 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
           return Column(
             children: [
-              Text("Selected Task view of this Location"),
+              Container(
+                  margin: EdgeInsets.all(8),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[500], // Background color
+                    borderRadius:
+                        BorderRadius.circular(16.0), // Optional: Border radius
+                  ),
+                  child: Text("Selected Task view of this Location")),
               // Center(
               //   child: WhatsAppButton(
               //     phoneNumber:
@@ -41,14 +54,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               //   ),
               // ),
               ListTile(
-                leading: CircleAvatar(
-                  maxRadius: 14,
-                  child: Text(
-                    'T' + (index + 1).toString(),
-                    textScaleFactor: .5,
-                  ),
-                ),
-
+                //leading:
                 contentPadding: EdgeInsets.only(right: 1.0),
                 title: Container(
                   decoration: BoxDecoration(
@@ -60,12 +66,20 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   child: Column(
                     children: [
                       Text(
+                        textAlign: TextAlign.center,
                         'Task Id: ${task['id']}  \n' +
                             'Task Name : ${task['task_name']}',
                         style: TextStyle(
-                          color: Colors.grey[500],
+                          color: const Color.fromARGB(255, 177, 74, 74),
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      CircleAvatar(
+                        maxRadius: 14,
+                        child: Text(
+                          'T' + (index + 1).toString(),
+                          textScaleFactor: .5,
                         ),
                       ),
                       structureWidget(structureList, index),
@@ -124,9 +138,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                     ? Text(
                         'Str Id : ${structure['id']}, ${structure['structure_name']}',
                         style: TextStyle(
-                            color: Colors.blueGrey,
+                            color: Colors.green,
                             fontSize: 12,
-                            fontWeight: FontWeight.w500),
+                            fontWeight: FontWeight.bold),
                       )
                     : Text('Structure No: ${structureIndex + 1}'),
               ),
@@ -194,7 +208,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                       child: Text(
                         'Materials',
                         style: TextStyle(
-                          color: Colors.grey[700],
+                          color: Colors.blue,
                           fontSize: 15.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -342,7 +356,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 child: Text(
                   'Labour',
                   style: TextStyle(
-                    color: Colors.grey[700],
+                    color: Colors.blue,
                     fontSize: 15.0,
                     fontWeight: FontWeight.bold,
                   ),
@@ -407,7 +421,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               child: Text(
                 'Taken Backs',
                 style: TextStyle(
-                  color: Colors.grey[750],
+                  color: Colors.blue,
                   fontSize: 15.0,
                   fontWeight: FontWeight.bold,
                 ),

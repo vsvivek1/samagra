@@ -1492,8 +1492,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.6,
           child: LocationMeasurementView(
-              tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
-              reflectQuantityDetails: reflectQuantityDetails),
+            tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
+            reflectQuantityDetails: reflectQuantityDetails,
+            estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+          ),
         ),
       ),
     );
