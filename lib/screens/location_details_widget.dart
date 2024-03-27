@@ -73,8 +73,12 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       position: _offsetAnimation,
       child: (widget.locationNo == '-1')
           ? Text("Select a Location to View details")
-          : Padding(
-              padding: const EdgeInsets.all(8.0),
+          : Container(
+              margin: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                  color: Colors.grey[400],
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

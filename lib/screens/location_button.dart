@@ -69,7 +69,7 @@ class _LocationButtonState extends State<LocationButton> {
 
   ElevatedButton ShowLocationButton(BuildContext context) {
     return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(backgroundColor: ksebColor),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[500]),
       onPressed: () async {
         setState(() {
           _loading = true;

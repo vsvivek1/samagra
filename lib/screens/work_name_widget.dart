@@ -18,18 +18,19 @@ class WorkNameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10, top: 10),
+      margin: EdgeInsets.all(10),
       padding: EdgeInsets.all(8.0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(3.0),
-        boxShadow: [
+        color: Colors.grey[400],
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        /*              boxShadow: [
           BoxShadow(
             color: Colors.blueAccent.withOpacity(0.9),
             blurRadius: 3.0,
             offset: Offset(0, 1),
           ),
         ],
+   */
       ),
       child: Text(
         label + workName + (workId != '' ? " '\n\nWork Id :$workId" : ''),

@@ -641,7 +641,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 1,
-        childAspectRatio: 1.7,
+        childAspectRatio: 1.5,
       ),
       itemCount: _filteredItems.length,
       itemBuilder: (context, index) {
@@ -720,7 +720,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                 child: GridTile(
                   footer: ShowWorkCode(workCode: workCode),
                   header: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(6.0),
                     child: WorkTitle(
                         workId: workId,
                         workScheduleGroupId: workScheduleGroupId,

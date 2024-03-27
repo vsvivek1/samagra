@@ -9,10 +9,13 @@ class LocationMeasurementView extends StatefulWidget {
 
   final estimatedQuantityOfmaterials;
 
+  final measurementDetails;
+
   LocationMeasurementView(
       {required this.tasks,
       required this.reflectQuantityDetails,
-      required this.estimatedQuantityOfmaterials});
+      required this.estimatedQuantityOfmaterials,
+      required this.measurementDetails});
 
   @override
   _LocationMeasurementViewState createState() =>
@@ -235,36 +238,43 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
                               // final labour = structure['labour'][materialIndex];
 
-                              return ListTile(
-                                  contentPadding: EdgeInsets.only(left: 1.0),
-                                  title: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * .5,
-                                    child: Wrap(
-                                      children: [
-                                        Text(
-                                            maxLines: 2,
-                                            '${materialIndex + 1} : ${material['material_name']}'),
-                                      ],
-                                    ),
-                                  ),
-                                  subtitle: itemEditingBox(material)
+                              return Column(
+                                children: [
+                                  ListTile(
+                                      contentPadding:
+                                          EdgeInsets.only(left: 1.0),
+                                      title: SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .5,
+                                        child: Wrap(
+                                          children: [
+                                            Text(
+                                                maxLines: 2,
+                                                '${materialIndex + 1} : ${material['material_name']}'),
+                                          ],
+                                        ),
+                                      ),
+                                      subtitle: itemEditingBox(material)
 
-                                  // trailing: ,
-                                  // trailing: TextFormField(
-                                  //         keyboardType:
-                                  //             TextInputType.numberWithOptions(
-                                  //                 decimal: true),
+                                      // trailing: ,
+                                      // trailing: TextFormField(
+                                      //         keyboardType:
+                                      //             TextInputType.numberWithOptions(
+                                      //                 decimal: true),
 
-                                  // trailing: TextField(),
-                                  // trailing: IconButton(
-                                  //   icon: Icon(Icons.edit),
-                                  //   onPressed: () {
-                                  //     _editMaterialQuantity(
-                                  //         materialIndex, structureIndex, index);
-                                  //   },
-                                  // ),
-                                  );
+                                      // trailing: TextField(),
+                                      // trailing: IconButton(
+                                      //   icon: Icon(Icons.edit),
+                                      //   onPressed: () {
+                                      //     _editMaterialQuantity(
+                                      //         materialIndex, structureIndex, index);
+                                      //   },
+                                      // ),
+                                      ),
+                                  Divider(color: Colors.grey)
+                                ],
+                              );
                             },
                           ),
                   ],
@@ -276,9 +286,32 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   }
 
   Wrap itemEditingBox(item) {
+    double estimateQuantity = 0;
+    if (item['material_code'] != null) {
+      int id = item['mst_material_id'];
+      var foundObject = widget.estimatedQuantityOfmaterials[id];
+      if (foundObject != null) {
+        estimateQuantity = foundObject['quantity'];
+      }
+
+      print("$foundObject is found");
+    }
+
+    //debugger(when: true);
     return Wrap(
       children: [
-        Text('Quantity: ${item['quantity']}'),
+        Container(
+          margin: EdgeInsets.all(8),
+          padding: EdgeInsets.all(8),
+          child: Column(
+            children: [
+              Text('Measured Quantity: ${item['quantity']}'),
+              Text('Issued Quantity: '),
+              if (item['material_code'] != null)
+                Text('Estimate Quantity: ${estimateQuantity} '),
+            ],
+          ),
+        ),
         SizedBox(width: 50),
         if (item['editing'] == null || item['editing'] == true)
           SizedBox(

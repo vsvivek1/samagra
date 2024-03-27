@@ -1141,7 +1141,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             },
             child: SafeArea(
               child: Container(
-                padding: EdgeInsets.all(.5),
+                padding: EdgeInsets.all(5),
                 child: Scaffold(
                   bottomNavigationBar: BottomAppBar(
                     shape: CircularNotchedRectangle(),
@@ -1156,8 +1156,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             onPressed: () =>
                                 _showMeasurementCopierDialog(context),
                             label: Text(
+                              overflow: TextOverflow.ellipsis,
                               'M-Copier',
-                              style: TextStyle(fontSize: 9),
+                              style: TextStyle(fontSize: 8),
                             ),
                           ),
                           _savedToSamagra
@@ -1172,7 +1173,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     'Save \nto Samagra',
                                     style: TextStyle(fontSize: 10),
                                   )),
-                          ElevatedButton.icon(
+                          /*  ElevatedButton.icon(
                               style: ksebButtonStyle(),
                               icon: Icon(Icons.remove_red_eye),
                               onPressed: () => {
@@ -1189,7 +1190,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   ),
                                   _viewFullLocationList
                                       ? 'Hide Detailed \n View of Locations'
-                                      : "Detailed \n View of Locations"))
+                                      : "Detailed \n View of Locations")) */
                         ]),
                   ),
                   floatingActionButton: FloatingActionButton(
@@ -1229,7 +1230,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   //   },
                   // ),
                   appBar: AppBar(
-                    backgroundColor: AppTheme.grey.withOpacity(0.7),
+                    backgroundColor: Colors.grey,
                     title: AnimatedSwitcher(
                       duration: Duration(milliseconds: 500),
                       transitionBuilder:
@@ -1244,179 +1245,197 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           Text(
                             userDirections,
                             key: ValueKey<String>(userDirections),
-                            style: TextStyle(fontSize: 11, color: Colors.red),
+                            style: TextStyle(fontSize: 11, color: ksebColor),
                           ),
                           // VoiceControl(),
                         ],
                       ),
                     ),
                   ),
-                  body: Scrollbar(
-                    thumbVisibility: true,
-                    trackVisibility: true,
-                    thickness: 10,
-                    child: SingleChildScrollView(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * 2,
-                        margin: EdgeInsets.all(16.0),
-                        child: Column(
-                          // mainAxisSize: MainAxisSize.min,
-                          // crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            WorkNameWidget(
-                              workName: widget.workName +
-                                  '\n\nWork Code : ${widget.workCode}',
-                              color: Colors.blue,
-                              workId: widget.workId.toString(),
-                            ),
-                            enterLocationDetails(),
-                            if (!_enableEntryOfLocationDetails)
-                              addOneMoreLocation(),
-                            locationNumberAndLocationPointsEntryScreen(),
-                            if (_selectedLocationIndex == -1 &&
-                                !_enableEntryOfLocationDetails) ...[
-                              Visibility(
-                                  visible: !_openedMeasurementCopier,
-                                  child: showLocationButtons())
-
-                              // for showing loading issued material
-                            ],
-                            if ((!_enableEntryOfLocationDetails &&
-                                _numberOfLocations > 0 &&
-                                _numberOfLocations < 999 &&
-                                _fromLocation != '' &&
-                                _toLocation != '')) ...[
-                              Divider(
-                                height: 5,
-                                thickness: 2,
-                                color: Colors.blueAccent,
+                  body: Container(
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      /*              boxShadow: [
+          BoxShadow(
+            color: Colors.blueAccent.withOpacity(0.9),
+            blurRadius: 3.0,
+            offset: Offset(0, 1),
+          ),
+        ],
+   */
+                    ),
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      trackVisibility: true,
+                      thickness: 10,
+                      child: SingleChildScrollView(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 2,
+                          margin: EdgeInsets.all(16.0),
+                          child: Column(
+                            // mainAxisSize: MainAxisSize.min,
+                            // crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              WorkNameWidget(
+                                workName: widget.workName +
+                                    '\n\nWork Code : ${widget.workCode}',
+                                color: Colors.blue,
+                                workId: widget.workId.toString(),
                               ),
+                              enterLocationDetails(),
+                              if (!_enableEntryOfLocationDetails)
+                                addOneMoreLocation(),
+                              locationNumberAndLocationPointsEntryScreen(),
+                              if (_selectedLocationIndex == -1 &&
+                                  !_enableEntryOfLocationDetails) ...[
+                                Visibility(
+                                    visible: !_openedMeasurementCopier,
+                                    child: showLocationButtons())
 
-                              // Visibility(
-                              //   // visible: _showAnotherLocationButton
-
-                              //   visible: _selectedLocationIndex != -1
-
-                              //   //  &&
-                              //   //     !_showSaveMeasurementDetailsButton
-                              //   ,
-                              //   child: Row(
-                              //     children: [
-                              //       Spacer(),
-                              //       ElevatedButton(
-                              //           onPressed: () =>
-                              //               {_gotToAnotherLocation()},
-                              //           child: Text('Go to  Another Location')),
-                              //       Spacer(),
-                              //     ],
-                              //   ),
-                              // ),
-                              Visibility(
-                                visible: (_showSaveMeasurementDetailsButton ||
-                                    (_showAnotherLocationButton &&
-                                        !_showSaveMeasurementDetailsButton) ||
-                                    _showSubmitToSamagraButton),
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 1.5,
-                                  child: Row(
-                                    children: [
-                                      Visibility(
-                                        visible:
-                                            _showSaveMeasurementDetailsButton &&
-                                                false,
-                                        child: ElevatedButton(
-                                            onPressed: () =>
-                                                {_saveMeasurementDetails()},
-                                            child: Text('Save')),
-                                      ),
-                                      Visibility(
-                                        visible: _showSubmitToSamagraButton,
-                                        child: ElevatedButton(
-                                            onPressed: () => {},
-                                            child: Text('Submit to Samagara')),
-                                      ),
-                                    ],
-                                  ),
+                                // for showing loading issued material
+                              ],
+                              if ((!_enableEntryOfLocationDetails &&
+                                  _numberOfLocations > 0 &&
+                                  _numberOfLocations < 999 &&
+                                  _fromLocation != '' &&
+                                  _toLocation != '')) ...[
+                                Divider(
+                                  height: 20,
+                                  thickness: 5,
+                                  color: Colors.grey[400],
                                 ),
-                              ),
 
-                              Visibility(
-                                visible: _selectedLocationIndex != -1,
-                                child: IntrinsicHeight(
+                                // Visibility(
+                                //   // visible: _showAnotherLocationButton
+
+                                //   visible: _selectedLocationIndex != -1
+
+                                //   //  &&
+                                //   //     !_showSaveMeasurementDetailsButton
+                                //   ,
+                                //   child: Row(
+                                //     children: [
+                                //       Spacer(),
+                                //       ElevatedButton(
+                                //           onPressed: () =>
+                                //               {_gotToAnotherLocation()},
+                                //           child: Text('Go to  Another Location')),
+                                //       Spacer(),
+                                //     ],
+                                //   ),
+                                // ),
+                                Visibility(
+                                  visible: (_showSaveMeasurementDetailsButton ||
+                                      (_showAnotherLocationButton &&
+                                          !_showSaveMeasurementDetailsButton) ||
+                                      _showSubmitToSamagraButton),
                                   child: SizedBox(
-                                    // height: 200,
                                     width:
-                                        MediaQuery.of(context).size.width * .95,
-                                    child: Row(children: [
-                                      Column(
-                                        children: [
-                                          // _selectedLocationHasGeoLocations
-                                          if (!_selectedLocationHasGeoLocations)
-                                            LocationDetailsWidget(
-                                                hasLocationDetailsInStorage:
-                                                    _hasLocationDetailsInStorage,
-                                                locationDetails: {},
-                                                updateLocationDetailsArray:
-                                                    _updateLocationDetailsArray,
-                                                locationNo:
-                                                    _selectedLocationIndex
-                                                        .toString(),
-                                                measurements: List<String>.from(
-                                                  _selectedMeasurements,
-                                                ),
-                                                emitLocDetailsToPolVarWidget:
-                                                    _handleEmitLocDetailsToPolVarWidget)
-                                          // ,
-
-                                          ,
-                                          // SizedBox(
-                                          //   height:
-                                          //       MediaQuery.of(context).size.height *
-                                          //           8,
-                                          //   width:
-                                          //       MediaQuery.of(context).size.width * 8,
-                                          //   child: MeasurementDisplayWidget(
-                                          //       measurementDetails),
-                                          // )
-
-                                          // // viewAllLocationDetails(context),
-                                          // ,
-                                        ],
-                                      )
-                                    ]),
+                                        MediaQuery.of(context).size.width * 1.5,
+                                    child: Row(
+                                      children: [
+                                        Visibility(
+                                          visible:
+                                              _showSaveMeasurementDetailsButton &&
+                                                  false,
+                                          child: ElevatedButton(
+                                              onPressed: () =>
+                                                  {_saveMeasurementDetails()},
+                                              child: Text('Save')),
+                                        ),
+                                        Visibility(
+                                          visible: _showSubmitToSamagraButton,
+                                          child: ElevatedButton(
+                                              onPressed: () => {},
+                                              child:
+                                                  Text('Submit to Samagara')),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              // Divider(color: Colors.white10, thickness: 10),
-                              // SizedBox(height: 50),
 
-                              viewLocationList(tasklist1),
+                                Visibility(
+                                  visible: _selectedLocationIndex != -1,
+                                  child: IntrinsicHeight(
+                                    child: SizedBox(
+                                      // height: 200,
+                                      width: MediaQuery.of(context).size.width *
+                                          .95,
+                                      child: Row(children: [
+                                        Column(
+                                          children: [
+                                            // _selectedLocationHasGeoLocations
+                                            if (!_selectedLocationHasGeoLocations)
+                                              LocationDetailsWidget(
+                                                  hasLocationDetailsInStorage:
+                                                      _hasLocationDetailsInStorage,
+                                                  locationDetails: {},
+                                                  updateLocationDetailsArray:
+                                                      _updateLocationDetailsArray,
+                                                  locationNo:
+                                                      _selectedLocationIndex
+                                                          .toString(),
+                                                  measurements:
+                                                      List<String>.from(
+                                                    _selectedMeasurements,
+                                                  ),
+                                                  emitLocDetailsToPolVarWidget:
+                                                      _handleEmitLocDetailsToPolVarWidget)
+                                            // ,
 
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                children: [
-                                  Spacer(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
+                                            ,
+                                            // SizedBox(
+                                            //   height:
+                                            //       MediaQuery.of(context).size.height *
+                                            //           8,
+                                            //   width:
+                                            //       MediaQuery.of(context).size.width * 8,
+                                            //   child: MeasurementDisplayWidget(
+                                            //       measurementDetails),
+                                            // )
 
-                              Visibility(
-                                visible: _viewFullLocationList,
-                                child: SizedBox(
-                                    width: 300,
-                                    height: 300,
-                                    child: MeasurementDisplayWidget(
-                                        measurementDetails)),
-                              ),
+                                            // // viewAllLocationDetails(context),
+                                            // ,
+                                          ],
+                                        )
+                                      ]),
+                                    ),
+                                  ),
+                                ),
+                                // Divider(color: Colors.white10, thickness: 10),
+                                // SizedBox(height: 50),
 
-                              Spacer(),
+                                viewLocationList(tasklist1),
+
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Spacer(),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+
+                                Visibility(
+                                  visible: _viewFullLocationList,
+                                  child: SizedBox(
+                                      width: 300,
+                                      height: 300,
+                                      child: MeasurementDisplayWidget(
+                                          measurementDetails)),
+                                ),
+
+                                Spacer(),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -1458,8 +1477,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return Visibility(
         visible: _selectedLocationTasks.length > 0,
         child: Container(
-            decoration:
-                BoxDecoration(border: Border.all(width: 1), color: ksebColor),
+            decoration: BoxDecoration(
+                border: Border.all(width: 1), color: Colors.grey[200]),
             child: Container(
               margin: EdgeInsets.all(10),
               child: Padding(
@@ -1475,7 +1494,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         ),
                       ],
                       fontSize: 18,
-                      color: Colors.amber,
+                      color: ksebColor,
                     )),
               ),
             )));
@@ -1492,10 +1511,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.6,
           child: LocationMeasurementView(
-            tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
-            reflectQuantityDetails: reflectQuantityDetails,
-            estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
-          ),
+              tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
+              reflectQuantityDetails: reflectQuantityDetails,
+              estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+              measurementDetails: measurementDetails),
         ),
       ),
     );
@@ -1603,7 +1622,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
             visible: _enableEntryOfLocationDetails,
             child: Column(
               children: [
-                Padding(
+                Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
                   padding: const EdgeInsets.all(16.0),
                   child: SizedBox(
                     height: 80,
@@ -1641,74 +1664,82 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 ),
                 Divider(
                   height: 20,
-                  thickness: 2,
-                  color: Colors.blueAccent,
+                  thickness: 5,
+                  color: Colors.grey[400],
                 ),
                 Visibility(
                   visible: _numberOfLocations > 0 && _numberOfLocations < 999,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'From Location',
-                            border: OutlineInputBorder(),
-                          ),
-                          child: TextFormField(
-                            initialValue: _toLocation,
-                            onChanged: (value) async {
-                              String from = ' _fromLocation';
-                              String to = '_toLocation';
-
-                              if (_fromLocation != '' && _toLocation != '') {
-                                await Future.delayed(Duration(seconds: 3));
-
-                                if (from == _fromLocation &&
-                                    to == _toLocation) {
-                                  this.userDirections = 'Now Press save ';
-
-                                  if (!isAudioMuted) {
-                                    // audioCache.play('press_save_button.mp3');
-                                  }
-                                } else {
-                                  from = _fromLocation;
-                                  to = _toLocation;
-                                }
-                              }
-
-                              setState(() {
-                                _fromLocation = value;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: InputDecorator(
-                          decoration: InputDecoration(
-                            labelText: 'To Location',
-                            border: OutlineInputBorder(),
-                          ),
-                          child: TextFormField(
-                            initialValue: _toLocation.toString(),
-                            onChanged: (value) {
-                              setState(() {
-                                _toLocation = value;
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'From Location',
+                              border: OutlineInputBorder(),
+                            ),
+                            child: TextFormField(
+                              initialValue: _toLocation,
+                              onChanged: (value) async {
+                                String from = ' _fromLocation';
+                                String to = '_toLocation';
 
                                 if (_fromLocation != '' && _toLocation != '') {
-                                  this.userDirections = 'Now Press save ';
-                                  if (!isAudioMuted) {
-                                    // audioCache.play('press_save_button.mp3');
+                                  await Future.delayed(Duration(seconds: 3));
+
+                                  if (from == _fromLocation &&
+                                      to == _toLocation) {
+                                    this.userDirections = 'Now Press save ';
+
+                                    if (!isAudioMuted) {
+                                      // audioCache.play('press_save_button.mp3');
+                                    }
+                                  } else {
+                                    from = _fromLocation;
+                                    to = _toLocation;
                                   }
-                                  this.steps = this.steps++; //3
                                 }
-                              });
-                            },
+
+                                setState(() {
+                                  _fromLocation = value;
+                                });
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: InputDecorator(
+                            decoration: InputDecoration(
+                              labelText: 'To Location',
+                              border: OutlineInputBorder(),
+                            ),
+                            child: TextFormField(
+                              initialValue: _toLocation.toString(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _toLocation = value;
+
+                                  if (_fromLocation != '' &&
+                                      _toLocation != '') {
+                                    this.userDirections = 'Now Press save ';
+                                    if (!isAudioMuted) {
+                                      // audioCache.play('press_save_button.mp3');
+                                    }
+                                    this.steps = this.steps++; //3
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Visibility(
@@ -1721,13 +1752,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(1.0),
                         child: ElevatedButton(
                           onPressed: saveFromAndTwoLocation,
                           child: Row(
                             children: [
                               Text("Save And Proceed For Measurement"),
-                              SizedBox(width: 20),
+                              SizedBox(width: 3),
                               Icon(color: Colors.blueAccent, Icons.save),
                             ],
                           ),
@@ -1758,9 +1789,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
               ),
             ),
             Divider(
-              height: 5,
-              thickness: 2,
-              color: Colors.blueAccent,
+              height: 20,
+              thickness: 5,
+              color: Colors.grey[400],
             ),
             Row(
               children: [
@@ -1812,7 +1843,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           _fetchingMasterEstimate
               ? Center(
                   child: SizedBox(
-                  width: MediaQuery.of(context).size.width * .9,
+                  width: MediaQuery.of(context).size.width * .8,
                   child: LinearProgressIndicator(
                     minHeight: 5,
                     semanticsValue: AutofillHints.photo,
@@ -1831,8 +1862,21 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Column showLocationButtons() {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
+        Container(
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            color: Colors.grey[400],
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            /*              boxShadow: [
+          BoxShadow(
+            color: Colors.blueAccent.withOpacity(0.9),
+            blurRadius: 3.0,
+            offset: Offset(0, 1),
+          ),
+        ],
+   */
+          ),
           child: Text(
             textHeightBehavior:
                 TextHeightBehavior(applyHeightToLastDescent: true),
@@ -1840,7 +1884,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             'Click any of the Location to Enter the Measurements',
             style: TextStyle(
                 // background: Paint(),
-                backgroundColor: Colors.orange,
+
                 color: ksebColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold),
@@ -1916,7 +1960,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   GestureDetector(
                     onTap: () => _viewLocationDetail(index, status),
                     child: Container(
-                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        /*              boxShadow: [
+          BoxShadow(
+            color: Colors.blueAccent.withOpacity(0.9),
+            blurRadius: 3.0,
+            offset: Offset(0, 1),
+          ),
+        ],
+   */
+                      ),
+
+                      /*  padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         border: Border.all(color: ksebColor),
                         backgroundBlendMode: BlendMode.colorDodge,
@@ -1929,7 +1988,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 ? Colors.white70
                                 : Color.fromRGBO(241, 78, 3, 0.6),
                       ),
-                      margin: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.all(8.0), */
                       child: Center(
                         child: Column(
                           textBaseline: TextBaseline.alphabetic,
