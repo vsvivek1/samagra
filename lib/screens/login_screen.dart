@@ -109,6 +109,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool externalLinkActivated = false;
 
+  String loginButtonText = 'Login with SSO';
+
   // get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
   //  bool _showFirstTimePasswordField;
 
@@ -560,10 +562,15 @@ class _LoginScreenState extends State<LoginScreen> {
       style: ButtonStyle(
         backgroundColor: MaterialStateProperty.all<Color>(ksebColor),
       ),
-      onPressed: () =>
-          {loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode)},
+      onPressed: () {
+        loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode);
+
+        setState(() {
+          loginButtonText = 'Proceed For Login';
+        });
+      },
       child:
-          Text(style: TextStyle(color: Colors.orangeAccent), 'Login with SSO'),
+          Text(style: TextStyle(color: Colors.orangeAccent), loginButtonText),
     );
   }
 
