@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/admin/update_check.dart';
@@ -146,6 +147,7 @@ class _SamagraState extends State<Samagra> {
         onGenerateRoute: (settings) {
           // Handle incoming deep links here
           if (settings.name == '/sso_screen') {
+            debugger(when: true);
             // Extract parameters from the deep link
             // You might want to get the latest deep link and check its format
             // For instance, using getInitialLink() from uni_links
@@ -166,7 +168,8 @@ class _SamagraState extends State<Samagra> {
           // '/': (context) => NavigationHomeScreen(),
           '/redirected': (context) => NavigationHomeScreen(),
           '/home': (context) => NavigationHomeScreen(),
-          '/sso_screen': (context) => SSO(), // SSO screen
+          // '/sso_screen': (context) => SSO(), // SSO screen
+          '/sso_screen': (context) => LoginScreen(), // SSO screen
         },
         debugShowCheckedModeBanner: showDebugbanner,
         theme: ThemeData(

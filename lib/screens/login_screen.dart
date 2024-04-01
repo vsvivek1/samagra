@@ -15,6 +15,7 @@ import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
+import 'package:samagra/screens/SSOLogin.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
@@ -39,6 +40,7 @@ String addPaddingToBase64UrlEncodedString(String base64String) {
 }
 
 String codeVerifier = generateRandomString();
+
 // String codeChallenge =
 //     addPaddingToBase64UrlEncodedString(generateCodeChallenge(codeVerifier));
 
@@ -135,7 +137,8 @@ class _LoginScreenState extends State<LoginScreen> {
     loadConfig();
     // config = EnvironmentConfig.fromEnvFile();
 
-    initUniLinks(); //moved to sso login screen
+    //initUniLinks();
+    //moved to sso login screen
 
     super.initState();
   }
@@ -564,10 +567,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       onPressed: () {
         loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode);
-
-        setState(() {
-          loginButtonText = 'Proceed For Login';
-        });
+        loginButtonText = 'Proceed For Login';
       },
       child:
           Text(style: TextStyle(color: Colors.orangeAccent), loginButtonText),
@@ -802,7 +802,13 @@ class _LoginScreenState extends State<LoginScreen> {
       {oIdAccessTokens}) async {
     String errorMsg = 'SERVER ERROR';
 
+    //debugger(when: true);
     if (result is DioException) {
+      if (result.response != null &&
+          result.response!.data != null &&
+          result.response!.data != '') {
+        errorMsg = result.response!.data['wsDisplayMessage'];
+      }
       Fluttertoast.showToast(
         msg: errorMsg,
         toastLength: Toast.LENGTH_LONG,
@@ -870,6 +876,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
       await _secureStorage.writeKeyValuePairToSecureStorage(
           "refresh_token", oIdAccessTokens[1]);
+
+      setState(() {
+        loginButtonText = 'Proceed For Login';
+      });
     } else {
       resultData = result["result_data"];
 
@@ -886,11 +896,13 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _ssoLoginLoading = false;
         _isLoggingIn = 0;
+        loginButtonText = 'Proceed For Login';
       });
     } else {
       setState(() {
         _ssoLoginLoading = false;
         _firstTimeLoginSpinner = 1;
+        loginButtonText = 'Proceed For Login';
       });
     }
 
@@ -993,7 +1005,7 @@ class _LoginScreenState extends State<LoginScreen> {
               loginUsingSso(context, _ssoLoginLoading, setLoginState, _empcode);
 
               //
-              // await proceedForLogin(context, 'firstTime');
+              //await proceedForLogin(context, 'firstTime');
             },
             child: Text('Login'),
           ),
@@ -1096,13 +1108,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   loginUsingSso(context, _ssoLoginLoading, setLoginState, empcode) {
     initUniLinks();
-    setLoginState();
+    setLoginState(); //just setting loading variable =true
+
+    print('sso1');
 
     launchSSOUrl(codeVerifier, codeChallenge, empcode);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => SSOLogin()),
-    // );
+    print('sso2');
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SSOLogin()),
+    );
+
+    //initUniLinks();
+    _ssoLoginLoading = false;
+    //return;
+    /*  Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SSOLogin()),
+    ); */
   }
 
   void initUniLinks() async {
@@ -1110,8 +1134,10 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final initialLink = await getInitialLink();
 
+      //debugger(when: true);
+
       if (initialLink == null) {
-        return;
+        // return;
 
         /// added because initla null lik causing error
       }
@@ -1120,30 +1146,33 @@ class _LoginScreenState extends State<LoginScreen> {
 
       print('$initialLink initial link');
 
+      //debugger(when: true);
       _sub = linkStream.listen((String? link) async {
         if (link == '') {
           return;
         }
         // print("link $link");
-        setState(() {
-          externalLinkActivated = true;
-        });
-
+        /*  setState(() {
+          
+        }); */
+        externalLinkActivated = true;
         String token = extractTokenFromLink(link!);
 
         if (token != '') {
           // print(token);
-
-          List<String> oIdAccessTokens =
-              await getOidcAccessTokens(codeVerifier, token);
-
-          // debugger(when: true);
-
           try {
+            List<String> oIdAccessTokens =
+                await getOidcAccessTokens(codeVerifier, token);
+            if (oIdAccessTokens[0] == 'dummy') {
+              throw Exception('dummy error');
+            }
+
+            // debugger(when: true);
+
             var result =
                 await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
 
-            // debugger(when: true);
+            //debugger(when: true);
 
             setState(() {
               externalLinkActivated = false;
@@ -1164,15 +1193,15 @@ class _LoginScreenState extends State<LoginScreen> {
           } on Exception catch (e) {
             String occation = 'regular';
 
-            debugger(when: true);
+            //  debugger(when: true);
             _handleServerLoginError(context, e, occation);
-            print(e);
+            print("$e is the error");
             // TODO
           } finally {
             print('OidcAccessTokenxyx ');
           }
         }
-        // print(_sub);
+        print("$_sub is sub");
         // Parse the link and warn the user, if it is not correct
       }, onError: (err) {
         // Handle exception by warning the user their action did not succeed

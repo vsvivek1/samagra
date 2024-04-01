@@ -3168,12 +3168,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       estimatedQuantityOfmaterials =
           aggregateMaterialQuantities(wrk_execution_material_schedules);
 
-      showDialog(
+      /* showDialog(
           context: context,
           builder: (BuildContext context) {
             return MaterialDetailsPopup(
                 materialData: estimatedQuantityOfmaterials);
-          });
+          }); */
 
       // print(estimatedQuantityOfmaterials);
 

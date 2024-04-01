@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:samagra/environmental_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:convert';
@@ -57,11 +59,13 @@ launchSSOUrl(codeVerifier, codeChallenge, empcode) async {
 
   final Uri _url = Uri.parse(url);
 
-  // debugger(when: true);
-
   // print(url);
   // launchUrl(url, mode: LaunchMode.externalApplication);
   if (!await launchUrl(_url, mode: LaunchMode.externalApplication)) {
+    //debugger(when: true);
+
     throw Exception('Could not launch $_url');
   }
+
+  return;
 }

@@ -460,8 +460,13 @@ class SchGrpListWidget extends StatefulWidget {
 
 class _SchGrpListWidgetState extends State<SchGrpListWidget>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  /* late AnimationController _controller;
   late Animation<double> _animation;
+ */
+  /*  void dispose() {
+    //_controller.dispose(); // Dispose of the AnimationController
+   // super.dispose();
+  } */
 
   @override
   void initState() {
@@ -479,18 +484,18 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
       // audioCache.play('select_work.wav');
     }
 
-    _controller = AnimationController(
+    /*  _controller = AnimationController(
       vsync: this,
       duration: Duration(seconds: 4), // Adjust the duration as needed
     );
-
-    _animation = Tween<double>(
+ */
+    /*  _animation = Tween<double>(
       begin: 0.0, // Start position (off-screen left)
       end: 0, // End position (center)
-    ).animate(_controller);
+    ).animate(_controller); */
 
     // Start the animation
-    _controller.forward();
+    /*  _controller.forward(); */
   }
 
   final _searchController = TextEditingController();

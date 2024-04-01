@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
@@ -18,7 +20,8 @@ Future getUserInfo(String accessToken, _ssoLoginLoading) async {
         dio, accessToken, config); // Replace with your actual API key
 
     Response response = await dio.post(url);
-    // debugger(when: true);
+
+    //debugger(when: true);
 
     return response.data;
 

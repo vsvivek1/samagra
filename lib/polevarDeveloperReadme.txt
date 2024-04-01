@@ -1,3 +1,5 @@
+NavigationHomeScreen first screen after login with drawer and home screen menu
+
 showLocationButtons
      function to list location as square boxes
 

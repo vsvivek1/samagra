@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/navigation_home_screen.dart';
+import 'package:samagra/samagra_home_screen/samagra_home_screen.dart';
+import 'package:samagra/screens/Untitled-1.dart';
 
 class SSOLogin extends StatefulWidget {
   const SSOLogin({super.key});
@@ -8,8 +11,13 @@ class SSOLogin extends StatefulWidget {
 }
 
 class _SSOLoginState extends State<SSOLogin> {
+  initState() {}
+
   @override
   Widget build(BuildContext context) {
+    //return LoginScreen();
+    return NavigationHomeScreen();
+    return SamagraHomeScreen();
     return const Placeholder();
   }
 }
