@@ -108,5 +108,13 @@ class Category {
       money: 208,
       rating: 4.9,
     ),
+    Category(
+      imagePath: 'assets/samagra_home_screen/interFace1.png',
+      target: 'VersionController',
+      title: 'Admin',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
   ];
 }

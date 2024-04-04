@@ -1,3 +1,4 @@
+import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
@@ -107,6 +108,10 @@ class CategoryView extends StatelessWidget {
         return IbBooking();
       case 'TreeCuttingCompensation':
         return TreeCuttingCompensation();
+      // Add more cases as needed
+
+      case 'VersionController':
+        return VersionController();
       // Add more cases as needed
       default:
         return ComingSoon();

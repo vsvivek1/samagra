@@ -277,6 +277,13 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                               );
                             },
                           ),
+                    ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              const Color.fromARGB(255, 132, 184, 134)),
+                        ),
+                        onPressed: addMaterialsNotInEstimate(),
+                        child: Text('Add Materials Not in Estimate')),
                   ],
                 ),
           ],
@@ -424,14 +431,33 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                     ],
                   );
                 },
-              )
+              ),
+              ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 132, 184, 134)),
+                  ),
+                  onPressed: addLabourNotInEstimate(),
+                  child: Text(
+                      textAlign: TextAlign.center,
+                      'Add Labour Not in Estimate')),
             ],
           ),
         );
       });
     } else {
       return Builder(builder: (context) {
-        return Column(children: [Container(child: Text('No labour'))]);
+        return Column(children: [
+          Container(child: Text('No labour')),
+          ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(
+                    const Color.fromARGB(255, 132, 184, 134)),
+              ),
+              onPressed: addLabourNotInEstimate(),
+              child: Text(
+                  textAlign: TextAlign.center, 'Add Labour Not in Estimate'))
+        ]);
       });
     }
   }
@@ -500,6 +526,15 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                     );
                   },
                 ),
+            ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      const Color.fromARGB(255, 132, 184, 134)),
+                ),
+                onPressed: addtakenbacksNotInEstimate(),
+                child: Text(
+                    textAlign: TextAlign.center,
+                    'Add Takenbacks Not in Estimate')),
           ],
         ),
       );
@@ -633,4 +668,10 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       },
     );
   }
+
+  addMaterialsNotInEstimate() {}
+
+  addLabourNotInEstimate() {}
+
+  addtakenbacksNotInEstimate() {}
 }

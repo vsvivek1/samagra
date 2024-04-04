@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flare_flutter/base/actor_color.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
@@ -1675,68 +1676,84 @@ class _PolVarScreenState extends State<PolVarScreen> {
                         color: Colors.grey[400],
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     padding: const EdgeInsets.all(16.0),
-                    child: Row(
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: 'From Location',
-                              border: OutlineInputBorder(),
-                            ),
-                            child: TextFormField(
-                              initialValue: _toLocation,
-                              onChanged: (value) async {
-                                String from = ' _fromLocation';
-                                String to = '_toLocation';
+                        Container(
+                            decoration: BoxDecoration(
+                                // gradient: Gradient(colors: [Colors.red,Colors.green]),
+                                color: Colors.grey[500],
+                                borderRadius: BorderRadius.circular(10)),
+                            padding: EdgeInsets.only(top: 1, bottom: 1),
+                            margin: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                                textAlign: TextAlign.center,
+                                "From and to Location names or pol Numbers ")),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'From Location',
+                                  border: OutlineInputBorder(),
+                                ),
+                                child: TextFormField(
+                                  initialValue: _toLocation,
+                                  onChanged: (value) async {
+                                    String from = ' _fromLocation';
+                                    String to = '_toLocation';
 
-                                if (_fromLocation != '' && _toLocation != '') {
-                                  await Future.delayed(Duration(seconds: 3));
+                                    if (_fromLocation != '' &&
+                                        _toLocation != '') {
+                                      await Future.delayed(
+                                          Duration(seconds: 3));
 
-                                  if (from == _fromLocation &&
-                                      to == _toLocation) {
-                                    this.userDirections = 'Now Press save ';
+                                      if (from == _fromLocation &&
+                                          to == _toLocation) {
+                                        this.userDirections = 'Now Press save ';
 
-                                    if (!isAudioMuted) {
-                                      // audioCache.play('press_save_button.mp3');
+                                        if (!isAudioMuted) {
+                                          // audioCache.play('press_save_button.mp3');
+                                        }
+                                      } else {
+                                        from = _fromLocation;
+                                        to = _toLocation;
+                                      }
                                     }
-                                  } else {
-                                    from = _fromLocation;
-                                    to = _toLocation;
-                                  }
-                                }
 
-                                setState(() {
-                                  _fromLocation = value;
-                                });
-                              },
+                                    setState(() {
+                                      _fromLocation = value;
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: InputDecorator(
-                            decoration: InputDecoration(
-                              labelText: 'To Location',
-                              border: OutlineInputBorder(),
-                            ),
-                            child: TextFormField(
-                              initialValue: _toLocation.toString(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _toLocation = value;
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'To Location',
+                                  border: OutlineInputBorder(),
+                                ),
+                                child: TextFormField(
+                                  initialValue: _toLocation.toString(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _toLocation = value;
 
-                                  if (_fromLocation != '' &&
-                                      _toLocation != '') {
-                                    this.userDirections = 'Now Press save ';
-                                    if (!isAudioMuted) {
-                                      // audioCache.play('press_save_button.mp3');
-                                    }
-                                    this.steps = this.steps++; //3
-                                  }
-                                });
-                              },
+                                      if (_fromLocation != '' &&
+                                          _toLocation != '') {
+                                        this.userDirections = 'Now Press save ';
+                                        if (!isAudioMuted) {
+                                          // audioCache.play('press_save_button.mp3');
+                                        }
+                                        this.steps = this.steps++; //3
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),

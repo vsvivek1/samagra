@@ -1,3 +1,4 @@
+import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/custom_drawer/drawer_user_controller.dart';
 import 'package:samagra/custom_drawer/home_drawer.dart';
@@ -97,6 +98,12 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
         case DrawerIndex.FrtuInspection:
           setState(() {
             screenView = FrtuInspection();
+          });
+          break;
+
+        case DrawerIndex.ADMIN:
+          setState(() {
+            screenView = VersionController();
           });
           break;
 

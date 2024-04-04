@@ -754,5 +754,6 @@ enum DrawerIndex {
   Invite,
   Testing,
   PhoneBook,
-  FrtuInspection
+  FrtuInspection,
+  ADMIN
 }
