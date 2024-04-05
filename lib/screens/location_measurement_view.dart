@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/add_new_material.dart';
 
 class LocationMeasurementView extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
@@ -282,7 +283,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                           backgroundColor: MaterialStateProperty.all<Color>(
                               const Color.fromARGB(255, 132, 184, 134)),
                         ),
-                        onPressed: addMaterialsNotInEstimate(),
+                        onPressed: (() {
+                          addMaterialsNotInEstimate();
+                        }),
                         child: Text('Add Materials Not in Estimate')),
                   ],
                 ),
@@ -669,7 +672,18 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     );
   }
 
-  addMaterialsNotInEstimate() {}
+  addMaterialsNotInEstimate() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => AddNewMaterial(
+          tasks: widget.tasks,
+          reflectQuantityDetails: widget.reflectQuantityDetails,
+          estimatedQuantityOfmaterials: widget.estimatedQuantityOfmaterials,
+          measurementDetails: widget.measurementDetails,
+        ),
+      ),
+    );
+  }
 
   addLabourNotInEstimate() {}
 
