@@ -81,11 +81,16 @@ class _WorkSelectionState extends State<WorkSelection> {
         appBar: AppBar(
           leading: null,
           automaticallyImplyLeading: false,
-          backgroundColor: ksebMaterialColor,
+          // backgroundColor: ksebMaterialColor,
+          backgroundColor: Colors.grey[200],
           title: Row(
             children: [
               Spacer(),
-              Text('Select a Work'),
+              Text(
+                textAlign: TextAlign.center,
+                'Select a Work',
+                style: TextStyle(color: ksebColor),
+              ),
               Spacer(),
               IconButton(
                   color: Colors.red,
