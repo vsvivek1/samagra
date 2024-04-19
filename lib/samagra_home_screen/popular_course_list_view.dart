@@ -34,6 +34,12 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
     return true;
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    animationController?.dispose();
+    super.dispose();
+  }
   // const DestinationScreen({Key? key}) : super(key: key);
 
   // Method to perform navigation

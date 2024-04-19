@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() async {
   // EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
@@ -24,6 +25,13 @@ void main() async {
   // lib/main.dart
 
   // .env
+  WidgetsFlutterBinding.ensureInitialized();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'));
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
   ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
     return SizedBox(
@@ -32,7 +40,6 @@ void main() async {
     ); // Replace with your custom error widget
   };
 
-  WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
@@ -167,7 +174,9 @@ class _SamagraState extends State<Samagra> {
           // '/polevar': (context) => PolVarScreen(),
           // '/': (context) => NavigationHomeScreen(),
           '/redirected': (context) => NavigationHomeScreen(),
+          // '/home': (context) => NavigationHomeScreen(),
           '/home': (context) => NavigationHomeScreen(),
+          // '/home': (context) => NavigationHomeScreen(),
           // '/sso_screen': (context) => SSO(), // SSO screen
           '/sso_screen': (context) => LoginScreen(), // SSO screen
         },
@@ -186,7 +195,7 @@ class _SamagraState extends State<Samagra> {
           textTheme: AppTheme.textTheme,
           platform: TargetPlatform.iOS,
         ),
-        home: UpdateCheck(), // //SplashScreen(),
+        home: LoginScreen(), // //SplashScreen(),
       ),
     );
   }

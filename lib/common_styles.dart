@@ -19,6 +19,14 @@ ksebButtonStyle() {
   );
 }
 
+LinearGradient india() {
+  return LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Colors.orangeAccent, Colors.white, Colors.green],
+  );
+}
+
 getKsebImages() async {
   // Dio dio = Dio();
 

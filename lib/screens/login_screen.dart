@@ -570,7 +570,8 @@ class _LoginScreenState extends State<LoginScreen> {
         loginButtonText = 'Proceed For Login';
       },
       child:
-          Text(style: TextStyle(color: Colors.orangeAccent), loginButtonText),
+          //Text(style: TextStyle(color: Colors.orangeAccent), loginButtonText),
+          Text(style: TextStyle(color: Colors.white), loginButtonText),
     );
   }
 
@@ -906,10 +907,10 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
 
-    Navigator.push(
+    /*  Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => NavigationHomeScreen()),
-    );
+    ); */
   }
 
   Future<void> handleServerLoginScafoldMessenger(

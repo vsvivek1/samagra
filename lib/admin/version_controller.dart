@@ -3,7 +3,13 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:samagra/admin/version_input.dart';
+import 'package:samagra/coming_soon.dart';
 import 'package:samagra/common.dart';
+import 'package:samagra/common_styles.dart';
 
 import '../screens/login_screen.dart';
 import '../screens/set_access_toke_and_api_key.dart';
@@ -13,17 +19,30 @@ class VersionController extends StatefulWidget {
   _VersionControllerState createState() => _VersionControllerState();
 }
 
-class _VersionControllerState extends State<VersionController> {
+class _VersionControllerState extends State<VersionController>
+    with SingleTickerProviderStateMixin {
   String versionNumber = '';
   String link = '';
   String remarks = '';
 
   var comments;
 
+  late TabController _tabController;
+  //TabController(length: 4, vsync: AnimatedListState());
+
   @override
   void initState() {
+    _tabController = TabController(length: 4, vsync: this);
     super.initState();
-    fetchData();
+
+    // _listVersions();
+    //fetchData();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose(); // Dispose of the TabController
+    super.dispose();
   }
 
   fetchData() async {
@@ -34,39 +53,94 @@ class _VersionControllerState extends State<VersionController> {
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
     //debugger(when: true);
     String url = "https://ws.kseb.in/resource/api/erp/group1/app_versions";
-    Response response = await dio.get(url, options: Options(headers: headers));
+    try {
+      Response response =
+          await dio.get(url, options: Options(headers: headers));
+    } on Exception catch (e) {
+      Fluttertoast.showToast(
+          msg: e.toString(),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      // TODO
+    }
 
     //debugger(when: true);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Version Controller'),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Version Controller'),
+          bottom: TabBar(
+            controller: _tabController,
+            dividerColor: Colors.grey[200],
+            indicatorColor: Colors.grey[100],
+            isScrollable: true,
+            labelColor: Colors.grey,
+            tabs: [
+              Tab(text: 'Versions'),
+              Tab(text: 'Add new Version'),
+              Tab(text: 'Tab 3'),
+              Tab(text: 'Tab 4'),
+            ],
+          ),
+        ),
+        body: TabBarView(controller: _tabController, children: [
+          //CurrentVersionDisplayWidget(),
+
+          SizedBox(
+              width: 200, height: 100, child: CurrentVersionDisplayWidget()),
+          //ComingSoon(),
+          SizedBox(width: 200, height: 100, child: addNewVersion()),
+          ComingSoon(),
+          ComingSoon(),
+          /*  ComingSoon(),
+          ComingSoon() */
+        ]),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+    );
+  }
+
+  Padding addNewVersion() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        width: 200,
+        height: 200,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            /*   TextField(
               decoration: InputDecoration(labelText: 'Comments'),
               onChanged: (value) {
                 setState(() {
                   comments = value;
                 });
               },
-            ),
+            ), */
             SizedBox(height: 20),
-            TextField(
+            VersionInput(
+              onChanged: (version) {
+                setState(() {
+                  versionNumber = version;
+                });
+              },
+            ),
+            /*  TextField(
               decoration: InputDecoration(labelText: 'Version Number'),
               onChanged: (value) {
                 setState(() {
                   versionNumber = value;
                 });
               },
-            ),
+            ), */
             SizedBox(height: 20),
             TextField(
               decoration: InputDecoration(labelText: 'Link'),
@@ -91,9 +165,9 @@ class _VersionControllerState extends State<VersionController> {
                 // Handle submit action here
 
                 _storeVersion();
-                print('Version Number: $versionNumber');
-                print('Link: $link');
-                print('Remarks: $remarks');
+                /*  print('Version Number: $versionNumber');
+                  print('Link: $link');
+                  print('Remarks: $remarks'); */
               },
               child: Text('Submit'),
             ),
@@ -119,13 +193,13 @@ class _VersionControllerState extends State<VersionController> {
     data['platform'] = 'android';
     data['date'] = new DateTime.now(); */
 
-    var data = FormData.fromMap({
+    Map<String, dynamic> data = {
       'platform': 'android',
-      'date': new DateTime.now(),
+      'date': DateTime.now().toIso8601String(),
       'version': versionNumber,
       'comments': comments,
       'url': link,
-    });
+    };
 
 /* var response = await dio.request(
   'http://localhost:8000/api/app_versions/',
@@ -138,21 +212,348 @@ class _VersionControllerState extends State<VersionController> {
 
     try {
       Response response =
-          await dio.post(url, options: Options(headers: headers));
+          await dio.post(url, data: data, options: Options(headers: headers));
 
       if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: response.data[0]['version'],
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        _tabController.animateTo(0);
+      } else {
+        print(response.statusMessage);
+      }
+    } on Exception catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Dio Error: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      debugger(when: true);
+      // TODO
+    }
+  }
+
+  void _getVersion(id) async {
+    Dio dio = Dio();
+    var accessToken = await getAccessToken();
+    final headers = {'Authorization': 'Bearer $accessToken'};
+
+    dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    //debugger(when: true);
+    String url =
+        "https://ws.kseb.in/resource/api/erp/group1/app_versions/${id}";
+
+    try {
+      Response response =
+          await dio.get(url, options: Options(headers: headers));
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: response.data[0]['version'],
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
         print(json.encode(response.data));
       } else {
         print(response.statusMessage);
       }
     } on Exception catch (e) {
       print(e);
+      Fluttertoast.showToast(
+          msg: "Dio Error: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
       debugger(when: true);
       // TODO
     }
   }
 
-  void _listVersions() {}
-  void _deleteVersion() {}
-  void _updateVersion() {}
+  void _deleteVersion(id) async {
+    Dio dio = Dio();
+    var accessToken = await getAccessToken();
+    final headers = {'Authorization': 'Bearer $accessToken'};
+
+    dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    //debugger(when: true);
+    String url =
+        "https://ws.kseb.in/resource/api/erp/group1/app_versions/${id}";
+
+    /*  Map data = {};
+    data['version'] = versionNumber;
+    data['url'] = link;
+    data['comments'] = comments;
+    data['platform'] = 'android';
+    data['date'] = new DateTime.now(); */
+
+    Map<String, dynamic> data = {
+      'platform': 'android',
+      'date': DateTime.now().toIso8601String(),
+      'version': versionNumber,
+      'comments': comments,
+      'url': link,
+    };
+
+/* var response = await dio.request(
+  'http://localhost:8000/api/app_versions/',
+  options: Options(
+    method: 'POST',
+    headers: headers,
+  ),
+  data: data,
+); */
+
+    try {
+      Response response =
+          await dio.delete(url, options: Options(headers: headers));
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: response.data[0]['version'],
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        print(json.encode(response.data));
+      } else {
+        print(response.statusMessage);
+      }
+    } on Exception catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Dio Error: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      debugger(when: true);
+      // TODO
+    }
+  }
+
+  void _updateVersion(id) async {
+    Dio dio = Dio();
+    var accessToken = await getAccessToken();
+    final headers = {'Authorization': 'Bearer $accessToken'};
+
+    dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    //debugger(when: true);
+    String url =
+        "https://ws.kseb.in/resource/api/erp/group1/app_versions/${id}";
+
+    /*  Map data = {};
+    data['version'] = versionNumber;
+    data['url'] = link;
+    data['comments'] = comments;
+    data['platform'] = 'android';
+    data['date'] = new DateTime.now(); */
+
+    Map<String, dynamic> data = {
+      'platform': 'android',
+      'date': DateTime.now().toIso8601String(),
+      'version': versionNumber,
+      'comments': comments,
+      'url': link,
+    };
+
+/* var response = await dio.request(
+  'http://localhost:8000/api/app_versions/',
+  options: Options(
+    method: 'POST',
+    headers: headers,
+  ),
+  data: data,
+); */
+
+    try {
+      Response response =
+          await dio.put(url, data: data, options: Options(headers: headers));
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: response.data[0]['version'],
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        print(json.encode(response.data));
+      } else {
+        print(response.statusMessage);
+      }
+    } on Exception catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Dio Error: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      debugger(when: true);
+      // TODO
+    }
+  }
+}
+
+class CurrentVersionDisplayWidget extends StatelessWidget {
+  const CurrentVersionDisplayWidget({
+    super.key,
+  });
+
+  Future _listVersions() async {
+    Dio dio = Dio();
+    var accessToken = await getAccessToken();
+    final headers = {'Authorization': 'Bearer $accessToken'};
+
+    dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    //debugger(when: true);
+    String url = "https://ws.kseb.in/resource/api/erp/group1/app_versions";
+
+    try {
+      Response response =
+          await dio.get(url, options: Options(headers: headers));
+
+      if (response.statusCode == 200) {
+        Fluttertoast.showToast(
+            msg: response.data[0]['version'],
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        print(json.encode(response.data));
+
+        return response.data;
+      } else {
+        return response.statusMessage;
+      }
+    } on Exception catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg: "Dio Error: $e",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+
+      return e;
+
+      // TODO
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: _listVersions(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return ComingSoon();
+          }
+
+          return Column(
+            children: [
+              Text('Current version'),
+              _buildListItem(context, snapshot.data[0]) as Widget,
+            ],
+          );
+        });
+  }
+
+  Widget? _buildListItem(context, item) {
+    return SizedBox(
+        width: 200,
+        height: 200,
+        child: Table(
+          children: [
+            TableRow(
+              decoration: BoxDecoration(
+                  gradient: india(),
+                  color: Colors.grey,
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(2)),
+              children: [
+                Text("Date "),
+                Text(item['date']),
+              ],
+            ),
+            TableRow(
+              decoration: BoxDecoration(
+                  gradient: india(),
+                  color: Colors.grey,
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(2)),
+              children: [
+                Text("Version "),
+                Text(item['version']),
+              ],
+            ),
+            TableRow(
+              decoration: BoxDecoration(
+                  gradient: india(),
+                  color: Colors.grey,
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(2)),
+              children: [
+                Text("Platform"),
+                Text(item['platform']),
+              ],
+            ),
+            TableRow(
+              decoration: BoxDecoration(
+                  gradient: india(),
+                  color: Colors.grey,
+                  border: Border.all(),
+                  borderRadius: BorderRadius.circular(2)),
+              children: [
+                Text("url"),
+                Text(item['url']),
+              ],
+            ),
+          ],
+        )
+
+        /*    Column(
+        children: [
+          Text(item['date']),
+          Spacer(),
+          Text(item['version']),
+          Spacer(),
+          Text(item['comments']),
+          Spacer(),
+          Text(item['url']),
+          Spacer(),
+          Text(item['platform']),
+        ],
+      ), */
+        );
+    print('item builder');
+
+    print(context);
+  }
 }

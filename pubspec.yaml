@@ -17,6 +17,7 @@ publish_to: "none"
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 #version: 1.0.0+1
+#version: 1.0.0
 version: 1.0.0
 
 environment:
@@ -64,6 +65,7 @@ dependencies:
     vector_math: any
     crypto: any
     path_provider: ^2.1.2
+    flutter_local_notifications: ^17.0.1
 
 
     

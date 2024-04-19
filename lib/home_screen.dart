@@ -52,6 +52,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () async {
+                      await showNotification();
+                    },
+                    child: Text('Show Notification'),
+                  ),
                   appBar(),
                   Expanded(
                     child: FutureBuilder<bool>(
@@ -176,6 +182,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ),
     );
   }
+
+  showNotification() {}
 }
 
 class HomeListView extends StatelessWidget {

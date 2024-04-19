@@ -857,7 +857,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                     'WorkCode: $workCode',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Color.fromARGB(255, 236, 143, 11),
+                      color: Color.fromARGB(255, 244, 242, 240),
                     ),
                   ),
                 ),

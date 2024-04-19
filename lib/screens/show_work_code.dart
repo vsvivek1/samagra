@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/kseb_color.dart';
 
 class ShowWorkCode extends StatelessWidget {
   final String workCode;
@@ -20,7 +21,7 @@ class ShowWorkCode extends StatelessWidget {
             textBaseline: TextBaseline.ideographic,
             fontSize: 14,
             wordSpacing: 5,
-            color: Color.fromARGB(255, 236, 143, 11)),
+            color: ksebColor),
       ),
     );
   }
