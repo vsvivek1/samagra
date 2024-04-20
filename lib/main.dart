@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
@@ -9,6 +10,7 @@ import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
+import 'package:upgrader/upgrader.dart';
 
 // import 'package:samagra/spalsh_screen.dart';
 // import 'navigation_home_screen.dart';
@@ -26,6 +28,9 @@ void main() async {
 
   // .env
   WidgetsFlutterBinding.ensureInitialized();
+
+  await FlutterDownloader.initialize();
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
@@ -43,7 +48,7 @@ void main() async {
   await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
-  ]).then((_) => runApp(ProviderScope(child: Samagra())));
+  ]).then((_) => runApp(UpgradeAlert(child: ProviderScope(child: Samagra()))));
 }
 
 methodChanel() {
@@ -173,9 +178,11 @@ class _SamagraState extends State<Samagra> {
         routes: {
           // '/polevar': (context) => PolVarScreen(),
           // '/': (context) => NavigationHomeScreen(),
-          '/redirected': (context) => NavigationHomeScreen(),
+          // '/redirected': (context) => NavigationHomeScreen(),
+          '/redirected': (context) => UpdateCheck(),
           // '/home': (context) => NavigationHomeScreen(),
-          '/home': (context) => NavigationHomeScreen(),
+          // '/home': (context) => NavigationHomeScreen(),
+          '/home': (context) => UpdateCheck(),
           // '/home': (context) => NavigationHomeScreen(),
           // '/sso_screen': (context) => SSO(), // SSO screen
           '/sso_screen': (context) => LoginScreen(), // SSO screen
