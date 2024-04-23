@@ -122,7 +122,8 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                     ),
                     SizedBox(height: 8.0),
                   ],
-                  if (editMode) ...[
+                  // if (editMode) ...[
+                  if (_gotLocation && locationName != '') ...[
                     Text('Enter Location Name'),
                     Row(
                       children: [
