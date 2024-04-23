@@ -44,7 +44,7 @@ class MeasurementOptionScreen extends StatelessWidget {
             },
             onHorizontalDragEnd: (details) {
               if (details.primaryVelocity! < 0) {
-                Navigator.push(
+                /*  Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => PolVarScreen(
@@ -54,14 +54,14 @@ class MeasurementOptionScreen extends StatelessWidget {
                           measurementSetId: this.measurementSetId,
                           workScheduleGroupId: this.workScheduleGroupId,
                           isMuted: this.isMuted)),
-                );
+                ); */
               }
 
               if (details.primaryVelocity! > 0) {
                 // printWidgetTree(context);
 
                 // Navigator.pushNamed(context, '/home');
-                Navigator.pop(context);
+                //  Navigator.pop(context);
 
                 // print('hi');
                 // print(details);

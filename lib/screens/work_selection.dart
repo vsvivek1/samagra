@@ -56,7 +56,7 @@ class _WorkSelectionState extends State<WorkSelection> {
         if (details.primaryVelocity! > 0) {
           // printWidgetTree(context);
 
-          Navigator.pushNamed(context, '/home');
+          // Navigator.pushNamed(context, '/home');
 
           // Navigator.pushReplacementNamed(context, '/home');
           // Swiped from left to right (right to left motion)
