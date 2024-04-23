@@ -2314,6 +2314,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
             headerBuilder: (BuildContext context, bool isExpanded) {
               taskNo++;
               return ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
                 // trailing: Text('select'),
                 leading: CircleAvatar(
                   radius: 20,

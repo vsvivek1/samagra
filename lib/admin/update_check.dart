@@ -291,9 +291,9 @@ class _UpdateCheckState extends State<UpdateCheck> {
         } else {
           // If the Future has resolved successfully
           // You can access the result using snapshot.data
-          if (snapshot.data is DioException) {
+          /*   if (snapshot.data is DioException) {
             return Center(child: Text('Dio Exception'));
-          }
+          } */
 
           serverVersion = snapshot.data;
 

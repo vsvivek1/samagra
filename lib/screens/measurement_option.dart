@@ -37,7 +37,7 @@ class MeasurementOptionScreen extends StatelessWidget {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onLongPress: () {
-              Navigator.pushNamed(context, '/home');
+              // Navigator.pushNamed(context, '/home');
             },
             onDoubleTap: () {
               print('hid');

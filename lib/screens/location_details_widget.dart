@@ -74,6 +74,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
       child: (widget.locationNo == '-1')
           ? Text("Select a Location to View details")
           : Container(
+              transformAlignment: Alignment.center,
               margin: EdgeInsets.all(5),
               decoration: BoxDecoration(
                   color: Colors.grey[400],
