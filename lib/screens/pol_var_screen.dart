@@ -1194,31 +1194,35 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                       : "Detailed \n View of Locations")) */
                         ]),
                   ),
-                  floatingActionButton: FloatingActionButton(
-                    elevation: 100,
-                    backgroundColor: Colors.white,
-                    autofocus: true,
-                    focusColor: ksebColor,
-                    tooltip: 'Go to another Location',
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.place,
-                          color: Colors.greenAccent,
-                        ),
-                        Text(
-                          style: TextStyle(
-                              backgroundColor: Colors.white, color: ksebColor),
-                          'Next',
-                          selectionColor: Colors.red,
-                        ),
-                      ],
+                  floatingActionButton: Visibility(
+                    visible: _showAnotherLocationButton,
+                    child: FloatingActionButton(
+                      elevation: 100,
+                      backgroundColor: Colors.white,
+                      autofocus: true,
+                      focusColor: ksebColor,
+                      tooltip: 'Go to another Location',
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.place,
+                            color: Colors.greenAccent,
+                          ),
+                          Text(
+                            style: TextStyle(
+                                backgroundColor: Colors.white,
+                                color: ksebColor),
+                            'Next',
+                            selectionColor: Colors.red,
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        _gotToAnotherLocation();
+                        // Add functionality for when the button is pressed
+                        // print('Button pressed!');
+                      },
                     ),
-                    onPressed: () {
-                      _gotToAnotherLocation();
-                      // Add functionality for when the button is pressed
-                      // print('Button pressed!');
-                    },
                   ),
 
                   // floatingActionButton: CurvedTextFab(
