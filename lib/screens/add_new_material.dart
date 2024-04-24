@@ -10,6 +10,7 @@ import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/searchable_dropdown.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
+import 'package:gap/gap.dart';
 
 class AddNewMaterial extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
@@ -99,92 +100,131 @@ class _MaterialEntryState extends State<MaterialEntry> {
       builder: (context, AsyncSnapshot snapshot) {
         if (!(snapshot.hasData)) {
           return Center(
+            widthFactor: 2,
+            heightFactor: 2,
             child: SpinKitFadingCube(color: Colors.blue), // Use your color here
           );
         }
-        print(snapshot);
+        //print(snapshot);
         materialMaster = snapshot.data;
-        return Row(
-          children: [
-            // List of ListTile for materials
-            SizedBox(height: 200, child: materialList(materialMaster)),
-            SizedBox(width: 10),
-            // Field to enter quantity
-            Expanded(
-              child: TextField(
-                onChanged: (value) {
-                  setState(() {
-                    quantity = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Quantity',
+        return Container(
+          decoration: BoxDecoration(
+              boxShadow: [BoxShadow(spreadRadius: 2, blurRadius: 2)],
+              borderRadius: BorderRadius.circular(10),
+              gradient: LinearGradient(
+                  colors: [Colors.grey, Colors.white70, Colors.grey])),
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 30,
+              ),
+              // Gap(),
+              materialList(materialMaster),
+              // List of ListTile for materials
+              /*  SizedBox(
+                  width: 250, height: 1000, child: materialList(materialMaster)), */
+              // SizedBox(width: 10),
+              // Field to enter quantity
+              /*   Expanded(
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      quantity = value;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Quantity',
+                  ),
                 ),
               ),
-            ),
-            // Edit, Delete, and Save buttons
-            IconButton(
-              onPressed: () {
-                // Implement edit functionality
-              },
-              icon: Icon(Icons.edit),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  // Implement delete functionality
-                });
-              },
-              icon: Icon(Icons.delete),
-            ),
-            IconButton(
-              onPressed: () {
-                // Implement save functionality
-              },
-              icon: Icon(Icons.save),
-            ),
-          ],
+              // Edit, Delete, and Save buttons
+              IconButton(
+                onPressed: () {
+                  // Implement edit functionality
+                },
+                icon: Icon(Icons.edit),
+              ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    // Implement delete functionality
+                  });
+                },
+                icon: Icon(Icons.delete),
+              ),
+              IconButton(
+                onPressed: () {
+                  // Implement save functionality
+                },
+                icon: Icon(Icons.save),
+              ),
+          
+              */
+            ],
+          ),
         );
       },
     );
   }
 
   Widget materialList(List materialList) {
-    List filteredMaterialMaster = [];
+    List filteredMaterialMaster = materialMaster;
+
+    print(filteredMaterialMaster);
+    print('filteredMaterialMaster');
+
     return Column(
       children: [
-        SizedBox(
-          width: 300,
-          height: 100,
-          child: TextField(
-            onChanged: (value) {
-              setState(() {
-                filteredMaterialMaster = materialMaster
-                    .where((material) => material['material_name']
-                        .toString()
-                        .toLowerCase()
-                        .contains(value.toLowerCase()))
-                    .toList();
-              });
-            },
-            /*  decoration: InputDecoration(
-              hintText: 'Search Material',
-            ), */
-          ),
+        Row(
+          children: [
+            SizedBox(
+              width: 300,
+              height: 100,
+              child: TextField(
+                onChanged: (value) {
+                  print('hi');
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search Material',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      print('hi');
+                      setState(() {});
+                    },
+                    icon: Icon(Icons.search),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide(color: Colors.blue),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
         SizedBox(
-          width: 100,
-          height: 200,
+          width: MediaQuery.sizeOf(context).width * .8,
+          height: 300,
           child: ListView.builder(
             itemCount: filteredMaterialMaster.length,
             itemBuilder: (BuildContext context, int index) {
               var item = filteredMaterialMaster[index];
               return ListTile(
+                selected: item['selected'] == true,
+                selectedTileColor: Colors.red,
+                trailing: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.select_all_sharp),
+                ),
                 title: Text(item['material_name'].toString()),
                 onTap: () {
-                  setState(() {
-                    selectedMaterial = (index + 1).toString();
-                  });
+                  selectMaterial(item, index);
                 },
               );
             },
@@ -192,6 +232,27 @@ class _MaterialEntryState extends State<MaterialEntry> {
         ),
       ],
     );
+  }
+
+  List<dynamic> searchMaterial(
+      List<dynamic> filteredMaterialMaster, String value) {
+    setState(() {
+      filteredMaterialMaster = materialMaster
+          .where((material) => material['material_name']
+              .toString()
+              .toLowerCase()
+              .contains(value.toLowerCase()))
+          .toList();
+    });
+    return filteredMaterialMaster;
+  }
+
+  void selectMaterial(item, int index) {
+    setState(() {
+      item['selected'] = item['selected'] ?? false;
+      item['selected'] = !item['selected'];
+      selectedMaterial = (index + 1).toString();
+    });
   }
 
   Future<List<dynamic>> getMaterialmasterData() async {
