@@ -75,11 +75,11 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
           ? Text("Select a Location to View details")
           : Container(
               transformAlignment: Alignment.center,
-              margin: EdgeInsets.all(5),
+              margin: EdgeInsets.all(2),
               decoration: BoxDecoration(
                   color: Colors.grey[400],
                   borderRadius: BorderRadius.all(Radius.circular(10))),
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -118,7 +118,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                   SizedBox(height: 8.0),
                   if (this.locationName != '') ...[
                     Text(
-                      'Location Name: ${this.locationName}',
+                      'Location Name:\n ${this.locationName}',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     SizedBox(height: 8.0),
@@ -130,7 +130,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                       children: [
                         SizedBox(
                           height: 100,
-                          width: 150,
+                          width: 125,
                           child: TextFormField(
                             initialValue: locationName,
                             onChanged: ((value) => updateLocationText(value)),

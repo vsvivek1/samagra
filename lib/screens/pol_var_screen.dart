@@ -1234,29 +1234,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   //     // print('Button pressed!');
                   //   },
                   // ),
-                  appBar: AppBar(
-                    backgroundColor: Colors.grey,
-                    title: AnimatedSwitcher(
-                      duration: Duration(milliseconds: 500),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          Text(
-                            userDirections,
-                            key: ValueKey<String>(userDirections),
-                            style: TextStyle(fontSize: 11, color: ksebColor),
-                          ),
-                          // VoiceControl(),
-                        ],
-                      ),
-                    ),
-                  ),
+                  appBar: appBar(),
                   body: Container(
                     margin: EdgeInsets.all(10),
                     padding: EdgeInsets.all(8.0),
@@ -1278,6 +1256,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                       thickness: 10,
                       child: SingleChildScrollView(
                         child: Container(
+                          //constraints: BoxConstraints.expand(height: null),
                           height: MediaQuery.of(context).size.height * 2,
                           margin: EdgeInsets.all(16.0),
                           child: Column(
@@ -1332,85 +1311,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 //     ],
                                 //   ),
                                 // ),
-                                Visibility(
-                                  visible: (_showSaveMeasurementDetailsButton ||
-                                      (_showAnotherLocationButton &&
-                                          !_showSaveMeasurementDetailsButton) ||
-                                      _showSubmitToSamagraButton),
-                                  child: SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 1.5,
-                                    child: Row(
-                                      children: [
-                                        Visibility(
-                                          visible:
-                                              _showSaveMeasurementDetailsButton &&
-                                                  false,
-                                          child: ElevatedButton(
-                                              onPressed: () =>
-                                                  {_saveMeasurementDetails()},
-                                              child: Text('Save')),
-                                        ),
-                                        Visibility(
-                                          visible: _showSubmitToSamagraButton,
-                                          child: ElevatedButton(
-                                              onPressed: () => {},
-                                              child:
-                                                  Text('Submit to Samagara')),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                                bottomnavigationButtons(context),
 
-                                Visibility(
-                                  visible: _selectedLocationIndex != -1,
-                                  child: IntrinsicHeight(
-                                    child: SizedBox(
-                                      // height: 200,
-                                      width: MediaQuery.of(context).size.width *
-                                          .95,
-                                      child: Row(children: [
-                                        Column(
-                                          children: [
-                                            // _selectedLocationHasGeoLocations
-                                            if (!_selectedLocationHasGeoLocations)
-                                              LocationDetailsWidget(
-                                                  hasLocationDetailsInStorage:
-                                                      _hasLocationDetailsInStorage,
-                                                  locationDetails: {},
-                                                  updateLocationDetailsArray:
-                                                      _updateLocationDetailsArray,
-                                                  locationNo:
-                                                      _selectedLocationIndex
-                                                          .toString(),
-                                                  measurements:
-                                                      List<String>.from(
-                                                    _selectedMeasurements,
-                                                  ),
-                                                  emitLocDetailsToPolVarWidget:
-                                                      _handleEmitLocDetailsToPolVarWidget)
-                                            // ,
-
-                                            ,
-                                            // SizedBox(
-                                            //   height:
-                                            //       MediaQuery.of(context).size.height *
-                                            //           8,
-                                            //   width:
-                                            //       MediaQuery.of(context).size.width * 8,
-                                            //   child: MeasurementDisplayWidget(
-                                            //       measurementDetails),
-                                            // )
-
-                                            // // viewAllLocationDetails(context),
-                                            // ,
-                                          ],
-                                        )
-                                      ]),
-                                    ),
-                                  ),
-                                ),
+                                geoCordinatesWidget(context),
                                 // Divider(color: Colors.white10, thickness: 10),
                                 // SizedBox(height: 50),
 
@@ -1419,23 +1322,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Row(
+                                /*   Row(
                                   children: [
                                     Spacer(),
                                   ],
-                                ),
+                                ), */
                                 SizedBox(
                                   height: 30,
                                 ),
 
-                                Visibility(
-                                  visible: _viewFullLocationList,
-                                  child: SizedBox(
-                                      width: 300,
-                                      height: 300,
-                                      child: MeasurementDisplayWidget(
-                                          measurementDetails)),
-                                ),
+                                fullLocationList(),
 
                                 Spacer(),
                               ],
@@ -1450,6 +1346,112 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ),
           );
         });
+  }
+
+  Visibility fullLocationList() {
+    return Visibility(
+      visible: _viewFullLocationList,
+      child: SizedBox(
+          width: 300,
+          height: 300,
+          child: MeasurementDisplayWidget(measurementDetails)),
+    );
+  }
+
+  Visibility bottomnavigationButtons(BuildContext context) {
+    return Visibility(
+      visible: (_showSaveMeasurementDetailsButton ||
+          (_showAnotherLocationButton && !_showSaveMeasurementDetailsButton) ||
+          _showSubmitToSamagraButton),
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 1.5,
+        child: Row(
+          children: [
+            Visibility(
+              visible: _showSaveMeasurementDetailsButton && false,
+              child: ElevatedButton(
+                  onPressed: () => {_saveMeasurementDetails()},
+                  child: Text('Save')),
+            ),
+            Visibility(
+              visible: _showSubmitToSamagraButton,
+              child: ElevatedButton(
+                  onPressed: () => {}, child: Text('Submit to Samagara')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AppBar appBar() {
+    return AppBar(
+      backgroundColor: Colors.grey,
+      title: AnimatedSwitcher(
+        duration: Duration(milliseconds: 500),
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        child: Column(
+          children: [
+            Text(
+              userDirections,
+              key: ValueKey<String>(userDirections),
+              style: TextStyle(fontSize: 11, color: ksebColor),
+            ),
+            // VoiceControl(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Visibility geoCordinatesWidget(BuildContext context) {
+    return Visibility(
+      visible: _selectedLocationIndex != -1,
+      child: IntrinsicHeight(
+        child: SizedBox(
+          // height: 200,
+          width: MediaQuery.of(context).size.width * .99,
+          child: Row(children: [
+            Column(
+              children: [
+                // _selectedLocationHasGeoLocations
+                if (!_selectedLocationHasGeoLocations)
+                  LocationDetailsWidget(
+                      hasLocationDetailsInStorage: _hasLocationDetailsInStorage,
+                      locationDetails: {},
+                      updateLocationDetailsArray: _updateLocationDetailsArray,
+                      locationNo: _selectedLocationIndex.toString(),
+                      measurements: List<String>.from(
+                        _selectedMeasurements,
+                      ),
+                      emitLocDetailsToPolVarWidget:
+                          _handleEmitLocDetailsToPolVarWidget)
+                // ,
+
+                ,
+                // SizedBox(
+                //   height:
+                //       MediaQuery.of(context).size.height *
+                //           8,
+                //   width:
+                //       MediaQuery.of(context).size.width * 8,
+                //   child: MeasurementDisplayWidget(
+                //       measurementDetails),
+                // )
+
+                // // viewAllLocationDetails(context),
+                // ,
+              ],
+            )
+          ]),
+        ),
+      ),
+    );
   }
 
   Padding addOneMoreLocation() {

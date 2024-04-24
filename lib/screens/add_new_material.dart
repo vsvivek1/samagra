@@ -39,9 +39,15 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Displaying existing rows
-          for (var entry in materialEntries) entry,
+
+          MaterialEntry(
+              tasks: widget.tasks,
+              reflectQuantityDetails: widget.reflectQuantityDetails,
+              estimatedQuantityOfmaterials: widget.estimatedQuantityOfmaterials,
+              measurementDetails: widget.measurementDetails)
+          // for (var entry in materialEntries) entry,
           // Button to add new row
-          ElevatedButton(
+          /*  ElevatedButton(
             onPressed: () {
               setState(() {
                 materialEntries.add(
@@ -56,7 +62,7 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
               });
             },
             child: Text('Add New Row'),
-          ),
+          ), */
         ],
       ),
     );
@@ -82,109 +88,131 @@ class MaterialEntry extends StatefulWidget {
 
 class _MaterialEntryState extends State<MaterialEntry> {
   var materials = [];
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    /*   var a = getMaterialmasterDataFromSecureStorage(); */
-  }
-
   String selectedMaterial = '1'; // Set a valid initial value
   String quantity = '';
-
   List materialMaster = [];
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: getMaterialmasterData(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!(snapshot.hasData)) {
-            return Center(
-              child: SpinKitFadingCube(color: ksebColor),
-              // child: CircularProgressIndicator(
-              //   backgroundColor: Colors.grey,
-              //   strokeWidth: 5.0,
-              //   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-              // ),
-            );
-          }
-          print(snapshot);
-
-          materialMaster = snapshot.data;
-          //  debugger(when: true);
-          return Row(
-            children: [
-              // Selectable field for materials
-              Expanded(
-                child: dropDownButton(),
-              ),
-              // Field to enter quantity
-              SizedBox(width: 10),
-              // Field to enter quantity
-              SizedBox(width: 10),
-              Expanded(
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      quantity = value;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Quantity',
-                  ),
-                ),
-              ),
-              // Edit, Delete, and Save buttons
-              IconButton(
-                onPressed: () {
-                  // Implement edit functionality
-                },
-                icon: Icon(Icons.edit),
-              ),
-              IconButton(
-                onPressed: () {
+      future: getMaterialmasterData(),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (!(snapshot.hasData)) {
+          return Center(
+            child: SpinKitFadingCube(color: Colors.blue), // Use your color here
+          );
+        }
+        print(snapshot);
+        materialMaster = snapshot.data;
+        return Row(
+          children: [
+            // List of ListTile for materials
+            SizedBox(height: 200, child: materialList(materialMaster)),
+            SizedBox(width: 10),
+            // Field to enter quantity
+            Expanded(
+              child: TextField(
+                onChanged: (value) {
                   setState(() {
-                    // Implement delete functionality
+                    quantity = value;
                   });
                 },
-                icon: Icon(Icons.delete),
+                decoration: InputDecoration(
+                  hintText: 'Quantity',
+                ),
               ),
-              IconButton(
-                onPressed: () {
-                  // Implement save functionality
-                },
-                icon: Icon(Icons.save),
-              ),
-            ],
-          );
-        });
+            ),
+            // Edit, Delete, and Save buttons
+            IconButton(
+              onPressed: () {
+                // Implement edit functionality
+              },
+              icon: Icon(Icons.edit),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  // Implement delete functionality
+                });
+              },
+              icon: Icon(Icons.delete),
+            ),
+            IconButton(
+              onPressed: () {
+                // Implement save functionality
+              },
+              icon: Icon(Icons.save),
+            ),
+          ],
+        );
+      },
+    );
   }
 
-  SizedBox dropDownButton() {
-    return SizedBox(
-                height: 10,
-                child: DropdownButton<String>(
-                  value: selectedMaterial,
-                  items: convertToDropdownItems(materialMaster),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedMaterial = newValue!;
-                    });
-                  },
-                ),
-
-                /* child: SearchableDropdown(
-                  items: materials,
-                  onChanged: (newValue) {
-                    setState(() {
-                      selectedMaterial = newValue;
-                    });
-                  },
-                ) */
+  Widget materialList(List materialList) {
+    List filteredMaterialMaster = [];
+    return Column(
+      children: [
+        SizedBox(
+          width: 300,
+          height: 100,
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                filteredMaterialMaster = materialMaster
+                    .where((material) => material['material_name']
+                        .toString()
+                        .toLowerCase()
+                        .contains(value.toLowerCase()))
+                    .toList();
+              });
+            },
+            /*  decoration: InputDecoration(
+              hintText: 'Search Material',
+            ), */
+          ),
+        ),
+        SizedBox(
+          width: 100,
+          height: 200,
+          child: ListView.builder(
+            itemCount: filteredMaterialMaster.length,
+            itemBuilder: (BuildContext context, int index) {
+              var item = filteredMaterialMaster[index];
+              return ListTile(
+                title: Text(item['material_name'].toString()),
+                onTap: () {
+                  setState(() {
+                    selectedMaterial = (index + 1).toString();
+                  });
+                },
               );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<List<dynamic>> getMaterialmasterData() async {
+    if (materialMaster.isNotEmpty) {
+      return materialMaster;
+    }
+
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+    final dio = Dio();
+    final url = '${config.liveServiceUrl}wrk/getLabourMaster/0';
+    final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
+
+    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+
+    String accessToken = await getAccessToken();
+    setDioAccessokenAndApiKey(dio, accessToken, config);
+
+    final response = await dio.get(url2, options: Options(headers: headers));
+
+    //debugger(when: true);
+    return response.data['result_data']['materialMaster'];
   }
 
   List<DropdownMenuItem<String>> convertToDropdownItems(List<dynamic> items) {
@@ -207,28 +235,16 @@ class _MaterialEntryState extends State<MaterialEntry> {
     }).toList();
   }
 
-  getMaterialmasterData() async {
-    if (materialMaster.isNotEmpty) {
-      return materialMaster;
-    }
+  @override
+  void initState() {
+    super.initState();
+    // Call your initialization method here
+  }
 
-    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
-    final dio = Dio();
-    final url = '${config.liveServiceUrl}wrk/getLabourMaster/0';
-    final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
-
-    final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
-
-    String accessToken = await getAccessToken();
-    setDioAccessokenAndApiKey(dio, accessToken, config);
-
-    // print(url);
-
-    // debugger(when: true);
-    final response = await dio.get(url2, options: Options(headers: headers));
-
-    return response.data['result_data']['materialMaster'];
-    debugger(when: true);
+  @override
+  void dispose() {
+    // Dispose any resources here
+    super.dispose();
   }
 }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
@@ -40,6 +42,7 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
     animationController?.dispose();
     super.dispose();
   }
+
   // const DestinationScreen({Key? key}) : super(key: key);
 
   // Method to perform navigation
@@ -102,6 +105,9 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
 }
 
 class CategoryView extends StatelessWidget {
+  int tapCount = 0;
+  Timer? _timer;
+
   Widget getTargetWidget(target) {
     switch (target) {
       case 'WorkSelection':
@@ -118,6 +124,14 @@ class CategoryView extends StatelessWidget {
 
       case 'VersionController':
         return VersionController();
+
+        /* else {
+          return AlertDialog(
+            content: Text('Dont be over smart'),
+          );
+        } */
+
+        break;
       // Add more cases as needed
       default:
         return ComingSoon();
@@ -125,7 +139,7 @@ class CategoryView extends StatelessWidget {
     }
   }
 
-  const CategoryView(
+  CategoryView(
       {Key? key,
       this.category,
       this.animationController,
@@ -153,15 +167,45 @@ class CategoryView extends StatelessWidget {
               // onTap: category?.target(),
 
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return getTargetWidget(category!.target);
-                  }
-                      // PhoneBook
+                print(category!.target);
+                if (category!.target == 'VersionController') {
+                  tapCount++;
+                  print("tap count $tapCount");
 
-                      ),
-                );
+                  if (tapCount == 1) {
+                    _timer = Timer(Duration(minutes: 1), () {
+                      // Reset the tap count if no taps occur within 1 minute
+                      tapCount = 0;
+                    });
+                  }
+
+                  if (tapCount == 5) {
+                    // Perform your action after 5 taps
+                    print('Button tapped 5 times!');
+                    // Reset the tap count
+                    tapCount = 0;
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) {
+                        return getTargetWidget(category!.target);
+                      }
+                          // PhoneBook
+
+                          ),
+                    );
+                  }
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return getTargetWidget(category!.target);
+                    }
+                        // PhoneBook
+
+                        ),
+                  );
+                }
               },
               // onTap: () {
               //   Widget? destinationScreen = category?.target();

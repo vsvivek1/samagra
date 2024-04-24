@@ -281,7 +281,8 @@ class _UpdateCheckState extends State<UpdateCheck> {
     return FutureBuilder(
       future: _listVersions(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            snapshot.data is DioException) {
           // While the Future is still loading
           return SpinKitDualRing(
               color: Colors.blue); // Or any other loading indicator

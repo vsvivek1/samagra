@@ -184,7 +184,7 @@ class _LocationButtonState extends State<LocationButton> {
       },
       icon: _loading ? Icon(Icons.label_important) : Icon(Icons.location_on),
       label: Text(
-        'Get Location',
+        'Get GPS lat/long',
         style: TextStyle(color: Colors.amber),
       ),
     );
