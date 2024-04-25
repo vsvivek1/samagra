@@ -346,85 +346,97 @@ class _LoginScreenState extends State<LoginScreen> {
                                           empCodeInitialValue =
                                               user["employee_code"].toString();
 
-                                          return Center(
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                if (config.deploymentMode
-                                                    .contains("UAT"))
-                                                  UATTestWidget(
-                                                      isUATTest: true),
-                                                ksebMainEmblemAndName(),
-                                                Visibility(
-                                                  visible: bytes.isEmpty,
-                                                  child: RandomAvatar(
-                                                      'saytoonz',
-                                                      trBackground: true,
-                                                      height: 100,
-                                                      width: 100),
-                                                  //
-                                                  // CircleAvatar(
-                                                  //     radius: 30,
-                                                  //     backgroundImage: AssetImage(
-                                                  //         'assets/images/kseb_emblem.jpeg'),
-                                                  //   ),
-                                                ),
-                                                Visibility(
-                                                  visible: bytes.isNotEmpty,
-                                                  child: CircleAvatar(
-                                                    radius: 100,
-                                                    backgroundImage:
-                                                        MemoryImage(bytes),
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                                gradient: RadialGradient(
+                                                    colors: [
+                                                  Color.fromARGB(
+                                                      255, 114, 179, 231),
+                                                  Colors.white
+                                                ])),
+                                            child: Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  if (config.deploymentMode
+                                                      .contains("UAT"))
+                                                    UATTestWidget(
+                                                        isUATTest: true),
+                                                  ksebMainEmblemAndName(),
+                                                  Visibility(
+                                                    visible: bytes.isEmpty,
+                                                    child: RandomAvatar(
+                                                        'saytoonz',
+                                                        trBackground: true,
+                                                        height: 100,
+                                                        width: 100),
+                                                    //
+                                                    // CircleAvatar(
+                                                    //     radius: 30,
+                                                    //     backgroundImage: AssetImage(
+                                                    //         'assets/images/kseb_emblem.jpeg'),
+                                                    //   ),
                                                   ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                    'Welcome Back ',
-                                                    style:
-                                                        TextStyle(fontSize: 20),
+                                                  Visibility(
+                                                    visible: bytes.isNotEmpty,
+                                                    child: CircleAvatar(
+                                                      radius: 100,
+                                                      backgroundImage:
+                                                          MemoryImage(bytes),
+                                                    ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  '$username ',
-                                                  style: TextStyle(
-                                                      color: ksebColor,
-                                                      fontSize: 24,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                // SizedBox(height: 32),
-                                                SizedBox(height: 16),
-                                                displayStoredEmployeeCode(),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      'Welcome Back ',
+                                                      style: TextStyle(
+                                                          fontSize: 20),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '$username ',
+                                                    style: TextStyle(
+                                                        color: ksebColor,
+                                                        fontSize: 24,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  // SizedBox(height: 32),
+                                                  SizedBox(height: 16),
+                                                  displayStoredEmployeeCode(),
 
-                                                SizedBox(
-                                                  height: 30,
-                                                ),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Spacer(),
-                                                    if (_showBiometricLoginButtton) ...[
-                                                      biometricLoginButton(
-                                                          context),
+                                                  SizedBox(
+                                                    height: 30,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
                                                       Spacer(),
+                                                      if (_showBiometricLoginButtton) ...[
+                                                        biometricLoginButton(
+                                                            context),
+                                                        Spacer(),
+                                                      ],
+                                                      if (DEPLOYEMENT_MODE
+                                                          .contains('SSO')) ...[
+                                                        Center(
+                                                            child:
+                                                                ssoLoginButton(
+                                                                    context)),
+                                                        Spacer(),
+                                                        changeUserButton(
+                                                            context),
+                                                        Spacer(),
+                                                      ]
                                                     ],
-                                                    if (DEPLOYEMENT_MODE
-                                                        .contains('SSO')) ...[
-                                                      Center(
-                                                          child: ssoLoginButton(
-                                                              context)),
-                                                      Spacer(),
-                                                      changeUserButton(context),
-                                                      Spacer(),
-                                                    ]
-                                                  ],
-                                                ),
-                                              ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         } else {
@@ -1145,131 +1157,126 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void initUniLinks() async {
     // Handle the initial URL when the app is opened with a URL
-    try {
-      final initialLink = await getInitialLink();
+    // try {
+    final initialLink = await getInitialLink();
 
-      //debugger(when: true);
+    //debugger(when: true);
 
-      if (initialLink == null) {
-        // return;
+    if (initialLink == null) {
+      // return;
 
-        /// added because initla null lik causing error
+      /// added because initla null lik causing error
+    }
+
+    late StreamSubscription _sub;
+
+    //debugger(when: true);
+    _sub = linkStream.listen((String? link) async {
+      if (link == '') {
+        return;
       }
-
-      late StreamSubscription _sub;
-
-      //debugger(when: true);
-      _sub = linkStream.listen((String? link) async {
-        if (link == '') {
-          return;
-        }
-        // print("link $link");
-        /*  setState(() {
+      // print("link $link");
+      /*  setState(() {
           
         }); */
-        externalLinkActivated = true;
-        String token = extractTokenFromLink(link!);
+      externalLinkActivated = true;
+      String token = extractTokenFromLink(link!);
 
-        if (token != '') {
-          // print(token);
-          try {
-            List<String> oIdAccessTokens =
-                await getOidcAccessTokens(codeVerifier, token);
-            if (oIdAccessTokens[0] == 'dummy') {
-              return;
-              throw Exception('dummy error');
-            }
+      if (token != '') {
+        // print(token);
 
-            // debugger(when: true);
+        List<String> oIdAccessTokens =
+            await getOidcAccessTokens(codeVerifier, token);
+        if (oIdAccessTokens[0] == 'dummy') {
+          return;
+          throw Exception('dummy error');
+        }
 
-            setState(() {
-              _gettingUserInfo = true;
-            });
-            var result =
-                await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
+        // debugger(when: true);
 
-            result['result_flag'] ??= -1;
+        setState(() {
+          _gettingUserInfo = true;
+        });
+        var result = await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
 
-            if (result['result_flag'] != 1) {
-              String msg = 'Try aafter some time LS 1186';
-              Fluttertoast.showToast(msg: msg);
-              setState(() {
-                externalLinkActivated = false;
+        result['result_flag'] ??= -1;
 
-                _gettingUserInfo = false;
-              });
+        if (result['result_flag'] != 1) {
+          String msg = 'Try aafter some time LS 1186';
+          Fluttertoast.showToast(msg: msg);
+          setState(() {
+            externalLinkActivated = false;
 
-              return;
-            }
+            _gettingUserInfo = false;
+          });
 
-            //debugger(when: true);
-            //debugger(when: true);
+          return;
+        }
 
-            setState(() {
-              externalLinkActivated = false;
+        //debugger(when: true);
 
-              _gettingUserInfo = false;
-            });
+        setState(() {
+          externalLinkActivated = false;
 
-            // debugger(when: true);
-            String occation = 'sso';
+          _gettingUserInfo = false;
+        });
 
-            await _handlServerLogin(result, occation, context,
-                oIdAccessTokens: oIdAccessTokens);
+        // debugger(when: true);
+        String occation = 'sso';
 
-            Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+        await _handlServerLogin(result, occation, context,
+            oIdAccessTokens: oIdAccessTokens);
 
-            // Check if the token has expired (optional)
+        //Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
 
+        // Check if the token has expired (optional)
+
+        // debugger(when: true);
+        // bool v = await isAccessTokenValid(token);
+
+        try {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UpdateCheck()),
+          );
+
+          // debugger(when: true);
+          /*  if (isAccessTokenValid(token)) {
             debugger(when: true);
-            bool v = await isAccessTokenValid(token);
-
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => UpdateCheck()),
-            );
-
+          } else {
             debugger(when: true);
-            if (isAccessTokenValid(token)) {
-              debugger(when: true);
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UpdateCheck()),
-              );
-            } else {
-              debugger(when: true);
-              return;
-            }
+            return;
+          } */
 
 //1049878 chalode ae
 
-            /// 1063736
-            // debugger(when: true);
+          /// 1063736
+          // debugger(when: true);
 
-            // print(result);
-          } on Exception catch (e) {
-            String occation = 'regular';
+          // print(result);
+        } on Exception catch (e) {
+          String occation = 'regular';
 
-            //  debugger(when: true);
-            _handleServerLoginError(context, e, occation);
-            print("$e is the error");
-            // TODO
-          } finally {
-            print('OidcAccessTokenxyx ');
-          }
+          //  debugger(when: true);
+          _handleServerLoginError(context, e, occation);
+          print("$e is the error");
+          // TODO
+        } finally {
+          print('OidcAccessTokenxyx ');
         }
-        print("$_sub is sub");
-        // Parse the link and warn the user, if it is not correct
-      }, onError: (err) {
-        // Handle exception by warning the user their action did not succeed
-      });
+      }
+      print("$_sub is sub");
+      // Parse the link and warn the user, if it is not correct
+    }, onError: (err) {
+      // Handle exception by warning the user their action did not succeed
+    });
 
-      // debugger(when: true);
+    // debugger(when: true);
 
-      // Process the initial URL accordingly
-    } on PlatformException {
+    // Process the initial URL accordingly
+    /*  } on PlatformException {
       // Handle exception if unable to get initial URL
-    }
+    } */
   }
 
   void _handleBiometricLogin(context) {
