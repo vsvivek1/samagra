@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 bool isAccessTokenValid(String accessToken) {
@@ -6,8 +8,10 @@ bool isAccessTokenValid(String accessToken) {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(accessToken);
 
     // Check if the token has expired (optional)
-    bool isTokenExpired = JwtDecoder.isExpired(decodedToken['exp']);
 
+    debugger(when: true);
+    bool isTokenExpired = JwtDecoder.isExpired(decodedToken['exp']);
+    debugger(when: true);
     // You can also check other claims if needed
 
     // Return true if the token is valid and not expired

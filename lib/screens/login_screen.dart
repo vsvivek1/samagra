@@ -11,7 +11,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:random_avatar/random_avatar.dart';
+import 'package:samagra/admin/is_jwt_valid.dart';
+import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/navigation_home_screen.dart';
@@ -21,6 +24,7 @@ import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
+import 'package:samagra/screens/my_api.dart';
 import 'package:samagra/screens/uat_test_display_widget.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:uni_links/uni_links.dart';
@@ -113,6 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String loginButtonText = 'Login with SSO';
 
+  bool _gettingUserInfo = false;
+
   // get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
   //  bool _showFirstTimePasswordField;
 
@@ -137,8 +143,9 @@ class _LoginScreenState extends State<LoginScreen> {
     loadConfig();
     // config = EnvironmentConfig.fromEnvFile();
 
-    //initUniLinks();
     //moved to sso login screen
+
+    initUniLinks();
 
     super.initState();
   }
@@ -228,7 +235,10 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     InternetConnectivity.showInternetConnectivityToast(context);
 
-    if (_isLoggingIn == -2 || _ssoLoginLoading || externalLinkActivated) {
+    if (_isLoggingIn == -2 ||
+        _ssoLoginLoading ||
+        externalLinkActivated ||
+        _gettingUserInfo) {
       return createLoadingSpinner();
     } else {
       return ScaffoldMessenger(
@@ -585,16 +595,24 @@ class _LoginScreenState extends State<LoginScreen> {
         Padding(
           padding: const EdgeInsets.all(20.0),
           child: Container(
+            decoration: BoxDecoration(
+                // backgroundBlendMode: BlendMode.hue,
+                boxShadow: [
+                  BoxShadow(blurRadius: 2),
+                  BoxShadow(blurRadius: 5),
+                  BoxShadow(blurRadius: 1)
+                ],
+                color: Color.alphaBlend(
+                    Colors.white70, Color.fromARGB(255, 197, 203, 219)),
+                borderRadius: BorderRadius.circular(10)),
             // clipBehavior: Clip.hardEdge,
-            color: Color.alphaBlend(
-                Colors.white70, Color.fromARGB(255, 197, 203, 219)),
+
             alignment: Alignment.centerRight,
             padding: EdgeInsets.all(20),
             child: Text('KERALA STATE ELECTRICTY BOARD LIMITED',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
                     fontSize: 18,
                     color: Color.fromARGB(255, 16, 87, 161))),
           ),
@@ -764,14 +782,16 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleServerLoginError(BuildContext context, Object e, occation) {
     String msg =
         'Error in connectecing With Server. Please Report or try after Some time';
-    ScaffoldMessenger.of(context).showSnackBar((SnackBar(
+
+    Fluttertoast.showToast(msg: msg, fontSize: 13, backgroundColor: Colors.red);
+    /*  ScaffoldMessenger.of(context).showSnackBar((SnackBar(
         content: Text(
           msg,
           style: TextStyle(
               color: Color.alphaBlend(
                   Color.fromARGB(255, 235, 79, 58), ksebColor)),
         ),
-        duration: Duration(seconds: 15))));
+        duration: Duration(seconds: 15)))); */
     print('exception hit');
     print(e);
 
@@ -1107,21 +1127,14 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(context: context, builder: (context) => alert);
   }
 
-  loginUsingSso(context, _ssoLoginLoading, setLoginState, empcode) {
-    initUniLinks();
+  loginUsingSso(context, _ssoLoginLoading, setLoginState, empcode) async {
     setLoginState(); //just setting loading variable =true
 
     print('sso1');
 
-    launchSSOUrl(codeVerifier, codeChallenge, empcode);
+    await launchSSOUrl(codeVerifier, codeChallenge, empcode);
     print('sso2');
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => SSOLogin()),
-    );
-
-    //initUniLinks();
     _ssoLoginLoading = false;
     //return;
     /*  Navigator.push(
@@ -1145,8 +1158,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       late StreamSubscription _sub;
 
-      print('$initialLink initial link');
-
       //debugger(when: true);
       _sub = linkStream.listen((String? link) async {
         if (link == '') {
@@ -1165,18 +1176,39 @@ class _LoginScreenState extends State<LoginScreen> {
             List<String> oIdAccessTokens =
                 await getOidcAccessTokens(codeVerifier, token);
             if (oIdAccessTokens[0] == 'dummy') {
+              return;
               throw Exception('dummy error');
             }
 
             // debugger(when: true);
 
+            setState(() {
+              _gettingUserInfo = true;
+            });
             var result =
                 await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
 
+            result['result_flag'] ??= -1;
+
+            if (result['result_flag'] != 1) {
+              String msg = 'Try aafter some time LS 1186';
+              Fluttertoast.showToast(msg: msg);
+              setState(() {
+                externalLinkActivated = false;
+
+                _gettingUserInfo = false;
+              });
+
+              return;
+            }
+
+            //debugger(when: true);
             //debugger(when: true);
 
             setState(() {
               externalLinkActivated = false;
+
+              _gettingUserInfo = false;
             });
 
             // debugger(when: true);
@@ -1184,6 +1216,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
             await _handlServerLogin(result, occation, context,
                 oIdAccessTokens: oIdAccessTokens);
+
+            Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+
+            // Check if the token has expired (optional)
+
+            debugger(when: true);
+            bool v = await isAccessTokenValid(token);
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => UpdateCheck()),
+            );
+
+            debugger(when: true);
+            if (isAccessTokenValid(token)) {
+              debugger(when: true);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UpdateCheck()),
+              );
+            } else {
+              debugger(when: true);
+              return;
+            }
 
 //1049878 chalode ae
 
@@ -1248,53 +1304,5 @@ String extractTokenFromLink(String inputString) {
     return secondItem;
   } else {
     return '';
-  }
-}
-
-class MyAPI {
-  final Dio _dio = Dio();
-
-  Future login(String email, String password, String showPhoto, context) async {
-    initializeConfig();
-    final String _url = "${config.liveServiceUrl}login";
-    final Map<String, String> data = {
-      "email": email,
-      "password": password,
-      "show_photo": showPhoto
-    };
-
-    try {
-      print(_url);
-      Response response = await _dio.post(_url, data: data);
-
-      if (response.statusCode != 200) {
-        ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-            content: Text('Too many requests and Load /server busy'),
-            duration: Duration(seconds: 3))));
-
-        var result;
-
-        return Future(() => result);
-      }
-
-      if (response.statusCode != 200 || response.data['result_flag'] == -1) {
-        // String resultMessage = response['result_message'];
-
-        // String resultMessage = response.result_message;
-
-        // ScaffoldMessenger.of(context).showSnackBar((SnackBar(
-        //     content: Text("$resultMessage"), duration: Duration(seconds: 3))));
-
-        return -1;
-      }
-      return response.data;
-    } on DioError catch (e) {
-      if (e.response != null) {
-        print(e);
-      } else {
-        // print(e.request);
-      }
-      throw e;
-    }
   }
 }

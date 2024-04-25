@@ -10,7 +10,7 @@ Future getUserInfo(String accessToken, _ssoLoginLoading) async {
   EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
   String url = '${config.liveServiceUrlLogin}/auth/getUserInfo';
 
-  String apiKey = '${config.apiKey}';
+  //String apiKey = '${config.apiKey}';
 
   try {
     // EnvironmentConfig config = EnvironmentConfig.fromEnvFile();

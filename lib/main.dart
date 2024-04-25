@@ -179,10 +179,10 @@ class _SamagraState extends State<Samagra> {
           // '/polevar': (context) => PolVarScreen(),
           // '/': (context) => NavigationHomeScreen(),
           // '/redirected': (context) => NavigationHomeScreen(),
-          '/redirected': (context) => UpdateCheck(),
+//'/redirected': (context) => UpdateCheck(),
           // '/home': (context) => NavigationHomeScreen(),
           // '/home': (context) => NavigationHomeScreen(),
-          '/home': (context) => UpdateCheck(),
+          // '/home': (context) => UpdateCheck(),
           // '/home': (context) => NavigationHomeScreen(),
           // '/sso_screen': (context) => SSO(), // SSO screen
           '/sso_screen': (context) => LoginScreen(), // SSO screen
