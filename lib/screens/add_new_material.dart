@@ -7,6 +7,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/material_list_widget.dart';
 import 'package:samagra/screens/searchable_dropdown.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
@@ -122,7 +123,10 @@ class _MaterialEntryState extends State<MaterialEntry> {
                 width: 30,
               ),
               // Gap(),
-              materialList(materialMaster),
+
+              MaterialListWidget(
+                  materialMaster: materialMaster, key: UniqueKey()),
+              // materialList(materialMaster),
               // List of ListTile for materials
               /*  SizedBox(
                   width: 250, height: 1000, child: materialList(materialMaster)), */
