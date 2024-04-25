@@ -70,6 +70,7 @@ dependencies:
     flutter_downloader: ^1.11.7
     android_intent: ^2.0.2
     gap: ^3.0.1
+    jwt_decoder: ^2.0.1
 
 
     

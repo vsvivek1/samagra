@@ -74,6 +74,8 @@ class _UpdateCheckState extends State<UpdateCheck> {
   Future _listVersions() async {
     Dio dio = Dio();
     var accessToken = await getAccessToken();
+
+    debugger(when: true);
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);

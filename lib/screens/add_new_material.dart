@@ -92,6 +92,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
   String selectedMaterial = '1'; // Set a valid initial value
   String quantity = '';
   List materialMaster = [];
+  String userText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -170,6 +171,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
   }
 
   Widget materialList(List materialList) {
+    String userText = '';
     List filteredMaterialMaster = materialMaster;
 
     print(filteredMaterialMaster);
@@ -184,14 +186,14 @@ class _MaterialEntryState extends State<MaterialEntry> {
               height: 100,
               child: TextField(
                 onChanged: (value) {
+                  userText = value;
                   print('hi');
                 },
                 decoration: InputDecoration(
                   hintText: 'Search Material',
                   suffixIcon: IconButton(
                     onPressed: () {
-                      print('hi');
-                      setState(() {});
+                      // searchMaterial(filteredMaterialMaster, userText);
                     },
                     icon: Icon(Icons.search),
                   ),
@@ -224,7 +226,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
                 ),
                 title: Text(item['material_name'].toString()),
                 onTap: () {
-                  selectMaterial(item, index);
+                  // selectMaterial(item, index);
                 },
               );
             },
