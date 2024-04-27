@@ -728,8 +728,9 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                 margin: EdgeInsets.all(3),
                 decoration: BoxDecoration(
                     image: DecorationImage(
+                      opacity: .03,
                       image: AssetImage(
-                          'assets/kseb.jpg'), // Provide the path to your image
+                          'assets/images/kseb.jpg'), // Provide the path to your image
                       fit: BoxFit.cover, // Adjust as needed
                     ),
                     gradient: LinearGradient(colors: [

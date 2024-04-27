@@ -15,7 +15,8 @@ class ShowWorkCode extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          gradient: SweepGradient(colors: [ksebColor, Colors.white]),
+          borderRadius: BorderRadius.circular(10),
+          gradient: SweepGradient(colors: [Colors.white54, Colors.white]),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.5),

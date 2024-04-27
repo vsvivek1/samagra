@@ -99,8 +99,10 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                 selectedTileColor: Colors.red,
                 trailing: IconButton(
                   onPressed: () {
-                    item['selected'] = item['selected'] ?? false;
-                    item['selected'] = !item['selected'];
+                    setState(() {
+                      item['selected'] = item['selected'] ?? false;
+                      item['selected'] = !item['selected'];
+                    });
                   },
                   icon: Icon(Icons.select_all_sharp),
                 ),
