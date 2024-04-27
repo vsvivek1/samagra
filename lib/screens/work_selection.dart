@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -637,6 +638,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
                       borderRadius: BorderRadius.all(Radius.circular(15))),
+                  //
                   child: normalListView()),
               // child: normalListWheelScrollView()
             ),
@@ -725,7 +727,26 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
               child: Container(
                 margin: EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                    color: Colors.grey[400],
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/kseb.jpg'), // Provide the path to your image
+                      fit: BoxFit.cover, // Adjust as needed
+                    ),
+                    gradient: LinearGradient(colors: [
+                      Colors.grey,
+                      Colors.white10,
+                      Colors.white30,
+                      Colors.white10,
+                      Colors.white70,
+                    ]),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 child: GridTile(
                   footer: ShowWorkCode(workCode: workCode),

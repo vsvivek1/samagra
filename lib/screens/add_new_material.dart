@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
@@ -36,36 +37,45 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(title: Text('Add New Material')),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Displaying existing rows
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Displaying existing rows
 
-          MaterialEntry(
-              tasks: widget.tasks,
-              reflectQuantityDetails: widget.reflectQuantityDetails,
-              estimatedQuantityOfmaterials: widget.estimatedQuantityOfmaterials,
-              measurementDetails: widget.measurementDetails)
-          // for (var entry in materialEntries) entry,
-          // Button to add new row
-          /*  ElevatedButton(
-            onPressed: () {
-              setState(() {
-                materialEntries.add(
-                  MaterialEntry(
-                    tasks: widget.tasks,
-                    reflectQuantityDetails: widget.reflectQuantityDetails,
-                    estimatedQuantityOfmaterials:
-                        widget.estimatedQuantityOfmaterials,
-                    measurementDetails: widget.measurementDetails,
-                  ),
-                );
-              });
-            },
-            child: Text('Add New Row'),
-          ), */
-        ],
+              MaterialEntry(
+                  tasks: widget.tasks,
+                  reflectQuantityDetails: widget.reflectQuantityDetails,
+                  estimatedQuantityOfmaterials:
+                      widget.estimatedQuantityOfmaterials,
+                  measurementDetails: widget.measurementDetails)
+              // for (var entry in materialEntries) entry,
+              // Button to add new row
+              /*  ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    materialEntries.add(
+                      MaterialEntry(
+                        tasks: widget.tasks,
+                        reflectQuantityDetails: widget.reflectQuantityDetails,
+                        estimatedQuantityOfmaterials:
+                            widget.estimatedQuantityOfmaterials,
+                        measurementDetails: widget.measurementDetails,
+                      ),
+                    );
+                  });
+                },
+                child: Text('Add New Row'),
+              ), */
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -95,6 +105,8 @@ class _MaterialEntryState extends State<MaterialEntry> {
   List materialMaster = [];
   String userText = '';
 
+  List selectedMaterials = [];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -102,8 +114,8 @@ class _MaterialEntryState extends State<MaterialEntry> {
       builder: (context, AsyncSnapshot snapshot) {
         if (!(snapshot.hasData)) {
           return Center(
-            widthFactor: 2,
-            heightFactor: 2,
+            widthFactor: 1,
+            heightFactor: 1,
             child: SpinKitFadingCube(color: Colors.blue), // Use your color here
           );
         }
@@ -117,15 +129,51 @@ class _MaterialEntryState extends State<MaterialEntry> {
                   colors: [Colors.grey, Colors.white70, Colors.grey])),
           margin: EdgeInsets.all(10),
           padding: EdgeInsets.all(10),
-          child: Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            //height*.3,
             children: [
-              SizedBox(
-                width: 30,
-              ),
+              /* SizedBox(
+                width: ,
+              ) */
               // Gap(),
 
-              MaterialListWidget(
-                  materialMaster: materialMaster, key: UniqueKey()),
+              SearchMaterial(
+                  materialMaster: materialMaster,
+                  selectedMaterials: selectedMaterials),
+
+              Divider(
+                color: Colors.red,
+              ),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFFFDDE1), // rgb(255, 221, 225)
+                      Color(0xFFFFFFFF), // rgb(255, 255, 255)
+                    ],
+                    stops: [0.112, 0.922], // Stop percentages from CSS gradient
+                    transform: GradientRotation(
+                        109.6 * 3.14 / 180), // Convert degrees to radians
+                  ),
+                ),
+                child: SizedBox(
+                  width: MediaQuery.sizeOf(context).width * .9,
+                  height: MediaQuery.sizeOf(context).height * .4,
+                  child: Placeholder(),
+                  /*  child: ListWheelScrollView(itemExtent: 5, children: [
+                    Text('1hhhhdhdhdhdhdhh'),
+                    Text('1'),
+                    Text('1'),
+                    Text('1'),
+                  ]), */
+                ),
+              )
+
               // materialList(materialMaster),
               // List of ListTile for materials
               /*  SizedBox(
@@ -312,6 +360,46 @@ class _MaterialEntryState extends State<MaterialEntry> {
   void dispose() {
     // Dispose any resources here
     super.dispose();
+  }
+}
+
+class SearchMaterial extends StatelessWidget {
+  const SearchMaterial({
+    super.key,
+    required this.materialMaster,
+    required this.selectedMaterials,
+  });
+
+  final List materialMaster;
+  final List selectedMaterials;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFFFDDE1), // rgb(255, 221, 225)
+              Color(0xFFFFFFFF), // rgb(255, 255, 255)
+            ],
+            stops: [0.112, 0.922], // Stop percentages from CSS gradient
+            transform: GradientRotation(
+                109.6 * 3.14 / 180), // Convert degrees to radians
+          )),
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width * .9,
+        height: MediaQuery.sizeOf(context).height * .3,
+        child: MaterialListWidget(
+          materialMaster: materialMaster,
+          key: UniqueKey(),
+          selectedMaterials: selectedMaterials,
+        ),
+      ),
+    );
   }
 }
 

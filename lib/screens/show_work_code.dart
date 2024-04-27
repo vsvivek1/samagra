@@ -13,8 +13,18 @@ class ShowWorkCode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Container(
+      decoration: BoxDecoration(
+          gradient: SweepGradient(colors: [ksebColor, Colors.white]),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3),
+            )
+          ]),
+      padding: const EdgeInsets.all(15.0),
       child: Text(
         'WorkCode: $workCode',
         style: TextStyle(

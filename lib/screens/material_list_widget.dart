@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class MaterialListWidget extends StatefulWidget {
   final List<dynamic> materialMaster;
 
-  const MaterialListWidget({required Key key, required this.materialMaster})
+  List selectedMaterials = [];
+
+  MaterialListWidget(
+      {required Key key,
+      required this.materialMaster,
+      required this.selectedMaterials})
       : super(key: key);
 
   @override
@@ -31,6 +36,20 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
     });
   }
 
+  void selectMaterial(item, int index) {
+    setState(() {
+      item['selected'] = item['selected'] ?? false;
+      item['selected'] = !item['selected'];
+
+      if (item['selected']) {
+        widget.selectedMaterials.add(item);
+      } else {
+        widget.selectedMaterials.remove(item);
+      }
+      //selectedMaterial = (index + 1).toString();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -38,8 +57,8 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
         Row(
           children: [
             SizedBox(
-              width: 300,
-              height: 100,
+              width: MediaQuery.of(context).size.width * 0.8,
+              height: MediaQuery.of(context).size.height * 0.05,
               child: TextField(
                 onChanged: (value) {
                   setState(() {
@@ -65,9 +84,12 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
             ),
           ],
         ),
+        Divider(
+          color: Colors.grey[900],
+        ),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.8,
-          height: 300,
+          height: MediaQuery.of(context).size.height * 0.2,
           child: ListView.builder(
             itemCount: filteredMaterialMaster.length,
             itemBuilder: (BuildContext context, int index) {
@@ -80,9 +102,7 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                   icon: Icon(Icons.select_all_sharp),
                 ),
                 title: Text(item['material_name'].toString()),
-                onTap: () {
-                  // selectMaterial(item, index);
-                },
+                onTap: () {},
               );
             },
           ),

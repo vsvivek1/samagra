@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flare_flutter/base/actor_color.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
@@ -1263,16 +1264,37 @@ class _PolVarScreenState extends State<PolVarScreen> {
                             // mainAxisSize: MainAxisSize.min,
                             // crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              WorkNameWidget(
-                                workName: widget.workName +
-                                    '\n\nWork Code : ${widget.workCode}',
-                                color: Colors.blue,
-                                workId: widget.workId.toString(),
+                              AnimatedContainer(
+                                duration: Duration(seconds: 1),
+                                width: (_selectedLocationIndex == -1 &&
+                                        !_enableEntryOfLocationDetails)
+                                    ? 0
+                                    : 2500,
+                                height: (_selectedLocationIndex == -1 &&
+                                        !_enableEntryOfLocationDetails)
+                                    ? 0
+                                    : 100,
+                                child: WorkNameWidget(
+                                  workName: widget.workName +
+                                      '\n\nWork Code : ${widget.workCode}',
+                                  color: Colors.blue,
+                                  workId: widget.workId.toString(),
+                                ),
                               ),
-                              enterLocationDetails(),
+                              if (_selectedLocationIndex == -1)
+                                AnimatedContainer(
+                                    width: (_selectedLocationIndex == -1)
+                                        ? 250
+                                        : 0,
+                                    height: (_selectedLocationIndex == -1)
+                                        ? 250
+                                        : 0,
+                                    duration: Duration(seconds: 1),
+                                    child:
+                                        locationNumberAndLocationPointsEntryScreen()),
                               if (!_enableEntryOfLocationDetails)
                                 addOneMoreLocation(),
-                              locationNumberAndLocationPointsEntryScreen(),
+                              enterLocationDetails(),
                               if (_selectedLocationIndex == -1 &&
                                   !_enableEntryOfLocationDetails) ...[
                                 Visibility(
@@ -1627,170 +1649,177 @@ class _PolVarScreenState extends State<PolVarScreen> {
         duration: Duration(milliseconds: 3000),
         child: Visibility(
             visible: _enableEntryOfLocationDetails,
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    height: 80,
-                    child: TextFormField(
-                      maxLength: 3,
-                      initialValue: _numberOfLocations.toString(),
-                      // controller: TextEditingController(
-                      //     text: _numberOfLocations.toString()),
-                      decoration: InputDecoration(
-                        labelText: 'Number of Locations',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(30))),
-                      ),
-                      keyboardType: TextInputType.number,
-
-                      onEditingComplete: () {},
-                      onChanged: (value) {
-                        setState(() {
-                          _numberOfLocations = int.tryParse(value) ?? 0;
-
-                          if (_numberOfLocations > 0) {
-                            this.userDirections =
-                                'NOW ENTER FROM AND TO LOCATIONS';
-                            if (!isAudioMuted) {
-                              // audioCache
-                              //     .play('enter_from_to_location_name.wav');
-                            }
-                          }
-                          this.steps = this.steps++;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                Divider(
-                  height: 20,
-                  thickness: 5,
-                  color: Colors.grey[400],
-                ),
-                Visibility(
-                  visible: _numberOfLocations > 0 && _numberOfLocations < 999,
-                  child: Container(
+            child: AnimatedContainer(
+              width: _enableEntryOfLocationDetails ? 80 : 0,
+              // height: _enableEntryOfLocationDetails?80:0,
+              duration: Duration(seconds: 2),
+              child: Column(
+                children: [
+                  Container(
                     margin: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         color: Colors.grey[400],
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      children: [
-                        Container(
-                            decoration: BoxDecoration(
-                                // gradient: Gradient(colors: [Colors.red,Colors.green]),
-                                color: Colors.grey[500],
-                                borderRadius: BorderRadius.circular(10)),
-                            padding: EdgeInsets.only(top: 1, bottom: 1),
-                            margin: EdgeInsets.only(top: 10, bottom: 10),
-                            child: Text(
-                                textAlign: TextAlign.center,
-                                "From and to Location names or pol Numbers ")),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: InputDecorator(
-                                decoration: InputDecoration(
-                                  labelText: 'From Location',
-                                  border: OutlineInputBorder(),
-                                ),
-                                child: TextFormField(
-                                  initialValue: _toLocation,
-                                  onChanged: (value) async {
-                                    String from = ' _fromLocation';
-                                    String to = '_toLocation';
+                    child: SizedBox(
+                      height: 80,
+                      child: TextFormField(
+                        maxLength: 3,
+                        initialValue: _numberOfLocations.toString(),
+                        // controller: TextEditingController(
+                        //     text: _numberOfLocations.toString()),
+                        decoration: InputDecoration(
+                          labelText: 'Number of Locations',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(30))),
+                        ),
+                        keyboardType: TextInputType.number,
 
-                                    if (_fromLocation != '' &&
-                                        _toLocation != '') {
-                                      await Future.delayed(
-                                          Duration(seconds: 3));
+                        onEditingComplete: () {},
+                        onChanged: (value) {
+                          setState(() {
+                            _numberOfLocations = int.tryParse(value) ?? 0;
 
-                                      if (from == _fromLocation &&
-                                          to == _toLocation) {
-                                        this.userDirections = 'Now Press save ';
-
-                                        if (!isAudioMuted) {
-                                          // audioCache.play('press_save_button.mp3');
-                                        }
-                                      } else {
-                                        from = _fromLocation;
-                                        to = _toLocation;
-                                      }
-                                    }
-
-                                    setState(() {
-                                      _fromLocation = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: InputDecorator(
-                                decoration: InputDecoration(
-                                  labelText: 'To Location',
-                                  border: OutlineInputBorder(),
-                                ),
-                                child: TextFormField(
-                                  initialValue: _toLocation.toString(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _toLocation = value;
+                            if (_numberOfLocations > 0) {
+                              this.userDirections =
+                                  'NOW ENTER FROM AND TO LOCATIONS';
+                              if (!isAudioMuted) {
+                                // audioCache
+                                //     .play('enter_from_to_location_name.wav');
+                              }
+                            }
+                            this.steps = this.steps++;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    height: 20,
+                    thickness: 5,
+                    color: Colors.grey[400],
+                  ),
+                  Visibility(
+                    visible: _numberOfLocations > 0 && _numberOfLocations < 999,
+                    child: Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.all(Radius.circular(10))),
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                  // gradient: Gradient(colors: [Colors.red,Colors.green]),
+                                  color: Colors.grey[500],
+                                  borderRadius: BorderRadius.circular(10)),
+                              padding: EdgeInsets.only(top: 1, bottom: 1),
+                              margin: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text(
+                                  textAlign: TextAlign.center,
+                                  "From and to Location names or pol Numbers ")),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: InputDecorator(
+                                  decoration: InputDecoration(
+                                    labelText: 'From Location',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  child: TextFormField(
+                                    initialValue: _toLocation,
+                                    onChanged: (value) async {
+                                      String from = ' _fromLocation';
+                                      String to = '_toLocation';
 
                                       if (_fromLocation != '' &&
                                           _toLocation != '') {
-                                        this.userDirections = 'Now Press save ';
-                                        if (!isAudioMuted) {
-                                          // audioCache.play('press_save_button.mp3');
+                                        await Future.delayed(
+                                            Duration(seconds: 3));
+
+                                        if (from == _fromLocation &&
+                                            to == _toLocation) {
+                                          this.userDirections =
+                                              'Now Press save ';
+
+                                          if (!isAudioMuted) {
+                                            // audioCache.play('press_save_button.mp3');
+                                          }
+                                        } else {
+                                          from = _fromLocation;
+                                          to = _toLocation;
                                         }
-                                        this.steps = this.steps++; //3
                                       }
-                                    });
-                                  },
+
+                                      setState(() {
+                                        _fromLocation = value;
+                                      });
+                                    },
+                                  ),
                                 ),
                               ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: InputDecorator(
+                                  decoration: InputDecoration(
+                                    labelText: 'To Location',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  child: TextFormField(
+                                    initialValue: _toLocation.toString(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _toLocation = value;
+
+                                        if (_fromLocation != '' &&
+                                            _toLocation != '') {
+                                          this.userDirections =
+                                              'Now Press save ';
+                                          if (!isAudioMuted) {
+                                            // audioCache.play('press_save_button.mp3');
+                                          }
+                                          this.steps = this.steps++; //3
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: (_numberOfLocations > 0 &&
+                        _numberOfLocations < 999 &&
+                        _fromLocation != '' &&
+                        _toLocation != ''),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: ElevatedButton(
+                            onPressed: saveFromAndTwoLocation,
+                            child: Row(
+                              children: [
+                                Text("Save And Proceed For Measurement"),
+                                SizedBox(width: 3),
+                                Icon(color: Colors.blueAccent, Icons.save),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
-                Visibility(
-                  visible: (_numberOfLocations > 0 &&
-                      _numberOfLocations < 999 &&
-                      _fromLocation != '' &&
-                      _toLocation != ''),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(1.0),
-                        child: ElevatedButton(
-                          onPressed: saveFromAndTwoLocation,
-                          child: Row(
-                            children: [
-                              Text("Save And Proceed For Measurement"),
-                              SizedBox(width: 3),
-                              Icon(color: Colors.blueAccent, Icons.save),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             )));
   }
 

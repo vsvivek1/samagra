@@ -284,7 +284,10 @@ class _UpdateCheckState extends State<UpdateCheck> {
       future: _listVersions(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data is DioException) {
-          Fluttertoast.showToast(msg: "Server Error");
+          Fluttertoast.showToast(msg: "Server Error Please Re login");
+          Navigator.push(context, MaterialPageRoute(builder: ((context) {
+            return LoginScreen();
+          })));
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
