@@ -140,7 +140,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
               // Gap(),
 
               SearchMaterial(
-                  onNewMaterialAdded: onNewMaterialAdded(),
+                  onNewMaterialAdded: onNewMaterialAdded,
                   materialMaster: materialMaster,
                   selectedMaterials: selectedMaterials),
 
@@ -286,6 +286,12 @@ class _MaterialEntryState extends State<MaterialEntry> {
   }
 
   onNewMaterialAdded() {
+    print('on neew material aded');
+    if (selectedMaterials.length > 0) {
+      setState(
+        () {},
+      );
+    }
     /*   setState(
       () {},
     ); */
@@ -293,11 +299,13 @@ class _MaterialEntryState extends State<MaterialEntry> {
 }
 
 class SearchMaterial extends StatelessWidget {
+  Function onNewMaterialAdded;
+
   SearchMaterial({
     super.key,
     required this.materialMaster,
     required this.selectedMaterials,
-    required onNewMaterialAdded,
+    required this.onNewMaterialAdded,
   });
 
   final List materialMaster;
@@ -324,12 +332,18 @@ class SearchMaterial extends StatelessWidget {
         width: MediaQuery.sizeOf(context).width * .9,
         height: MediaQuery.sizeOf(context).height * .3,
         child: MaterialListWidget(
+          updateMaterialStatus: updateMaterialStatus,
           materialMaster: materialMaster,
           key: UniqueKey(),
           selectedMaterials: selectedMaterials,
         ),
       ),
     );
+  }
+
+  updateMaterialStatus() {
+    print('update material');
+    //onNewMaterialAdded();
   }
 }
 

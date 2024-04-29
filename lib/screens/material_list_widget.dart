@@ -5,10 +5,13 @@ class MaterialListWidget extends StatefulWidget {
 
   List selectedMaterials = [];
 
+  Function updateMaterialStatus;
+
   MaterialListWidget(
       {required Key key,
       required this.materialMaster,
-      required this.selectedMaterials})
+      required this.selectedMaterials,
+      required this.updateMaterialStatus})
       : super(key: key);
 
   @override
@@ -23,33 +26,6 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
   void initState() {
     super.initState();
     filteredMaterialMaster = widget.materialMaster;
-  }
-
-  void searchMaterial() {
-    setState(() {
-      filteredMaterialMaster = widget.materialMaster
-          .where((material) => material['material_name']
-              .toString()
-              .toLowerCase()
-              .contains(userText.toLowerCase()))
-          .toList();
-    });
-  }
-
-  void selectMaterial(item, int index) {
-    setState(() {
-      item['selected'] = item['selected'] ?? false;
-      item['selected'] = !item['selected'];
-
-      if (item['selected']) {
-        widget.selectedMaterials.add(item);
-      } else {
-        widget.selectedMaterials.remove(item);
-      }
-
-      print(widget.selectedMaterials);
-      //selectedMaterial = (index + 1).toString();
-    });
   }
 
   @override
@@ -112,7 +88,8 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                       }
                     });
 
-                    print(widget.selectedMaterials);
+                    widget.updateMaterialStatus();
+                    //print(widget.selectedMaterials);
                   },
                   icon: Icon(Icons.select_all_sharp),
                 ),
