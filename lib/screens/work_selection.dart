@@ -933,6 +933,9 @@ class WorkTitle extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            gradient: SweepGradient(colors: [Colors.white30, Colors.white])),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

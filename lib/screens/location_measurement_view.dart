@@ -38,6 +38,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           final structureList = (task["structures"] ?? []).toList();
 
           return Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                   margin: EdgeInsets.all(8),
@@ -477,6 +478,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           borderRadius: BorderRadius.circular(16.0), // Optional: Border radius
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: EdgeInsets.all(5.0),

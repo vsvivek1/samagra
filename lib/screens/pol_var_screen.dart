@@ -1175,6 +1175,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                     'Save \nto Samagra',
                                     style: TextStyle(fontSize: 10),
                                   )),
+                          GotoNextLocation()
                           /*  ElevatedButton.icon(
                               style: ksebButtonStyle(),
                               icon: Icon(Icons.remove_red_eye),
@@ -1195,36 +1196,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                       : "Detailed \n View of Locations")) */
                         ]),
                   ),
-                  floatingActionButton: Visibility(
-                    visible: _showAnotherLocationButton,
-                    child: FloatingActionButton(
-                      elevation: 100,
-                      backgroundColor: Colors.white,
-                      autofocus: true,
-                      focusColor: ksebColor,
-                      tooltip: 'Go to another Location',
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.place,
-                            color: Colors.greenAccent,
-                          ),
-                          Text(
-                            style: TextStyle(
-                                backgroundColor: Colors.white,
-                                color: ksebColor),
-                            'Next',
-                            selectionColor: Colors.red,
-                          ),
-                        ],
-                      ),
-                      onPressed: () {
-                        _gotToAnotherLocation();
-                        // Add functionality for when the button is pressed
-                        // print('Button pressed!');
-                      },
-                    ),
-                  ),
+                  // floatingActionButton: GotoNextLocation(),
 
                   // floatingActionButton: CurvedTextFab(
                   //   // child: Icon(Icons.place),
@@ -1254,110 +1226,92 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     child: Scrollbar(
                       thumbVisibility: true,
                       trackVisibility: true,
-                      thickness: 10,
+                      thickness: 2,
                       child: SingleChildScrollView(
-                        child: Container(
-                          //constraints: BoxConstraints.expand(height: null),
-                          height: MediaQuery.of(context).size.height * 2,
-                          margin: EdgeInsets.all(16.0),
-                          child: Column(
-                            // mainAxisSize: MainAxisSize.min,
-                            // crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              AnimatedContainer(
-                                duration: Duration(seconds: 1),
-                                width: (_selectedLocationIndex == -1 &&
-                                        !_enableEntryOfLocationDetails)
-                                    ? 0
-                                    : 2500,
-                                height: (_selectedLocationIndex == -1 &&
-                                        !_enableEntryOfLocationDetails)
-                                    ? 0
-                                    : 100,
-                                child: WorkNameWidget(
+                        child: IntrinsicHeight(
+                          child: Container(
+                            //constraints: BoxConstraints.expand(height: null),
+                            height: MediaQuery.of(context).size.height * 1.5,
+                            margin: EdgeInsets.all(16.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                WorkNameWidget(
                                   workName: widget.workName +
                                       '\n\nWork Code : ${widget.workCode}',
                                   color: Colors.blue,
                                   workId: widget.workId.toString(),
                                 ),
-                              ),
-                              if (_selectedLocationIndex == -1)
-                                AnimatedContainer(
-                                    width: (_selectedLocationIndex == -1)
-                                        ? 250
-                                        : 0,
-                                    height: (_selectedLocationIndex == -1)
-                                        ? 250
-                                        : 0,
-                                    duration: Duration(seconds: 1),
-                                    child:
-                                        locationNumberAndLocationPointsEntryScreen()),
-                              if (!_enableEntryOfLocationDetails)
-                                addOneMoreLocation(),
-                              enterLocationDetails(),
-                              if (_selectedLocationIndex == -1 &&
-                                  !_enableEntryOfLocationDetails) ...[
-                                Visibility(
-                                    visible: !_openedMeasurementCopier,
-                                    child: showLocationButtons())
+                                if (_selectedLocationIndex == -1)
+                                  locationNumberAndLocationPointsEntryScreen(),
+                                if (!_enableEntryOfLocationDetails)
+                                  addOneMoreLocation(),
+                                enterLocationDetails(),
+                                if (_selectedLocationIndex == -1 &&
+                                    !_enableEntryOfLocationDetails) ...[
+                                  Visibility(
+                                      visible: !_openedMeasurementCopier,
+                                      child: showLocationButtons())
 
-                                // for showing loading issued material
+                                  // for showing loading issued material
+                                ],
+                                if ((!_enableEntryOfLocationDetails &&
+                                    _numberOfLocations > 0 &&
+                                    _numberOfLocations < 999 &&
+                                    _fromLocation != '' &&
+                                    _toLocation != '')) ...[
+                                  Divider(
+                                    height: 20,
+                                    thickness: 5,
+                                    color: Colors.grey[400],
+                                  ),
+
+                                  // Visibility(
+                                  //   // visible: _showAnotherLocationButton
+
+                                  //   visible: _selectedLocationIndex != -1
+
+                                  //   //  &&
+                                  //   //     !_showSaveMeasurementDetailsButton
+                                  //   ,
+                                  //   child: Row(
+                                  //     children: [
+                                  //       Spacer(),
+                                  //       ElevatedButton(
+                                  //           onPressed: () =>
+                                  //               {_gotToAnotherLocation()},
+                                  //           child: Text('Go to  Another Location')),
+                                  //       Spacer(),
+                                  //     ],
+                                  //   ),
+                                  // ),
+                                  bottomnavigationButtons(context),
+
+                                  geoCordinatesWidget(context),
+                                  // Divider(color: Colors.white10, thickness: 10),
+                                  // SizedBox(height: 50),
+
+                                  viewLocationList(tasklist1),
+
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  /*   Row(
+                                    children: [
+                                      Spacer(),
+                                    ],
+                                  ), */
+                                  SizedBox(
+                                    height: 30,
+                                  ),
+
+                                  fullLocationList(),
+
+                                  Spacer(),
+                                ],
                               ],
-                              if ((!_enableEntryOfLocationDetails &&
-                                  _numberOfLocations > 0 &&
-                                  _numberOfLocations < 999 &&
-                                  _fromLocation != '' &&
-                                  _toLocation != '')) ...[
-                                Divider(
-                                  height: 20,
-                                  thickness: 5,
-                                  color: Colors.grey[400],
-                                ),
-
-                                // Visibility(
-                                //   // visible: _showAnotherLocationButton
-
-                                //   visible: _selectedLocationIndex != -1
-
-                                //   //  &&
-                                //   //     !_showSaveMeasurementDetailsButton
-                                //   ,
-                                //   child: Row(
-                                //     children: [
-                                //       Spacer(),
-                                //       ElevatedButton(
-                                //           onPressed: () =>
-                                //               {_gotToAnotherLocation()},
-                                //           child: Text('Go to  Another Location')),
-                                //       Spacer(),
-                                //     ],
-                                //   ),
-                                // ),
-                                bottomnavigationButtons(context),
-
-                                geoCordinatesWidget(context),
-                                // Divider(color: Colors.white10, thickness: 10),
-                                // SizedBox(height: 50),
-
-                                viewLocationList(tasklist1),
-
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                /*   Row(
-                                  children: [
-                                    Spacer(),
-                                  ],
-                                ), */
-                                SizedBox(
-                                  height: 30,
-                                ),
-
-                                fullLocationList(),
-
-                                Spacer(),
-                              ],
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -1368,6 +1322,32 @@ class _PolVarScreenState extends State<PolVarScreen> {
             ),
           );
         });
+  }
+
+  Visibility GotoNextLocation() {
+    return Visibility(
+      //visible: _showAnotherLocationButton,
+      visible: true,
+      child: ElevatedButton(
+        autofocus: true,
+        child: Text(
+          softWrap: true,
+          style: TextStyle(
+              textBaseline: TextBaseline.alphabetic,
+              overflow: TextOverflow.fade,
+              fontSize: 13,
+              backgroundColor: Colors.white,
+              color: ksebColor),
+          'Go to\n Next\n Location',
+          selectionColor: Colors.red,
+        ),
+        onPressed: () {
+          _gotToAnotherLocation();
+          // Add functionality for when the button is pressed
+          // print('Button pressed!');
+        },
+      ),
+    );
   }
 
   Visibility fullLocationList() {
@@ -1538,7 +1518,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         decoration:
             BoxDecoration(border: Border.all(width: 1), color: ksebColor),
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.6,
+          height: MediaQuery.of(context).size.height * 0.3,
           child: LocationMeasurementView(
               tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
               reflectQuantityDetails: reflectQuantityDetails,
@@ -1649,177 +1629,171 @@ class _PolVarScreenState extends State<PolVarScreen> {
         duration: Duration(milliseconds: 3000),
         child: Visibility(
             visible: _enableEntryOfLocationDetails,
-            child: AnimatedContainer(
-              width: _enableEntryOfLocationDetails ? 80 : 0,
-              // height: _enableEntryOfLocationDetails?80:0,
-              duration: Duration(seconds: 2),
-              child: Column(
-                children: [
-                  Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  margin: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    height: 75,
+                    child: TextFormField(
+                      maxLength: 3,
+                      initialValue: _numberOfLocations.toString(),
+                      // controller: TextEditingController(
+                      //     text: _numberOfLocations.toString()),
+                      decoration: InputDecoration(
+                        labelText: 'Number of Locations',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(30))),
+                      ),
+                      keyboardType: TextInputType.number,
+
+                      onEditingComplete: () {},
+                      onChanged: (value) {
+                        setState(() {
+                          _numberOfLocations = int.tryParse(value) ?? 0;
+
+                          if (_numberOfLocations > 0) {
+                            this.userDirections =
+                                'NOW ENTER FROM AND TO LOCATIONS';
+                            if (!isAudioMuted) {
+                              // audioCache
+                              //     .play('enter_from_to_location_name.wav');
+                            }
+                          }
+                          this.steps = this.steps++;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                Divider(
+                  height: 20,
+                  thickness: 5,
+                  color: Colors.grey[400],
+                ),
+                Visibility(
+                  visible: _numberOfLocations > 0 && _numberOfLocations < 999,
+                  child: Container(
                     margin: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         color: Colors.grey[400],
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      height: 80,
-                      child: TextFormField(
-                        maxLength: 3,
-                        initialValue: _numberOfLocations.toString(),
-                        // controller: TextEditingController(
-                        //     text: _numberOfLocations.toString()),
-                        decoration: InputDecoration(
-                          labelText: 'Number of Locations',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(30))),
-                        ),
-                        keyboardType: TextInputType.number,
+                    child: Column(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                                // gradient: Gradient(colors: [Colors.red,Colors.green]),
+                                color: Colors.grey[500],
+                                borderRadius: BorderRadius.circular(10)),
+                            padding: EdgeInsets.only(top: 1, bottom: 1),
+                            margin: EdgeInsets.only(top: 10, bottom: 10),
+                            child: Text(
+                                textAlign: TextAlign.center,
+                                "From and to Location names or pol Numbers ")),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'From Location',
+                                  border: OutlineInputBorder(),
+                                ),
+                                child: TextFormField(
+                                  initialValue: _toLocation,
+                                  onChanged: (value) async {
+                                    String from = ' _fromLocation';
+                                    String to = '_toLocation';
 
-                        onEditingComplete: () {},
-                        onChanged: (value) {
-                          setState(() {
-                            _numberOfLocations = int.tryParse(value) ?? 0;
+                                    if (_fromLocation != '' &&
+                                        _toLocation != '') {
+                                      await Future.delayed(
+                                          Duration(seconds: 3));
 
-                            if (_numberOfLocations > 0) {
-                              this.userDirections =
-                                  'NOW ENTER FROM AND TO LOCATIONS';
-                              if (!isAudioMuted) {
-                                // audioCache
-                                //     .play('enter_from_to_location_name.wav');
-                              }
-                            }
-                            this.steps = this.steps++;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  Divider(
-                    height: 20,
-                    thickness: 5,
-                    color: Colors.grey[400],
-                  ),
-                  Visibility(
-                    visible: _numberOfLocations > 0 && _numberOfLocations < 999,
-                    child: Container(
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  // gradient: Gradient(colors: [Colors.red,Colors.green]),
-                                  color: Colors.grey[500],
-                                  borderRadius: BorderRadius.circular(10)),
-                              padding: EdgeInsets.only(top: 1, bottom: 1),
-                              margin: EdgeInsets.only(top: 10, bottom: 10),
-                              child: Text(
-                                  textAlign: TextAlign.center,
-                                  "From and to Location names or pol Numbers ")),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: InputDecorator(
-                                  decoration: InputDecoration(
-                                    labelText: 'From Location',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  child: TextFormField(
-                                    initialValue: _toLocation,
-                                    onChanged: (value) async {
-                                      String from = ' _fromLocation';
-                                      String to = '_toLocation';
+                                      if (from == _fromLocation &&
+                                          to == _toLocation) {
+                                        this.userDirections = 'Now Press save ';
+
+                                        if (!isAudioMuted) {
+                                          // audioCache.play('press_save_button.mp3');
+                                        }
+                                      } else {
+                                        from = _fromLocation;
+                                        to = _toLocation;
+                                      }
+                                    }
+
+                                    setState(() {
+                                      _fromLocation = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 16),
+                            Expanded(
+                              child: InputDecorator(
+                                decoration: InputDecoration(
+                                  labelText: 'To Location',
+                                  border: OutlineInputBorder(),
+                                ),
+                                child: TextFormField(
+                                  initialValue: _toLocation.toString(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _toLocation = value;
 
                                       if (_fromLocation != '' &&
                                           _toLocation != '') {
-                                        await Future.delayed(
-                                            Duration(seconds: 3));
-
-                                        if (from == _fromLocation &&
-                                            to == _toLocation) {
-                                          this.userDirections =
-                                              'Now Press save ';
-
-                                          if (!isAudioMuted) {
-                                            // audioCache.play('press_save_button.mp3');
-                                          }
-                                        } else {
-                                          from = _fromLocation;
-                                          to = _toLocation;
+                                        this.userDirections = 'Now Press save ';
+                                        if (!isAudioMuted) {
+                                          // audioCache.play('press_save_button.mp3');
                                         }
+                                        this.steps = this.steps++; //3
                                       }
-
-                                      setState(() {
-                                        _fromLocation = value;
-                                      });
-                                    },
-                                  ),
+                                    });
+                                  },
                                 ),
                               ),
-                              SizedBox(width: 16),
-                              Expanded(
-                                child: InputDecorator(
-                                  decoration: InputDecoration(
-                                    labelText: 'To Location',
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  child: TextFormField(
-                                    initialValue: _toLocation.toString(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _toLocation = value;
-
-                                        if (_fromLocation != '' &&
-                                            _toLocation != '') {
-                                          this.userDirections =
-                                              'Now Press save ';
-                                          if (!isAudioMuted) {
-                                            // audioCache.play('press_save_button.mp3');
-                                          }
-                                          this.steps = this.steps++; //3
-                                        }
-                                      });
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: (_numberOfLocations > 0 &&
-                        _numberOfLocations < 999 &&
-                        _fromLocation != '' &&
-                        _toLocation != ''),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(1.0),
-                          child: ElevatedButton(
-                            onPressed: saveFromAndTwoLocation,
-                            child: Row(
-                              children: [
-                                Text("Save And Proceed For Measurement"),
-                                SizedBox(width: 3),
-                                Icon(color: Colors.blueAccent, Icons.save),
-                              ],
                             ),
-                          ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+                Visibility(
+                  visible: (_numberOfLocations > 0 &&
+                      _numberOfLocations < 999 &&
+                      _fromLocation != '' &&
+                      _toLocation != ''),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: ElevatedButton(
+                          onPressed: saveFromAndTwoLocation,
+                          child: Row(
+                            children: [
+                              Text("Save And Proceed For Measurement"),
+                              SizedBox(width: 3),
+                              Icon(color: Colors.blueAccent, Icons.save),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             )));
   }
 
@@ -2282,6 +2256,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     int counter = 0;
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         // SizedBox(
         //     width: 900,
@@ -2362,7 +2337,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 ),
               );
             },
-            body: Column(children: [
+            body: Column(mainAxisSize: MainAxisSize.min, children: [
               ...structures.map<Widget>(
                 (st) {
                   // debugger(when: true);

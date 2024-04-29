@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -139,6 +140,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
               // Gap(),
 
               SearchMaterial(
+                  onNewMaterialAdded: onNewMaterialAdded(),
                   materialMaster: materialMaster,
                   selectedMaterials: selectedMaterials),
 
@@ -164,7 +166,20 @@ class _MaterialEntryState extends State<MaterialEntry> {
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width * .9,
                   height: MediaQuery.sizeOf(context).height * .4,
-                  child: Placeholder(),
+                  child: Container(
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: ListView.separated(
+                                itemBuilder: itemBuilder,
+                                separatorBuilder: separatorBuilder,
+                                itemCount: selectedMaterials.length)),
+                        /*  ElevatedButton(
+                           /*  onPressed: addExtraMaterialsToMeasurements(), */
+                            child: Text('Save')) */
+                      ],
+                    ),
+                  ),
                   /*  child: ListWheelScrollView(itemExtent: 5, children: [
                     Text('1hhhhdhdhdhdhdhh'),
                     Text('1'),
@@ -243,26 +258,6 @@ class _MaterialEntryState extends State<MaterialEntry> {
     return response.data['result_data']['materialMaster'];
   }
 
-  List<DropdownMenuItem<String>> convertToDropdownItems(List<dynamic> items) {
-    int c = 1;
-    return items.skipWhile(
-      (value) {
-        return (value == null || value['material_name'] == null);
-      },
-    ).map((
-      item,
-    ) {
-      c++;
-      return DropdownMenuItem<String>(
-        // value: item['material_name']
-
-        value: c.toString(), // Assuming each item can be converted to a string
-        child:
-            Text(item['material_name'].toString()), // Display the item as text
-      );
-    }).toList();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -274,17 +269,39 @@ class _MaterialEntryState extends State<MaterialEntry> {
     // Dispose any resources here
     super.dispose();
   }
+
+  addExtraMaterialsToMeasurements() {}
+
+  Widget separatorBuilder(BuildContext context, int index) {
+    return Divider(color: Colors.red);
+  }
+
+  Widget? itemBuilder(BuildContext context, int index) {
+    print(index);
+
+    return ListTile(
+      title: Text(selectedMaterials[index]['material_name']),
+    );
+    selectedMaterials.map((e) => {print(e)});
+  }
+
+  onNewMaterialAdded() {
+    /*   setState(
+      () {},
+    ); */
+  }
 }
 
 class SearchMaterial extends StatelessWidget {
-  const SearchMaterial({
+  SearchMaterial({
     super.key,
     required this.materialMaster,
     required this.selectedMaterials,
+    required onNewMaterialAdded,
   });
 
   final List materialMaster;
-  final List selectedMaterials;
+  List selectedMaterials;
 
   @override
   Widget build(BuildContext context) {

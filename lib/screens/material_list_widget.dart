@@ -46,6 +46,8 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
       } else {
         widget.selectedMaterials.remove(item);
       }
+
+      print(widget.selectedMaterials);
       //selectedMaterial = (index + 1).toString();
     });
   }
@@ -102,7 +104,15 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                     setState(() {
                       item['selected'] = item['selected'] ?? false;
                       item['selected'] = !item['selected'];
+
+                      if (item['selected']) {
+                        widget.selectedMaterials.add(item);
+                      } else {
+                        widget.selectedMaterials.remove(item);
+                      }
                     });
+
+                    print(widget.selectedMaterials);
                   },
                   icon: Icon(Icons.select_all_sharp),
                 ),

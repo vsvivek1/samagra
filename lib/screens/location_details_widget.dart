@@ -159,7 +159,7 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                   ],
                   if (widget.latitude != null && widget.longitude != null) ...[
                     Text(
-                      'Latitude: ${widget.latitude}, Longitude: ${widget.longitude}',
+                      'Latitude: ${widget.latitude},\n Longitude: ${widget.longitude}',
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     SizedBox(height: 5.0),
