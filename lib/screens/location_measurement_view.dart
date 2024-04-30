@@ -564,6 +564,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
             [structureIndex]['materials'][materialIndex]['quantity'];
 
         return AlertDialog(
+          insetPadding: EdgeInsets.all(0),
+          contentPadding: EdgeInsets.all(0),
           title: Text('Edit Quantity'),
           content: TextField(
             onChanged: (value) {
@@ -704,6 +706,10 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       var structureId = result['strutctureId'];
       var selectedMaterials = result['selectedMaterials'];
 
+      selectedMaterials.forEach((element) {
+        element['mst_material_id'] = element['id'];
+      });
+
       var a = widget.measurementDetails;
 
       Map loc = widget.measurementDetails.firstWhere(
@@ -718,10 +724,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       // debugger(when: true);
       Map structure = structures
           .firstWhere((s) => s['id'].toString() == structureId.toString());
-      debugger(when: true);
+      //debugger(when: true);
       List materials = structure['materials'];
 
-      // materials.addAll(selectedMaterials);
+      //debugger(when: true);
+      materials.addAll(selectedMaterials);
 /* 
       print(materials);
       debugger(when: true);

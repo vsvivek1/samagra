@@ -1470,15 +1470,18 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
-  Column measurementPreviewWidget(BuildContext context) {
-    return Column(
-      children: [
-        headingofLocationMeasurementView(),
-        SizedBox(
-          height: 10,
-        ),
-        invokeLocationMeasurementView(context),
-      ],
+  GestureDetector measurementPreviewWidget(BuildContext context) {
+    return GestureDetector(
+      onDoubleTap: () {},
+      child: Column(
+        children: [
+          headingofLocationMeasurementView(),
+          SizedBox(
+            height: 10,
+          ),
+          invokeLocationMeasurementView(context),
+        ],
+      ),
     );
   }
 
@@ -1513,18 +1516,39 @@ class _PolVarScreenState extends State<PolVarScreen> {
     return Visibility(
       visible: _selectedLocationTasks.length > 0,
       // visible: true,
-      child: Container(
-        padding: EdgeInsets.all(3),
-        decoration:
-            BoxDecoration(border: Border.all(width: 1), color: ksebColor),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: LocationMeasurementView(
-              selectedLocationIndex: _selectedLocationIndex,
-              tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
-              reflectQuantityDetails: reflectQuantityDetails,
-              estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
-              measurementDetails: measurementDetails),
+      child: GestureDetector(
+        onDoubleTap: () {
+          print('hi');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Location Measurement View'),
+                content: LocationMeasurementView(
+                    selectedLocationIndex: _selectedLocationIndex,
+                    tasks: List<Map<dynamic, dynamic>>.from(
+                        _selectedLocationTasks),
+                    reflectQuantityDetails: reflectQuantityDetails,
+                    estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+                    measurementDetails: measurementDetails),
+                actions: [],
+              );
+            },
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.all(3),
+          decoration:
+              BoxDecoration(border: Border.all(width: 1), color: ksebColor),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: LocationMeasurementView(
+                selectedLocationIndex: _selectedLocationIndex,
+                tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
+                reflectQuantityDetails: reflectQuantityDetails,
+                estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+                measurementDetails: measurementDetails),
+          ),
         ),
       ),
     );
