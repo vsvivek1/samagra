@@ -325,10 +325,14 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           padding: EdgeInsets.all(8),
           child: Column(
             children: [
-              Text('Measured Quantity: ${item['quantity']}'),
-              Text('Issued Quantity: '),
+              Divider(),
+              Text('Measured Quantity Here: ${item['quantity']}'),
+              Divider(),
+              Text('Total Issued Quantity: '),
+              Divider(),
               if (item['material_code'] != null)
-                Text('Estimate Quantity: ${estimateQuantity} '),
+                Text('Total Estimate Quantity: ${estimateQuantity} '),
+              Divider()
             ],
           ),
         ),
@@ -366,15 +370,18 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               // maxLength: 2,
             ),
           ),
+        // Divider(),
         SizedBox(width: 10),
         if (item['editing'] == null || item['editing'] == true)
-          IconButton(
-              onPressed: (() {
-                setState(() {
-                  item['editing'] = false;
-                });
-              }),
-              icon: Icon(color: Colors.green, Icons.save)),
+          Center(
+            child: IconButton(
+                onPressed: (() {
+                  setState(() {
+                    item['editing'] = false;
+                  });
+                }),
+                icon: Icon(color: Colors.green, Icons.save)),
+          ),
         if (item['editing'] != null && item['editing'] == false)
           IconButton(
               onPressed: (() {
