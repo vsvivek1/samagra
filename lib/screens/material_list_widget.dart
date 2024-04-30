@@ -28,6 +28,16 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
     filteredMaterialMaster = widget.materialMaster;
   }
 
+  void searchMaterial() {
+    filteredMaterialMaster = widget.materialMaster
+        .where((material) => material['material_name']
+            .toString()
+            .toLowerCase()
+            .contains(userText.toLowerCase()))
+        .toList();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(

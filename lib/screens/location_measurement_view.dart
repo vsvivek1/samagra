@@ -10,13 +10,18 @@ class LocationMeasurementView extends StatefulWidget {
 
   final estimatedQuantityOfmaterials;
 
+  int selectedLocationIndex;
+
   final measurementDetails;
+
+  var locationNo;
 
   LocationMeasurementView(
       {required this.tasks,
       required this.reflectQuantityDetails,
       required this.estimatedQuantityOfmaterials,
-      required this.measurementDetails});
+      required this.measurementDetails,
+      required this.selectedLocationIndex});
 
   @override
   _LocationMeasurementViewState createState() =>
@@ -26,7 +31,9 @@ class LocationMeasurementView extends StatefulWidget {
 class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   @override
   Widget build(BuildContext context) {
-    print("${widget.tasks} is tasks");
+    // print("${widget.tasks} is tasks");
+
+    // print('selected index ${widget.selectedLocationIndex}');
 
     //debugger(when: true);
     return Scaffold(
@@ -87,7 +94,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                           textScaleFactor: .5,
                         ),
                       ),
-                      structureWidget(structureList, index),
+                      structureWidget(structureList, index, task['id']),
                     ],
                   ),
                 ),
@@ -114,7 +121,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     );
   }
 
-  ListView structureWidget(structureList, int index) {
+  ListView structureWidget(structureList, int index, taskId) {
     return ListView.builder(
       shrinkWrap: true,
       physics: ClampingScrollPhysics(),
@@ -151,7 +158,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               ),
               Column(
                 children: [
-                  MaterialsView(structure, structureIndex, index),
+                  MaterialsView(structure, structureIndex, index, taskId,
+                      structure['id']),
                   //  Divider({Key? key, double? height, double? thickness, double? indent, double? endIndent, Color? color}))
                   Divider(
                     color: ksebMaterialColor,
@@ -185,7 +193,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     );
   }
 
-  Builder MaterialsView(structure, int structureIndex, int index) {
+  Builder MaterialsView(
+      structure, int structureIndex, int index, taskId, strutctureId) {
     // int matLen = structure['materials'].length;
 
     int matLen = structure['materials'].length;
@@ -285,7 +294,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                               const Color.fromARGB(255, 132, 184, 134)),
                         ),
                         onPressed: (() {
-                          addMaterialsNotInEstimate();
+                          addMaterialsNotInEstimate(taskId, strutctureId);
                         }),
                         child: Text('Add Materials Not in Estimate')),
                   ],
@@ -674,17 +683,51 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     );
   }
 
-  addMaterialsNotInEstimate() {
-    Navigator.of(context).push(
+  addMaterialsNotInEstimate(taskId, structureId) {
+    Navigator.of(context)
+        .push(
       MaterialPageRoute(
         builder: (context) => AddNewMaterial(
+          seletedLocationIndex: widget.selectedLocationIndex,
+          taskId: taskId,
+          structureId: structureId,
           tasks: widget.tasks,
-          reflectQuantityDetails: widget.reflectQuantityDetails,
+          reflectQuantityDetails: (object) {},
           estimatedQuantityOfmaterials: widget.estimatedQuantityOfmaterials,
           measurementDetails: widget.measurementDetails,
         ),
       ),
-    );
+    )
+        .then((result) {
+      // print('poped $result');
+      var taskId = result['taskId'];
+      var structureId = result['strutctureId'];
+      var selectedMaterials = result['selectedMaterials'];
+
+      var a = widget.measurementDetails;
+
+      Map loc = widget.measurementDetails.firstWhere(
+          (l) => l['locationNo'] == widget.selectedLocationIndex + 1);
+
+      List tasks = loc['tasks'];
+
+      Map task = tasks.firstWhere((lc) => lc['id'] == taskId);
+
+      //  debugger(when: true);
+      List structures = task['structures'];
+      // debugger(when: true);
+      Map structure = structures
+          .firstWhere((s) => s['id'].toString() == structureId.toString());
+      debugger(when: true);
+      List materials = structure['materials'];
+
+      // materials.addAll(selectedMaterials);
+/* 
+      print(materials);
+      debugger(when: true);
+      debugger(when: true);
+      print('$loc is loc'); */
+    });
   }
 
   addLabourNotInEstimate() {}

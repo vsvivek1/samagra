@@ -1136,7 +1136,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           return GestureDetector(
             onHorizontalDragEnd: (details) {
-              Navigator.pop(context);
+              // Navigator.pop(context);
             },
             onLongPress: () {
               Navigator.pushNamed(context, '/home');
@@ -1520,6 +1520,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.3,
           child: LocationMeasurementView(
+              selectedLocationIndex: _selectedLocationIndex,
               tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
               reflectQuantityDetails: reflectQuantityDetails,
               estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,

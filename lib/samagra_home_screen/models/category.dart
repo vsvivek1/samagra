@@ -84,30 +84,30 @@ class Category {
       money: 208,
       rating: 4.9,
     ),
-    Category(
+    /*  Category(
       imagePath: 'assets/samagra_home_screen/interFace3.png',
       target: FrtuInspection,
       title: 'RMU/FRTU inspection',
       lessonCount: 12,
       money: 25,
       rating: 4.8,
-    ),
-    Category(
+    ), */
+    /*   Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
       target: 'IbBooking',
       title: 'IB Booking',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
-    ),
-    Category(
+    ), */
+    /*  Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
       target: 'TreeCuttingCompensation',
       title: 'Tree Cutting Compensation',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
-    ),
+    ), */
     Category(
       imagePath: 'assets/samagra_home_screen/interFace1.png',
       target: 'VersionController',

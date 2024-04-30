@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/material_list_widget.dart';
+import 'package:samagra/screens/search_material.dart';
 import 'package:samagra/screens/searchable_dropdown.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
@@ -20,12 +22,21 @@ class AddNewMaterial extends StatefulWidget {
   final Function reflectQuantityDetails;
   final Map<int, Map<dynamic, dynamic>> estimatedQuantityOfmaterials;
   var measurementDetails;
+  var taskId;
+  var structureId;
+
+  var locationNo;
+
+  int seletedLocationIndex;
 
   AddNewMaterial({
     required this.tasks,
     required this.reflectQuantityDetails,
     required this.estimatedQuantityOfmaterials,
     required this.measurementDetails,
+    required this.taskId,
+    required this.structureId,
+    required int this.seletedLocationIndex,
   });
 
   @override
@@ -51,11 +62,15 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
               // Displaying existing rows
 
               MaterialEntry(
-                  tasks: widget.tasks,
-                  reflectQuantityDetails: widget.reflectQuantityDetails,
-                  estimatedQuantityOfmaterials:
-                      widget.estimatedQuantityOfmaterials,
-                  measurementDetails: widget.measurementDetails)
+                tasks: widget.tasks,
+                reflectQuantityDetails: widget.reflectQuantityDetails,
+                estimatedQuantityOfmaterials:
+                    widget.estimatedQuantityOfmaterials,
+                measurementDetails: widget.measurementDetails,
+                taskId: widget.taskId, structureId: widget.structureId,
+
+                // taskId: widget.taskId, structureId: structureId
+              )
               // for (var entry in materialEntries) entry,
               // Button to add new row
               /*  ElevatedButton(
@@ -88,12 +103,17 @@ class MaterialEntry extends StatefulWidget {
   final Map<int, Map<dynamic, dynamic>> estimatedQuantityOfmaterials;
   var measurementDetails;
 
-  MaterialEntry({
-    required this.tasks,
-    required this.reflectQuantityDetails,
-    required this.estimatedQuantityOfmaterials,
-    required this.measurementDetails,
-  });
+  var taskId;
+
+  var structureId;
+
+  MaterialEntry(
+      {required this.tasks,
+      required this.reflectQuantityDetails,
+      required this.estimatedQuantityOfmaterials,
+      required this.measurementDetails,
+      required this.taskId,
+      required this.structureId});
 
   @override
   _MaterialEntryState createState() => _MaterialEntryState();
@@ -171,12 +191,16 @@ class _MaterialEntryState extends State<MaterialEntry> {
                       children: [
                         Expanded(
                             child: ListView.separated(
+                                scrollDirection: Axis.vertical,
+                                physics: AlwaysScrollableScrollPhysics(),
                                 itemBuilder: itemBuilder,
                                 separatorBuilder: separatorBuilder,
                                 itemCount: selectedMaterials.length)),
-                        /*  ElevatedButton(
-                           /*  onPressed: addExtraMaterialsToMeasurements(), */
-                            child: Text('Save')) */
+                        ElevatedButton(
+                            onPressed: (() {
+                              addExtraMaterialsToMeasurements();
+                            }),
+                            child: Text('Save'))
                       ],
                     ),
                   ),
@@ -270,27 +294,78 @@ class _MaterialEntryState extends State<MaterialEntry> {
     super.dispose();
   }
 
-  addExtraMaterialsToMeasurements() {}
+  addExtraMaterialsToMeasurements() {
+    Map result = {};
+
+    result['selectedMaterials'] = selectedMaterials;
+    result['taskId'] = widget.taskId;
+    result['strutctureId'] = widget.structureId;
+    Future.microtask(() {
+      Navigator.pop(context, result);
+    });
+  }
 
   Widget separatorBuilder(BuildContext context, int index) {
     return Divider(color: Colors.red);
   }
+// Import for TextInputFormatter
+
+  Widget buildIntegerInputField({
+    String labelText = '',
+    required Function(String) onChanged,
+    required String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      keyboardType: TextInputType.number, // Set keyboard type to number
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly // Allow only digits
+      ],
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(),
+      ),
+      onChanged: onChanged,
+      validator: validator,
+    );
+  }
 
   Widget? itemBuilder(BuildContext context, int index) {
-    print(index);
+    //print(index);
 
     return ListTile(
       title: Text(selectedMaterials[index]['material_name']),
+      subtitle: buildIntegerInputField(
+        labelText: 'Enter quantity',
+        onChanged: (value) {
+          selectedMaterials[index]['quantity'] = value;
+
+          // Handle input value change
+        },
+        validator: (value) {
+          if (value?.isEmpty ?? true) {
+            return 'Please enter some text';
+          }
+          // You can add more validation logic here if needed
+          return null;
+        },
+      ),
+      trailing: Text(
+          'UOM :' + selectedMaterials[index]['mst_stock_uom_id'].toString()),
     );
     selectedMaterials.map((e) => {print(e)});
   }
 
   onNewMaterialAdded() {
-    print('on neew material aded');
+    print(
+        'on neew material aded selectedMaterials.length ${selectedMaterials.length}');
+
+    print(selectedMaterials[0].keys.toList());
     if (selectedMaterials.length > 0) {
-      setState(
-        () {},
-      );
+      Future.microtask(() {
+        setState(
+          () {},
+        );
+      });
     }
     /*   setState(
       () {},
@@ -298,54 +373,8 @@ class _MaterialEntryState extends State<MaterialEntry> {
   }
 }
 
-class SearchMaterial extends StatelessWidget {
-  Function onNewMaterialAdded;
 
-  SearchMaterial({
-    super.key,
-    required this.materialMaster,
-    required this.selectedMaterials,
-    required this.onNewMaterialAdded,
-  });
 
-  final List materialMaster;
-  List selectedMaterials;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFFFDDE1), // rgb(255, 221, 225)
-              Color(0xFFFFFFFF), // rgb(255, 255, 255)
-            ],
-            stops: [0.112, 0.922], // Stop percentages from CSS gradient
-            transform: GradientRotation(
-                109.6 * 3.14 / 180), // Convert degrees to radians
-          )),
-      child: SizedBox(
-        width: MediaQuery.sizeOf(context).width * .9,
-        height: MediaQuery.sizeOf(context).height * .3,
-        child: MaterialListWidget(
-          updateMaterialStatus: updateMaterialStatus,
-          materialMaster: materialMaster,
-          key: UniqueKey(),
-          selectedMaterials: selectedMaterials,
-        ),
-      ),
-    );
-  }
-
-  updateMaterialStatus() {
-    print('update material');
-    //onNewMaterialAdded();
-  }
-}
 
 
 /* DropdownButton<String>(
