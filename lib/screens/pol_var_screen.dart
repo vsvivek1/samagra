@@ -1531,7 +1531,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
                     reflectQuantityDetails: reflectQuantityDetails,
                     estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
                     measurementDetails: measurementDetails),
-                actions: [],
+                actions: [
+                  ElevatedButton(
+                    child: Text('X'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
               );
             },
           );
