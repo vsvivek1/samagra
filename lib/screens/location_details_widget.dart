@@ -129,9 +129,8 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                     Row(
                       children: [
                         SizedBox(
-                          height: 100,
-                          width: 125,
-                          child: TextFormField(
+                            height: 100, width: 125, child: Text(locationName)
+                            /* child: TextFormField(
                             initialValue: locationName,
                             onChanged: ((value) => updateLocationText(value)),
                             // controller: this.locationNameController,
@@ -139,8 +138,8 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                             //   labelText: 'Enter Location Name',
                             //   hintText: 'Enter location name',
                             // )
-                          ),
-                        ),
+                          ), */
+                            ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Visibility(
