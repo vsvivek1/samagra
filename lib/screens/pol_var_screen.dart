@@ -9,6 +9,7 @@ import 'package:samagra/screens/centered_circular_spinner.dart';
 import 'package:samagra/screens/material_details_popup.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
+import 'package:samagra/screens/polevar_view_of_locations.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
@@ -1286,6 +1287,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   //     ],
                                   //   ),
                                   // ),
+
+                                  polevarViewButton(),
                                   bottomnavigationButtons(context),
 
                                   geoCordinatesWidget(context),
@@ -3226,7 +3229,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       wrk_execution_material_schedules =
           wrk_execution_schedules[0]["wrk_execution_material_schedules"];
-      debugger(when: true);
+      //debugger(when: true);
       estimatedQuantityOfmaterials =
           aggregateMaterialQuantities(wrk_execution_material_schedules);
 
@@ -3742,5 +3745,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
     /// get tasks of location
     /// get structures
     /// remove the structure
+  }
+
+  polevarViewButton() {
+    return ElevatedButton(
+        child: Text('Polvar View'),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: ((context) {
+            return PolvarViewOfLocations(
+                measurementDetails: measurementDetails);
+          })));
+        });
   }
 }
