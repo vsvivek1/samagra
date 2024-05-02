@@ -11,6 +11,7 @@ import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/material_list_widget.dart';
+import 'package:samagra/screens/on_will_pop.dart';
 import 'package:samagra/screens/search_material.dart';
 import 'package:samagra/screens/searchable_dropdown.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
@@ -50,46 +51,59 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      appBar: AppBar(title: Text('Add New Material')),
+      appBar: AppBar(
+          automaticallyImplyLeading: false, title: Text('Add New Material')),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Displaying existing rows
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text('Please use Save Button to go back'),
+                  );
+                });
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Displaying existing rows
 
-              MaterialEntry(
-                tasks: widget.tasks,
-                reflectQuantityDetails: widget.reflectQuantityDetails,
-                estimatedQuantityOfmaterials:
-                    widget.estimatedQuantityOfmaterials,
-                measurementDetails: widget.measurementDetails,
-                taskId: widget.taskId, structureId: widget.structureId,
+                MaterialEntry(
+                  tasks: widget.tasks,
+                  reflectQuantityDetails: widget.reflectQuantityDetails,
+                  estimatedQuantityOfmaterials:
+                      widget.estimatedQuantityOfmaterials,
+                  measurementDetails: widget.measurementDetails,
+                  taskId: widget.taskId, structureId: widget.structureId,
 
-                // taskId: widget.taskId, structureId: structureId
-              )
-              // for (var entry in materialEntries) entry,
-              // Button to add new row
-              /*  ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    materialEntries.add(
-                      MaterialEntry(
-                        tasks: widget.tasks,
-                        reflectQuantityDetails: widget.reflectQuantityDetails,
-                        estimatedQuantityOfmaterials:
-                            widget.estimatedQuantityOfmaterials,
-                        measurementDetails: widget.measurementDetails,
-                      ),
-                    );
-                  });
-                },
-                child: Text('Add New Row'),
-              ), */
-            ],
+                  // taskId: widget.taskId, structureId: structureId
+                )
+                // for (var entry in materialEntries) entry,
+                // Button to add new row
+                /*  ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      materialEntries.add(
+                        MaterialEntry(
+                          tasks: widget.tasks,
+                          reflectQuantityDetails: widget.reflectQuantityDetails,
+                          estimatedQuantityOfmaterials:
+                              widget.estimatedQuantityOfmaterials,
+                          measurementDetails: widget.measurementDetails,
+                        ),
+                      );
+                    });
+                  },
+                  child: Text('Add New Row'),
+                ), */
+              ],
+            ),
           ),
         ),
       ),

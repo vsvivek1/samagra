@@ -3226,7 +3226,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       wrk_execution_material_schedules =
           wrk_execution_schedules[0]["wrk_execution_material_schedules"];
-      //debugger(when: true);
+      debugger(when: true);
       estimatedQuantityOfmaterials =
           aggregateMaterialQuantities(wrk_execution_material_schedules);
 

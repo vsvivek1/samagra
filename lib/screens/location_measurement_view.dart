@@ -709,6 +709,13 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     )
         .then((result) {
       // print('poped $result');
+
+      if (result['selectedMaterials'] == null ||
+          result['selectedMaterials'].length == 0) {
+        print('hi return');
+        return;
+      }
+
       var taskId = result['taskId'];
       var structureId = result['strutctureId'];
       var selectedMaterials = result['selectedMaterials'];

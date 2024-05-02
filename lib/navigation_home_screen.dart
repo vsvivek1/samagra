@@ -6,7 +6,9 @@ import 'package:samagra/frtu/frtu_inspection.dart';
 import 'package:samagra/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/samagra_home_screen/samagra_home_screen.dart';
+import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/phone_book.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';
 import 'package:samagra/screens/work_selection.dart';
 
@@ -31,11 +33,17 @@ class _NavigationHomeScreenState extends State<NavigationHomeScreen> {
     });
   }
 
+  mailme() async {
+    var object = await getLoginDetails();
+    gmailMe(object);
+  }
+
   @override
   void initState() {
     drawerIndex = DrawerIndex.HOME;
     // screenView = const MyHomePage();
     screenView = SamagraHomeScreen();
+    mailme();
     super.initState();
   }
 

@@ -17,7 +17,9 @@ void gmailMe(dynamic object) async {
 
   // Create our message.
 
-  print('hi object   $object');
+  //print('hi object   $object');
+
+  String empcode=await 
   final message = Message()
     ..from = Address(username, 'from Vivek')
     ..recipients.add('vs.vivek1@gmail.com')
