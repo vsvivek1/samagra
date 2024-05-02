@@ -349,9 +349,15 @@ class _MaterialEntryState extends State<MaterialEntry> {
           return null;
         },
       ),
-      trailing: Text(
-          'UOM :' + selectedMaterials[index]['mst_stock_uom_id'].toString()),
+      trailing: Text('UOM :' +
+          selectedMaterials[index]['mst_stock_uom']['uom_descr']
+              .toString()
+              .toUpperCase()),
     );
+
+    /*   trailing: Text(
+          'UOM :' + selectedMaterials[index]['mst_stock_uom_id'].toString()),
+    ); */
     selectedMaterials.map((e) => {print(e)});
   }
 
