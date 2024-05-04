@@ -1,28 +1,114 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FullEstimatedMaterialsScreen extends StatelessWidget {
-  final Map<int, Map<dynamic, dynamic>> materials;
-
-  FullEstimatedMaterialsScreen({required this.materials});
+  final Map<int, Map<dynamic, dynamic>> EstimatedMaterials;
+  var measurementDetails;
+  FullEstimatedMaterialsScreen(
+      {required this.EstimatedMaterials, required this.measurementDetails});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Full Estimated Materials'),
+        title: Text(' \t\tMaterial Details\nMeasured vs Estimate'),
       ),
       body: Center(
-        child: FullEstimatedMaterialsList(materials: materials),
+        child: FullEstimatedMaterialsList(
+          EstimatedMaterials: EstimatedMaterials,
+          measurementDetails: this.measurementDetails,
+        ),
       ),
     );
   }
 }
 
-class FullEstimatedMaterialsList extends StatelessWidget {
-  final Map<int, Map<dynamic, dynamic>> materials;
+// ignore: must_be_immutable
+class FullEstimatedMaterialsList extends StatefulWidget {
+  var measurementDetails;
+  final Map<int, Map<dynamic, dynamic>> EstimatedMaterials;
 
-  FullEstimatedMaterialsList({required this.materials});
+  FullEstimatedMaterialsList(
+      {required this.EstimatedMaterials, required this.measurementDetails});
+
+  @override
+  State<FullEstimatedMaterialsList> createState() =>
+      _FullEstimatedMaterialsListState();
+}
+
+class _FullEstimatedMaterialsListState
+    extends State<FullEstimatedMaterialsList> {
+  var material;
+
+  List measuredMaterials = [];
+
+  @override
+  void initState() {
+    // listUniqueMaterials();
+    super.initState();
+    // ignore: todo
+    // TODO: implement initState
+  }
+
+  Map<String, int> listUniqueMaterials() {
+    Map<String, int> materialQuantities = {};
+
+    // Iterate through the nested structure
+    widget.measurementDetails.forEach((tasks) {
+      tasks['structures'].forEach((structure) {
+        structure['materials'].forEach((materialInfo) {
+          String materialName = materialInfo['material']['material_name'];
+          int quantity = materialInfo['material']['quantity'];
+          // Accumulate quantities for each material
+          materialQuantities.update(materialName, (value) => value + quantity,
+              ifAbsent: () => quantity);
+
+          int index = measuredMaterials.indexWhere(
+              (element) => element['material_name'] == materialName);
+
+          if (index != -1) {
+            // If materialName already exists in the list, update its quantity
+            measuredMaterials[index]['quantity'] += quantity;
+          } else {
+            // If materialName doesn't exist in the list, add a new entry
+            measuredMaterials
+                .add({'materialName': materialName, 'quantity': quantity});
+          }
+
+          ;
+        });
+      });
+    });
+
+    debugger(when: true);
+    return materialQuantities;
+  }
+
+  int getMeasuredQuantity(String materialName) {
+    int totalQuantity = 0;
+    // Iterate through the list
+    for (var location in widget.measurementDetails) {
+      // Iterate through tasks
+      for (var task in location['tasks']) {
+        // Iterate through structures
+        for (var structure in task['structures']) {
+          // Iterate through materials
+          for (var material in structure['materials']) {
+            //  String name = material['material']['material_name'];
+            String name = material['material_name'];
+            if (name == materialName) {
+              //totalQuantity += int.parse(material['material']['quantity']);
+              totalQuantity += int.parse(material['quantity']);
+            }
+          }
+        }
+      }
+    }
+    // Return total quantity if material name found, otherwise return -1
+    return totalQuantity > 0 ? totalQuantity : 0;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +118,11 @@ class FullEstimatedMaterialsList extends StatelessWidget {
         child: DataTable(
           dataRowHeight: 75,
           columns: [
-            DataColumn(label: Text('Material Name')),
-            DataColumn(label: Text('Quantity')),
+            DataColumn(label: Text('Material\nName')),
+            DataColumn(label: Text('Estimated\nQuantity')),
+            DataColumn(label: Text('Measured\nQuantity')),
           ],
-          rows: materials.entries
+          rows: widget.EstimatedMaterials.entries
               .map(
                 (entry) => DataRow(cells: [
                   DataCell(Container(
@@ -43,6 +130,12 @@ class FullEstimatedMaterialsList extends StatelessWidget {
                       padding: EdgeInsets.all(5),
                       child: Text(entry.value['material']['material_name']))),
                   DataCell(Text(entry.value['quantity'].toString())),
+                  // DataCell(Text('0')),
+                  DataCell(Text(getMeasuredQuantity(
+                          entry.value['material']['material_name'])
+                      .toString()))
+
+                  //*/
                 ]),
               )
               .toList(),

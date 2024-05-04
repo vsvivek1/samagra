@@ -1302,8 +1302,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                 MaterialPageRoute(
                                                     builder: (context) {
                                               return FullEstimatedMaterialsScreen(
-                                                  materials:
-                                                      estimatedQuantityOfmaterials);
+                                                  EstimatedMaterials:
+                                                      estimatedQuantityOfmaterials,
+                                                  measurementDetails:
+                                                      this.measurementDetails);
                                             }));
                                           }),
                                           child: Text(
