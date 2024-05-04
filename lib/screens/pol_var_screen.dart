@@ -6,6 +6,7 @@ import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/centered_circular_spinner.dart';
+import 'package:samagra/screens/full_estimated_materials.dart';
 import 'package:samagra/screens/material_details_popup.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
@@ -1288,7 +1289,27 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   //   ),
                                   // ),
 
-                                  polevarViewButton(),
+                                  Row(
+                                    children: [
+                                      polevarViewButton(),
+                                      ElevatedButton(
+                                          onPressed: (() {
+                                            print(estimatedQuantityOfmaterials);
+
+                                            //debugger(when: true);
+
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                              return FullEstimatedMaterialsScreen(
+                                                  materials:
+                                                      estimatedQuantityOfmaterials);
+                                            }));
+                                          }),
+                                          child: Text(
+                                              ' view Full Estimate Materials'))
+                                    ],
+                                  ),
                                   bottomnavigationButtons(context),
 
                                   geoCordinatesWidget(context),
