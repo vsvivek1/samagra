@@ -52,40 +52,6 @@ class _FullEstimatedMaterialsListState
     // TODO: implement initState
   }
 
-  Map<String, int> listUniqueMaterials() {
-    Map<String, int> materialQuantities = {};
-
-    // Iterate through the nested structure
-    widget.measurementDetails.forEach((tasks) {
-      tasks['structures'].forEach((structure) {
-        structure['materials'].forEach((materialInfo) {
-          String materialName = materialInfo['material']['material_name'];
-          int quantity = materialInfo['material']['quantity'];
-          // Accumulate quantities for each material
-          materialQuantities.update(materialName, (value) => value + quantity,
-              ifAbsent: () => quantity);
-
-          int index = measuredMaterials.indexWhere(
-              (element) => element['material_name'] == materialName);
-
-          if (index != -1) {
-            // If materialName already exists in the list, update its quantity
-            measuredMaterials[index]['quantity'] += quantity;
-          } else {
-            // If materialName doesn't exist in the list, add a new entry
-            measuredMaterials
-                .add({'materialName': materialName, 'quantity': quantity});
-          }
-
-          ;
-        });
-      });
-    });
-
-    debugger(when: true);
-    return materialQuantities;
-  }
-
   int getMeasuredQuantity(String materialName) {
     int totalQuantity = 0;
     // Iterate through the list

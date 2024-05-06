@@ -178,6 +178,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Map<int, Map> estimatedQuantityOfmaterials = {};
 
+  List measuredMaterials = [];
+
   void togglePlay() {
     setState(() {
       isPlaying = !isPlaying;
@@ -2725,6 +2727,40 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // getTasksofSelectedLocation();
   }
 
+  List<dynamic> createListOfMeasuredmaterials() {
+    Map<String, int> materialQuantities = {};
+
+    // Iterate through the nested structure
+    measurementDetails.forEach((tasks) {
+      tasks['structures'].forEach((structure) {
+        structure['materials'].forEach((materialInfo) {
+          String materialName = materialInfo['material']['material_name'];
+          int quantity = materialInfo['material']['quantity'];
+          // Accumulate quantities for each material
+          materialQuantities.update(materialName, (value) => value + quantity,
+              ifAbsent: () => quantity);
+
+          int index = measurementDetails.indexWhere(
+              (element) => element['material_name'] == materialName);
+
+          if (index != -1) {
+            // If materialName already exists in the list, update its quantity
+            measuredMaterials[index]['quantity'] += quantity;
+          } else {
+            // If materialName doesn't exist in the list, add a new entry
+            measuredMaterials
+                .add({'material_name': materialName, 'quantity': quantity});
+          }
+
+          ;
+        });
+      });
+    });
+
+    // debugger(when: true);
+    return measuredMaterials;
+  }
+
   void updateMeasurementDetailsWithStructureMasterData(
       String taskId,
       int mstStructureId,
@@ -2869,6 +2905,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
           "location['lastUpdated'] = ${location['lastUpdated']} and location['firstIUpdated'] is $location['firstIUpdated'] ");
 
       /// finally updating last updated
+      ///
+      /// ls
+
+      createListOfMeasuredmaterials();
       return;
     });
   }
