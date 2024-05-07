@@ -2,12 +2,18 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/material_estimate_view.dart';
+import 'package:samagra/screens/measured_materials_view.dart';
 
 class FullEstimatedMaterialsScreen extends StatelessWidget {
   final Map<int, Map<dynamic, dynamic>> EstimatedMaterials;
-  var measurementDetails;
+  List<Map<dynamic, dynamic>> measurementDetails;
+  List<Map<String, dynamic>> measuredMaterials;
   FullEstimatedMaterialsScreen(
-      {required this.EstimatedMaterials, required this.measurementDetails});
+      {required this.EstimatedMaterials,
+      required this.measurementDetails,
+      required this.measuredMaterials});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,7 @@ class FullEstimatedMaterialsScreen extends StatelessWidget {
       ),
       body: Center(
         child: FullEstimatedMaterialsList(
+          measuredMaterials: measuredMaterials,
           EstimatedMaterials: EstimatedMaterials,
           measurementDetails: this.measurementDetails,
         ),
@@ -27,11 +34,14 @@ class FullEstimatedMaterialsScreen extends StatelessWidget {
 
 // ignore: must_be_immutable
 class FullEstimatedMaterialsList extends StatefulWidget {
-  var measurementDetails;
+  List<Map<dynamic, dynamic>> measurementDetails;
+  List<Map<String, dynamic>> measuredMaterials;
   final Map<int, Map<dynamic, dynamic>> EstimatedMaterials;
 
   FullEstimatedMaterialsList(
-      {required this.EstimatedMaterials, required this.measurementDetails});
+      {required this.EstimatedMaterials,
+      required this.measurementDetails,
+      required this.measuredMaterials});
 
   @override
   State<FullEstimatedMaterialsList> createState() =>
@@ -78,29 +88,67 @@ class _FullEstimatedMaterialsListState
 
   @override
   Widget build(BuildContext context) {
+    //var EstimatedMaterials = [];
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(color: Colors.white10),
+            child: Column(
+              children: [
+                Divider(),
+                Text('Estimate of Materials'),
+                Divider(),
+              ],
+            ),
+          ),
+          MaterialEstimateView(EstimatedMaterials: widget.EstimatedMaterials),
+          Container(
+            decoration: BoxDecoration(color: Colors.white10),
+            child: Column(
+              children: [
+                Divider(),
+                Text('Measured Vs Estimated'),
+                Divider(),
+              ],
+            ),
+          ),
+          MeasuredMaterialsView(
+            measuredMaterials: widget.measuredMaterials,
+            estimatedMaterials: widget.EstimatedMaterials,
+          )
+        ],
+      ),
+    );
+    return est();
+  }
+
+  SingleChildScrollView est() {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: DataTable(
-          dataRowHeight: 75,
           columns: [
             DataColumn(label: Text('Material\nName')),
-            DataColumn(label: Text('Estimated\nQuantity')),
+            //  DataColumn(label: Text('Estimated\nQuantity')),
             DataColumn(label: Text('Measured\nQuantity')),
           ],
           rows: widget.EstimatedMaterials.entries
+              //rows: widget.measuredMaterials.entries
               .map(
                 (entry) => DataRow(cells: [
                   DataCell(Container(
+                      width: 75,
                       transformAlignment: Alignment.center,
                       padding: EdgeInsets.all(5),
-                      child: Text(entry.value['material']['material_name']))),
+                      //child: Text(entry.value['material']['material_name']))),
+                      child: Text(entry.value['material_name']))),
                   DataCell(Text(entry.value['quantity'].toString())),
                   // DataCell(Text('0')),
-                  DataCell(Text(getMeasuredQuantity(
-                          entry.value['material']['material_name'])
-                      .toString()))
-
+                  /*   DataCell(Text(getMeasuredQuantity(
+                        entry.value['material']['material_name'])
+                    .toString()))
+ */
                   //*/
                 ]),
               )

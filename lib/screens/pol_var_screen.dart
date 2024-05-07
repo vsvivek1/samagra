@@ -178,7 +178,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Map<int, Map> estimatedQuantityOfmaterials = {};
 
-  List measuredMaterials = [];
+  List<Map<String, dynamic>> measuredMaterials = [];
 
   void togglePlay() {
     setState(() {
@@ -484,6 +484,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // print(_workDetails);
 
         print('work details abobve $_numberOfLocations');
+
+        createListOfMeasuredmaterials();
 
         _enableEntryOfLocationDetails = false;
       }
@@ -1120,8 +1122,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           _taskList = tasklist1;
 
-          print(wrk_schedule_group_structures);
-          print('wrk_schedule_group_structures above at polvar 1116');
+          /*   print(wrk_schedule_group_structures);
+          print('wrk_schedule_group_structures above at polvar 1116'); */
 
           //  return
           //
@@ -1296,7 +1298,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                       polevarViewButton(),
                                       ElevatedButton(
                                           onPressed: (() {
-                                            print(estimatedQuantityOfmaterials);
+                                            // print(estimatedQuantityOfmaterials);
 
                                             //debugger(when: true);
 
@@ -1304,6 +1306,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                 MaterialPageRoute(
                                                     builder: (context) {
                                               return FullEstimatedMaterialsScreen(
+                                                  measuredMaterials:
+                                                      measuredMaterials,
                                                   EstimatedMaterials:
                                                       estimatedQuantityOfmaterials,
                                                   measurementDetails:
@@ -2731,32 +2735,34 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Map<String, int> materialQuantities = {};
 
     // Iterate through the nested structure
-    measurementDetails.forEach((tasks) {
-      tasks['structures'].forEach((structure) {
-        structure['materials'].forEach((materialInfo) {
-          String materialName = materialInfo['material']['material_name'];
-          int quantity = materialInfo['material']['quantity'];
-          // Accumulate quantities for each material
-          materialQuantities.update(materialName, (value) => value + quantity,
-              ifAbsent: () => quantity);
+    measurementDetails.forEach((locations) {
+      locations['tasks'].forEach((task) => {
+            task['structures'].forEach((structure) {
+              structure['materials'].forEach((materialInfo) {
+                String materialName = materialInfo['material_name'];
+                int quantity = int.parse(materialInfo['quantity']);
+                // Accumulate quantities for each material
+                materialQuantities.update(
+                    materialName, (value) => value + quantity,
+                    ifAbsent: () => quantity);
 
-          int index = measurementDetails.indexWhere(
-              (element) => element['material_name'] == materialName);
+                int index = measurementDetails.indexWhere(
+                    (element) => element['material_name'] == materialName);
 
-          if (index != -1) {
-            // If materialName already exists in the list, update its quantity
-            measuredMaterials[index]['quantity'] += quantity;
-          } else {
-            // If materialName doesn't exist in the list, add a new entry
-            measuredMaterials
-                .add({'material_name': materialName, 'quantity': quantity});
-          }
+                if (index != -1) {
+                  // If materialName already exists in the list, update its quantity
+                  measuredMaterials[index]['quantity'] += quantity;
+                } else {
+                  // If materialName doesn't exist in the list, add a new entry
+                  measuredMaterials.add(
+                      {'material_name': materialName, 'quantity': quantity});
+                }
 
-          ;
-        });
-      });
+                ;
+              });
+            })
+          });
     });
-
     // debugger(when: true);
     return measuredMaterials;
   }
