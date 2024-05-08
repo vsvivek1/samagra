@@ -180,6 +180,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   List<Map<String, dynamic>> measuredMaterials = [];
 
+  bool _requiresEstimateRevision = false;
+
   void togglePlay() {
     setState(() {
       isPlaying = !isPlaying;
@@ -426,7 +428,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print('data above 277');
 
     // return;
-
+    await _fetchWorkDetails();
     setState(() {
       if (data != null &&
           data['fromLocation'] != null &&
@@ -484,7 +486,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // print(_workDetails);
 
         print('work details abobve $_numberOfLocations');
+        // await _fetchWorkDetails();
+        // aggregateMaterialQuantities(wrk_execution_material_schedules);
 
+        //debugger(when: true);
         createListOfMeasuredmaterials();
 
         _enableEntryOfLocationDetails = false;
@@ -1171,16 +1176,34 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           ),
                           _savedToSamagra
                               ? CircularProgressIndicator()
-                              : ElevatedButton.icon(
-                                  style: ksebButtonStyle(),
-                                  // color: Colors.green,
-                                  icon: Icon(Icons.send_sharp),
-                                  onPressed: () =>
-                                      {sendObjectToSamagra(measurementDetails)},
-                                  label: Text(
-                                    'Save \nto Samagra',
-                                    style: TextStyle(fontSize: 10),
-                                  )),
+                              : !_requiresEstimateRevision
+                                  ? ElevatedButton.icon(
+                                      style: ksebButtonStyle(),
+                                      // color: Colors.green,
+                                      icon: Icon(Icons.send_sharp),
+                                      onPressed: () => {
+                                            sendObjectToSamagra(
+                                                measurementDetails)
+                                          },
+                                      label: Text(
+                                        'Save \nto Samagra',
+                                        style: TextStyle(fontSize: 10),
+                                      ))
+                                  : ElevatedButton.icon(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              content: Text(
+                                                  'Complete revison in Samagra'),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(Icons.reviews_outlined),
+                                      label: Text(
+                                          'Requires \nEstimate\n Revison ')),
                           GotoNextLocation()
                           /*  ElevatedButton.icon(
                               style: ksebButtonStyle(),
@@ -1314,8 +1337,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                       this.measurementDetails);
                                             }));
                                           }),
-                                          child: Text(
-                                              ' view Full Estimate Materials'))
+                                          child:
+                                              Text('Estimate vs Measurement'))
                                     ],
                                   ),
                                   bottomnavigationButtons(context),
@@ -2731,6 +2754,60 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // getTasksofSelectedLocation();
   }
 
+  void checkMaterials(List<Map<String, dynamic>> measuredMaterials,
+      Map<int, Map<dynamic, dynamic>> estimatedMaterials) {
+    // Check if any measured material is not in estimated materials or if quantity is greater
+    List<Map<String, dynamic>> missingMaterials = [];
+    for (Map<String, dynamic> measuredMaterial in measuredMaterials) {
+      String materialName = measuredMaterial['material_name'];
+      int measuredQuantity = measuredMaterial['quantity'];
+
+      var a = estimatedMaterials.values.any(
+          (element) => element['material']['material_name'] == materialName);
+
+      if (!a) {
+        missingMaterials.add(measuredMaterial);
+      } else {
+        double estimatedQuantity = 0.0;
+
+        estimatedMaterials.entries.forEach(
+          (element) {
+            if (element.value['material']['material_name'] == materialName) {
+              estimatedQuantity = estimatedQuantity + element.value['quantity'];
+            }
+            ;
+          },
+        );
+
+        if (measuredQuantity > estimatedQuantity) {
+          missingMaterials.add(measuredMaterial);
+        }
+
+        //debugger(when: true, message: 'poda');
+        /*   if (measuredQuantity > estimatedQuantity) {
+        missingMaterials.add(measuredMaterial);
+      } */
+      }
+    }
+
+    // Print the missing materials
+
+    // debugger(when: true, message: 'poda');
+    if (missingMaterials.isEmpty) {
+      _requiresEstimateRevision = false;
+
+      setState(() {});
+      print('All measured materials are accounted for in estimated materials.');
+    } else {
+      print('The following materials are missing or have greater quantity:');
+      for (Map<String, dynamic> material in missingMaterials) {
+        print(material);
+      }
+      setState(() {});
+      _requiresEstimateRevision = true;
+    }
+  }
+
   List<dynamic> createListOfMeasuredmaterials() {
     Map<String, int> materialQuantities = {};
 
@@ -2764,6 +2841,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
           });
     });
     // debugger(when: true);
+
+    checkMaterials(measuredMaterials, estimatedQuantityOfmaterials);
     return measuredMaterials;
   }
 
@@ -2777,7 +2856,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       totalLabourDetails,
       takenBacksOfSelectedStructure) {
     ///checking existing measuremnt details of the lcoation
-    measurementDetails.forEach((location) {
+    measurementDetails.forEach((location) async {
       int locationNumber = _selectedLocationIndex + 1;
 
       if (location['locationNo'] != locationNumber) {
@@ -2913,7 +2992,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
       /// finally updating last updated
       ///
       /// ls
+      ///
+      ///
 
+      await _fetchWorkDetails();
+      // aggregateMaterialQuantities(wrk_execution_material_schedules);
+
+      debugger(when: true);
       createListOfMeasuredmaterials();
       return;
     });
@@ -3154,7 +3239,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
     );
   }
 
-  Map<int, Map> aggregateMaterialQuantities(List<dynamic> materialSchedules) {
+  Future<Map<int, Map>> aggregateMaterialQuantities(
+      List<dynamic> materialSchedules) async {
     // Map to store materials grouped by name
 
     // return {-1: {}};
@@ -3300,7 +3386,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           wrk_execution_schedules[0]["wrk_execution_material_schedules"];
       //debugger(when: true);
       estimatedQuantityOfmaterials =
-          aggregateMaterialQuantities(wrk_execution_material_schedules);
+          await aggregateMaterialQuantities(wrk_execution_material_schedules);
 
       /* showDialog(
           context: context,
@@ -3335,7 +3421,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       print(e.toString());
       var stackTrace = StackTrace.current;
       print(stackTrace);
-      print("$e  is the error in _fetchWorkDetails()");
+    
 
       return Future.value([-1]);
 
@@ -3818,7 +3904,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   polevarViewButton() {
     return ElevatedButton(
-        child: Text('Polvar View'),
+        child: Text('PolVAR'),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: ((context) {
             return PolvarViewOfLocations(
