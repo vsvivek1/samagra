@@ -7,6 +7,7 @@ import 'package:samagra/screens/add_new_material.dart';
 class LocationMeasurementView extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
   final Function reflectQuantityDetails;
+  final Function onNewMaterialAdditionFinished;
 
   final estimatedQuantityOfmaterials;
 
@@ -21,7 +22,8 @@ class LocationMeasurementView extends StatefulWidget {
       required this.reflectQuantityDetails,
       required this.estimatedQuantityOfmaterials,
       required this.measurementDetails,
-      required this.selectedLocationIndex});
+      required this.selectedLocationIndex,
+      required this.onNewMaterialAdditionFinished});
 
   @override
   _LocationMeasurementViewState createState() =>
@@ -743,6 +745,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
       //debugger(when: true);
       materials.addAll(selectedMaterials);
+
+      widget.onNewMaterialAdditionFinished();
+      //onMaterialFinished();
 /* 
       print(materials);
       debugger(when: true);
@@ -754,4 +759,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
   addLabourNotInEstimate() {}
 
   addtakenbacksNotInEstimate() {}
+
+  void onMaterialFinished() {}
 }

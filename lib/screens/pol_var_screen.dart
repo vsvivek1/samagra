@@ -14,6 +14,7 @@ import 'package:samagra/screens/polevar_view_of_locations.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
+import 'package:samagra/screens/ts_revision.dart';
 
 import 'get_work_details.dart';
 import 'log_functions.dart';
@@ -1191,7 +1192,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                       ))
                                   : ElevatedButton.icon(
                                       onPressed: () {
-                                        showDialog(
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: ((context) {
+                                          return TSRevisonForm();
+                                        })));
+
+                                        /*   showDialog(
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
@@ -1199,7 +1206,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                   'Complete revison in Samagra'),
                                             );
                                           },
-                                        );
+                                        ); */
                                       },
                                       icon: Icon(Icons.reviews_outlined),
                                       label: Text(
@@ -1580,6 +1587,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
               return AlertDialog(
                 title: Text('Location Measurement View'),
                 content: LocationMeasurementView(
+                    onNewMaterialAdditionFinished: () =>
+                        {onNewMaterialAdditionFinished()},
                     selectedLocationIndex: _selectedLocationIndex,
                     tasks: List<Map<dynamic, dynamic>>.from(
                         _selectedLocationTasks),
@@ -1605,6 +1614,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.3,
             child: LocationMeasurementView(
+                onNewMaterialAdditionFinished: onNewMaterialAdditionFinished,
                 selectedLocationIndex: _selectedLocationIndex,
                 tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
                 reflectQuantityDetails: reflectQuantityDetails,
@@ -2998,7 +3008,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       await _fetchWorkDetails();
       // aggregateMaterialQuantities(wrk_execution_material_schedules);
 
-      debugger(when: true);
+      // debugger(when: true);
       createListOfMeasuredmaterials();
       return;
     });
@@ -3911,5 +3921,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 measurementDetails: measurementDetails);
           })));
         });
+  }
+
+  onNewMaterialAdditionFinished() async {
+    //debugger(when: true);
+    //setState(() {});
+    _saveMeasurementDetails();
+    await _fetchWorkDetails();
+    // aggregateMaterialQuantities(wrk_execution_material_schedules);
+
+    // debugger(when: true);
+    createListOfMeasuredmaterials();
+    setState(() {});
   }
 }

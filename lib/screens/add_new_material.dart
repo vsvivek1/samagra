@@ -58,15 +58,15 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
           FocusScope.of(context).unfocus();
         },
         child: PopScope(
-          canPop: false,
+          canPop: true,
           onPopInvoked: (didPop) {
-            showDialog(
+            /* showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
                     content: Text('Please use Save Button to go back'),
                   );
-                });
+                }); */
           },
           child: SingleChildScrollView(
             child: Column(
@@ -314,9 +314,12 @@ class _MaterialEntryState extends State<MaterialEntry> {
     result['selectedMaterials'] = selectedMaterials;
     result['taskId'] = widget.taskId;
     result['strutctureId'] = widget.structureId;
-    Future.microtask(() {
-      Navigator.pop(context, result);
-    });
+
+    Navigator.pop(context, result);
+    /* Future.microtask(() {
+     
+    }) */
+    ;
   }
 
   Widget separatorBuilder(BuildContext context, int index) {

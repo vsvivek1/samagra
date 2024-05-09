@@ -59,28 +59,12 @@ class TSRevision {
   }
 }
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class TSRevisonForm extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text('Send Data to Server')),
-        body: DataForm(),
-      ),
-    );
-  }
+  _TSRevisonFormState createState() => _TSRevisonFormState();
 }
 
-class DataForm extends StatefulWidget {
-  @override
-  _DataFormState createState() => _DataFormState();
-}
-
-class _DataFormState extends State<DataForm> {
+class _TSRevisonFormState extends State<TSRevisonForm> {
   TSRevision tsRevision = TSRevision(
     userId: 1,
     seatId: 1,
@@ -141,50 +125,52 @@ class _DataFormState extends State<DataForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text('User ID: ${tsRevision.userId}'),
-          Text('Seat ID: ${tsRevision.seatId}'),
-          Text('Role ID: ${tsRevision.roleId}'),
-          Text('Office ID: ${tsRevision.officeId}'),
-          Text('PLG Work ID: ${tsRevision.plgWorkId}'),
-          Text('Estimate Report: ${tsRevision.estimateReport}'),
-          Text('Note: ${tsRevision.note}'),
-          SizedBox(height: 20.0),
-          ElevatedButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text('Confirmation'),
-                    content:
-                        Text('Do you want to send this data to the server?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          tsRevision.sendDataToServer(context);
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Send'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            child: Text('Send Data to Server'),
-          ),
-        ],
+    return Scaffold(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('User ID: ${tsRevision.userId}'),
+            Text('Seat ID: ${tsRevision.seatId}'),
+            Text('Role ID: ${tsRevision.roleId}'),
+            Text('Office ID: ${tsRevision.officeId}'),
+            Text('PLG Work ID: ${tsRevision.plgWorkId}'),
+            Text('Estimate Report: ${tsRevision.estimateReport}'),
+            Text('Note: ${tsRevision.note}'),
+            SizedBox(height: 20.0),
+            ElevatedButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirmation'),
+                      content:
+                          Text('Do you want to send this data to the server?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            tsRevision.sendDataToServer(context);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('Send'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text('Send Data to Server'),
+            ),
+          ],
+        ),
       ),
     );
   }
