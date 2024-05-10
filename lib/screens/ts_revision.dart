@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:samagra/common.dart';
+import 'package:samagra/screens/estimate_revision_tabs.dart';
 import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/heading_container.dart';
 
 class TSRevision {
   final int userId;
@@ -188,9 +190,19 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
             Text('Note: ${note}'),
             SizedBox(height: 20.0),
             Divider(),
-            EstimateReport(),
+            EstimateRevisionTabs(
+              key: UniqueKey(),
+              tabs: [
+                TabData(title: "Materials", content: RevisedMaterialList()),
+                TabData(title: "Labour", content: RevisedMaterialList()),
+                TabData(title: "Taken backs", content: RevisedMaterialList()),
+                TabData(title: "Estimate Report", content: EstimateReport()),
+                TabData(title: "Note", content: Note())
+              ],
+            ),
+            HeadingContainer(key: UniqueKey(), text: 'Estimate Report'),
             Divider(),
-            Note(),
+            HeadingContainer(key: UniqueKey(), text: 'Note'),
             Divider(),
             ElevatedButton(
               onPressed: () {
@@ -226,6 +238,14 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
         ),
       ),
     );
+  }
+}
+
+class RevisedMaterialList extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
   }
 }
 

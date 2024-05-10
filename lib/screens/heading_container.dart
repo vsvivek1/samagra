@@ -19,8 +19,13 @@ class HeadingContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      transformAlignment: Alignment.center,
+      margin: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+          color: Color.fromARGB(255, 26, 30, 101),
+          borderRadius: BorderRadius.circular(10)),
       padding: EdgeInsets.all(padding),
-      color: color,
+      // color: color,
       child: Text(
         text,
         style: TextStyle(
