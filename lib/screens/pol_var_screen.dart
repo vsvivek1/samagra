@@ -76,7 +76,8 @@ class PolVarScreen extends StatefulWidget {
 // # - Implement functions/methods for saving data
 // # - Include error handling and confirmation messages on successful saving
 
-  @override
+  //@override
+
   final int workId;
   final String workName;
   final String workCode;
@@ -1195,7 +1196,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: ((context) {
-                                          return TSRevisonForm();
+                                          return TSRevisonForm(
+                                              workId: widget.workId);
                                         })));
 
                                         /*   showDialog(

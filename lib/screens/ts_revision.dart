@@ -1,5 +1,10 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:samagra/common.dart';
+import 'package:samagra/screens/get_login_details.dart';
 
 class TSRevision {
   final int userId;
@@ -34,11 +39,48 @@ class TSRevision {
       'estimate_data': estimateData,
     };
   }
+}
+
+class TSRevisonForm extends StatefulWidget {
+  int workId;
+
+  TSRevisonForm({required this.workId});
+  @override
+  _TSRevisonFormState createState() => _TSRevisonFormState();
+}
+
+class _TSRevisonFormState extends State<TSRevisonForm> {
+//TSRevisonForm({required workId:this.workId});
+
+  var userId;
+
+  var seatId;
+
+  late var userDetails;
+
+  var roleId;
+
+  var seatDetails;
+
+  var officeId;
+
+  var estimateReport;
+
+  var plgWorkId;
+
+  var note;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    setUserData();
+    super.initState();
+  }
 
   Future<void> sendDataToServer(BuildContext context) async {
     final url = 'your_server_endpoint_here';
     final headers = {'Content-Type': 'application/json'};
-    final body = toJson();
+    final body = 'k'; //.toJson();
 
     try {
       final response =
@@ -57,17 +99,22 @@ class TSRevision {
           .showSnackBar(SnackBar(content: Text('Error sending data: $error')));
     }
   }
-}
 
-class TSRevisonForm extends StatefulWidget {
-  @override
-  _TSRevisonFormState createState() => _TSRevisonFormState();
-}
+  setUserData() async {
+    userId = await getUserId();
+    seatId = await getSeatId();
+    userDetails = await getUserLoginDetails();
+    seatDetails = userDetails['seat_details'];
+    roleId = seatDetails['role_id'];
+    officeId = seatDetails['office_id'];
 
-class _TSRevisonFormState extends State<TSRevisonForm> {
-  TSRevision tsRevision = TSRevision(
-    userId: 1,
-    seatId: 1,
+    /*  print(userDetails);
+    debugger(); */
+  }
+
+/*   TSRevision tsRevision = TSRevision(
+    userId:widget.workId,
+    seatId:seatId,
     roleId: 1,
     officeId: 1,
     plgWorkId: 1,
@@ -122,6 +169,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
       },
     ],
   );
+ */
 
   @override
   Widget build(BuildContext context) {
@@ -131,14 +179,19 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('User ID: ${tsRevision.userId}'),
-            Text('Seat ID: ${tsRevision.seatId}'),
-            Text('Role ID: ${tsRevision.roleId}'),
-            Text('Office ID: ${tsRevision.officeId}'),
-            Text('PLG Work ID: ${tsRevision.plgWorkId}'),
-            Text('Estimate Report: ${tsRevision.estimateReport}'),
-            Text('Note: ${tsRevision.note}'),
+            Text('User ID: ${userId}'),
+            Text('Seat ID: ${seatId}'),
+            Text('Role ID: ${roleId}'),
+            Text('Office ID: ${officeId}'),
+            Text('PLG Work ID: ${plgWorkId}'),
+            Text('Estimate Report: ${estimateReport}'),
+            Text('Note: ${note}'),
             SizedBox(height: 20.0),
+            Divider(),
+            EstimateReport(),
+            Divider(),
+            Note(),
+            Divider(),
             ElevatedButton(
               onPressed: () {
                 showDialog(
@@ -157,7 +210,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                         ),
                         TextButton(
                           onPressed: () {
-                            tsRevision.sendDataToServer(context);
+                            sendDataToServer(context);
                             Navigator.of(context).pop();
                           },
                           child: Text('Send'),
@@ -173,5 +226,58 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
         ),
       ),
     );
+  }
+}
+
+class Note extends StatelessWidget {
+  const Note({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(100.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: TextFormField(
+        maxLines: null, // Allow unlimited lines
+        keyboardType: TextInputType.multiline, // Enable multiline input
+        decoration: InputDecoration(
+          hintText: 'Note ...',
+          border: InputBorder.none, // Hide the default border
+        ),
+        style: TextStyle(fontSize: 16.0),
+      ),
+    );
+  }
+}
+
+class EstimateReport extends StatelessWidget {
+  const EstimateReport({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(100.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: TextFormField(
+        maxLines: null, // Allow unlimited lines
+        keyboardType: TextInputType.multiline, // Enable multiline input
+        decoration: InputDecoration(
+          hintText: 'Estimate report ...',
+          border: InputBorder.none, // Hide the default border
+        ),
+        style: TextStyle(fontSize: 16.0),
+      ),
+    );
+    ;
   }
 }
