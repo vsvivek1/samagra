@@ -2559,6 +2559,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           //
         });
+
+        Navigator.of(context).pop();
         // Handle button press
         // _handleButtonPress(context);
       },

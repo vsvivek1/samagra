@@ -17,25 +17,27 @@ class CustomAlertDialog extends StatelessWidget {
 
     return Dialog(
       insetPadding: EdgeInsets.all(10),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: title,
-            ),
-            SingleChildScrollView(
-              child: SizedBox(
-                  height: MediaQuery.of(context).size.height * .8,
-                  width: 400,
-                  child: content),
-            ),
-            ButtonBar(
-              children: actions ?? [],
-            ),
-          ],
+      child: SingleChildScrollView(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: title,
+              ),
+              SingleChildScrollView(
+                child: SizedBox(
+                    height: MediaQuery.of(context).size.height * .8,
+                    width: 400,
+                    child: content),
+              ),
+              ButtonBar(
+                children: actions ?? [],
+              ),
+            ],
+          ),
         ),
       ),
     );
