@@ -98,7 +98,7 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
                       }
                     });
 
-                    widget.updateMaterialStatus();
+                    widget.updateMaterialStatus(item);
                     //print(widget.selectedMaterials);
                   },
                   icon: Icon(Icons.select_all_sharp),

@@ -17,13 +17,16 @@ class LocationMeasurementView extends StatefulWidget {
 
   var locationNo;
 
+  var mst_scheme_id;
+
   LocationMeasurementView(
       {required this.tasks,
       required this.reflectQuantityDetails,
       required this.estimatedQuantityOfmaterials,
       required this.measurementDetails,
       required this.selectedLocationIndex,
-      required this.onNewMaterialAdditionFinished});
+      required this.onNewMaterialAdditionFinished,
+      required this.mst_scheme_id});
 
   @override
   _LocationMeasurementViewState createState() =>
@@ -299,6 +302,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                               const Color.fromARGB(255, 132, 184, 134)),
                         ),
                         onPressed: (() {
+                          print(widget.mst_scheme_id);
+
                           addMaterialsNotInEstimate(taskId, strutctureId);
                         }),
                         child: Text('Add Materials Not in Estimate')),
@@ -348,10 +353,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
             height: 25,
             child: TextField(
               onChanged: (value) {
-                print(item);
-                setState(() {
-                  item['quantity'] = value;
-                });
+                item['quantity'] = value;
 
                 // print('hi');
                 // _edititemQuantity(itemIndex,
@@ -436,25 +438,27 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
                   final labour = labour1[labourIndex];
 
-                  return Column(
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.only(left: 1.0),
-                        title: Text(
-                            '${labourIndex + 1}: ${labour['labour_name']}'),
-                        // subtitle: Text('Quantity: ${labour['quantity']}'),
-                        subtitle: itemEditingBox(labour),
+                  return Builder(builder: (context) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.only(left: 1.0),
+                          title: Text(
+                              '${labourIndex + 1}: ${labour['labour_name']}'),
+                          // subtitle: Text('Quantity: ${labour['quantity']}'),
+                          subtitle: itemEditingBox(labour),
 
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit),
-                          onPressed: () {
-                            _editLabourQuantity(
-                                labourIndex, structureIndex, index);
-                          },
+                          trailing: IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              _editLabourQuantity(
+                                  labourIndex, structureIndex, index);
+                            },
+                          ),
                         ),
-                      ),
-                    ],
-                  );
+                      ],
+                    );
+                  });
                 },
               ),
               ElevatedButton(
@@ -702,19 +706,25 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
         .push(
       MaterialPageRoute(
         builder: (context) => AddNewMaterial(
-          seletedLocationIndex: widget.selectedLocationIndex,
-          taskId: taskId,
-          structureId: structureId,
-          tasks: widget.tasks,
-          reflectQuantityDetails: (object) {},
-          estimatedQuantityOfmaterials: widget.estimatedQuantityOfmaterials,
-          measurementDetails: widget.measurementDetails,
-        ),
+            seletedLocationIndex: widget.selectedLocationIndex,
+            taskId: taskId,
+            structureId: structureId,
+            tasks: widget.tasks,
+            reflectQuantityDetails: (object) {},
+            estimatedQuantityOfmaterials: widget.estimatedQuantityOfmaterials,
+            measurementDetails: widget.measurementDetails,
+            mst_scheme_id: widget.mst_scheme_id),
       ),
     )
         .then((result) {
-      // print('poped $result');
+      if (result == null || !(result is Map)) {
+        return;
+      }
 
+      print(result);
+      debugger(when: true);
+      // print('poped $result');
+      return;
       if (result['selectedMaterials'] == null ||
           result['selectedMaterials'].length == 0) {
         print('hi return');

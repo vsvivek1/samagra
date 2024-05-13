@@ -188,6 +188,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   var tasklist1;
 
+  var wrk_work_detail;
+
+  var mst_scheme_id = -1;
+
   void togglePlay() {
     setState(() {
       isPlaying = !isPlaying;
@@ -365,9 +369,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
   Future<void> initialSetup() async {
     logCurrentFunction();
     await _updateWorkDetailsOnLoading();
+
+    await getScheduleDetailsForMeasurement(widget.workId.toString());
     audioCache = AudioCache(prefix: 'assets/audio/');
 
-    print('$_numberOfLocations is numberof locations at 230');
+    // print('$_numberOfLocations is numberof locations at 230');
 
     if (_enableEntryOfLocationDetails) {
       setState(() {
@@ -699,42 +705,43 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // bool retVal = false;
 
     //wrong function
-    try {
-      String baseUrlOld =
-          "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+    /*  try { */
+    String baseUrlOld =
+        "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0";
 
-      String baseUrl =
-          "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/$workId/0";
+    // print("BASE UR mdtwm 136L $baseUrl");
 
-      print("BASE UR mdtwm 136L $baseUrl");
+    Dio dio = new Dio();
 
-      Dio dio = new Dio();
+    dio = await setAccessTockenToDio(dio);
 
-      dio = await setAccessTockenToDio(dio);
+    setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
-      debugger(when: true);
+    Response response = await dio.get(baseUrlOld);
 
-      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    if (response.statusCode == 200 && response.data['result_flag'] != -1) {
+      Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
+      wrk_work_detail = apiData['wrk_work_detail'];
 
-      Response response = await dio.get(baseUrl);
-      if (response.statusCode == 200) {
-        Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
+      mst_scheme_id = wrk_work_detail['mst_scheme_id'];
+      //debugger(when: true);
+      //print("api @693 $apiData");
 
-        print("api @693 $apiData");
+      //debugger(when: true);
 
-        //debugger(when: true);
-
-        ///34843
-        return apiData['wrk_schedule_group_structures'];
-        // print("apidata at mdtwm $apiData");
-      } else {
-        return Future.value([]);
-      }
-    } catch (e) {
+      ///34843
+      return apiData['wrk_schedule_group_structures'];
+      // print("apidata at mdtwm $apiData");
+    } else {
+      print(response);
+      print('response above');
+      return Future.value([]);
+    }
+    /*  } catch (e) {
       print('error at 672 polvar screen $e');
 
       return Future.value([]);
-    }
+    } */
   }
 
   getMeasurementObjForApi(obj) async {
@@ -1062,7 +1069,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           int ln = measurementDetails.length;
 
-          print('measurement details length $ln');
+          // print('measurement details length $ln');
         }
       }
 
@@ -1161,244 +1168,246 @@ class _PolVarScreenState extends State<PolVarScreen> {
             child: SafeArea(
               child: Container(
                 padding: EdgeInsets.all(5),
-                child: Scaffold(
-                  bottomNavigationBar: BottomAppBar(
-                    shape: CircularNotchedRectangle(),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          ElevatedButton.icon(
-                            style: ksebButtonStyle(),
-                            icon: Icon(
-                              Icons.copy,
-                            ),
-                            onPressed: () =>
-                                _showMeasurementCopierDialog(context),
-                            label: Text(
-                              overflow: TextOverflow.ellipsis,
-                              'M-Copier',
-                              style: TextStyle(fontSize: 8),
-                            ),
-                          ),
-                          _savedToSamagra
-                              ? CircularProgressIndicator()
-                              : !_requiresEstimateRevision
-                                  ? ElevatedButton.icon(
-                                      style: ksebButtonStyle(),
-                                      // color: Colors.green,
-                                      icon: Icon(Icons.send_sharp),
-                                      onPressed: () => {
-                                            sendObjectToSamagra(
-                                                measurementDetails)
-                                          },
-                                      label: Text(
-                                        'Save \nto Samagra',
-                                        style: TextStyle(fontSize: 10),
-                                      ))
-                                  : ElevatedButton.icon(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              content: Text(
-                                                  'Complete revison in Samagra'),
-                                            );
-                                          },
-                                        );
-
-                                        /*    Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: ((context) {
-                                          return TSRevisonForm(
-                                              workId: widget.workId);
-                                        }))); */
-                                      },
-                                      icon: Icon(Icons.reviews_outlined),
-                                      label: Text(
-                                          'Requires \nEstimate\n Revison ')),
-                          GotoNextLocation()
-                          /*  ElevatedButton.icon(
+                child: Builder(builder: (context) {
+                  return Scaffold(
+                    bottomNavigationBar: BottomAppBar(
+                      shape: CircularNotchedRectangle(),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            ElevatedButton.icon(
                               style: ksebButtonStyle(),
-                              icon: Icon(Icons.remove_red_eye),
-                              onPressed: () => {
-                                    setState(
-                                      () {
-                                        _viewFullLocationList =
-                                            !_viewFullLocationList;
-                                      },
-                                    )
-                                  },
+                              icon: Icon(
+                                Icons.copy,
+                              ),
+                              onPressed: () =>
+                                  _showMeasurementCopierDialog(context),
                               label: Text(
-                                  style: TextStyle(
-                                    fontSize: 6,
-                                  ),
-                                  _viewFullLocationList
-                                      ? 'Hide Detailed \n View of Locations'
-                                      : "Detailed \n View of Locations")) */
-                        ]),
-                  ),
-                  // floatingActionButton: GotoNextLocation(),
+                                overflow: TextOverflow.ellipsis,
+                                'M-Copier',
+                                style: TextStyle(fontSize: 8),
+                              ),
+                            ),
+                            _savedToSamagra
+                                ? CircularProgressIndicator()
+                                : !_requiresEstimateRevision
+                                    ? ElevatedButton.icon(
+                                        style: ksebButtonStyle(),
+                                        // color: Colors.green,
+                                        icon: Icon(Icons.send_sharp),
+                                        onPressed: () => {
+                                              sendObjectToSamagra(
+                                                  measurementDetails)
+                                            },
+                                        label: Text(
+                                          'Save \nto Samagra',
+                                          style: TextStyle(fontSize: 10),
+                                        ))
+                                    : ElevatedButton.icon(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: Text(
+                                                    'Complete revison in Samagra'),
+                                              );
+                                            },
+                                          );
 
-                  // floatingActionButton: CurvedTextFab(
-                  //   // child: Icon(Icons.place),
-                  //   text: 'My etesxt',
-                  //   onPressed: () {
-                  //     _gotToAnotherLocation();
-                  //     // Add functionality for when the button is pressed
-                  //     // print('Button pressed!');
-                  //   },
-                  // ),
-                  appBar: appBar(),
-                  body: Container(
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                      /*              boxShadow: [
-          BoxShadow(
-            color: Colors.blueAccent.withOpacity(0.9),
-            blurRadius: 3.0,
-            offset: Offset(0, 1),
-          ),
-        ],
-   */
-                    ),
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      trackVisibility: true,
-                      thickness: 2,
-                      child: SingleChildScrollView(
-                        child: IntrinsicHeight(
-                          child: Container(
-                            //constraints: BoxConstraints.expand(height: null),
-                            height: MediaQuery.of(context).size.height * 1.5,
-                            margin: EdgeInsets.all(16.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                WorkNameWidget(
-                                  workName: widget.workName +
-                                      '\n\nWork Code : ${widget.workCode}',
-                                  color: Colors.blue,
-                                  workId: widget.workId.toString(),
-                                ),
-                                if (_selectedLocationIndex == -1)
-                                  locationNumberAndLocationPointsEntryScreen(),
-                                if (!_enableEntryOfLocationDetails)
-                                  addOneMoreLocation(),
-                                enterLocationDetails(),
-                                if (_selectedLocationIndex == -1 &&
-                                    !_enableEntryOfLocationDetails) ...[
-                                  Visibility(
-                                      visible: !_openedMeasurementCopier,
-                                      child: showLocationButtons())
-
-                                  // for showing loading issued material
-                                ],
-                                if ((!_enableEntryOfLocationDetails &&
-                                    _numberOfLocations > 0 &&
-                                    _numberOfLocations < 999 &&
-                                    _fromLocation != '' &&
-                                    _toLocation != '')) ...[
-                                  Divider(
-                                    height: 20,
-                                    thickness: 5,
-                                    color: Colors.grey[400],
-                                  ),
-
-                                  // Visibility(
-                                  //   // visible: _showAnotherLocationButton
-
-                                  //   visible: _selectedLocationIndex != -1
-
-                                  //   //  &&
-                                  //   //     !_showSaveMeasurementDetailsButton
-                                  //   ,
-                                  //   child: Row(
-                                  //     children: [
-                                  //       Spacer(),
-                                  //       ElevatedButton(
-                                  //           onPressed: () =>
-                                  //               {_gotToAnotherLocation()},
-                                  //           child: Text('Go to  Another Location')),
-                                  //       Spacer(),
-                                  //     ],
-                                  //   ),
-                                  // ),
-
-                                  Row(
-                                    children: [
-                                      Visibility(
-                                        visible: measuredMaterials.isNotEmpty,
-                                        child: polevarViewButton(),
+                                          /*    Navigator.push(context,
+                                                MaterialPageRoute(
+                                                    builder: ((context) {
+                                              return TSRevisonForm(
+                                                  workId: widget.workId);
+                                            }))); */
+                                        },
+                                        icon: Icon(Icons.reviews_outlined),
+                                        label: Text(
+                                            'Requires \nEstimate\n Revison ')),
+                            GotoNextLocation()
+                            /*  ElevatedButton.icon(
+                                  style: ksebButtonStyle(),
+                                  icon: Icon(Icons.remove_red_eye),
+                                  onPressed: () => {
+                                        setState(
+                                          () {
+                                            _viewFullLocationList =
+                                                !_viewFullLocationList;
+                                          },
+                                        )
+                                      },
+                                  label: Text(
+                                      style: TextStyle(
+                                        fontSize: 6,
                                       ),
-                                      Visibility(
-                                        visible: measuredMaterials.isNotEmpty,
-                                        child: ElevatedButton(
-                                            onPressed: (() {
-                                              // print(estimatedQuantityOfmaterials);
+                                      _viewFullLocationList
+                                          ? 'Hide Detailed \n View of Locations'
+                                          : "Detailed \n View of Locations")) */
+                          ]),
+                    ),
+                    // floatingActionButton: GotoNextLocation(),
 
-                                              //debugger(when: true);
-
-                                              Navigator.push(context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) {
-                                                return FullEstimatedMaterialsScreen(
-                                                    measuredMaterials:
-                                                        measuredMaterials,
-                                                    EstimatedMaterials:
-                                                        estimatedQuantityOfmaterials,
-                                                    measurementDetails: this
-                                                        .measurementDetails);
-                                              }));
-                                            }),
-                                            child: Text(
-                                                'Estimate vs Measurement')),
-                                      )
-                                    ],
+                    // floatingActionButton: CurvedTextFab(
+                    //   // child: Icon(Icons.place),
+                    //   text: 'My etesxt',
+                    //   onPressed: () {
+                    //     _gotToAnotherLocation();
+                    //     // Add functionality for when the button is pressed
+                    //     // print('Button pressed!');
+                    //   },
+                    // ),
+                    appBar: appBar(),
+                    body: Container(
+                      margin: EdgeInsets.all(10),
+                      padding: EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        /*              boxShadow: [
+                              BoxShadow(
+                                color: Colors.blueAccent.withOpacity(0.9),
+                                blurRadius: 3.0,
+                                offset: Offset(0, 1),
+                              ),
+                            ],
+                       */
+                      ),
+                      child: Scrollbar(
+                        thumbVisibility: true,
+                        trackVisibility: true,
+                        thickness: 2,
+                        child: SingleChildScrollView(
+                          child: IntrinsicHeight(
+                            child: Container(
+                              //constraints: BoxConstraints.expand(height: null),
+                              height: MediaQuery.of(context).size.height * 1.5,
+                              margin: EdgeInsets.all(16.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  WorkNameWidget(
+                                    workName: widget.workName +
+                                        '\n\nWork Code : ${widget.workCode}',
+                                    color: Colors.blue,
+                                    workId: widget.workId.toString(),
                                   ),
-                                  bottomnavigationButtons(context),
+                                  if (_selectedLocationIndex == -1)
+                                    locationNumberAndLocationPointsEntryScreen(),
+                                  if (!_enableEntryOfLocationDetails)
+                                    addOneMoreLocation(),
+                                  enterLocationDetails(),
+                                  if (_selectedLocationIndex == -1 &&
+                                      !_enableEntryOfLocationDetails) ...[
+                                    Visibility(
+                                        visible: !_openedMeasurementCopier,
+                                        child: showLocationButtons())
 
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(left: 25, right: 25),
-                                    /*  width:
-                                        MediaQuery.of(context).size.width * .9, */
-                                    child: geoCordinatesWidget(context),
-                                  )
-                                  // Divider(color: Colors.white10, thickness: 10),
-                                  // SizedBox(height: 50),
+                                    // for showing loading issued material
+                                  ],
+                                  if ((!_enableEntryOfLocationDetails &&
+                                      _numberOfLocations > 0 &&
+                                      _numberOfLocations < 999 &&
+                                      _fromLocation != '' &&
+                                      _toLocation != '')) ...[
+                                    Divider(
+                                      height: 20,
+                                      thickness: 5,
+                                      color: Colors.grey[400],
+                                    ),
 
-                                  ,
-                                  viewLocationList(tasklist1),
+                                    // Visibility(
+                                    //   // visible: _showAnotherLocationButton
 
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  /*   Row(
-                                    children: [
-                                      Spacer(),
-                                    ],
-                                  ), */
-                                  SizedBox(
-                                    height: 30,
-                                  ),
+                                    //   visible: _selectedLocationIndex != -1
 
-                                  fullLocationList(),
+                                    //   //  &&
+                                    //   //     !_showSaveMeasurementDetailsButton
+                                    //   ,
+                                    //   child: Row(
+                                    //     children: [
+                                    //       Spacer(),
+                                    //       ElevatedButton(
+                                    //           onPressed: () =>
+                                    //               {_gotToAnotherLocation()},
+                                    //           child: Text('Go to  Another Location')),
+                                    //       Spacer(),
+                                    //     ],
+                                    //   ),
+                                    // ),
 
-                                  Spacer(),
+                                    Row(
+                                      children: [
+                                        Visibility(
+                                          visible: measuredMaterials.isNotEmpty,
+                                          child: polevarViewButton(),
+                                        ),
+                                        Visibility(
+                                          visible: measuredMaterials.isNotEmpty,
+                                          child: ElevatedButton(
+                                              onPressed: (() {
+                                                // print(estimatedQuantityOfmaterials);
+
+                                                //debugger(when: true);
+
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) {
+                                                  return FullEstimatedMaterialsScreen(
+                                                      measuredMaterials:
+                                                          measuredMaterials,
+                                                      EstimatedMaterials:
+                                                          estimatedQuantityOfmaterials,
+                                                      measurementDetails: this
+                                                          .measurementDetails);
+                                                }));
+                                              }),
+                                              child: Text(
+                                                  'Estimate vs Measurement')),
+                                        )
+                                      ],
+                                    ),
+                                    bottomnavigationButtons(context),
+
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(left: 25, right: 25),
+                                      /*  width:
+                                            MediaQuery.of(context).size.width * .9, */
+                                      child: geoCordinatesWidget(context),
+                                    )
+                                    // Divider(color: Colors.white10, thickness: 10),
+                                    // SizedBox(height: 50),
+
+                                    ,
+                                    viewLocationList(tasklist1),
+
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    /*   Row(
+                                        children: [
+                                          Spacer(),
+                                        ],
+                                      ), */
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+
+                                    fullLocationList(),
+
+                                    Spacer(),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                }),
               ),
             ),
           );
@@ -1648,6 +1657,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             reflectQuantityDetails: reflectQuantityDetails,
             estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
             measurementDetails: measurementDetails,
+            mst_scheme_id: mst_scheme_id,
           ),
           actions: [
             buttonForSaveAndProceedToNextTask(tasklist1),
@@ -1670,6 +1680,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return AlertDialog(
           title: Text('Location Measurement View'),
           content: LocationMeasurementView(
+              mst_scheme_id: mst_scheme_id,
               onNewMaterialAdditionFinished: () =>
                   {onNewMaterialAdditionFinished()},
               selectedLocationIndex: _selectedLocationIndex,
@@ -2881,9 +2892,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
       setState(() {});
       print('All measured materials are accounted for in estimated materials.');
     } else {
-      print('The following materials are missing or have greater quantity:');
+      // print('The following materials are missing or have greater quantity:');
       for (Map<String, dynamic> material in missingMaterials) {
-        print(material);
+        // print(material);
       }
       setState(() {});
       _requiresEstimateRevision = true;
@@ -3061,7 +3072,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
         _showSaveMeasurementDetailsButton = true;
 
-        print("BEFORE CALLING SAVE MEASUREMENT DETAILS");
+        // print("BEFORE CALLING SAVE MEASUREMENT DETAILS");
         _saveMeasurementDetails();
         return;
       }
@@ -3350,30 +3361,30 @@ class _PolVarScreenState extends State<PolVarScreen> {
         //print(materialSchedule);
 
         // Accessing 'updated_quantity' and 'mst_material' for each material schedule
-        print("loop1b4 no ${loop1}");
+        //  print("loop1b4 no ${loop1}");
         double quantity = double.parse(materialSchedule["updated_quantity"]);
-        print("loop1aftr1 no ${loop1}");
+        //  print("loop1aftr1 no ${loop1}");
 
         Map<String, dynamic> material = materialSchedule['mst_material'];
-        print("loop1aftr2 no ${loop1}");
+        // print("loop1aftr2 no ${loop1}");
 
         String materialName = material['material_name'];
 
-        print("${material['id'].runtimeType} mat id");
+        // print("${material['id'].runtimeType} mat id");
 
         int materialId = material['id'];
         /* int materialId = (material['id'].runtimeType != 'int'
             ? int.parse(material['id'])
             : material['id']); */
 
-        print("$materialName is materialName ");
+        // print("$materialName is materialName ");
 
         //debugger(when: true);
 
         // Adding quantity to the map or updating if already exists
         if (materialQuantities.containsKey(materialId)) {
-          print(
-              "CONTAINS $quantity is materialSchedule ${quantity.runtimeType} ");
+          /* print(
+              "CONTAINS $quantity is materialSchedule ${quantity.runtimeType} "); */
 
           //print(materialQuantities);
 
@@ -3385,14 +3396,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           //materialQuantities[materialId] ?? 0 + quantity;
         } else {
-          print(
-              "NOT CONTAINS $quantity is materialSchedule ${quantity.runtimeType} ");
+          /*  print(
+              "NOT CONTAINS $quantity is materialSchedule ${quantity.runtimeType} "); */
           var mat = {};
           mat['material'] = material;
 
           mat['quantity'] = materialQuantities[materialId] ?? 0 + quantity;
 
-          print('counter $counter ${materialName} ${mat['quantity']}');
+          // print('counter $counter ${materialName} ${mat['quantity']}');
           counter++;
 
           materialQuantities[materialId] = mat;
@@ -3615,8 +3626,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void getTasksofSelectedLocation() {
     String locationNo = (_selectedLocationIndex + 1).toString();
 
-    print("MEASUREMENT DETAILS $measurementDetails");
-    print("LOCATION NO $locationNo");
+    /*  print("MEASUREMENT DETAILS $measurementDetails");
+    print("LOCATION NO $locationNo"); */
 
     setState(() {
       _selectedLocationDetails =
@@ -3626,7 +3637,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             Map<String, dynamic>(), // Return an empty map of the correct type
       ));
 
-      print("_selectedLocationDetails $_selectedLocationDetails");
+      //print("_selectedLocationDetails $_selectedLocationDetails");
 
       if (_selectedLocationDetails.isNotEmpty) {
         if (_selectedLocationDetails['tasks'] == null) {
@@ -3638,7 +3649,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     });
 
     populateExistingMeasurementToSelectedLocation();
-    print("SELECTED LOCATION DR $_selectedLocationDetails");
+    //print("SELECTED LOCATION DR $_selectedLocationDetails");
   }
 
   void saveFromAndTwoLocation() {

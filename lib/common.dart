@@ -81,3 +81,23 @@ Future<Object> getUserLoginDetails() async {
     return Future.value(ob);
   }
 }
+
+Future<Map> getUserLoginDetailsMap() async {
+  var _secureStorage = SecureStorage();
+  var _loginDetails1 =
+      await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
+
+  if (!_loginDetails1?.isEmpty) {
+    var ob = json.decode(_loginDetails1["loginDetails"] ?? '');
+
+    ob["seat_details"] = getCurrentSeatDetails(_loginDetails1["loginDetails"]);
+
+    return Future.value(ob);
+  } else {
+    var ob = {};
+
+    ob["seat_details"] = '';
+
+    return Future.value(ob);
+  }
+}

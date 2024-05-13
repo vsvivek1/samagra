@@ -49,8 +49,8 @@ class _SearchMaterialState extends State<SearchMaterial> {
     );
   }
 
-  updateMaterialStatus() {
+  updateMaterialStatus(item) {
     print('update material');
-    widget.onNewMaterialAdded();
+    widget.onNewMaterialAdded(item);
   }
 }
