@@ -1362,10 +1362,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   ),
                                   bottomnavigationButtons(context),
 
-                                  geoCordinatesWidget(context),
+                                  Container(
+                                    margin:
+                                        EdgeInsets.only(left: 25, right: 25),
+                                    /*  width:
+                                        MediaQuery.of(context).size.width * .9, */
+                                    child: geoCordinatesWidget(context),
+                                  )
                                   // Divider(color: Colors.white10, thickness: 10),
                                   // SizedBox(height: 50),
 
+                                  ,
                                   viewLocationList(tasklist1),
 
                                   SizedBox(
@@ -1495,6 +1502,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           child: Row(children: [
             Column(
               children: [
+                Spacer(),
                 // _selectedLocationHasGeoLocations
                 if (!_selectedLocationHasGeoLocations)
                   LocationDetailsWidget(
@@ -1510,6 +1518,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 // ,
 
                 ,
+
+                Spacer(),
                 // SizedBox(
                 //   height:
                 //       MediaQuery.of(context).size.height *
@@ -2415,7 +2425,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         //     height: 90,
         //     child: LocationListScreen(
         //         measurementDetails: this.measurementDetails)),
-        measurementPreviewWidget(context),
+        //  measurementPreviewWidget(context),
         Container(
           padding: EdgeInsets.all(16.0),
           child: Text(
@@ -2521,7 +2531,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   // Text(st["structure_name"]);
                 },
               ).toList(),
-              buttonForSaveAndProceedToNextTask(tasklist1),
+              DetailedMeasurementDialogButton(context),
+              //   buttonForSaveAndProceedToNextTask(tasklist1),
             ]),
           );
         }).toList());
