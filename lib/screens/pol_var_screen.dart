@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:flare_flutter/base/actor_color.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/centered_circular_spinner.dart';
+import 'package:samagra/screens/custom_alert_dialog.dart';
 import 'package:samagra/screens/full_estimated_materials.dart';
 import 'package:samagra/screens/material_details_popup.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
@@ -183,6 +185,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
   List<Map<String, dynamic>> measuredMaterials = [];
 
   bool _requiresEstimateRevision = false;
+
+  var tasklist1;
 
   void togglePlay() {
     setState(() {
@@ -1112,7 +1116,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             return CenteredCircularSpinner();
           }
 
-          var tasklist1 = snapshot.data;
+          tasklist1 = snapshot.data;
 
           // ignore: unrelated_type_equality_checks
           if (tasklist1 == null || tasklist1 == -1) {
@@ -1193,14 +1197,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                       ))
                                   : ElevatedButton.icon(
                                       onPressed: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: ((context) {
-                                          return TSRevisonForm(
-                                              workId: widget.workId);
-                                        })));
-
-                                        /*   showDialog(
+                                        showDialog(
                                           context: context,
                                           builder: (context) {
                                             return AlertDialog(
@@ -1208,7 +1205,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                   'Complete revison in Samagra'),
                                             );
                                           },
-                                        ); */
+                                        );
+
+                                        /*    Navigator.push(context,
+                                            MaterialPageRoute(
+                                                builder: ((context) {
+                                          return TSRevisonForm(
+                                              workId: widget.workId);
+                                        }))); */
                                       },
                                       icon: Icon(Icons.reviews_outlined),
                                       label: Text(
@@ -1327,27 +1331,33 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                                   Row(
                                     children: [
-                                      polevarViewButton(),
-                                      ElevatedButton(
-                                          onPressed: (() {
-                                            // print(estimatedQuantityOfmaterials);
+                                      Visibility(
+                                        visible: measuredMaterials.isNotEmpty,
+                                        child: polevarViewButton(),
+                                      ),
+                                      Visibility(
+                                        visible: measuredMaterials.isNotEmpty,
+                                        child: ElevatedButton(
+                                            onPressed: (() {
+                                              // print(estimatedQuantityOfmaterials);
 
-                                            //debugger(when: true);
+                                              //debugger(when: true);
 
-                                            Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: (context) {
-                                              return FullEstimatedMaterialsScreen(
-                                                  measuredMaterials:
-                                                      measuredMaterials,
-                                                  EstimatedMaterials:
-                                                      estimatedQuantityOfmaterials,
-                                                  measurementDetails:
-                                                      this.measurementDetails);
-                                            }));
-                                          }),
-                                          child:
-                                              Text('Estimate vs Measurement'))
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) {
+                                                return FullEstimatedMaterialsScreen(
+                                                    measuredMaterials:
+                                                        measuredMaterials,
+                                                    EstimatedMaterials:
+                                                        estimatedQuantityOfmaterials,
+                                                    measurementDetails: this
+                                                        .measurementDetails);
+                                              }));
+                                            }),
+                                            child: Text(
+                                                'Estimate vs Measurement')),
+                                      )
                                     ],
                                   ),
                                   bottomnavigationButtons(context),
@@ -1581,35 +1591,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       visible: _selectedLocationTasks.length > 0,
       // visible: true,
       child: GestureDetector(
-        onDoubleTap: () {
-          print('hi');
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text('Location Measurement View'),
-                content: LocationMeasurementView(
-                    onNewMaterialAdditionFinished: () =>
-                        {onNewMaterialAdditionFinished()},
-                    selectedLocationIndex: _selectedLocationIndex,
-                    tasks: List<Map<dynamic, dynamic>>.from(
-                        _selectedLocationTasks),
-                    reflectQuantityDetails: reflectQuantityDetails,
-                    estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
-                    measurementDetails: measurementDetails),
-                actions: [
-                  ElevatedButton(
-                    child: Text('X'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            },
-          );
-        },
-        child: Container(
+          onDoubleTap: () {
+            print('hi');
+            showDetailedMeasurementDialog(context, tasklist1);
+          },
+          child: DetailedMeasurementDialogButton(context)
+          /*  child: Container(
           padding: EdgeInsets.all(3),
           decoration:
               BoxDecoration(border: Border.all(width: 1), color: ksebColor),
@@ -1623,8 +1610,74 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
                 measurementDetails: measurementDetails),
           ),
-        ),
-      ),
+        ), */
+          ),
+    );
+  }
+
+  ElevatedButton DetailedMeasurementDialogButton(BuildContext context) {
+    return ElevatedButton(
+        onPressed: (() {
+          showDetailedMeasurementDialog(context, tasklist1);
+        }),
+        child: Text('Go to Detailed measurement'));
+  }
+
+  void showDetailedMeasurementDialog(BuildContext context, tasklist1) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CustomAlertDialog(
+          title: Text('Location Measurement View'),
+          content: LocationMeasurementView(
+            onNewMaterialAdditionFinished: () {
+              onNewMaterialAdditionFinished();
+            },
+            selectedLocationIndex: _selectedLocationIndex,
+            tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
+            reflectQuantityDetails: reflectQuantityDetails,
+            estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+            measurementDetails: measurementDetails,
+          ),
+          actions: [
+            buttonForSaveAndProceedToNextTask(tasklist1),
+            ElevatedButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    return;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Location Measurement View'),
+          content: LocationMeasurementView(
+              onNewMaterialAdditionFinished: () =>
+                  {onNewMaterialAdditionFinished()},
+              selectedLocationIndex: _selectedLocationIndex,
+              tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
+              reflectQuantityDetails: reflectQuantityDetails,
+              estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+              measurementDetails: measurementDetails),
+          actions: [
+            buttonForSaveAndProceedToNextTask(tasklist1),
+            ElevatedButton(
+              child: Text('X1ß'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
     );
   }
 
@@ -2468,34 +2521,38 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   // Text(st["structure_name"]);
                 },
               ).toList(),
-              ElevatedButton(
-                /// save for a dummy save to collapse the expansion panel and
-                ///  check whetehr there is any structure has quantity
-                onPressed: () {
-                  setState(() {
-                    for (int i = 0; i < tasklist1.length; i++) {
-                      tasklist1[i]['isExpanded'] = false;
-
-                      bool hasStr = checkAnyStructureHasQuantity(tasklist1[i]);
-
-                      tasklist1[i]['hasStructure'] = hasStr;
-
-                      // if (tasklist1[i].isEmpty) {}
-
-                      // print(hasStr);
-                      // tasklist1[i]['isExpanded'] = !tasklist1[i]['isExpanded'];
-                    }
-
-                    //
-                  });
-                  // Handle button press
-                  // _handleButtonPress(context);
-                },
-                child: Text('Save and Select Next task'),
-              ),
+              buttonForSaveAndProceedToNextTask(tasklist1),
             ]),
           );
         }).toList());
+  }
+
+  ElevatedButton buttonForSaveAndProceedToNextTask(tasklist1) {
+    return ElevatedButton(
+      /// save for a dummy save to collapse the expansion panel and
+      ///  check whetehr there is any structure has quantity
+      onPressed: () {
+        setState(() {
+          for (int i = 0; i < tasklist1.length; i++) {
+            tasklist1[i]['isExpanded'] = false;
+
+            bool hasStr = checkAnyStructureHasQuantity(tasklist1[i]);
+
+            tasklist1[i]['hasStructure'] = hasStr;
+
+            // if (tasklist1[i].isEmpty) {}
+
+            // print(hasStr);
+            // tasklist1[i]['isExpanded'] = !tasklist1[i]['isExpanded'];
+          }
+
+          //
+        });
+        // Handle button press
+        // _handleButtonPress(context);
+      },
+      child: Text('Save and Select Next task'),
+    );
   }
 
   Row setStructureQuantityWidget(st, t) {

@@ -24,16 +24,34 @@ class _EstimateRevisionTabsState extends State<EstimateRevisionTabs>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        forceMaterialTransparency: true,
+        primary: false,
         title: Text('Estimate Revision Tabs'),
         bottom: TabBar(
+          indicatorColor: Colors.orange,
+          tabAlignment: TabAlignment.center,
+          dividerColor: Color.fromARGB(255, 6, 20, 153),
+          isScrollable: true,
+          indicatorWeight: 2,
+          physics: ScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           controller: _tabController,
-          tabs: widget.tabs.map((tab) => Tab(text: tab.title)).toList(),
+          tabs: widget.tabs
+              .map((tab) =>
+                  SizedBox(width: 200, height: 50, child: Tab(text: tab.title)))
+              .toList(),
         ),
       ),
       body: SingleChildScrollView(
-        child: TabBarView(
-          controller: _tabController,
-          children: widget.tabs.map((tab) => tab.content).toList(),
+        child: SizedBox(
+          width: 500,
+          height: 500,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: TabBarView(
+              controller: _tabController,
+              children: widget.tabs.map((tab) => tab.content).toList(),
+            ),
+          ),
         ),
       ),
     );

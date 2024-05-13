@@ -1199,6 +1199,18 @@ class _LoginScreenState extends State<LoginScreen> {
         });
         var result = await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
 
+        if (result is DioException) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  content: Text((result.response!.data['error'])));
+            },
+          );
+
+          return;
+        }
+
         result['result_flag'] ??= -1;
 
         if (result['result_flag'] != 1) {

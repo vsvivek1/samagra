@@ -85,12 +85,12 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                             'Task Name : ${task['task_name']}',
                         style: TextStyle(
                           color: const Color.fromARGB(255, 177, 74, 74),
-                          fontSize: 15.0,
+                          fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       CircleAvatar(
-                        maxRadius: 14,
+                        maxRadius: 20,
                         child: Text(
                           'T' + (index + 1).toString(),
                           textScaleFactor: .5,
@@ -145,9 +145,12 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 tileColor: Colors.grey[200],
                 contentPadding: EdgeInsets.only(left: 1.0),
                 leading: CircleAvatar(
-                    maxRadius: 13,
+                    maxRadius: 40,
                     backgroundColor: Colors.blue[100],
-                    child: Text('S' + (structureIndex + 1).toString())),
+                    child: Text('T' +
+                        (index + 1).toString() +
+                        '/S' +
+                        (structureIndex + 1).toString())),
                 title: structure['structure_name'] != null
                     ? Text(
                         'Str Id : ${structure['id']}, ${structure['structure_name']}',

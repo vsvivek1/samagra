@@ -68,8 +68,6 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
   var estimateReport;
 
-  var plgWorkId;
-
   var note;
 
   @override
@@ -177,7 +175,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.0),
+        padding: EdgeInsets.fromLTRB(25, 100, 50, 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -185,24 +183,36 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
             Text('Seat ID: ${seatId}'),
             Text('Role ID: ${roleId}'),
             Text('Office ID: ${officeId}'),
-            Text('PLG Work ID: ${plgWorkId}'),
+            Text('PLG Work ID: ${widget.workId}'),
             Text('Estimate Report: ${estimateReport}'),
             Text('Note: ${note}'),
             SizedBox(height: 20.0),
             Divider(),
-            EstimateRevisionTabs(
-              key: UniqueKey(),
-              tabs: [
-                TabData(title: "Materials", content: RevisedMaterialList()),
-                TabData(title: "Labour", content: RevisedMaterialList()),
-                TabData(title: "Taken backs", content: RevisedMaterialList()),
-                TabData(title: "Estimate Report", content: EstimateReport()),
-                TabData(title: "Note", content: Note())
-              ],
+            SizedBox(
+              width: 500,
+              height: 2000,
+              child: EstimateRevisionTabs(
+                key: UniqueKey(),
+                tabs: [
+                  TabData(title: "Materials", content: RevisedMaterialList()),
+                  TabData(title: "Labour", content: RevisedMaterialList()),
+                  TabData(title: "Taken backs", content: RevisedMaterialList()),
+                  TabData(
+                      title: "Estimate Report",
+                      content: EstimateReport(
+                        onSaved: (data) {
+                          return {};
+                        },
+                      )),
+                  TabData(
+                      title: "Note",
+                      content: Note(onSaved: (data) => {saveNote(data)}))
+                ],
+              ),
             ),
-            HeadingContainer(key: UniqueKey(), text: 'Estimate Report'),
-            Divider(),
-            HeadingContainer(key: UniqueKey(), text: 'Note'),
+            // HeadingContainer(key: UniqueKey(), text: 'Estimate Report'),
+            // Divider(),
+            // HeadingContainer(key: UniqueKey(), text: 'Note'),
             Divider(),
             ElevatedButton(
               onPressed: () {
@@ -239,11 +249,18 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
       ),
     );
   }
+
+  saveNote(data) {
+    this.note = data;
+  }
+
+  SaveEstimateReport(data) {}
 }
 
 class RevisedMaterialList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return Text('hi');
     // TODO: implement build
     throw UnimplementedError();
   }
@@ -252,25 +269,35 @@ class RevisedMaterialList extends StatelessWidget {
 class Note extends StatelessWidget {
   const Note({
     super.key,
+    required Set<dynamic> Function(dynamic data) onSaved,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(100.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: TextFormField(
-        maxLines: null, // Allow unlimited lines
-        keyboardType: TextInputType.multiline, // Enable multiline input
-        decoration: InputDecoration(
-          hintText: 'Note ...',
-          border: InputBorder.none, // Hide the default border
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(20.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: TextFormField(
+            maxLines: null, // Allow unlimited lines
+            keyboardType: TextInputType.multiline, // Enable multiline input
+            decoration: InputDecoration(
+              hintText: 'Note ...',
+              border: InputBorder.none, // Hide the default border
+            ),
+            style: TextStyle(fontSize: 16.0),
+          ),
         ),
-        style: TextStyle(fontSize: 16.0),
-      ),
+        Divider(),
+        ElevatedButton(
+          child: Text('Save Note'),
+          onPressed: () {},
+        )
+      ],
     );
   }
 }
@@ -278,26 +305,39 @@ class Note extends StatelessWidget {
 class EstimateReport extends StatelessWidget {
   const EstimateReport({
     super.key,
+    required Map Function(dynamic data) onSaved,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(100.0),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: TextFormField(
-        maxLines: null, // Allow unlimited lines
-        keyboardType: TextInputType.multiline, // Enable multiline input
-        decoration: InputDecoration(
-          hintText: 'Estimate report ...',
-          border: InputBorder.none, // Hide the default border
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(75.0),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: TextFormField(
+            maxLines: null, // Allow unlimited lines
+            keyboardType: TextInputType.multiline, // Enable multiline input
+            decoration: InputDecoration(
+              hintText: 'Estimate report ...',
+              border: InputBorder.none, // Hide the default border
+            ),
+            style: TextStyle(fontSize: 16.0),
+          ),
         ),
-        style: TextStyle(fontSize: 16.0),
-      ),
+        Divider(),
+        ElevatedButton(
+            child: Text('Save Estimate report'),
+            onPressed: () {
+              // saveEstimateReport(data);
+            })
+      ],
     );
     ;
   }
+
+  void saveEstimateReport(data) {}
 }
