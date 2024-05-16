@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/screens/estimate_revision_tabs.dart';
 import 'package:samagra/screens/get_login_details.dart';
-import 'package:samagra/screens/heading_container.dart';
 
 class TSRevision {
   final int userId;
@@ -46,7 +45,11 @@ class TSRevision {
 class TSRevisonForm extends StatefulWidget {
   int workId;
 
-  TSRevisonForm({required this.workId});
+  List<Map<dynamic, dynamic>> measurementDetails;
+
+  TSRevisonForm(
+      {required this.workId,
+      required List<Map<dynamic, dynamic>> this.measurementDetails});
   @override
   _TSRevisonFormState createState() => _TSRevisonFormState();
 }
@@ -69,6 +72,13 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
   var estimateReport;
 
   var note;
+
+  late Map<String, dynamic> consolidatedData;
+
+  Map<String, double> materialQuantities = {};
+
+  // Map to store labour quantities for each task, structure, and labour
+  Map<String, double> labourQuantities = {};
 
   @override
   void initState() {
@@ -107,6 +117,10 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     seatDetails = userDetails['seat_details'];
     roleId = seatDetails['role_id'];
     officeId = seatDetails['office_id'];
+
+    consolidatedData = buildEstimateData(widget.measurementDetails);
+
+    debugger(when: true);
 
     /*  print(userDetails);
     debugger(); */
@@ -170,6 +184,116 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     ],
   );
  */
+
+  Map<String, dynamic> buildEstimateData(
+      List<Map<dynamic, dynamic>> locations) {
+    Map<String, dynamic> consolidatedData = {
+      'estimate_data': {
+        'materials': [],
+        'labours': [],
+        'structures': [],
+        'otherCharges': [],
+      }
+    };
+
+    // Map to store material quantities for each task, structure, and material
+
+    // Iterate through locations
+    locations.forEach((location) {
+      (location['tasks'] as List<dynamic>).forEach((task) {
+        (task['structures'] as List<dynamic>).forEach((structure) {
+          // Check if structure is already present
+          String structureKey = '${task['id']}_${structure['id']}';
+          bool isStructurePresent =
+              consolidatedData['estimate_data']['structures'].any((entry) =>
+                  entry['mst_task_id'] == task['id'] &&
+                  entry['mst_structure_id'] == structure['id']);
+
+          if (isStructurePresent) {
+            // If structure is present, increment the quantity
+            consolidatedData['estimate_data']['structures']
+                .where((entry) =>
+                    entry['mst_task_id'] == task['id'] &&
+                    entry['mst_structure_id'] == structure['id'])
+                .forEach((existingStructure) {
+              existingStructure['quantity'] += structure['quantity'];
+            });
+          } else {
+            // If structure is not present, add it as a new entry
+            Map<String, dynamic> structureData = {
+              'mst_task_id': task['id'],
+              'mst_structure_id': structure['id'],
+              'mst_uom_id': structure['mst_uom_id'],
+              'structure_code': structure['structure_code'],
+              'uom_code': structure['uom_code'],
+              'quantity': structure['quantity'],
+            };
+            consolidatedData['estimate_data']['structures'].add(structureData);
+          }
+
+          // Materials
+          (structure['materials'] as List<dynamic>).forEach((material) {
+            String materialKey =
+                '${task['id']}_${structure['id']}_${material['mst_material_id']}';
+            if (materialQuantities.containsKey(materialKey)) {
+              materialQuantities[materialKey] =
+                  double.parse(material['quantity']);
+            } else {
+              materialQuantities[materialKey] =
+                  double.parse(material['quantity']);
+              Map<String, dynamic> parsedMaterial = Map.from(material);
+              parsedMaterial['quantity'] = double.parse(material['quantity']);
+              consolidatedData['estimate_data']['materials']
+                  .add(parsedMaterial);
+            }
+          });
+
+          // Labours
+
+          if (task['labours'] != null)
+            (task['labours'] as List<dynamic>).forEach((labour) {
+              String labourKey =
+                  '${task['id']}_${structure['id']}_${labour['mst_labour_id']}';
+              Map<String, dynamic> labourData = {
+                'mst_task_id': task['id'],
+                'mst_structure_id': structure['id'],
+                'mst_labour_id': labour['mst_labour_id'],
+                'mst_uom_id': labour['mst_uom_id'],
+                'labour_code': labour['labour_code'],
+                'uom_code': labour['uom_code'],
+                'quantity': double.parse(labour['quantity']),
+                'rate': double.parse(labour['rate']),
+                'supply_mode': labour['supply_mode'],
+              };
+              consolidatedData['estimate_data']['labours'].add(labourData);
+            });
+
+          // Other Charges
+
+          if (task['otherCharges'] != null)
+            (location['otherCharges'] as List<Map<String, dynamic>>)
+                .forEach((charge) {
+              Map<String, dynamic> parsedCharge = Map.from(charge);
+              parsedCharge['quantity_or_rate'] =
+                  double.parse(charge['quantity_or_rate']);
+              consolidatedData['estimate_data']['otherCharges']
+                  .add(parsedCharge);
+            });
+        });
+      });
+    });
+
+    // Update material quantities in the consolidated data
+    consolidatedData['estimate_data']['materials'].forEach((material) {
+      String materialKey =
+          '${material['mst_task_id']}_${material['mst_structure_id']}_${material['mst_material_id']}';
+      if (materialQuantities.containsKey(materialKey)) {
+        material['quantity'] = materialQuantities[materialKey];
+      }
+    });
+
+    return consolidatedData;
+  }
 
   @override
   Widget build(BuildContext context) {

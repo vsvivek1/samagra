@@ -471,7 +471,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
     );
   }
 
-  Object _getCurrentSeatDetailsFromSeatsArray(seats, currentSeatId) {
+  /*  Object _getCurrentSeatDetailsFromSeatsArray(seats, currentSeatId) {
     return 'hi';
 
     print(seats
@@ -483,7 +483,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
     // // return seats[0];
 
     return seats.firstWhere((seat) => seat["mst_seat_id"] == currentSeatId);
-  }
+  } */
 
   void logOut() {
     Navigator.push(
@@ -558,8 +558,6 @@ class _HomeDrawerState extends State<HomeDrawer> {
       // initials = initials + '-' + words.last.substring(0, 3);
       // return initials.toUpperCase();
     } on Exception {
-      // TODO
-
       return name;
     }
   }

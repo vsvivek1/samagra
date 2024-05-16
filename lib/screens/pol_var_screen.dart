@@ -1205,7 +1205,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                         ))
                                     : ElevatedButton.icon(
                                         onPressed: () {
-                                          showDialog(
+                                          /*  showDialog(
                                             context: context,
                                             builder: (context) {
                                               return AlertDialog(
@@ -1213,14 +1213,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                     'Complete revison in Samagra'),
                                               );
                                             },
-                                          );
+                                          ); */
 
-                                          /*    Navigator.push(context,
-                                                MaterialPageRoute(
-                                                    builder: ((context) {
-                                              return TSRevisonForm(
-                                                  workId: widget.workId);
-                                            }))); */
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: ((context) {
+                                            return TSRevisonForm(
+                                                measurementDetails:
+                                                    measurementDetails,
+                                                workId: widget.workId);
+                                          })));
                                         },
                                         icon: Icon(Icons.reviews_outlined),
                                         label: Text(

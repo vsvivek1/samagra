@@ -65,13 +65,13 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
         child: PopScope(
           canPop: true,
           onPopInvoked: (didPop) {
-            showDialog(
+            /* showDialog(
                 context: context,
                 builder: (context) {
                   return AlertDialog(
                     content: Text('Please use Save Button to go back'),
                   );
-                });
+                }); */
           },
           child: SingleChildScrollView(
             child: Column(

@@ -722,9 +722,9 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       }
 
       print(result);
-      debugger(when: true);
+      //debugger(when: true);
       // print('poped $result');
-      return;
+
       if (result['selectedMaterials'] == null ||
           result['selectedMaterials'].length == 0) {
         print('hi return');

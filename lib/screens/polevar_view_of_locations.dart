@@ -123,7 +123,7 @@ class PolvarViewOfLocations extends StatelessWidget {
           label: RotatedBox(
               quarterTurns: -1, child: Text(_formatText(takenback)))));
     });
-    debugger(when: true);
+    //debugger(when: true);
 
     return columns;
   }
@@ -178,7 +178,7 @@ class PolvarViewOfLocations extends StatelessWidget {
         ],
       ));
     }
-    debugger(when: true);
+    //debugger(when: true);
     return rows;
   }
 
