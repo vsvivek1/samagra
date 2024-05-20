@@ -29,7 +29,7 @@ void main() async {
   // .env
   WidgetsFlutterBinding.ensureInitialized();
 
-  await FlutterDownloader.initialize();
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();

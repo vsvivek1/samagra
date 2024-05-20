@@ -9,6 +9,8 @@
          <uses-permission android:name="android.permission.CALL_PHONE" />
          <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 
 <queries>
@@ -38,6 +40,16 @@
         android:label="m-Samagra"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <provider
+    android:name="sk.fourq.otaupdate.OtaUpdateFileProvider"
+    android:authorities="${applicationId}.ota_update_provider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+    <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/filepaths" />ß
+</provider>
         <activity
             android:name=".MainActivity"
             android:exported="true"

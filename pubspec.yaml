@@ -71,6 +71,7 @@ dependencies:
     android_intent: ^2.0.2
     gap: ^3.0.1
     jwt_decoder: ^2.0.1
+    ota_update: ^6.0.0
 
 
     

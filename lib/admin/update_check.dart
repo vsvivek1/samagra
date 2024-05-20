@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:ui';
 
 import 'package:android_package_installer/android_package_installer.dart';
 import 'package:dio/dio.dart';
@@ -16,9 +18,25 @@ import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import 'package:android_intent/android_intent.dart';
+// IMPORT PACKAGE
+import 'package:ota_update/ota_update.dart';
 
 import 'package:flutter_downloader/flutter_downloader.dart';
+
 //import 'package:package_installer/package_installer.dart';
+String apkUrl = '';
+
+Future<void> installUpdate(String filePath) async {
+  debugger(when: true);
+  int? statusCode =
+      await AndroidPackageInstaller.installApk(apkFilePath: filePath);
+  var code;
+  if (code != null) {
+    PackageInstallerStatus installationStatus =
+        PackageInstallerStatus.byCode(statusCode!);
+    print(installationStatus.name);
+  }
+}
 
 class UpdateCheck extends StatefulWidget {
   @override
@@ -34,10 +52,18 @@ class _UpdateCheckState extends State<UpdateCheck> {
   String serverVersion = '-1';
   String _latestVersion =
       '2.5.0'; // Replace with the latest version from the server
-  String apkUrl = '';
+
   String update = 'Update';
+  ReceivePort _port = ReceivePort();
 
   // String ap
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    send?.send([id, status, progress]);
+  }
 
   @override
   void initState() {
@@ -46,8 +72,18 @@ class _UpdateCheckState extends State<UpdateCheck> {
     _getPackageInfo();
 
     _initializeState();
-    //debugger(when: true);
+    //
 
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) {
+      String id = data[0];
+      //  DownloadTaskStatus status = DownloadTaskStatus(data[1]);
+      int progress = data[2];
+
+      //debugger(when: true);
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -56,19 +92,19 @@ class _UpdateCheckState extends State<UpdateCheck> {
 
     /* print("curent version $localVersion");
     print("print server version $serverVersion"); */
-    // debugger(when: true);
+    //
     //await _listVersions();
     // print("curent version $localVersion");
     // print("print server version $serverVersion");
-    // debugger(when: true);
+    //
 
-    // debugger(when: true);
+    //
     // await _needsUpdateCheck();
 
     /*  print("curent version $localVersion");
     print("print server version $serverVersion");
-    debugger(when: true);
-    debugger(when: true); */
+    
+     */
   }
 
   Future _listVersions() async {
@@ -78,7 +114,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
-    //debugger(when: true);
+    //
     String url = "https://ws.kseb.in/resource/api/erp/group1/app_versions";
 
     String PlatForm = Platform.isAndroid ? 'Android' : 'IOS';
@@ -86,22 +122,25 @@ class _UpdateCheckState extends State<UpdateCheck> {
     try {
       Response response =
           await dio.get(url, options: Options(headers: headers));
-      debugger(when: true);
-      //debugger(when: true);
+
+      //
       //String serverVersion = '';
 
       if (response.statusCode == 200) {
         if (response.data != null) {
           Map version = response.data.firstWhere((d) =>
               d['platform'].toString().toUpperCase() == PlatForm.toUpperCase());
-
+          //
           serverVersion = version['version'].toString().toUpperCase();
-          apkUrl = version['url'];
+          //
+          apkUrl = version['url'] ??
+              'https://ws.kseb.in/mstore/samagra/msamagra.apk';
+          //
 
-          // debugger(when: true);
+          //
         }
 
-        //debugger(when: true);
+        //
         Fluttertoast.showToast(
             msg: 'Current server Version :' +
                     response.data[0]['version'] +
@@ -156,6 +195,8 @@ class _UpdateCheckState extends State<UpdateCheck> {
        
       }) */
       ;
+    } else {
+      return false;
     }
     return Future.value(true);
 
@@ -163,74 +204,43 @@ class _UpdateCheckState extends State<UpdateCheck> {
     return _currentVersion != _latestVersion;
   }
 
-  Future<void> _downloadAndInstallApk() async {
-    Dio dio = Dio();
-
+  Future<void> _downloadAndInstallApk(String apkUrl) async {
     try {
-      // Fetch the APK file
-      // await FlutterDownloader.initialize();
-      /* final String dir = (await getExternalStorageDirectory())!.path;
+      //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
+      OtaUpdate()
+          .execute(
+        apkUrl,
+        // OPTIONAL
+        destinationFilename: 'msamagra.apk',
+        //OPTIONAL, ANDROID ONLY - ABILITY TO VALIDATE CHECKSUM OF FILE:
+        /*  sha256checksum:
+            "d6da28451a1e15cf7a75f2c3f151befad3b80ad0bb232ab15c20897e54f21478", */
+      )
+          .listen(
+        (OtaEvent event) {
+          OtaEvent currentEvent;
+          print("event is ${event.status} and ${event.value}");
 
-      final File file = File('$dir/msamagra.apk'); */
+          if (int.parse(event.value as String) % 5 == 0) {
+            update = '${event.status} and ${event.value}';
+            setState(() {});
+          }
 
-      /*  final taskId = await FlutterDownloader.enqueue(
-        url: apkUrl,
-        savedDir: dir,
-        fileName: 'msamagra.apk', // Customize the filename if needed
-        showNotification: true,
-        openFileFromNotification: true,
+          /*  setState(() {
+           
+          }); */
+          //  setState(() => currentEvent = event);
+        },
       );
- */
-
-      // debugger(when: true);
-      /* FlutterDownloader.registerCallback((id, status, progress) {
-        if (status == DownloadTaskStatus.complete) {
-          print('ok');
-          //installDownloadedApk(id);
-        }
-      }); */
-
-      Uri apkUri1 = Uri.parse(apkUrl);
-      launchUrl(apkUri1);
-
-      return;
-
-      Response response = await dio.get(apkUrl,
-          options: Options(responseType: ResponseType.bytes));
-
-      // Save the APK file to external storage
-      final String dir = (await getExternalStorageDirectory())!.path;
-      final File file = File('$dir/app1.apk');
-      await file.writeAsBytes(response.data as List<int>);
-
-      /* AndroidIntent intent = AndroidIntent(
-        action: 'android.intent.action.INSTALL_PACKAGE',
-        data: file.path,
-        type: 'application/vnd.android.package-archive',
-      );
-      await intent.launch(); */
-
-      // Install the APK file
-      Uri apkUri = file.uri;
-
-      launchUrl(apkUri);
-      /*  int? statusCode = await AndroidPackageInstaller.installApk(
-          apkFilePath: apkUri.toString()); */
-
-      /* print("tgis is status code $statusCode");
-      // Handle installation status
-      if (statusCode != null) {
-        PackageInstallerStatus installationStatus =
-            PackageInstallerStatus.byCode(statusCode);
-        print(installationStatus.name);
-
-        print('reached here ${apkUri.toString()}');
-
-        print(" status is $installationStatus");
-      } */
     } catch (e) {
-      print("Error downloading and installing APK: $e");
+      print('Failed to make OTA update. Details: $e');
     }
+
+    return;
+    /////////////////
+    WidgetsFlutterBinding.ensureInitialized();
+
+    //debugger(when: true);
   }
 
   void _showUpdateDialog() {
@@ -244,41 +254,43 @@ class _UpdateCheckState extends State<UpdateCheck> {
     });
   }
 
-  AlertDialog displayUpdateWidget() {
-    return AlertDialog(
-      title: Text('Update Available'),
-      content: SizedBox(
-        height: 100,
-        child: Column(
-          children: [
-            Text(
-                'A new version of M-samagra is available. Please update to the latest version.'),
-            Text('Current Version $localVersion'),
-            Text('New Version Available $serverVersion'),
-          ],
+  Builder displayUpdateWidget() {
+    return Builder(builder: (context) {
+      return AlertDialog(
+        title: Text('Update Available'),
+        content: SizedBox(
+          height: 200,
+          child: Column(
+            children: [
+              Text(
+                  'A new version of M-samagra is available.\n\n Please update to the latest version.'),
+              Text('\nCurrent Version in this Device: $localVersion'),
+              Text('\nNew Version Available for this device: $serverVersion'),
+            ],
+          ),
         ),
-      ),
-      actions: <Widget>[
-        Builder(builder: (context) {
-          return TextButton(
-            onPressed: () {
-              // Add logic to redirect users to the app store for update
-              // For example: launch('URL_TO_APP_STORE');
+        actions: <Widget>[
+          Builder(builder: (context) {
+            return TextButton(
+              onPressed: () {
+                // Add logic to redirect users to the app store for update
+                // For example: launch('URL_TO_APP_STORE');
 
-              setState(() {
-                update = 'Updating ....';
-              });
-              _downloadAndInstallApk();
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(builder: (context) => LoginScreen()),
-              // );
-            },
-            child: Text("$update"),
-          );
-        }),
-      ],
-    );
+                setState(() {
+                  update = 'Updating ....';
+                });
+                _downloadAndInstallApk(apkUrl);
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => LoginScreen()),
+                // );
+              },
+              child: Text("$update"),
+            );
+          }),
+        ],
+      );
+    });
   }
 
   @override
@@ -315,7 +327,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
             _needsUpdate = true;
           }
 
-          //debugger(when: true);
+          //
 
           //* implement your logic to determine if update is needed */;
           if (_needsUpdate) {
