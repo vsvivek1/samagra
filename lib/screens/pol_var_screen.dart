@@ -477,7 +477,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             var mout = jsonDecode(data['measurementDetails']);
             measurementDetails = List<Map<dynamic, dynamic>>.from(mout);
 
-            // debugger(when: true);
+            //
           }
 
           ///during normal fetching from storage its a striong
@@ -502,7 +502,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // await _fetchWorkDetails();
         // aggregateMaterialQuantities(wrk_execution_material_schedules);
 
-        //debugger(when: true);
+        //
         createListOfMeasuredmaterials();
 
         _enableEntryOfLocationDetails = false;
@@ -529,29 +529,28 @@ class _PolVarScreenState extends State<PolVarScreen> {
     if (resultData.containsKey('unit_master')) {
       final unitMaster = resultData['unit_master'];
 
-      if (unitMaster.containsKey(type)) {
-        debugger(when: true);
-        final laboursOrMaterials = unitMaster[type];
+      String type1 = type + 's';
+      if (unitMaster.containsKey(type1)) {
+        final laboursOrMaterials = unitMaster[type1];
 
         print(laboursOrMaterials);
 
         print('laboursOrMaterials above');
-        debugger(when: true);
+
         if (laboursOrMaterials is List) {
-          debugger(when: true);
           final matchingItem = laboursOrMaterials.firstWhere(
             (item) =>
                 item['mst_${type}_id'] == mstId &&
                 item['mst_structure_id'] == mstStructureId,
             orElse: () => {},
           );
-
+          debugger(when: true);
           if (!matchingItem.isBlank && matchingItem.containsKey('quantity')) {
             debugger(when: true);
             return matchingItem['quantity'].toString();
           }
-          debugger(when: true);
         }
+
         debugger(when: true);
       }
     }
@@ -731,10 +730,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       wrk_work_detail = apiData['wrk_work_detail'];
 
       mst_scheme_id = wrk_work_detail['mst_scheme_id'];
-      //debugger(when: true);
+      //
       //print("api @693 $apiData");
 
-      //debugger(when: true);
+      //
 
       ///34843
       return apiData['wrk_schedule_group_structures'];
@@ -825,9 +824,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
               wrkScheduleGroupStructure?['id'] ?? -1;
 
           // workScheduleGroupId
-          // debugger(when: true);
+          //
 
-          // debugger(when: true);
+          //
 
           updateStructureMeasurements(structureMeasurements, structure['id'],
               structure, taskId, wrkScheduleGroupStructureId.toString());
@@ -859,7 +858,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             });
 
             totalMaterialList.add(mat);
-            // debugger(when: true);
+            //
 
             // // mat['material_name'] = materials['material_name'];
             // mat['material_code'] = materialMeasurements['material_code'];
@@ -888,7 +887,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // List<Map<dynamic, dynamic>>.from(task['structures'] ?? []);
 
-        // debugger(when: true);
+        //
       }
 
       setState(() {
@@ -915,7 +914,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // Map materialTakenBackMeasurements
 
     print('all materials $totalMaterialList');
-    // debugger(when: true);
+    //
 
     apiDataForSamagra['workId'] = widget.workId;
     Navigator.push(
@@ -946,7 +945,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // wrk_schedule_group_structures =
     //     await getScheduleDetailsForMeasurement(widget.workId.toString());
 
-    // debugger(when: true);
+    //
   }
 
   dynamic updateMeasurementDetails(
@@ -1045,7 +1044,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           (element) => element['locationNo'] == locationNumber,
           orElse: () => Map<String, dynamic>());
 
-      // debugger(when: true);
+      //
       if (existingMeasurementDetails.isEmpty) {
         if (locDetails.isNotEmpty) {
           existingMeasurementDetails = {
@@ -1358,7 +1357,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                               onPressed: (() {
                                                 // print(estimatedQuantityOfmaterials);
 
-                                                //debugger(when: true);
+                                                //
 
                                                 Navigator.push(context,
                                                     MaterialPageRoute(
@@ -2522,7 +2521,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
             body: Column(mainAxisSize: MainAxisSize.min, children: [
               ...structures.map<Widget>(
                 (st) {
-                  // debugger(when: true);
+                  //
                   return GestureDetector(
                     onDoubleTap: () => _showBottomSheet(context),
                     child: Card(
@@ -2590,7 +2589,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Row setStructureQuantityWidget(st, t) {
     /// to add and delete strucutres
-    // debugger(when: true);
+    //
     return Row(
       children: [
         IconButton(
@@ -2773,7 +2772,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       String taskId = task['id'].toString();
 
-      // debugger(when: true);
+      //
       EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
 
       final url =
@@ -2942,7 +2941,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               })
             });
     });
-    // debugger(when: true);
+    //
 
     checkMaterials(measuredMaterials, estimatedQuantityOfmaterials);
     return measuredMaterials;
@@ -3019,7 +3018,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
             Map dispTask =
                 _taskList.firstWhere((task) => task['id'].toString() == taskId);
-            //debugger(when: true);
+            //
 
             ///displaying tasks
 
@@ -3032,7 +3031,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               dispStr['quantity'] = 1;
             }
           });
-          // debugger(when: true);
+          //
         } else {
           ///
           var selectedStructure = {};
@@ -3043,21 +3042,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
           setState(() {
             selectedStructure['quantity'] = 1;
           });
-          debugger(when: true);
+
           selectedStructure['structure_name'] =
               structureName ?? 'str Name Not Found';
           selectedStructure['id'] = mstStructureId;
 
-          // debugger(when: true);
+          //
           strcuture['quantity'] == null
               ? strcuture['quantity'] = 1
               : strcuture['quantity'] = strcuture['quantity'] + 1;
 
-          // debugger(when: true);
+          //
 
           if (issuedMaterialsForSelectedStructure != null &&
               responseDataForStructureDetails != null) {
-            debugger(when: true);
             setIssuedmaterials(
                 issuedMaterialsForSelectedStructure,
                 responseDataForStructureDetails,
@@ -3079,7 +3077,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           }
 
           task['structures'].add(selectedStructure);
-          // debugger(when: true);
+          //
         }
 
         updateQuantityOfStructureInStrucureList(taskId, mstStructureId);
@@ -3104,7 +3102,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       await _fetchWorkDetails();
       // aggregateMaterialQuantities(wrk_execution_material_schedules);
 
-      // debugger(when: true);
+      //
       createListOfMeasuredmaterials();
       return;
     });
@@ -3194,6 +3192,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
       int mstStructureId, Map<dynamic, dynamic> structure) {
     // print("this is issued materials $totalIssuedMaterialDetails");
+
     if (totalIssuedMaterialDetails.length != 0) {
       totalIssuedMaterialDetails.forEach((item) {
         int mstMaterialId = item['mst_material_id'] ?? 0;
@@ -3203,17 +3202,17 @@ class _PolVarScreenState extends State<PolVarScreen> {
         //  print("$item is issued material");
 
         String quantity = getUnitQuantity(
-            jsonData, 'materials', mstMaterialId, mstStructureId);
+            jsonData, 'material', mstMaterialId, mstStructureId);
 
         item['quantity'] = quantity;
 
         // print("this is unit of labour quantity $quantity");
       });
 
-      // debugger(when: true);
+      //
       structure['materials'].addAll(totalIssuedMaterialDetails);
 
-      //debugger(when: true);
+      //
 
       /* structure['materials']
           .structure['materials']
@@ -3393,7 +3392,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
         // print("$materialName is materialName ");
 
-        //debugger(when: true);
+        //
 
         // Adding quantity to the map or updating if already exists
         if (materialQuantities.containsKey(materialId)) {
@@ -3403,10 +3402,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
           //print(materialQuantities);
 
           //    print(materialQuantities[materialId]);
-          //   debugger(when: true);
+          //
           materialQuantities[materialId]!['quantity'] =
               materialQuantities[materialId]!['quantity'] + quantity;
-          // debugger(when: true);
+          //
 
           //materialQuantities[materialId] ?? 0 + quantity;
         } else {
@@ -3428,11 +3427,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
         // TODO
       }
     }
-    //debugger(when: true);
+    //
 
     print(materialQuantities);
     print('finished');
-    //debugger(when: true);
+    //
     return materialQuantities;
   }
 
@@ -3469,7 +3468,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
-    //debugger(when: true);
+    //
     Response response = await dio.get(url, options: Options(headers: headers));
 
     /*    if (response.statusCode != 200) {
@@ -3491,7 +3490,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       wrk_execution_material_schedules =
           wrk_execution_schedules[0]["wrk_execution_material_schedules"];
-      //debugger(when: true);
+      //
       estimatedQuantityOfmaterials =
           await aggregateMaterialQuantities(wrk_execution_material_schedules);
 
@@ -3504,7 +3503,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       // print(estimatedQuantityOfmaterials);
 
-      //debugger(when: true);
+      //
       //print("response polvar 2504 ${res['wrk_schedule_group_structures']}");
 
       //gmailMe(res[wrk_schedule_group_structures]);
@@ -3513,12 +3512,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       //print(a);
 
-      // debugger(when: true);
+      //
       _wrk_schedule_group_id = res['data']['id'];
 
       return Future.value([res['data']]);
     } else {
-      print(response.data['result_data']['data'].keys);
+      print(response);
       // print(response.data['result_data']['wrk_schedule_group_structures']);
       print('else print at 3077');
       // print(response.data['result_data']);
@@ -3858,7 +3857,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     resetStructureQuantities(_taskList);
     print(_taskList);
 
-    // debugger(when: true);
+    //
     setState(() {
       _selectedLocationIndex = -1;
       _showAnotherLocationButton = true;
@@ -4021,13 +4020,13 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   onNewMaterialAdditionFinished() async {
-    //debugger(when: true);
+    //
     //setState(() {});
     _saveMeasurementDetails();
     await _fetchWorkDetails();
     // aggregateMaterialQuantities(wrk_execution_material_schedules);
 
-    // debugger(when: true);
+    //
     createListOfMeasuredmaterials();
     setState(() {});
   }
