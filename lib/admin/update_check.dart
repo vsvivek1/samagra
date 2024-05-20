@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
+import 'package:samagra/admin/update_dialog.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
@@ -54,7 +55,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
       '2.5.0'; // Replace with the latest version from the server
 
   String update = 'Update';
-  ReceivePort _port = ReceivePort();
+/*   ReceivePort _port = ReceivePort(); */
 
   // String ap
 
@@ -73,7 +74,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
 
     _initializeState();
     //
-
+/* 
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
@@ -83,7 +84,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
 
       //debugger(when: true);
       setState(() {});
-    });
+    }); */
     super.initState();
   }
 
@@ -204,95 +205,6 @@ class _UpdateCheckState extends State<UpdateCheck> {
     return _currentVersion != _latestVersion;
   }
 
-  Future<void> _downloadAndInstallApk(String apkUrl) async {
-    try {
-      //LINK CONTAINS APK OF FLUTTER HELLO WORLD FROM FLUTTER SDK EXAMPLES
-      OtaUpdate()
-          .execute(
-        apkUrl,
-        // OPTIONAL
-        destinationFilename: 'msamagra.apk',
-        //OPTIONAL, ANDROID ONLY - ABILITY TO VALIDATE CHECKSUM OF FILE:
-        /*  sha256checksum:
-            "d6da28451a1e15cf7a75f2c3f151befad3b80ad0bb232ab15c20897e54f21478", */
-      )
-          .listen(
-        (OtaEvent event) {
-          OtaEvent currentEvent;
-          print("event is ${event.status} and ${event.value}");
-
-          if (int.parse(event.value as String) % 5 == 0) {
-            update = '${event.status} and ${event.value}';
-            setState(() {});
-          }
-
-          /*  setState(() {
-           
-          }); */
-          //  setState(() => currentEvent = event);
-        },
-      );
-    } catch (e) {
-      print('Failed to make OTA update. Details: $e');
-    }
-
-    return;
-    /////////////////
-    WidgetsFlutterBinding.ensureInitialized();
-
-    //debugger(when: true);
-  }
-
-  void _showUpdateDialog() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return displayUpdateWidget();
-        },
-      );
-    });
-  }
-
-  Builder displayUpdateWidget() {
-    return Builder(builder: (context) {
-      return AlertDialog(
-        title: Text('Update Available'),
-        content: SizedBox(
-          height: 200,
-          child: Column(
-            children: [
-              Text(
-                  'A new version of M-samagra is available.\n\n Please update to the latest version.'),
-              Text('\nCurrent Version in this Device: $localVersion'),
-              Text('\nNew Version Available for this device: $serverVersion'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          Builder(builder: (context) {
-            return TextButton(
-              onPressed: () {
-                // Add logic to redirect users to the app store for update
-                // For example: launch('URL_TO_APP_STORE');
-
-                setState(() {
-                  update = 'Updating ....';
-                });
-                _downloadAndInstallApk(apkUrl);
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => LoginScreen()),
-                // );
-              },
-              child: Text("$update"),
-            );
-          }),
-        ],
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -331,7 +243,11 @@ class _UpdateCheckState extends State<UpdateCheck> {
 
           //* implement your logic to determine if update is needed */;
           if (_needsUpdate) {
-            return displayUpdateWidget();
+            return UpdateDialog(
+              localVersion: localVersion,
+              serverVersion: serverVersion,
+              apkUrl: apkUrl, // Pass the APK URL if needed
+            );
           } else {
             return NavigationHomeScreen();
           }
