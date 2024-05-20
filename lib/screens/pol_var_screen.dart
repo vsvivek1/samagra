@@ -3,6 +3,7 @@ import 'package:flare_flutter/base/actor_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/utils.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
@@ -325,7 +326,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
   Future _sheduleBuilder() async {
     // logCurrentFunction();
-    logCurrentFunction();
+    //logCurrentFunction();
     if (_taskByName.length > 0 ||
         (widget.workScheduleGroupId == this._calledWorkSheduleGroupId)) {
       print('called again');
@@ -521,34 +522,40 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // print('debugPrinting unit master abovbe $jsonData["unit_master"]');
 
-    print('getting into unit qty function');
+    /*   print('getting into unit qty function');
 
-    print("type is $type unit master $resultData['unit_master']");
+    print("type is $type unit master $resultData['unit_master']"); */
 
     if (resultData.containsKey('unit_master')) {
       final unitMaster = resultData['unit_master'];
 
       if (unitMaster.containsKey(type)) {
+        debugger(when: true);
         final laboursOrMaterials = unitMaster[type];
 
         print(laboursOrMaterials);
 
         print('laboursOrMaterials above');
-
+        debugger(when: true);
         if (laboursOrMaterials is List) {
+          debugger(when: true);
           final matchingItem = laboursOrMaterials.firstWhere(
             (item) =>
                 item['mst_${type}_id'] == mstId &&
                 item['mst_structure_id'] == mstStructureId,
-            orElse: () => null,
+            orElse: () => {},
           );
 
-          if (matchingItem != null && matchingItem.containsKey('quantity')) {
+          if (!matchingItem.isBlank && matchingItem.containsKey('quantity')) {
+            debugger(when: true);
             return matchingItem['quantity'].toString();
           }
+          debugger(when: true);
         }
+        debugger(when: true);
       }
     }
+    debugger(when: true);
     return 0.toString();
   }
 
@@ -2789,7 +2796,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       response = response1;
 
-      // debugger(when: true);
       /*  } catch (e) {
         print(e);
         print('e above');
@@ -2977,6 +2983,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         var task;
         if (isTaskPresent) {
           task = location['tasks'].firstWhere((task) => task['id'] == taskId);
+
           DateTime dateTime = DateTime.now();
           String dateTimeString = dateTime.toIso8601String();
 
@@ -3010,7 +3017,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
             /// actual measurement
 
-            Map dispTask = _taskList.firstWhere((task) => task['id'] == taskId);
+            Map dispTask =
+                _taskList.firstWhere((task) => task['id'].toString() == taskId);
+            //debugger(when: true);
 
             ///displaying tasks
 
@@ -3034,7 +3043,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           setState(() {
             selectedStructure['quantity'] = 1;
           });
-
+          debugger(when: true);
           selectedStructure['structure_name'] =
               structureName ?? 'str Name Not Found';
           selectedStructure['id'] = mstStructureId;
@@ -3048,6 +3057,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
           if (issuedMaterialsForSelectedStructure != null &&
               responseDataForStructureDetails != null) {
+            debugger(when: true);
             setIssuedmaterials(
                 issuedMaterialsForSelectedStructure,
                 responseDataForStructureDetails,
@@ -3193,7 +3203,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         //  print("$item is issued material");
 
         String quantity = getUnitQuantity(
-            jsonData, 'material', mstMaterialId, mstStructureId);
+            jsonData, 'materials', mstMaterialId, mstStructureId);
+
         item['quantity'] = quantity;
 
         // print("this is unit of labour quantity $quantity");
