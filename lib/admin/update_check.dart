@@ -75,7 +75,6 @@ class _UpdateCheckState extends State<UpdateCheck> {
     Dio dio = Dio();
     var accessToken = await getAccessToken();
 
-    //debugger(when: true);
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
@@ -87,7 +86,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
     try {
       Response response =
           await dio.get(url, options: Options(headers: headers));
-
+      debugger(when: true);
       //debugger(when: true);
       //String serverVersion = '';
 
@@ -104,7 +103,11 @@ class _UpdateCheckState extends State<UpdateCheck> {
 
         //debugger(when: true);
         Fluttertoast.showToast(
-            msg: 'Current Version :' + response.data[0]['version'],
+            msg: 'Current server Version :' +
+                    response.data[0]['version'] +
+                    '\n Current local Version :' +
+                    _currentVersion ??
+                '-1',
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
