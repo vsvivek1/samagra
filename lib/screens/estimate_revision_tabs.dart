@@ -24,6 +24,7 @@ class _EstimateRevisionTabsState extends State<EstimateRevisionTabs>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         forceMaterialTransparency: true,
         primary: false,
         title: Text('Estimate Revision Tabs'),
@@ -62,6 +63,8 @@ class _EstimateRevisionTabsState extends State<EstimateRevisionTabs>
     _tabController.dispose();
     super.dispose();
   }
+
+  void saveRevisedEstimatedDetails() {}
 }
 
 class TabData {

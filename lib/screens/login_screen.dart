@@ -1198,13 +1198,13 @@ class _LoginScreenState extends State<LoginScreen> {
           _gettingUserInfo = true;
         });
         var result = await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
-
+        //debugger(when: true);
         if (result is DioException) {
           showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                  content: Text((result.response!.data['error'])));
+                  content: Text('Server Error . Please try after some time '));
             },
           );
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -42,6 +43,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
   late AnimationController _animationController;
 
   var _apiResultFlag = 1;
+
+  var _apiResponseData;
   @override
   void dispose() {
     _animationController.dispose();
@@ -202,13 +205,20 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                 Column(
                   children: [
                     // HtmlWidget(_apiResult),
-
                     serverMessageWidget(
+                      context,
+
+                      _apiResponseData['result_message'][0],
+                      _apiResponseData['result_flag'],
+                      //inputString.toString() != '-1' ? 1 : 0,
+                      vsync: this,
+                    )
+                    /*  serverMessageWidget(
                       context,
                       _apiResult,
                       _apiResultFlag.toString() != '-1' ? 1 : 0,
                       vsync: this,
-                    ),
+                    ), */
                     // Text(
                     //   _apiResult,
                     //   style: TextStyle(
@@ -372,10 +382,14 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             _apiResultFlag = response.data['result_flag'];
             _apiResultFlag = response.data['result_flag'];
 
-            String inputString = response.data['result_message'];
+            // String inputString = response.data['result_message'];
             //[0];
-            List<String> parts = inputString.split('<br/>');
-            _apiResult = parts.isNotEmpty ? parts[0] : '';
+            /*    List<String> parts = inputString.split('<br/>');
+            _apiResult = parts.isNotEmpty ? parts[0] : ''; */
+
+            _apiResponseData = response.data;
+
+            //debugger(when: true);
 
             // _apiResult = response.data['result_message'][0];
           });
@@ -383,7 +397,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           serverMessageWidget(
             context,
             _apiResult,
-            response.data['result_message'],
+            response.data['result_message'][0],
             //inputString.toString() != '-1' ? 1 : 0,
             vsync: this,
           );
