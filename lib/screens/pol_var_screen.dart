@@ -2262,6 +2262,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                             .toString() ==
                                                         locationNo.toString());
 
+                                                createListOfMeasuredmaterials();
+                                                checkMaterials(
+                                                    measuredMaterials,
+                                                    estimatedQuantityOfmaterials);
+
                                                 setState(() {});
                                                 Navigator.of(context).pop();
                                               },
@@ -2894,24 +2899,28 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // debugger(when: true, message: 'poda');
     if (missingMaterials.isEmpty) {
-      _requiresEstimateRevision = false;
-
-      setState(() {});
+      setState(() {
+        _requiresEstimateRevision = false;
+      });
       print('All measured materials are accounted for in estimated materials.');
     } else {
       // print('The following materials are missing or have greater quantity:');
       for (Map<String, dynamic> material in missingMaterials) {
         // print(material);
       }
-      setState(() {});
-      _requiresEstimateRevision = true;
+      setState(() {
+        _requiresEstimateRevision = true;
+      });
+
+      //debugger(when: true);
     }
   }
 
   List<dynamic> createListOfMeasuredmaterials() {
     Map<String, int> materialQuantities = {};
-
+    // debugger(when: true);
     // Iterate through the nested structure
+    measuredMaterials = [];
     measurementDetails.forEach((locations) {
       if (locations['tasks'] != null)
         locations['tasks'].forEach((task) => {
@@ -2940,6 +2949,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 });
               })
             });
+
+      debugger(when: true);
     });
     //
 
@@ -3204,6 +3215,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         String quantity = getUnitQuantity(
             jsonData, 'material', mstMaterialId, mstStructureId);
 
+        debugger(when: true);
         item['quantity'] = quantity;
 
         // print("this is unit of labour quantity $quantity");
