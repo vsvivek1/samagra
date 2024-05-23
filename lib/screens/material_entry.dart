@@ -268,10 +268,15 @@ class _MaterialEntryState extends State<MaterialEntry> {
           return null;
         },
       ),
-      trailing: Text('UOM :' +
-          selectedMaterials[index]['mst_stock_uom']['uom_descr']
-              .toString()
-              .toUpperCase()),
+      trailing: Column(
+        children: [
+          Text('UOM :' +
+              selectedMaterials[index]['mst_stock_uom']['uom_descr']
+                  .toString()
+                  .toUpperCase()),
+          Text('Stock Quantity')
+        ],
+      ),
     );
 
     /*   trailing: Text(
@@ -280,17 +285,17 @@ class _MaterialEntryState extends State<MaterialEntry> {
     selectedMaterials.map((e) => {print(e)});
   }
 
-  Future<List> getStockPosition(mstMaterialId) async {
+  Future getStockPosition(mstMaterialId) async {
     // try {
     Map userDetails = await getUserLoginDetailsMap();
 
-    var officeCode = userDetails['seat_details']['office']['office_code'] ?? -1;
+    var officeId = userDetails['seat_details']['office_id'] ?? -1;
 
     EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     final dio = Dio();
-
+    // mstMaterialId = 2659;
     final url2 =
-        '${config.liveServiceUrl}wrk/getStockPosition/${officeCode}/${widget.mst_scheme_id}/${mstMaterialId}';
+        '${config.liveServiceUrl}wrk/getStockPosition/${officeId}/${widget.mst_scheme_id}/${mstMaterialId}';
 
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
@@ -298,43 +303,45 @@ class _MaterialEntryState extends State<MaterialEntry> {
     setDioAccessokenAndApiKey(dio, accessToken, config);
     Response response = await dio.get(url2);
 
-    return Future.value(response as FutureOr<List>?);
+    if (response.statusCode == 200 && response.data['result_flag'] == 1) {
+      var responseDataResultData = response.data['result_data'];
 
-    print(response);
-
-    debugger(when: true);
-    if (response.statusCode == 200) {
-      Map<String, dynamic> responseData = response.data;
-      List<dynamic> materialsData = responseData['result_data']['materials'];
+      //debugger(when: true);
+      List<dynamic> materialsData = responseDataResultData['materials'];
       List<dynamic> alternateMaterialsData =
-          responseData['result_data']['alternate_materials'];
+          responseDataResultData['alternate_materials'];
 
       var materials = materialsData
           .where(
               (material) => [1, 2, 4, 5].contains(material['materialStatusId']))
-          .toList();
+          .toList()
+          .map((m) => m['qty'] ?? 0 - m['allocated_qty'] ?? 0);
 
       var alternateMaterials = alternateMaterialsData
           .where(
               (material) => [1, 2, 4, 5].contains(material['materialStatusId']))
-          .toList();
+          .toList()
+          .map((m) => m['qty'] ?? 0 - m['allocated_qty'] ?? 0);
 
-      return materials;
-      // setState(() {});
+      List combinedList = [...materials, ...alternateMaterials];
+
+      if (combinedList.isEmpty) {
+        return 0;
+      }
+      //debugger(when: true);
+      return combinedList.reduce((value, element) => value + element);
+    } else {
+      return 0;
     }
-    /*  } catch (e) {
-      return [];
-      print('Error fetching data: $e');
-    } */
-
-    return [];
   }
 
   onNewMaterialAdded(data) async {
-    //var a = await getStockPosition(data['id']);
+    var a = await getStockPosition(data['id']);
 
-    /* debugger(when: true);
-    print(a);
+    print(selectedMaterial);
+    debugger(when: true);
+
+    /*
     print(
         'on neew material aded selectedMaterials.length ${selectedMaterials.length}');
 

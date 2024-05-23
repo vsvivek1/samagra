@@ -2950,7 +2950,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               })
             });
 
-      debugger(when: true);
+      //debugger(when: true);
     });
     //
 
@@ -2972,6 +2972,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       int locationNumber = _selectedLocationIndex + 1;
 
       if (location['locationNo'] != locationNumber) {
+        ///filtering only the selected location
         return;
       }
 
@@ -2980,6 +2981,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
           DateTime dateTime = DateTime.now();
           String dateTimeString = dateTime.toIso8601String();
           location['firstUpdated'] = dateTimeString;
+
+          /// adding tasks if none is presnet
 
           /// if tasks are null its first time update
           location['lastUpdated'] = location['firstUpdated'];
@@ -2990,8 +2993,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
         bool isTaskPresent =
             location['tasks'].any((task) => task['id'] == taskId);
 
+        ///checking if the current task is present
+
         var task;
         if (isTaskPresent) {
+          /// current task is present
           task = location['tasks'].firstWhere((task) => task['id'] == taskId);
 
           DateTime dateTime = DateTime.now();
@@ -3203,7 +3209,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
       int mstStructureId, Map<dynamic, dynamic> structure) {
     // print("this is issued materials $totalIssuedMaterialDetails");
-
+    debugger(when: true);
     if (totalIssuedMaterialDetails.length != 0) {
       totalIssuedMaterialDetails.forEach((item) {
         int mstMaterialId = item['mst_material_id'] ?? 0;
@@ -3436,7 +3442,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       } on Exception catch (e) {
         print(e);
         throw e;
-        // TODO
       }
     }
     //
@@ -3543,7 +3548,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       return Future.value([-1]);
 
-      // TODO
+    
     } */
   }
 
@@ -3883,11 +3888,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   _enterLocationDetails(int index) {
-    var _selectedLocationIndex = index;
-  }
-
-  _viewMeasurementDetilsOfLocation(context) {
-    // ViewTabbedViewOfComponentsInLocation._showComponentPopup( context);
+    _selectedLocationIndex = index;
   }
 
   void updateMaterialmeasurements(
