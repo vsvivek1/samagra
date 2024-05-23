@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/utils.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/search_material.dart';
@@ -185,7 +186,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
     EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     final dio = Dio();
     final url = '${config.liveServiceUrl}wrk/getLabourMaster/0';
-    final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
+    final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/3/0';
 
     final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
 
@@ -274,7 +275,15 @@ class _MaterialEntryState extends State<MaterialEntry> {
               selectedMaterials[index]['mst_stock_uom']['uom_descr']
                   .toString()
                   .toUpperCase()),
-          Text('Stock Quantity')
+          Text(
+              style: TextStyle(
+                color: selectedMaterials[index]['stock'] > 0
+                    ? Colors.green
+                    : Colors.red,
+                fontSize: 13,
+              ),
+              'Stock Qty:\n${selectedMaterials[index]['stock']}'),
+          // Text("${selectedMaterials[index]['stock']} x")
         ],
       ),
     );
@@ -338,8 +347,22 @@ class _MaterialEntryState extends State<MaterialEntry> {
   onNewMaterialAdded(data) async {
     var a = await getStockPosition(data['id']);
 
-    print(selectedMaterial);
-    debugger(when: true);
+    var mat = selectedMaterials.firstWhere(
+      (element) {
+        return element['id'] == data['id'];
+      },
+      orElse: () {
+        return {};
+      },
+    );
+    if (mat.isEmpty || a == 0) {
+      mat['stock'] = 0;
+    } else {
+      mat['stock'] = a;
+    }
+
+    // return;
+    //debugger(when: true);
 
     /*
     print(
