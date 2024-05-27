@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:samagra/frtu/frtu_inspection.dart';
 import 'package:samagra/screens/work_selection.dart';
 
 class Category {

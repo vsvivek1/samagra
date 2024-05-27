@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/add_new_material.dart';
@@ -265,7 +263,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                                       title: SizedBox(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                .5,
+                                                .9,
                                         child: Wrap(
                                           children: [
                                             Text(
@@ -328,6 +326,10 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     }
 
     //debugger(when: true);
+    TextEditingController itemController = TextEditingController();
+    itemController.text = item['quantity'];
+
+    double.parse(item['quantity']) > 0 ? item['editing'] = false : true;
     return Wrap(
       children: [
         Container(
@@ -352,6 +354,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
             width: 100.0,
             height: 25,
             child: TextField(
+              controller: itemController,
               onChanged: (value) {
                 item['quantity'] = value;
 
@@ -376,27 +379,31 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               // maxLines: 2,
               // maxLength: 2,
             ),
+          )
+        else
+          Row(
+            children: [
+              Text("Qty: ${item['quantity']}"),
+              SizedBox(width: 10),
+              if (item['editing'] == null || item['editing'] == true)
+                IconButton(
+                    onPressed: (() {
+                      setState(() {
+                        item['editing'] = false;
+                      });
+                    }),
+                    icon: Icon(color: Colors.green, Icons.save)),
+              if (item['editing'] != null && item['editing'] == false)
+                IconButton(
+                    onPressed: (() {
+                      setState(() {
+                        item['editing'] = true;
+                      });
+                    }),
+                    icon: Icon(color: Colors.red, Icons.edit))
+            ],
           ),
         // Divider(),
-        SizedBox(width: 10),
-        if (item['editing'] == null || item['editing'] == true)
-          Center(
-            child: IconButton(
-                onPressed: (() {
-                  setState(() {
-                    item['editing'] = false;
-                  });
-                }),
-                icon: Icon(color: Colors.green, Icons.save)),
-          ),
-        if (item['editing'] != null && item['editing'] == false)
-          IconButton(
-              onPressed: (() {
-                setState(() {
-                  item['editing'] = true;
-                });
-              }),
-              icon: Icon(color: Colors.red, Icons.edit))
       ],
     );
   }

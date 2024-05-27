@@ -2,13 +2,11 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
-import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:upgrader/upgrader.dart';
 

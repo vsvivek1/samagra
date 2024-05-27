@@ -1,16 +1,11 @@
 import 'dart:convert';
-import 'package:flare_flutter/base/actor_color.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/utils.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/centered_circular_spinner.dart';
 import 'package:samagra/screens/custom_alert_dialog.dart';
 import 'package:samagra/screens/full_estimated_materials.dart';
-import 'package:samagra/screens/material_details_popup.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/polevar_view_of_locations.dart';
@@ -34,7 +29,6 @@ import 'package:samagra/screens/location_measurement_view.dart';
 import 'package:samagra/screens/view_tabbed_view_of_components_in_location.dart';
 import 'package:samagra/screens/work_name_widget.dart';
 
-import '../app_theme.dart';
 import '../secure_storage/secure_storage.dart';
 
 import 'measurement_display_widget.dart';
@@ -538,23 +532,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
         print('laboursOrMaterials above');
 
         if (laboursOrMaterials is List) {
-          final matchingItem = laboursOrMaterials.firstWhere(
+          final Map matchingItem = laboursOrMaterials.firstWhere(
             (item) =>
                 item['mst_${type}_id'] == mstId &&
                 item['mst_structure_id'] == mstStructureId,
             orElse: () => {},
           );
-          debugger(when: true);
-          if (!matchingItem.isBlank && matchingItem.containsKey('quantity')) {
-            debugger(when: true);
+          //debugger(when: true);
+          if (matchingItem.isNotEmpty && matchingItem.containsKey('quantity')) {
+            //debugger(when: true);
             return matchingItem['quantity'].toString();
           }
         }
 
-        debugger(when: true);
+        // debugger(when: true);
       }
     }
-    debugger(when: true);
+    // debugger(when: true);
     return 0.toString();
   }
 
@@ -2817,6 +2811,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
         var totalLabourDetails =
             response.data['result_data']['labour_schedule'];
 
+        //debugger(when: true);
+
         var resultData = response.data['result_data'];
         var takenBacksOfSelectedStructure = resultData['takenbacks'];
 
@@ -2927,7 +2923,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               task['structures'].forEach((structure) {
                 structure['materials'].forEach((materialInfo) {
                   String materialName = materialInfo['material_name'];
-                  int quantity = int.parse(materialInfo['quantity']);
+                  int quantity = int.parse(materialInfo['quantity'] ?? '0');
                   // Accumulate quantities for each material
                   materialQuantities.update(
                       materialName, (value) => value + quantity,
@@ -3209,7 +3205,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void setIssuedmaterials(totalIssuedMaterialDetails, jsonData,
       int mstStructureId, Map<dynamic, dynamic> structure) {
     // print("this is issued materials $totalIssuedMaterialDetails");
-    debugger(when: true);
+    //debugger(when: true);
     if (totalIssuedMaterialDetails.length != 0) {
       totalIssuedMaterialDetails.forEach((item) {
         int mstMaterialId = item['mst_material_id'] ?? 0;

@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/services.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/estimate_revision_tabs.dart';
@@ -255,6 +253,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
     // Iterate through locations
     locations.forEach((location) {
+      debugger(when: true);
       if (location['tasks'] != null)
         (location['tasks'] as List<dynamic>).forEach((task) {
           var mst_task_id = task['id'];
@@ -311,14 +310,15 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                 Map mat = {};
 
                 mat['material_name'] = material['material_name'];
-                mat['quantity'] = double.parse(material['quantity']);
+                mat['quantity'] = double.parse(material['quantity'] ?? '0');
                 mat['mst_task_id'] = mst_task_id;
                 mat['mst_structure_id'] = mst_structure_id;
 
                 materialQuantities[materialKey] = mat;
 
                 Map<String, dynamic> parsedMaterial = Map.from(material);
-                parsedMaterial['quantity'] = double.parse(material['quantity']);
+                parsedMaterial['quantity'] =
+                    double.parse(material['quantity'] ?? '0');
                 consolidatedData['estimate_data']['materials']
                     .add(parsedMaterial);
               }
@@ -409,24 +409,16 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                   TabData(
                       title: "Materials",
                       content: Builder(builder: (context) {
-                        if (materialQuantities != null) {
-                          return RevisedMaterialList(
-                              materialQuantities: materialQuantities);
-                        } else {
-                          return Text('No materials');
-                        }
-                      })),
+                        return RevisedMaterialList(
+                            materialQuantities: materialQuantities);
+                                            })),
                   // TabData(title: "Labour", content: RevisedLabourList()),
                   TabData(
                       title: "Labour",
                       content: Builder(builder: (context) {
-                        if (materialQuantities != null) {
-                          return RevisedLabourList(
-                              labourQuantities: labourQuantities);
-                        } else {
-                          return Text('No materials');
-                        }
-                      })),
+                        return RevisedLabourList(
+                            labourQuantities: labourQuantities);
+                                            })),
 
                   /*  TabData(
                       title: "Taken backs",
@@ -452,7 +444,11 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                       title: "Note",
                       content: Note(
                           onSaved: (data) => {
-                                debugger(when: true)
+                                setState(() {
+                                  note = data;
+                                })
+
+                                //debugger(when: true)
                                 // saveNote(data)
                               }))
                 ],
@@ -589,10 +585,10 @@ class Note extends StatelessWidget {
           onPressed: () {
             print(no.text);
 
-            debugger(when: true);
-            //onSaved(no.text);
+            //debugger(when: true);
+            onSaved(no.text);
 
-            debugger(when: true);
+            //debugger(when: true);
           },
         )
       ],

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:isolate';
@@ -14,15 +13,9 @@ import 'package:samagra/admin/update_dialog.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'dart:io';
-import 'package:android_intent/android_intent.dart';
 // IMPORT PACKAGE
-import 'package:ota_update/ota_update.dart';
 
-import 'package:flutter_downloader/flutter_downloader.dart';
 
 //import 'package:package_installer/package_installer.dart';
 String apkUrl = '';
@@ -32,11 +25,6 @@ Future<void> installUpdate(String filePath) async {
   int? statusCode =
       await AndroidPackageInstaller.installApk(apkFilePath: filePath);
   var code;
-  if (code != null) {
-    PackageInstallerStatus installationStatus =
-        PackageInstallerStatus.byCode(statusCode!);
-    print(installationStatus.name);
-  }
 }
 
 class UpdateCheck extends StatefulWidget {

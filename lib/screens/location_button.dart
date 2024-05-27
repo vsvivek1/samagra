@@ -3,7 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:samagra/kseb_color.dart';
 
 class LocationButton extends StatefulWidget {
   final Function(double, double, String) onLocationSelected;

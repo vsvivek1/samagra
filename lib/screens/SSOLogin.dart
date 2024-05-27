@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/samagra_home_screen/samagra_home_screen.dart';
-import 'package:samagra/screens/Untitled-1.dart';
 
 class SSOLogin extends StatefulWidget {
   const SSOLogin({super.key});
