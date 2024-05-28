@@ -2861,7 +2861,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     List<Map<String, dynamic>> missingMaterials = [];
     for (Map<String, dynamic> measuredMaterial in measuredMaterials) {
       String materialName = measuredMaterial['material_name'];
-      int measuredQuantity = measuredMaterial['quantity'];
+      double measuredQuantity = measuredMaterial['quantity'];
 
       var a = estimatedMaterials.values.any(
           (element) => element['material']['material_name'] == materialName);
@@ -2913,7 +2913,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   List<dynamic> createListOfMeasuredmaterials() {
-    Map<String, int> materialQuantities = {};
+    Map<String, double> materialQuantities = {};
     // debugger(when: true);
     // Iterate through the nested structure
     measuredMaterials = [];
@@ -2923,7 +2923,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
               task['structures'].forEach((structure) {
                 structure['materials'].forEach((materialInfo) {
                   String materialName = materialInfo['material_name'];
-                  int quantity = int.parse(materialInfo['quantity'] ?? '0');
+                  double quantity =
+                      double.parse(materialInfo['quantity'] ?? 0.0);
                   // Accumulate quantities for each material
                   materialQuantities.update(
                       materialName, (value) => value + quantity,
@@ -3217,7 +3218,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         String quantity = getUnitQuantity(
             jsonData, 'material', mstMaterialId, mstStructureId);
 
-        debugger(when: true);
+        //debugger(when: true);
         item['quantity'] = quantity;
 
         // print("this is unit of labour quantity $quantity");
@@ -3253,15 +3254,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       print("TOITAL LABOUR DETAILS ${totalLabourDetails.length}");
 
       // print()
-
-      // totalLabourDetails.forEach((Map<dynamic, dynamic> item) {
-
-      //   if (item.containsKey('wrk_execution_labour_schedule_id')) {
-      //     return;
-
-      //   }
-
-      // });
+      debugger(when: true);
+      totalLabourDetails.forEach((Map<dynamic, dynamic> item) {
+        if (item.containsKey('wrk_execution_labour_schedule_id')) {
+          return;
+        }
+      });
 
       if (structure['labour'] == null) {
         structure['labour'] = [];

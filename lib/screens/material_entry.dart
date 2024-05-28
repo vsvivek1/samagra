@@ -281,6 +281,11 @@ class _MaterialEntryState extends State<MaterialEntry> {
                 fontSize: 13,
               ),
               'Stock Qty:\n${selectedMaterials[index]['stock']}'),
+          
+          
+          IconButton(onPressed: (() {
+            _removeSelectedItem(index);
+          }), icon: Icon(Icons.delete())
           // Text("${selectedMaterials[index]['stock']} x")
         ],
       ),
@@ -378,5 +383,10 @@ class _MaterialEntryState extends State<MaterialEntry> {
     /*   setState(
       () {},
     ); */
+  }
+  
+  void _removeSelectedItem(int index) {
+
+    
   }
 }

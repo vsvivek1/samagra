@@ -327,9 +327,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
     //debugger(when: true);
     TextEditingController itemController = TextEditingController();
-    itemController.text = item['quantity'];
+    itemController.text = item['quantity'].toString();
 
-    double.parse(item['quantity']) > 0 ? item['editing'] = false : true;
+    double.parse(item['quantity'].toString()) > 0
+        ? item['editing'] = false
+        : true;
     return Wrap(
       children: [
         Container(
@@ -338,7 +340,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           child: Column(
             children: [
               Divider(),
-              Text('Measured Quantity Here: ${item['quantity']}'),
+              Text(
+                  'Measured Quantity Here: ${double.parse(item['quantity'].toString()).toStringAsFixed(2)}'),
               Divider(),
               Text('Total Issued Quantity: '),
               Divider(),
@@ -349,7 +352,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           ),
         ),
         SizedBox(width: 50),
-        if (item['editing'] == null || item['editing'] == true)
+        if (item['editing'] == true)
           SizedBox(
             width: 100.0,
             height: 25,
@@ -383,17 +386,19 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
         else
           Row(
             children: [
-              Text("Qty: ${item['quantity']}"),
+              Text(
+                  "${item['editing']} Qty: ${double.parse(item['quantity'].toString()).toStringAsFixed(2)}"),
               SizedBox(width: 10),
               if (item['editing'] == null || item['editing'] == true)
                 IconButton(
                     onPressed: (() {
                       setState(() {
-                        item['editing'] = false;
+                        item['editing'] =
+                            item['editing'] == null ? true : !item['editing'];
                       });
                     }),
                     icon: Icon(color: Colors.green, Icons.save)),
-              if (item['editing'] != null && item['editing'] == false)
+              if (item['editing'] == false)
                 IconButton(
                     onPressed: (() {
                       setState(() {
@@ -455,13 +460,13 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                           // subtitle: Text('Quantity: ${labour['quantity']}'),
                           subtitle: itemEditingBox(labour),
 
-                          trailing: IconButton(
+                          /* trailing: IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
                               _editLabourQuantity(
                                   labourIndex, structureIndex, index);
                             },
-                          ),
+                          ), */
                         ),
                       ],
                     );

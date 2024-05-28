@@ -82,34 +82,46 @@ class _MaterialListWidgetState extends State<MaterialListWidget> {
             itemCount: filteredMaterialMaster.length,
             itemBuilder: (BuildContext context, int index) {
               var item = filteredMaterialMaster[index];
-              return ListTile(
-                selected: item['selected'] == true,
-                selectedTileColor: Colors.red,
-                trailing: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      item['selected'] = item['selected'] ?? false;
-                      item['selected'] = !item['selected'];
-
-                      if (item['selected']) {
-                        widget.selectedMaterials.add(item);
-                      } else {
-                        widget.selectedMaterials.remove(item);
-                      }
-                    });
-
-                    widget.updateMaterialStatus(item);
-                    //print(widget.selectedMaterials);
-                  },
-                  icon: Icon(Icons.select_all_sharp),
+              return GestureDetector(
+                onDoubleTap: () {
+                  chooseTheItem(item);
+                },
+                onTap: () {
+                  chooseTheItem(item);
+                },
+                child: ListTile(
+                  selected: item['selected'] == true,
+                  selectedTileColor: Colors.red,
+                  trailing: IconButton(
+                    onPressed: () {
+                      chooseTheItem(item);
+                      //print(widget.selectedMaterials);
+                    },
+                    icon: Icon(Icons.select_all_sharp),
+                  ),
+                  title: Text(item['material_name'].toString()),
+                  onTap: () {},
                 ),
-                title: Text(item['material_name'].toString()),
-                onTap: () {},
               );
             },
           ),
         ),
       ],
     );
+  }
+
+  void chooseTheItem(item) {
+    setState(() {
+      item['selected'] = item['selected'] ?? false;
+      item['selected'] = !item['selected'];
+
+      if (item['selected']) {
+        widget.selectedMaterials.add(item);
+      } else {
+        widget.selectedMaterials.remove(item);
+      }
+    });
+
+    widget.updateMaterialStatus(item);
   }
 }
