@@ -100,7 +100,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
                 ),
                 child: SizedBox(
                   width: MediaQuery.sizeOf(context).width * .9,
-                  height: MediaQuery.sizeOf(context).height * .4,
+                  height: MediaQuery.sizeOf(context).height * .5,
                   child: Container(
                     child: Column(
                       children: [
@@ -252,23 +252,23 @@ class _MaterialEntryState extends State<MaterialEntry> {
 
     return ListTile(
       title: Text(selectedMaterials[index]['material_name']),
-      subtitle: buildIntegerInputField(
-        labelText: 'Enter quantity',
-        onChanged: (value) {
-          selectedMaterials[index]['quantity'] = value;
-
-          // Handle input value change
-        },
-        validator: (value) {
-          if (value?.isEmpty ?? true) {
-            return 'Please enter some text';
-          }
-          // You can add more validation logic here if needed
-          return null;
-        },
-      ),
-      trailing: Column(
+      subtitle: Column(
         children: [
+          buildIntegerInputField(
+            labelText: 'Enter quantity',
+            onChanged: (value) {
+              selectedMaterials[index]['quantity'] = value;
+
+              // Handle input value change
+            },
+            validator: (value) {
+              if (value?.isEmpty ?? true) {
+                return 'Please enter some text';
+              }
+              // You can add more validation logic here if needed
+              return null;
+            },
+          ),
           Text('UOM :' +
               selectedMaterials[index]['mst_stock_uom']['uom_descr']
                   .toString()
@@ -280,12 +280,17 @@ class _MaterialEntryState extends State<MaterialEntry> {
                     : Colors.red,
                 fontSize: 13,
               ),
-              'Stock Qty:\n${selectedMaterials[index]['stock']}'),
-          
-          
-          IconButton(onPressed: (() {
-            _removeSelectedItem(index);
-          }), icon: Icon(Icons.delete())
+              'Stock Qty:${selectedMaterials[index]['stock']}'),
+        ],
+      ),
+      trailing: Column(
+        children: [
+          IconButton(
+              onPressed: (() {
+                _removeSelectedItem(index);
+              }),
+              icon: Icon(Icons.delete)),
+
           // Text("${selectedMaterials[index]['stock']} x")
         ],
       ),
@@ -313,7 +318,15 @@ class _MaterialEntryState extends State<MaterialEntry> {
 
     String accessToken = await getAccessToken();
     setDioAccessokenAndApiKey(dio, accessToken, config);
-    Response response = await dio.get(url2);
+
+    /* MaterialBanner materialBanner =
+        MaterialBanner(content: Text('Failed to fetch Details from server')); */
+
+    var response = await dio.get(url2).catchError((error) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to retirve data')));
+      return -1;
+    });
 
     if (response.statusCode == 200 && response.data['result_flag'] == 1) {
       var responseDataResultData = response.data['result_data'];
@@ -384,9 +397,10 @@ class _MaterialEntryState extends State<MaterialEntry> {
       () {},
     ); */
   }
-  
-  void _removeSelectedItem(int index) {
 
-    
+  void _removeSelectedItem(int index) {
+    if (selectedMaterials.length > index && index > -1) {
+      selectedMaterials.removeAt(index);
+    }
   }
 }

@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:get/state_manager.dart';
+import 'package:get/utils.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/estimate_revision_tabs.dart';
@@ -75,7 +77,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
   var note = 'Note..';
 
-  late Map<String, dynamic> consolidatedData;
+  Map<String, dynamic> consolidatedData = {};
 
   Map<dynamic, Map> materialQuantities = {};
 
@@ -91,6 +93,34 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     super.initState();
   }
 
+  List<String> validateMaterialData(Map<String, dynamic> item) {
+    // Check for presence of required keys
+    final requiredKeys = [
+      'mst_task_id',
+      'mst_structure_id',
+      'mst_material_id',
+      'mst_material_status_id',
+      'mst_uom_id',
+      'is_return',
+      'material_code',
+      'uom_code',
+      'rate',
+      'quantity',
+      'supply_mode',
+    ];
+
+    final missingKeys =
+        requiredKeys.where((key) => !item.containsKey(key)).toList();
+    final validSupplyModes = ['KSEB'];
+    // Check for valid supply_mode value
+    if (missingKeys.isEmpty &&
+        !validSupplyModes.contains(item['supply_mode'])) {
+      missingKeys.add('supply_mode');
+    }
+
+    return missingKeys;
+  }
+
   Future<void> sendDataToServer(BuildContext context) async {
     EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
     // String seatId = await getSeatId();
@@ -104,6 +134,19 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     String url = "${config.liveServiceUrl}wrk/saveTSRevisionEstimate";
 
     var estimate_data = consolidatedData['estimate_data'];
+
+    estimate_data['materials'].forEach((e) {
+      var a = validateMaterialData(e);
+
+      e['mst_material_status_id'] = e['mst_material_status_id'] ?? 1;
+      e['mst_uom_id'] = e['mst_uom_id'] ?? e['mst_stock_uom']['id'];
+      e['uom_code'] = e['uom_code'] ?? e['mst_stock_uom']['uom_code'];
+      e['rate'] = e['rate'] ?? (e['mst_material_rates'][0]['rate'] ?? 0);
+      /*  if (a.isNotEmpty) {
+        debugger(when: true);
+      } */
+    });
+    //debugger(when: true);
     Map<String, dynamic> userData = {
       'user_id': userId,
       'seat_id': seatId,
@@ -131,7 +174,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
       ),
       data: body,
     );
-    //debugger(when: true);
+    debugger(when: true);
     //debugger(when: true);
     if (response.statusCode == 200) {
       if (response.data['result_flag'] == -1) {
@@ -164,7 +207,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     roleId = seatDetails['role_id'];
     officeId = seatDetails['office_id'];
 
-    consolidatedData = buildEstimateData(widget.measurementDetails);
+    buildEstimateData(widget.measurementDetails);
 
     /* print(materialQuantities);
     print(labourQuantities); */
@@ -240,146 +283,140 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
   Map<String, dynamic> buildEstimateData(
       List<Map<dynamic, dynamic>> locations) {
-    Map<String, dynamic> consolidatedData = {
-      'estimate_data': {
-        'materials': [],
-        'labours': [],
-        'structures': [],
-        'otherCharges': [],
-      }
-    };
-
     // Map to store material quantities for each task, structure, and material
+    consolidatedData['estimate_data'] = {};
+    var estimateData = consolidatedData['estimate_data'];
 
-    // Iterate through locations
+    estimateData['structures'] = [];
+    estimateData['materials'] = [];
+    estimateData['labours'] = [];
+    estimateData['other_charges'] = [];
+
     locations.forEach((location) {
-      debugger(when: true);
+      // debugger(when: true);
       if (location['tasks'] != null)
         (location['tasks'] as List<dynamic>).forEach((task) {
           var mst_task_id = task['id'];
-          (task['structures'] as List<dynamic>).forEach((structure) {
-            int mst_structure_id = structure['id'];
-            // Check if structure is already present
-            String structureKey = '${task['id']}_${structure['id']}';
-            bool isStructurePresent =
-                consolidatedData['estimate_data']['structures'].any((entry) =>
-                    entry['mst_task_id'] == task['id'] &&
-                    entry['mst_structure_id'] == structure['id']);
+          //debugger(when: true);
+          if (task['structures'] != null)
+            (task['structures'] as List<dynamic>).forEach((structure) {
+              int mst_structure_id = structure['id'];
+              // Check if structure is already present
 
-            if (isStructurePresent) {
-              // If structure is present, increment the quantity
-              consolidatedData['estimate_data']['structures']
-                  .where((entry) =>
+              // debugger(when: true);
+
+              bool isStructurePresent = (estimateData != null &&
+                  estimateData['structures'] != null &&
+                  estimateData['structures'].any((entry) =>
                       entry['mst_task_id'] == task['id'] &&
-                      entry['mst_structure_id'] == structure['id'])
-                  .forEach((existingStructure) {
-                existingStructure['quantity'] += structure['quantity'];
-              });
-            } else {
-              // If structure is not present, add it as a new entry
-              Map<String, dynamic> structureData = {
-                'mst_task_id': task['id'],
-                'mst_structure_id': structure['id'],
-                'mst_uom_id': structure['mst_uom_id'],
-                'structure_code': structure['structure_code'],
-                'uom_code': structure['uom_code'],
-                'quantity': structure['quantity'],
-              };
-              consolidatedData['estimate_data']['structures']
-                  .add(structureData);
-            }
+                      entry['mst_structure_id'] == structure['id']));
 
-            // Materials
-            (structure['materials'] as List<dynamic>).forEach((material) {
-              String materialKey =
-                  '${task['id']}_${structure['id']}_${material['mst_material_id']}';
-
-              if (materialQuantities.containsKey(materialKey)) {
-                Map<dynamic, dynamic> mat =
-                    materialQuantities[materialKey] ?? {};
-                mat['quantity'] =
-                    mat['quantity'] + double.parse(material['quantity']);
-
-                mat['mst_task_id'] = mst_task_id;
-                mat['mst_structure_id'] = mst_structure_id;
-
-                materialQuantities[materialKey] = mat;
-                /*  materialQuantities[materialKey] =
-                  double.parse(material['quantity']); */
-              } else {
-                Map mat = {};
-
-                mat['material_name'] = material['material_name'];
-                mat['quantity'] = double.parse(material['quantity'] ?? '0');
-                mat['mst_task_id'] = mst_task_id;
-                mat['mst_structure_id'] = mst_structure_id;
-
-                materialQuantities[materialKey] = mat;
-
-                Map<String, dynamic> parsedMaterial = Map.from(material);
-                parsedMaterial['quantity'] =
-                    double.parse(material['quantity'] ?? '0');
-                consolidatedData['estimate_data']['materials']
-                    .add(parsedMaterial);
-              }
-            });
-
-            // Labours
-
-            (structure['labour'] as List<dynamic>).forEach((labour) {
-              String labourKey =
-                  '${task['id']}_${structure['id']}_${labour['id']}'; // Using 'id'
-
-              if (labourQuantities.containsKey(labourKey)) {
-                Map<dynamic, dynamic> lab = labourQuantities[labourKey] ?? {};
-                lab['quantity'] = lab['quantity'] +
-                    double.parse(labour['quantity'].toString());
-                lab['mst_task_id'] = mst_task_id;
-                lab['mst_structure_id'] = mst_structure_id;
-                labourQuantities[labourKey] = lab;
-                /*  labourQuantities[labourKey] =
-            double.parse(labour['quantity']); */
-              } else {
-                Map lab = {};
-                lab['mst_task_id'] = mst_task_id;
-                lab['mst_structure_id'] = mst_structure_id;
-                lab['labour_name'] = labour['labour_name'];
-                lab['quantity'] = double.parse(labour['quantity'].toString());
-
-                labourQuantities[labourKey] = lab;
-
-                Map<String, dynamic> parsedLabour = Map.from(labour);
-                parsedLabour['quantity'] =
-                    double.parse(labour['quantity'].toString());
+              if (isStructurePresent) {
                 //debugger(when: true);
-                consolidatedData['estimate_data']['labours'].add(parsedLabour);
+                // If structure is present, increment the quantity
+                estimateData['structures']
+                    .where((entry) =>
+                        entry['mst_task_id'] == task['id'] &&
+                        entry['mst_structure_id'] == structure['id'])
+                    .forEach((existingStructure) {
+                  existingStructure['quantity'] += structure['quantity'];
+                });
+              } else {
+                // If structure is not present, add it as a new entry
+                Map<String, dynamic> structureData = {
+                  'mst_task_id': task['id'],
+                  'mst_structure_id': structure['id'],
+                  'mst_uom_id': structure['mst_uom_id'],
+                  'structure_code': structure['structure_code'],
+                  'uom_code': structure['uom_code'],
+                  'quantity': structure['quantity'],
+                };
+
+                debugger(when: true);
+                estimateData['structures'].add(structureData);
               }
-            });
 
-            // Other Charges
+              // Materials
+              (structure['materials'] as List<dynamic>).forEach((material) {
+                Map CurMaterial = estimateData['materials'].firstWhere(
+                    (m) =>
+                        m['mst_task_id'] == task['id'] &&
+                        m['mst_structure_id'] == structure['id'] &&
+                        m['mst_material_id'] == material['mst_material_id'],
+                    orElse: () => {});
 
-            if (task['otherCharges'] != null)
-              (location['otherCharges'] as List<Map<String, dynamic>>)
-                  .forEach((charge) {
-                Map<String, dynamic> parsedCharge = Map.from(charge);
-                parsedCharge['quantity_or_rate'] =
-                    double.parse(charge['quantity_or_rate']);
-                consolidatedData['estimate_data']['otherCharges']
-                    .add(parsedCharge);
+                //debugger(when: true);
+                material['mst_task_id'] = task['id'];
+                material['mst_structure_id'] = structure['id'];
+                material['mst_material_id'] = material['mst_material_id'];
+
+                material['is_return'] = false;
+
+                material['supply_mode'] = material['supply_mode'] ?? 'KSEB';
+
+                if (CurMaterial.isEmpty) {
+                  estimateData['materials'].add(material);
+
+                  // print(material);
+
+                  //debugger(when: true);
+                } else {
+                  CurMaterial['is_return'] = false;
+                  CurMaterial['quantity'] =
+                      CurMaterial['quantity'] + material['quantity'];
+
+                  //debugger(when: true);
+                }
               });
-          });
+
+              (structure['labour'] as List<dynamic>).forEach((labour) {
+                final currentLabour = estimateData['labours']?.firstWhere(
+                  (m) =>
+                      m['mst_task_id'] == task['id'] &&
+                      m['mst_structure_id'] == structure['id'] &&
+                      m['mst_labour_id'] == labour['mst_labour_id'],
+                  orElse: () =>
+                      <String, dynamic>{}, // Create an empty map by default
+                );
+
+                if (currentLabour == null || currentLabour.isEmpty) {
+                  final newLabour = <String, dynamic>{};
+                  labour.forEach((key, value) {
+                    if (key == 'quantity') {
+                      newLabour[key] = [value];
+                    } else {
+                      newLabour[key] = value;
+                    }
+                  });
+                  newLabour['mst_task_id'] = mst_task_id;
+                  newLabour['mst_structure_id'] = mst_structure_id;
+
+                  estimateData['labours'].add(newLabour);
+                  // Add newLabour to your desired location (potentially using update logic)
+                } else {
+                  currentLabour['quantity'] = [
+                    currentLabour['quantity'][0] +
+                        double.parse(labour['quantity'].toString()),
+                  ];
+                }
+              });
+
+              //debugger(when: true);
+              // Other Charges
+
+              if (task['otherCharges'] != null)
+                (location['otherCharges'] as List<Map<String, dynamic>>)
+                    .forEach((charge) {
+                  Map<String, dynamic> parsedCharge = Map.from(charge);
+                  parsedCharge['quantity_or_rate'] =
+                      double.parse(charge['quantity_or_rate']);
+                  estimateData['otherCharges'].add(parsedCharge);
+                });
+            });
         });
     });
 
-    // Update material quantities in the consolidated data
-    consolidatedData['estimate_data']['materials'].forEach((material) {
-      String materialKey =
-          '${material['mst_task_id']}_${material['mst_structure_id']}_${material['mst_material_id']}';
-      if (materialQuantities.containsKey(materialKey)) {
-        material['quantity'] = materialQuantities[materialKey];
-      }
-    });
-
+    //debugger(when: true);
     return consolidatedData;
   }
 
@@ -411,14 +448,14 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                       content: Builder(builder: (context) {
                         return RevisedMaterialList(
                             materialQuantities: materialQuantities);
-                                            })),
+                      })),
                   // TabData(title: "Labour", content: RevisedLabourList()),
                   TabData(
                       title: "Labour",
                       content: Builder(builder: (context) {
                         return RevisedLabourList(
                             labourQuantities: labourQuantities);
-                                            })),
+                      })),
 
                   /*  TabData(
                       title: "Taken backs",
@@ -517,7 +554,7 @@ class RevisedLabourList extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         String labourId = labourQuantities.keys.elementAt(index);
         String labourName = labourQuantities[labourId]!['labour_name'];
-        double quantity = labourQuantities[labourId]!['quantity'];
+        double quantity = labourQuantities[labourId]!['quantity'][0];
 
         return ListTile(
           title: Text(labourName),

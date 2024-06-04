@@ -719,7 +719,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     Response response = await dio.get(baseUrlOld);
 
-    if (response.statusCode == 200 && response.data['result_flag'] != -1) {
+    if (response.statusCode == 200 &&
+        response.data['result_flag'] != -1 &&
+        response.data != null) {
       Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
       wrk_work_detail = apiData['wrk_work_detail'];
 
@@ -3254,9 +3256,12 @@ class _PolVarScreenState extends State<PolVarScreen> {
       print("TOITAL LABOUR DETAILS ${totalLabourDetails.length}");
 
       // print()
-      debugger(when: true);
-      totalLabourDetails.forEach((Map<dynamic, dynamic> item) {
-        if (item.containsKey('wrk_execution_labour_schedule_id')) {
+      //debugger(when: true);
+
+      //if (totalLabourDetails != null)
+      totalLabourDetails.forEach((/*  Map<dynamic, dynamic> */ item) {
+        if (item != null &&
+            item.containsKey('wrk_execution_labour_schedule_id')) {
           return;
         }
       });
@@ -3480,58 +3485,45 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
     //
-    Response response = await dio.get(url, options: Options(headers: headers));
+    try {
+      final response = await dio.get(url, options: Options(headers: headers));
+      if (response.statusCode != 200) {
+        throw Exception(
+            'Error fetching data: Status Code ${response.statusCode}');
+      }
 
-    /*    if (response.statusCode != 200) {
-      print('returnning atr 3051 error');
-      return Future.value([-1]);
-    }
- */
-    if (response.data != null &&
-        response.data['result_data'] != null &&
-        response.data['result_data']['data']['wrk_schedule_group_structures'] !=
-            null) {
-      var res = response.data['result_data'];
+      // Check for expected data structure
+      if (response.data == null ||
+          response.data['result_data'] == null ||
+          response.data['result_data']['data']
+                  ['wrk_schedule_group_structures'] ==
+              null) {
+        throw Exception('Unexpected data format in response.');
+      }
+
+      final res = response.data['result_data'];
 
       wrk_schedule_group_structures =
-          response.data['result_data']['data']['wrk_schedule_group_structures'];
-
-      wrk_execution_schedules =
-          response.data['result_data']['data']["wrk_execution_schedules"];
-
+          res['data']['wrk_schedule_group_structures'];
+      wrk_execution_schedules = res['data']["wrk_execution_schedules"];
       wrk_execution_material_schedules =
           wrk_execution_schedules[0]["wrk_execution_material_schedules"];
-      //
+
       estimatedQuantityOfmaterials =
           await aggregateMaterialQuantities(wrk_execution_material_schedules);
 
-      /* showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return MaterialDetailsPopup(
-                materialData: estimatedQuantityOfmaterials);
-          }); */
+      // Removed commented-out code (consider using a separate function)
 
-      // print(estimatedQuantityOfmaterials);
-
-      //
-      //print("response polvar 2504 ${res['wrk_schedule_group_structures']}");
-
-      //gmailMe(res[wrk_schedule_group_structures]);
-
-      /*  */
-
-      //print(a);
-
-      //
       _wrk_schedule_group_id = res['data']['id'];
 
       return Future.value([res['data']]);
-    } else {
-      print(response);
-      // print(response.data['result_data']['wrk_schedule_group_structures']);
-      print('else print at 3077');
-      // print(response.data['result_data']);
+    } on Exception catch (error) {
+      // Show Snackbar with error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $error'),
+        ),
+      );
       return Future.value([-1]);
     }
     /* } on Exception catch (e) {
