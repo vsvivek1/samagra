@@ -705,45 +705,53 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // bool retVal = false;
 
     //wrong function
-    /*  try { */
-    String baseUrlOld =
-        "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0";
+    try {
+      String baseUrlOld =
+          "${config.liveServiceUrl}wrk/getScheduleDetailsForMeasurement/NORMAL/${widget.workScheduleGroupId}/0";
 
-    // print("BASE UR mdtwm 136L $baseUrl");
+      // print("BASE UR mdtwm 136L $baseUrl");
 
-    Dio dio = new Dio();
+      Dio dio = new Dio();
 
-    dio = await setAccessTockenToDio(dio);
+      dio = await setAccessTockenToDio(dio);
 
-    setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
-    Response response = await dio.get(baseUrlOld);
+      Response response = await dio.get(baseUrlOld);
 
-    if (response.statusCode == 200 &&
-        response.data['result_flag'] != -1 &&
-        response.data != null) {
-      Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
-      wrk_work_detail = apiData['wrk_work_detail'];
+      if (response.statusCode == 401) {
+        throw Exception('Login Expired . Please re login');
+        // throw Exeception('');
+      }
 
-      mst_scheme_id = wrk_work_detail['mst_scheme_id'];
-      //
-      //print("api @693 $apiData");
+      if (response.statusCode == 200 &&
+          response.data['result_flag'] != -1 &&
+          response.data != null) {
+        Map<dynamic, dynamic> apiData = response.data['result_data']['data'];
+        wrk_work_detail = apiData['wrk_work_detail'];
 
-      //
+        mst_scheme_id = wrk_work_detail['mst_scheme_id'];
+        //
+        //print("api @693 $apiData");
 
-      ///34843
-      return apiData['wrk_schedule_group_structures'];
-      // print("apidata at mdtwm $apiData");
-    } else {
-      print(response);
-      print('response above');
-      return Future.value([]);
-    }
-    /*  } catch (e) {
+        //
+
+        ///34843
+        return apiData['wrk_schedule_group_structures'];
+        // print("apidata at mdtwm $apiData");
+      } else {
+        print(response);
+        print('response above');
+        return Future.value([]);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.toString()),
+      ));
       print('error at 672 polvar screen $e');
 
       return Future.value([]);
-    } */
+    }
   }
 
   getMeasurementObjForApi(obj) async {
@@ -2796,6 +2804,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       response = response1;
 
+      //debugger(when: true);
       /*  } catch (e) {
         print(e);
         print('e above');
@@ -2813,13 +2822,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
         var totalLabourDetails =
             response.data['result_data']['labour_schedule'];
 
-        //debugger(when: true);
+        //
 
         var resultData = response.data['result_data'];
         var takenBacksOfSelectedStructure = resultData['takenbacks'];
 
         var responseDataForStructureDetails = response.data['result_data'];
         var master = response.data['result_data']['unit_master'];
+
+        var structureMaster = response.data['result_data']['structure_master'];
+        //debugger(when: true);
 
         var out = measurementDetails.firstWhere(
           (element) => element['locationNo'] == _selectedLocationIndex + 1,
@@ -2844,7 +2856,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             issuedMaterialsForSelectedStructure,
             responseDataForStructureDetails,
             totalLabourDetails,
-            takenBacksOfSelectedStructure);
+            takenBacksOfSelectedStructure,
+            structureMaster);
       }
     } catch (e) {
       print("$e is the try cathc error at 1975 of polvar");
@@ -2965,7 +2978,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
       issuedMaterialsForSelectedStructure,
       responseDataForStructureDetails,
       totalLabourDetails,
-      takenBacksOfSelectedStructure) {
+      takenBacksOfSelectedStructure,
+      structureMaster) {
     ///checking existing measuremnt details of the lcoation
     measurementDetails.forEach((location) async {
       int locationNumber = _selectedLocationIndex + 1;
@@ -3054,6 +3068,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           selectedStructure['materials'] = [];
           selectedStructure['labour'] = [];
           selectedStructure['takenBack'] = [];
+          selectedStructure['structureMaster'] = structureMaster;
 
           setState(() {
             selectedStructure['quantity'] = 1;

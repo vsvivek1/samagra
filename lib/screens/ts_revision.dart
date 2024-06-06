@@ -10,6 +10,7 @@ import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/estimate_revision_tabs.dart';
 import 'package:samagra/screens/get_login_details.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+import 'package:samagra/screens/set_access_token_to_dio.dart';
 
 class TSRevision {
   final int userId;
@@ -207,7 +208,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     roleId = seatDetails['role_id'];
     officeId = seatDetails['office_id'];
 
-    buildEstimateData(widget.measurementDetails);
+    await buildEstimateData(widget.measurementDetails);
 
     /* print(materialQuantities);
     print(labourQuantities); */
@@ -281,16 +282,37 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
   );
  */
 
-  Map<String, dynamic> buildEstimateData(
-      List<Map<dynamic, dynamic>> locations) {
+  Future<Map<String, dynamic>> buildEstimateData(
+      List<Map<dynamic, dynamic>> locations) async {
     // Map to store material quantities for each task, structure, and material
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+
+    String baseUrlOld =
+        "${config.liveServiceUrl}wrk/getLastOtherChargeEstimateDetails/${this.plgWorkId}";
+
+    // print("BASE UR mdtwm 136L $baseUrl");
+
+    Dio dio = new Dio();
+
+    dio = await setAccessTockenToDio(dio);
+
+    setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+
+    Response response = await dio.get(baseUrlOld);
+
+    if (response.data == null) {
+      throw Exception('Issues in obtaining other charges');
+    }
+
+    var other_charges = response.data['result_data'];
+    //debugger(when: true);
     consolidatedData['estimate_data'] = {};
     var estimateData = consolidatedData['estimate_data'];
 
     estimateData['structures'] = [];
     estimateData['materials'] = [];
     estimateData['labours'] = [];
-    estimateData['other_charges'] = [];
+    estimateData['other_charges'] = other_charges;
 
     locations.forEach((location) {
       // debugger(when: true);
@@ -326,13 +348,14 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                 Map<String, dynamic> structureData = {
                   'mst_task_id': task['id'],
                   'mst_structure_id': structure['id'],
-                  'mst_uom_id': structure['mst_uom_id'],
-                  'structure_code': structure['structure_code'],
-                  'uom_code': structure['uom_code'],
+                  'mst_uom_id': structure['structureMaster']['mst_uom_id'],
+                  'structure_code': structure['structureMaster']
+                      ['structure_code'],
+                  'uom_code': structure['structureMaster']['structure_code'],
                   'quantity': structure['quantity'],
                 };
 
-                debugger(when: true);
+                //debugger(when: true);
                 estimateData['structures'].add(structureData);
               }
 

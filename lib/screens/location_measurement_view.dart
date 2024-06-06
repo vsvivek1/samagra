@@ -473,7 +473,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   });
                 },
               ),
-              ElevatedButton(
+              /*   ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         const Color.fromARGB(255, 132, 184, 134)),
@@ -481,7 +481,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   onPressed: addLabourNotInEstimate(),
                   child: Text(
                       textAlign: TextAlign.center,
-                      'Add Labour Not in Estimate')),
+                      'Add Labour Not in Estimate')), */
             ],
           ),
         );
@@ -568,7 +568,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                     );
                   },
                 ),
-            ElevatedButton(
+            /*  ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
                       const Color.fromARGB(255, 132, 184, 134)),
@@ -576,7 +576,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 onPressed: addtakenbacksNotInEstimate(),
                 child: Text(
                     textAlign: TextAlign.center,
-                    'Add Takenbacks Not in Estimate')),
+                    'Add Takenbacks Not in Estimate')), */
           ],
         ),
       );
