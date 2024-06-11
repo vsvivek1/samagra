@@ -11,11 +11,12 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:samagra/admin/update_dialog.dart';
 import 'package:samagra/common.dart';
+import 'package:samagra/custom_drawer/home_drawer.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
+import 'package:samagra/screens/server_error.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 // IMPORT PACKAGE
-
 
 //import 'package:package_installer/package_installer.dart';
 String apkUrl = '';
@@ -103,8 +104,9 @@ class _UpdateCheckState extends State<UpdateCheck> {
     final headers = {'Authorization': 'Bearer $accessToken'};
 
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
-    //
-    String url = "https://ws.kseb.in/resource/api/erp/group1/app_versions";
+
+    // String url = "https://ws.kseb.in/resource/api/erp/group1/app_versions";
+    String url = "${config.liveServiceUrl}app_versions";
 
     String PlatForm = Platform.isAndroid ? 'Android' : 'IOS';
 
@@ -199,10 +201,14 @@ class _UpdateCheckState extends State<UpdateCheck> {
       future: _listVersions(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data is DioException) {
+          //debugger(when: true);
           Fluttertoast.showToast(msg: "Server Error Please Re login");
-          Navigator.push(context, MaterialPageRoute(builder: ((context) {
+          String msg1 = "Server Error Please Re login";
+          return ServerError(msg1);
+
+          /*  Navigator.push(context, MaterialPageRoute(builder: ((context) {
             return LoginScreen();
-          })));
+          }))); */
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
