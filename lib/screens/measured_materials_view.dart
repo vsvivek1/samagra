@@ -23,7 +23,7 @@ class MeasuredMaterialsView extends StatelessWidget {
           ],
           rows: measuredMaterials.map((material) {
             final String materialName = material['material_name'];
-            final int measuredQuantity = material['quantity'];
+            final double measuredQuantity = material['quantity'];
             double estimatedQuantity = 0;
 
             estimatedMaterials.forEach((key, value) {

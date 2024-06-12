@@ -3957,9 +3957,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
     Map<String, dynamic> materialMeasurement = result["materialMeasurement"];
 
     if (materialMeasurements.containsKey(key)) {
-      int currentQuantity = int.parse(materialMeasurements[key]['quantity']);
-      int additionalQuantity = int.parse(materialMeasurement['quantity']);
-      int updatedQuantity = currentQuantity + additionalQuantity;
+      double currentQuantity =
+          double.parse(materialMeasurements[key]['quantity']);
+      double additionalQuantity = double.parse(materialMeasurement['quantity']);
+      double updatedQuantity = currentQuantity + additionalQuantity;
       materialMeasurements[key]['quantity'] = updatedQuantity.toString();
 
       print("new quantity ${materialMeasurements[key]['quantity']}");

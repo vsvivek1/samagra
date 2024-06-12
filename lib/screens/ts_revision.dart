@@ -165,6 +165,8 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
     final body = jsonEncode(userData); //.toJson();
 
+    debugger(when: true);
+
     //try {
     var response = await dio.post(
       url,
@@ -386,7 +388,8 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                 } else {
                   CurMaterial['is_return'] = false;
                   CurMaterial['quantity'] =
-                      CurMaterial['quantity'] + material['quantity'];
+                      double.parse(CurMaterial['quantity']) +
+                          double.parse(material['quantity']);
 
                   //debugger(when: true);
                 }
@@ -557,7 +560,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
   saveNote(data) {
     this.note = data;
 
-    debugger(when: true);
+    // debugger(when: true);
 
     setState(() {});
   }
