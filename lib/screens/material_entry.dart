@@ -275,7 +275,7 @@ class _MaterialEntryState extends State<MaterialEntry> {
                   .toUpperCase()),
           Text(
               style: TextStyle(
-                color: selectedMaterials[index]['stock'] > 0
+                color: ((selectedMaterials[index]['stock'] ?? 0) > 0)
                     ? Colors.green
                     : Colors.red,
                 fontSize: 13,

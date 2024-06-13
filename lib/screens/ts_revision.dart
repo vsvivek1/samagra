@@ -184,7 +184,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             duration: Duration(seconds: 5),
             backgroundColor: Colors.red,
-            content: Text(response.data['result_message'])));
+            content: Text(response.data['result_message'].toString())));
       } else
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Data sent successfully')));
@@ -307,14 +307,14 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     }
 
     var other_charges = response.data['result_data'];
-    //debugger(when: true);
+    debugger(when: true);
     consolidatedData['estimate_data'] = {};
     var estimateData = consolidatedData['estimate_data'];
 
     estimateData['structures'] = [];
     estimateData['materials'] = [];
     estimateData['labours'] = [];
-    estimateData['other_charges'] = other_charges;
+    estimateData['otherCharges'] = other_charges;
 
     locations.forEach((location) {
       // debugger(when: true);
@@ -379,6 +379,8 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
                 material['supply_mode'] = material['supply_mode'] ?? 'KSEB';
 
+                material['quantity'] =
+                    double.parse(material['quantity'].toString());
                 if (CurMaterial.isEmpty) {
                   estimateData['materials'].add(material);
 
@@ -388,8 +390,8 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                 } else {
                   CurMaterial['is_return'] = false;
                   CurMaterial['quantity'] =
-                      double.parse(CurMaterial['quantity']) +
-                          double.parse(material['quantity']);
+                      double.parse(CurMaterial['quantity'].toString()) +
+                          double.parse(material['quantity'].toString());
 
                   //debugger(when: true);
                 }
@@ -442,7 +444,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
         });
     });
 
-    //debugger(when: true);
+    debugger(when: true);
     return consolidatedData;
   }
 
@@ -597,6 +599,7 @@ class RevisedMaterialList extends StatelessWidget {
   RevisedMaterialList({this.materialQuantities});
   @override
   Widget build(BuildContext context) {
+    debugger(when: true);
     return ListView.builder(
       itemCount: materialQuantities.length,
       itemBuilder: (BuildContext context, int index) {
