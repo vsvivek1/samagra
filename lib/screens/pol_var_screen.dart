@@ -2469,6 +2469,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             child: SingleChildScrollView(
                 clipBehavior: Clip.hardEdge,
                 child: taskSelectionWidget(tasklist1, counter))),
+
+        DetailedMeasurementDialogButton(context),
       ],
     );
   }
@@ -2559,7 +2561,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   // Text(st["structure_name"]);
                 },
               ).toList(),
-              DetailedMeasurementDialogButton(context),
+
               //   buttonForSaveAndProceedToNextTask(tasklist1),
             ]),
           );

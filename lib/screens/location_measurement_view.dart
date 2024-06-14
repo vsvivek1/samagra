@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/add_new_material.dart';
 
 class LocationMeasurementView extends StatefulWidget {
-  final List<Map<dynamic, dynamic>> tasks;
+  List<Map<dynamic, dynamic>> tasks;
   final Function reflectQuantityDetails;
   final Function onNewMaterialAdditionFinished;
 
@@ -315,6 +317,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
   Wrap itemEditingBox(item) {
     double estimateQuantity = 0;
+
     if (item['material_code'] != null) {
       int id = item['mst_material_id'];
       var foundObject = widget.estimatedQuantityOfmaterials[id];
@@ -325,13 +328,15 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       print("$foundObject is found");
     }
 
-    //debugger(when: true);
     TextEditingController itemController = TextEditingController();
     itemController.text = item['quantity'].toString();
 
-    double.parse(item['quantity'].toString()) > 0
-        ? item['editing'] = false
-        : true;
+    bool editingMode = item['editingMode'] ?? false;
+
+    if (double.parse(item['quantity'].toString()) > 0) {
+      item['editingMode'] = false;
+    }
+
     return Wrap(
       children: [
         Container(
@@ -352,7 +357,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
           ),
         ),
         SizedBox(width: 50),
-        if (item['editing'] == true)
+        if (editingMode)
           SizedBox(
             width: 100.0,
             height: 25,
@@ -360,10 +365,6 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
               controller: itemController,
               onChanged: (value) {
                 item['quantity'] = value;
-
-                // print('hi');
-                // _edititemQuantity(itemIndex,
-                //     structureIndex, index);
               },
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
@@ -371,44 +372,33 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                   gapPadding: 10,
                   borderSide: BorderSide(
-                      strokeAlign: BorderSide.strokeAlignInside,
-                      width: 2.0,
-                      color: Colors.blue), // Border color
+                    width: 2.0,
+                    color: Colors.blue, // Border color
+                  ),
                 ),
               ),
-              onEditingComplete: () {},
-              // focusNode: FocusScope.of(context).parent,
               cursorColor: Colors.red,
-              // maxLines: 2,
-              // maxLength: 2,
             ),
           )
         else
           Row(
             children: [
               Text(
-                  "${item['editing']} Qty: ${double.parse(item['quantity'].toString()).toStringAsFixed(2)}"),
+                  "Qty: ${double.parse(item['quantity'].toString()).toStringAsFixed(2)}"),
               SizedBox(width: 10),
-              if (item['editing'] == null || item['editing'] == true)
-                IconButton(
-                    onPressed: (() {
-                      setState(() {
-                        item['editing'] =
-                            item['editing'] == null ? true : !item['editing'];
-                      });
-                    }),
-                    icon: Icon(color: Colors.green, Icons.save)),
-              if (item['editing'] == false)
-                IconButton(
-                    onPressed: (() {
-                      setState(() {
-                        item['editing'] = true;
-                      });
-                    }),
-                    icon: Icon(color: Colors.red, Icons.edit))
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    item['editingMode'] = !editingMode;
+                  });
+                },
+                icon: Icon(
+                  editingMode ? Icons.save : Icons.edit,
+                  color: editingMode ? Colors.green : Colors.red,
+                ),
+              ),
             ],
           ),
-        // Divider(),
       ],
     );
   }
