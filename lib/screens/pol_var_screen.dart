@@ -2910,7 +2910,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // Print the missing materials
 
-    // debugger(when: true, message: 'poda');
+    debugger(when: true, message: 'poda');
     if (missingMaterials.isEmpty) {
       setState(() {
         _requiresEstimateRevision = false;

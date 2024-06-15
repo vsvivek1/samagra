@@ -358,27 +358,43 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
         ),
         SizedBox(width: 50),
         if (editingMode)
-          SizedBox(
-            width: 100.0,
-            height: 25,
-            child: TextField(
-              controller: itemController,
-              onChanged: (value) {
-                item['quantity'] = value;
-              },
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                  gapPadding: 10,
-                  borderSide: BorderSide(
-                    width: 2.0,
-                    color: Colors.blue, // Border color
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 100,
+                height: 25,
+                child: TextField(
+                  controller: itemController,
+                  onChanged: (value) {
+                    item['quantity'] = value;
+                  },
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      gapPadding: 10,
+                      borderSide: BorderSide(
+                        width: 2.0,
+                        color: Colors.blue, // Border color
+                      ),
+                    ),
                   ),
+                  cursorColor: Colors.red,
                 ),
               ),
-              cursorColor: Colors.red,
-            ),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    item['editingMode'] = !editingMode;
+                  });
+                },
+                icon: Icon(
+                  editingMode ? Icons.save : Icons.edit,
+                  color: editingMode ? Colors.green : Colors.red,
+                ),
+              ),
+            ],
           )
         else
           Row(

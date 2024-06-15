@@ -69,12 +69,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
   }
 
   initialiseMeasurementObject() async {
+    
     _measurementDataToWorkModule = MeasurementDataToWorkModule(
       wrk_schedule_group_id: widget.workScheduleGroupId,
       workScheduleGroupId: widget.workScheduleGroupId,
       workId: widget.workId.toString(),
       is_premeasurement: false,
-      part_or_final: true,
+      part_or_final: false,
       measurement_set_date: DateTime.now(),
       commencement_date: DateTime.now(),
       completion_date: DateTime.now(),
