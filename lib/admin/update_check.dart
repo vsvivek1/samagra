@@ -16,6 +16,7 @@ import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/screens/server_error.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+import 'package:samagra/screens/sso.dart';
 // IMPORT PACKAGE
 
 //import 'package:package_installer/package_installer.dart';
@@ -202,6 +203,16 @@ class _UpdateCheckState extends State<UpdateCheck> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data is DioException) {
           //debugger(when: true);
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(actions: [
+                TextButton(
+                    onPressed: () => pleaseLogin(), child: Text('Please login'))
+              ], content: Text('Server Error . Please try after some time '));
+            },
+          );
+
           Fluttertoast.showToast(msg: "Server Error Please Re login");
           String msg1 = "Server Error Please Re login";
           return ServerError(msg1);
@@ -248,5 +259,13 @@ class _UpdateCheckState extends State<UpdateCheck> {
         }
       },
     );
+  }
+
+  pleaseLogin() {
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) {
+        return SSO(); // Return the SSO screen with parameters if needed
+      },
+    ));
   }
 }

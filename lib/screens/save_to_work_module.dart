@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -17,13 +18,13 @@ class SaveToWorkModule extends StatefulWidget {
   int workId; // Initialize these fields
   String workScheduleGroupId;
 
-  String workName = '';
+  String workName;
 
   SaveToWorkModule({
     required this.dataFromPreviousScreen,
     required this.workId, // Initialize this field in the constructor
     required this.workScheduleGroupId,
-    required workName, // Initialize this field in the constructor
+    required this.workName, // Initialize this field in the constructor
   });
 
   @override
@@ -37,6 +38,8 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
   late Map polVarMeasurementObject;
   bool _isSubmitting = false;
   String _apiResult = '';
+
+  int measuremetSetId = -1;
   // var workId;
   var polvar_data;
   late AnimationController _animationController;
@@ -69,7 +72,6 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
   }
 
   initialiseMeasurementObject() async {
-    
     _measurementDataToWorkModule = MeasurementDataToWorkModule(
       wrk_schedule_group_id: widget.workScheduleGroupId,
       workScheduleGroupId: widget.workScheduleGroupId,
@@ -201,7 +203,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                 ],
               ),
               if (_apiResult.isNotEmpty) SizedBox(height: 16),
-              if (_apiResult.isNotEmpty)
+              if (_apiResult.isNotEmpty && _apiResponseData != null)
                 Column(
                   children: [
                     // HtmlWidget(_apiResult),
@@ -230,6 +232,9 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                   ],
                 ),
               // Text(_apiResultFlag.toString()),
+
+              Text('MEASUREMENT SET ID' + measuremetSetId.toString()),
+
               ElevatedButton(
                   onPressed: gotToWorkList,
                   child: Row(
@@ -355,6 +360,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           data: modifiedData,
         );
 
+        //debugger(when: true);
         print("error ${response.data}");
         if (response.statusCode == 200) {
           if (response.data['result_flag'] == -1) {
@@ -374,7 +380,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
             // ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
 
-          print(json.encode(response.data));
+          //print(json.encode(response.data));
 
           setState(() {
             _isSubmitting = false;
@@ -389,7 +395,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
 
             _apiResponseData = response.data;
 
-            //debugger(when: true);
+            if (_apiResponseData['result_data'] != null &&
+                _apiResponseData['result_data']['wrk_measurement_set_id'] !=
+                    null) {
+              measuremetSetId =
+                  _apiResponseData['result_data']['wrk_measurement_set_id'];
+              //debugger(when: true);
+            }
 
             // _apiResult = response.data['result_message'][0];
           });
@@ -397,7 +409,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           serverMessageWidget(
             context,
             _apiResult,
-            response.data['result_message'][0],
+            response.data['result_message'],
             //inputString.toString() != '-1' ? 1 : 0,
             vsync: this,
           );

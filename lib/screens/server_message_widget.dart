@@ -89,7 +89,9 @@ class ServerMessage extends StatelessWidget {
           ),
           SizedBox(height: 8.0),
           Text(
-            messageFromServer,
+            messageFromServer
+                //.split('<br>')[0]
+                .toString(),
             style: TextStyle(fontSize: 14.0, color: textColor),
           ),
         ],

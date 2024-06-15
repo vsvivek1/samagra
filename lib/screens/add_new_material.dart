@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/material_entry.dart';
 
@@ -60,7 +59,9 @@ class _AddNewMaterialState extends State<AddNewMaterial> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Displaying existing rows
-                Text(widget.mst_scheme_id.toString()),
+                Center(
+                    child: Text(
+                        "MST SCHEME ID: " + widget.mst_scheme_id.toString())),
                 MaterialEntry(
                     tasks: widget.tasks,
                     reflectQuantityDetails: widget.reflectQuantityDetails,

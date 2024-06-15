@@ -9,6 +9,8 @@ import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/estimate_revision_tabs.dart';
 import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/revised_labour_list.dart';
+import 'package:samagra/screens/revised_material_list.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
 
@@ -80,10 +82,10 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
   Map<String, dynamic> consolidatedData = {};
 
-  Map<dynamic, Map> materialQuantities = {};
+  List materialQuantities = [];
 
   // Map to store labour quantities for each task, structure, and labour
-  Map<dynamic, Map> labourQuantities = {};
+  List<Map<String, dynamic>> labourQuantities = [];
 
   var plgWorkId;
 
@@ -212,9 +214,6 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
     await buildEstimateData(widget.measurementDetails);
 
-    /* print(materialQuantities);
-    print(labourQuantities); */
-
     setState(() {});
 
     //debugger(when: true);
@@ -307,7 +306,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
     }
 
     var other_charges = response.data['result_data'];
-    debugger(when: true);
+    //debugger(when: true);
     consolidatedData['estimate_data'] = {};
     var estimateData = consolidatedData['estimate_data'];
 
@@ -444,7 +443,12 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
         });
     });
 
-    debugger(when: true);
+    // estimateData['structures'] = [];
+    materialQuantities = estimateData['materials'];
+    labourQuantities = estimateData['labours'];
+    //estimateData['otherCharges'] = other_charges;
+    setState(() {});
+    //debugger(when: true);
     return consolidatedData;
   }
 
@@ -484,16 +488,6 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
                         return RevisedLabourList(
                             labourQuantities: labourQuantities);
                       })),
-
-                  /*  TabData(
-                      title: "Taken backs",
-                      content: Builder(builder: (context) {
-                        if (materialQuantities != null) {
-                          return RevisedMaterialList();
-                        } else {
-                          return Text('No Takenbacks');
-                        }
-                      })), */
 
                   TabData(
                       title: "Estimate Report",
@@ -568,52 +562,6 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
   }
 
   SaveEstimateReport(data) {}
-}
-
-class RevisedLabourList extends StatelessWidget {
-  final Map labourQuantities;
-
-  RevisedLabourList({required Map this.labourQuantities});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: labourQuantities.length,
-      itemBuilder: (BuildContext context, int index) {
-        String labourId = labourQuantities.keys.elementAt(index);
-        String labourName = labourQuantities[labourId]!['labour_name'];
-        double quantity = labourQuantities[labourId]!['quantity'][0];
-
-        return ListTile(
-          title: Text(labourName),
-          subtitle: Text('Quantity: $quantity'),
-        );
-      },
-    );
-  }
-}
-
-class RevisedMaterialList extends StatelessWidget {
-  var materialQuantities;
-
-  RevisedMaterialList({this.materialQuantities});
-  @override
-  Widget build(BuildContext context) {
-    debugger(when: true);
-    return ListView.builder(
-      itemCount: materialQuantities.length,
-      itemBuilder: (BuildContext context, int index) {
-        String materialId = materialQuantities.keys.elementAt(index);
-        String materialName = materialQuantities[materialId]['material_name'];
-        double quantity = materialQuantities[materialId]['quantity'];
-
-        return ListTile(
-          title: Text(materialName),
-          subtitle: Text('Quantity: $quantity'),
-        );
-      },
-    );
-  }
 }
 
 class Note extends StatelessWidget {
