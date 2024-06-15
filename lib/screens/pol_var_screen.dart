@@ -2883,8 +2883,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
       var a = estimatedMaterials.values.any(
           (element) => element['material']['material_name'] == materialName);
 
-      if (!a) {
+      if (!a && measuredQuantity != 0) {
         missingMaterials.add(measuredMaterial);
+
+        debugger(when: true);
       } else {
         double estimatedQuantity = 0.0;
 
@@ -2910,7 +2912,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     // Print the missing materials
 
-    debugger(when: true, message: 'poda');
+    //debugger(when: true, message: 'poda');
     if (missingMaterials.isEmpty) {
       setState(() {
         _requiresEstimateRevision = false;
@@ -3529,6 +3531,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       estimatedQuantityOfmaterials =
           await aggregateMaterialQuantities(wrk_execution_material_schedules);
 
+      //debugger(when: true);
       // Removed commented-out code (consider using a separate function)
 
       _wrk_schedule_group_id = res['data']['id'];
