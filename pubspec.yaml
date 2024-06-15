@@ -73,6 +73,7 @@ dependencies:
     jwt_decoder: ^2.0.1
     ota_update: ^6.0.0
     percent_indicator: ^4.2.3
+    google_fonts: ^6.2.0
 
 
     

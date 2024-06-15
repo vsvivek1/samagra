@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
@@ -53,15 +54,20 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                  margin: EdgeInsets.all(8),
+                  margin: EdgeInsets.only(top: 50),
                   padding:
                       EdgeInsets.symmetric(horizontal: 16.0, vertical: 18.0),
                   decoration: BoxDecoration(
-                    color: Colors.grey[500], // Background color
+                    color:
+                        Color.fromARGB(255, 212, 211, 216), // Background color
                     borderRadius:
                         BorderRadius.circular(16.0), // Optional: Border radius
                   ),
-                  child: Text("Selected Task view of this Location")),
+                  child: Text("Selected Task view of this Location",
+                      style: GoogleFonts.lato(
+                        textStyle: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ))),
               // Center(
               //   child: WhatsAppButton(
               //     phoneNumber:
@@ -92,11 +98,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      CircleAvatar(
-                        maxRadius: 20,
-                        child: Text(
-                          'T' + (index + 1).toString(),
-                          textScaleFactor: .5,
+                      Text(
+                        'T' + (index + 1).toString(),
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
                         ),
                       ),
                       structureWidget(structureList, index, task['id']),
@@ -150,18 +156,24 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 leading: CircleAvatar(
                     maxRadius: 40,
                     backgroundColor: Colors.blue[100],
-                    child: Text('T' +
-                        (index + 1).toString() +
-                        '/S' +
-                        (structureIndex + 1).toString())),
+                    child: Text(
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        'T' +
+                            (index + 1).toString() +
+                            '/S' +
+                            (structureIndex + 1).toString())),
                 title: structure['structure_name'] != null
                     ? Text(
-                        'Str Id : ${structure['id']}, ${structure['structure_name']}',
-                        style: TextStyle(
-                            color: Colors.green,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold),
-                      )
+                        'Str Id : ${structure['id']}\n Structure Name:\n${structure['structure_name']}',
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold),
+                        ))
                     : Text('Structure No: ${structureIndex + 1}'),
               ),
               Column(
@@ -229,10 +241,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                       padding: EdgeInsets.all(5.0),
                       child: Text(
                         'Materials',
-                        style: TextStyle(
-                          color: Colors.blue,
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.bold,
+                        style: GoogleFonts.lato(
+                          textStyle: TextStyle(
+                              color: Colors.blueAccent,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -240,10 +253,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                         ? Column(children: [
                             Text(
                               'No materials for this Task or Not Issued',
-                              style: TextStyle(
-                                color: Color.fromARGB(255, 234, 12, 12),
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.bold,
+                              style: GoogleFonts.lato(
+                                textStyle: TextStyle(
+                                    color: Colors.redAccent,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold),
                               ),
                             )
                           ])
@@ -269,6 +283,12 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                                         child: Wrap(
                                           children: [
                                             Text(
+                                                style: GoogleFonts.lato(
+                                                  textStyle: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
                                                 maxLines: 2,
                                                 '${materialIndex + 1} : ${material['material_name']}'),
                                           ],
@@ -306,7 +326,12 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
 
                           addMaterialsNotInEstimate(taskId, strutctureId);
                         }),
-                        child: Text('Add Materials Not in Estimate')),
+                        child: Text(
+                            style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
+                            'Add Materials Not in Estimate')),
                   ],
                 ),
           ],

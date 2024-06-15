@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -197,7 +198,9 @@ class _SamagraState extends State<Samagra> {
             ),
           ),
           primarySwatch: ksebMaterialColor,
-          textTheme: AppTheme.textTheme,
+          textTheme: GoogleFonts.montserratTextTheme(
+            Theme.of(context).textTheme,
+          ),
           platform: TargetPlatform.iOS,
         ),
         home: LoginScreen(), // //SplashScreen(),
