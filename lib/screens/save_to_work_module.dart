@@ -210,7 +210,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                     serverMessageWidget(
                       context,
 
-                      _apiResponseData['result_message'][0],
+                      _apiResponseData['result_message'],
                       _apiResponseData['result_flag'],
                       //inputString.toString() != '-1' ? 1 : 0,
                       vsync: this,
@@ -300,7 +300,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
       try {
         var dataToSend = _measurementDataToWorkModule.toMap();
 
-        debugger(when: true);
+        //debugger(when: true);
 
         dataToSend['office_id'] = (await getOfficeId()).toString();
         dataToSend['role_id'] = (await getUserRoleId()).toString();
