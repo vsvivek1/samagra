@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:samagra/environmental_config.dart';
@@ -131,7 +132,7 @@ class MeasurementDataToWorkModule {
       // 'polevar_data': convertMapKeysToString(polevar_data),
       // 'taskMeasurements': convertMapKeysToString(taskMeasurements),
       // 'structureMeasurements': convertMapKeysToString(structureMeasurements),
-      // 'materialMeasurements': convertMapKeysToString(materialMeasurements),
+
       // 'labourMeasurements': convertMapKeysToString(labourMeasurements),
       // 'materialTakenBackMeasurements':
       //     convertMapKeysToString(materialTakenBackMeasurements),
@@ -185,6 +186,7 @@ class MeasurementDataToWorkModule {
         materialMeasurements = dataFromPolvarScreen['materialMeasurements']
             as Map<dynamic, dynamic>;
 
+        //debugger(when: true);
         labourMeasurements =
             dataFromPolvarScreen['labourMeasurements'] as Map<dynamic, dynamic>;
 

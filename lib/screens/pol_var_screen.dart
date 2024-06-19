@@ -1137,9 +1137,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           tasklist1 = snapshot.data;
 
           // ignore: unrelated_type_equality_checks
-          if (snapshot.connectionState != ConnectionState.done ||
-              tasklist1 == null ||
-              tasklist1 == -1) {
+          if (tasklist1 == null || tasklist1 == -1) {
             return Center(
               child: SizedBox(
                 width: 50,
@@ -1149,7 +1147,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
             );
           }
 
-          if (snapshot.connectionState == ConnectionState.done) {
+          // if (snapshot.connectionState == ConnectionState.done) {
+          if (true) {
             int ln = tasklist1.length;
 
             _taskList = tasklist1;
@@ -1162,11 +1161,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
             //  return
             //
             // _showSpinnerForAsync
-            //     ? Center(
+            //`     ? Center(
             //         child: SizedBox(
             //           width: 50,
             //           height: 50,
-            //           child: CircularProgressIndicator(
+            //           child: CircularProgressIndicator(72
             //             color: Colors.amberAccent,
             //             strokeWidth: 20,
             //           ),
@@ -1434,8 +1433,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 ),
               ),
             );
-          } else {
-            return Text('Pls try after some time');
           }
         });
   }
@@ -1585,7 +1582,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
               _numberOfLocations = _numberOfLocations + 1;
             });
           },
-          label: Text('Add more Location if locations are less')),
+          label: Text('Add more Locations')),
     );
   }
 
