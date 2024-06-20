@@ -3313,7 +3313,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     print("this is from taken backs 1991 $takenBacks");
 
-    debugger(when: true);
     if (takenBacks.length != 0) {
       if (structure['takenBacks'] == null) {
         structure['takenBacks'] = [];
@@ -4080,6 +4079,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       // var key = element['wrk_execution_schedule_id'];
       var key = element['wrk_material_field_return_item_id'].toString();
 
+      //debugger(when: true);
       if (materialTakenBackMeasurements.containsKey(element[key])) {
         materialTakenBackMeasurements[key]['quantity'] =
             double.parse(materialTakenBackMeasurements[key]['quantity']) +
