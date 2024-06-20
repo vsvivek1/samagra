@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:samagra/screens/get_login_details.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/server_message_widget.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/work_name_widget.dart';
@@ -210,7 +211,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
                     serverMessageWidget(
                       context,
 
-                      _apiResponseData['result_message'],
+                      _apiResponseData['result_message'].toString(),
                       _apiResponseData['result_flag'],
                       //inputString.toString() != '-1' ? 1 : 0,
                       vsync: this,
@@ -330,6 +331,12 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
 // Iterate over the original map
         dataToSend.forEach((key, value) {
           // Check if the value is not already a String
+
+          if (key == 'is_premeasurement') {
+            dataToSend[key] = value ? '1' : '0';
+
+            debugger(when: true);
+          }
           if (value is! String) {
             // Check if the value is a DateTime instance
             if (value is DateTime) {
@@ -348,7 +355,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
 
         setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
-        print(dataToSend);
+        // print(dataToSend);
 
         // debugger(when: true);
         var response = await dio.request(
@@ -363,7 +370,12 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
         );
 
         //debugger(when: true);
-        print("error ${response.data}");
+        //var s = jsonEncode(dataToSend);
+        //  gmailMe(s);
+
+        /*    return;
+        debugger(when: true); */
+        //  print("error ${response.data}");
         if (response.statusCode == 200) {
           if (response.data['result_flag'] == -1) {
             // final snackBar = SnackBar(

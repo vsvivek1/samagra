@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
@@ -2812,6 +2813,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
         options: Options(headers: headers),
       )
           .catchError((er) {
+        Fluttertoast.showToast(msg: 'No internet. Check your Connection');
         throw Exception('Intert error');
       });
 
