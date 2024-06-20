@@ -1143,6 +1143,8 @@ class _LoginScreenState extends State<LoginScreen> {
     await launchSSOUrl(codeVerifier, codeChallenge, empcode);
     print('sso2');
 
+    //debugger(when: true);
+
     _ssoLoginLoading = false;
     //return;
     /*  Navigator.push(

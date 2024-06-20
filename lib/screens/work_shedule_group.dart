@@ -11,6 +11,12 @@ class WorkScheduleGroup extends StatefulWidget {
 
 class _WorkScheduleGroupState extends State<WorkScheduleGroup> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: widget.entries.length,

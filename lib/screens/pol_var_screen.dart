@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/utils.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
@@ -2488,6 +2489,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   ExpansionPanelList taskSelectionWidget(tasklist1, int counter) {
+    loadStructureQuantitiesIFpresent();
     int taskNo = 0;
     return ExpansionPanelList(
         animationDuration: Duration(seconds: 2),
@@ -3310,6 +3312,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // funcgtion to append taken backs of a strcuture to a strcutre
 
     print("this is from taken backs 1991 $takenBacks");
+
+    debugger(when: true);
     if (takenBacks.length != 0) {
       if (structure['takenBacks'] == null) {
         structure['takenBacks'] = [];
@@ -3580,8 +3584,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _selectedLocationIndex = index;
 
       _tappedIndex = index;
-
-      loadStructureQuantitiesIFpresent();
 
       /// if a user selectts a location after selecting any other location saving the current datat to storage
 
@@ -3894,11 +3896,22 @@ class _PolVarScreenState extends State<PolVarScreen> {
     ///
     ///
     ///
+    ///
+    ///
 
+    var _taskList = tasklist1;
+
+    if (_taskList == null || _taskList.length == 0) {
+      return;
+    }
     var loc = measurementDetails.firstWhere(
         (m) => m['locationNo'] == (_selectedLocationIndex + 1),
         orElse: (() => {}));
     // print(loc);
+
+    if (_taskList != null) if (loc.isEmpty) {
+      return;
+    }
 
     if (loc['tasks'] != null && loc['tasks'].length > 0) {
       loc['tasks'].forEach((t) => {
@@ -3908,13 +3921,29 @@ class _PolVarScreenState extends State<PolVarScreen> {
                   var tx = _taskList
                       .firstWhere((t1) => t1['id'].toString() == t['id']);
 
-                  if (tx['strcutres'] != null && tx['strcutres'].length > 0) {
-                    var s1 = tx['strcutres']
-                        .firstWhere((sx) => sx['id'].toString() == s['id']);
+                  var a = tx['structures'].length;
 
-                    setState(() {
+                  if (tx['structures'] != null && tx['structures'].isNotEmpty) {
+                    var s1 = tx['structures'].firstWhere(
+                        (sx) => sx['id'].toString() == s['id'].toString(),
+                        orElse: () => null // Return null if no element is found
+                        );
+
+                    if (s1 != null) {
+                      print(s1);
+                      //debugger(when: true);
                       s1['quantity'] = s['quantity'];
-                    });
+                      /* setState(() {
+                        
+                      }); */
+                    } else {
+                      print('No matching structure found');
+                      /*   setState(() {
+                        // Handle the case where no matching structure is found
+                        // You can add a new structure or update another part of the state
+                        // tx['structures'].add({'id': s['id'], 'quantity': 0});
+                      }); */
+                    }
                   }
 
                   //debugger(when: true);
@@ -3923,6 +3952,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           });
     }
 
+    return;
     //debugger(when: true);
   }
 

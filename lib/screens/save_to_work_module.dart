@@ -334,8 +334,9 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
 
           if (key == 'is_premeasurement') {
             dataToSend[key] = value ? '1' : '0';
+            //  value = value ? '1' : '0';
 
-            debugger(when: true);
+            //debugger(when: true);
           }
           if (value is! String) {
             // Check if the value is a DateTime instance
@@ -349,6 +350,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           }
           // Add the modified value to the new map
           modifiedData[key] = value;
+
+          if (key == 'is_premeasurement') {
+            modifiedData[key] = value == true ? '1' : '0';
+            //  value = value ? '1' : '0';
+
+            //debugger(when: true);
+          }
         });
 
         var dio = Dio();
@@ -369,7 +377,7 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
           data: modifiedData,
         );
 
-        //debugger(when: true);
+        // debugger(when: true);
         //var s = jsonEncode(dataToSend);
         //  gmailMe(s);
 
