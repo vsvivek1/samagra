@@ -25,8 +25,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def home=System.getProperty('user.home')
 android {
-
+applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "msamagra.apk"
+        }
+    }
     compileSdkVersion 34// flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

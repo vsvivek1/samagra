@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/state_manager.dart';
 import 'package:get/utils.dart';
 import 'package:samagra/common.dart';
@@ -85,7 +86,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
   List materialQuantities = [];
 
   // Map to store labour quantities for each task, structure, and labour
-  List<Map<String, dynamic>> labourQuantities = [];
+  List<dynamic> labourQuantities = [];
 
   var plgWorkId;
 
@@ -138,17 +139,19 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
     var estimate_data = consolidatedData['estimate_data'];
 
-    estimate_data['materials'].forEach((e) {
-      var a = validateMaterialData(e);
+    //debugger(when: true);
+    if (estimate_data != null)
+      estimate_data['materials'].forEach((e) {
+        var a = validateMaterialData(e);
 
-      e['mst_material_status_id'] = e['mst_material_status_id'] ?? 1;
-      e['mst_uom_id'] = e['mst_uom_id'] ?? e['mst_stock_uom']['id'];
-      e['uom_code'] = e['uom_code'] ?? e['mst_stock_uom']['uom_code'];
-      e['rate'] = e['rate'] ?? (e['mst_material_rates'][0]['rate'] ?? 0);
-      /*  if (a.isNotEmpty) {
+        e['mst_material_status_id'] = e['mst_material_status_id'] ?? 1;
+        e['mst_uom_id'] = e['mst_uom_id'] ?? e['mst_stock_uom']['id'];
+        e['uom_code'] = e['uom_code'] ?? e['mst_stock_uom']['uom_code'];
+        e['rate'] = e['rate'] ?? (e['mst_material_rates'][0]['rate'] ?? 0);
+        /*  if (a.isNotEmpty) {
         debugger(when: true);
       } */
-    });
+      });
     //debugger(when: true);
     Map<String, dynamic> userData = {
       'user_id': userId,
@@ -167,7 +170,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
 
     final body = jsonEncode(userData); //.toJson();
 
-    debugger(when: true);
+    //debugger(when: true);
 
     //try {
     var response = await dio.post(
@@ -179,7 +182,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
       ),
       data: body,
     );
-    // debugger(when: true);
+    //debugger(when: true);
     //debugger(when: true);
     if (response.statusCode == 200) {
       if (response.data['result_flag'] == -1) {
@@ -187,13 +190,20 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
             duration: Duration(seconds: 5),
             backgroundColor: Colors.red,
             content: Text(response.data['result_message'].toString())));
-      } else
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Data sent successfully')));
+      } else {
+        Fluttertoast.showToast(msg: 'Data sent successfully');
+
+        /* 
+ ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Data sent successfully'))); */
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      Fluttertoast.showToast(
+          msg: 'Failed to send data. Error: ${response.statusMessage}');
+
+      /*  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content:
-              Text('Failed to send data. Error: ${response.statusMessage}')));
+              Text('Failed to send data. Error: ${response.statusMessage}'))); */
     }
     /*   } catch (error) {
       ScaffoldMessenger.of(context)
@@ -287,176 +297,176 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
       List<Map<dynamic, dynamic>> locations) async {
     // Map to store material quantities for each task, structure, and material
 
-    try {
-      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+    //try {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
 
-      String baseUrlOld =
-          "${config.liveServiceUrl}wrk/getLastOtherChargeEstimateDetails/${this.plgWorkId}";
+    String baseUrlOld =
+        "${config.liveServiceUrl}wrk/getLastOtherChargeEstimateDetails/${this.plgWorkId}";
 
-      // print("BASE UR mdtwm 136L $baseUrl");
+    // print("BASE UR mdtwm 136L $baseUrl");
 
-      Dio dio = new Dio();
+    Dio dio = new Dio();
 
-      dio = await setAccessTockenToDio(dio);
+    dio = await setAccessTockenToDio(dio);
 
-      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
+    setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
-      Response response = await dio.get(baseUrlOld);
+    Response response = await dio.get(baseUrlOld);
 
-      if (response is DioException) {
-        throw Exception(response);
-      }
+    if (response is DioException) {
+      throw Exception(response);
+    }
+    // debugger(when: true);
+    if (response.data == null) {
+      throw Exception('Issues in obtaining other charges');
+    }
+
+    var other_charges = response.data['result_data'];
+    //debugger(when: true);
+    consolidatedData['estimate_data'] = {};
+    var estimateData = consolidatedData['estimate_data'];
+
+    estimateData['structures'] = [];
+    estimateData['materials'] = [];
+    estimateData['labours'] = [];
+    estimateData['otherCharges'] = other_charges;
+
+    locations.forEach((location) {
       // debugger(when: true);
-      if (response.data == null) {
-        throw Exception('Issues in obtaining other charges');
-      }
+      if (location['tasks'] != null)
+        (location['tasks'] as List<dynamic>).forEach((task) {
+          var mst_task_id = task['id'];
+          //debugger(when: true);
+          if (task['structures'] != null)
+            (task['structures'] as List<dynamic>).forEach((structure) {
+              int mst_structure_id = structure['id'];
+              // Check if structure is already present
 
-      var other_charges = response.data['result_data'];
-      //debugger(when: true);
-      consolidatedData['estimate_data'] = {};
-      var estimateData = consolidatedData['estimate_data'];
+              // debugger(when: true);
 
-      estimateData['structures'] = [];
-      estimateData['materials'] = [];
-      estimateData['labours'] = [];
-      estimateData['otherCharges'] = other_charges;
+              bool isStructurePresent = (estimateData != null &&
+                  estimateData['structures'] != null &&
+                  estimateData['structures'].any((entry) =>
+                      entry['mst_task_id'] == task['id'] &&
+                      entry['mst_structure_id'] == structure['id']));
 
-      locations.forEach((location) {
-        // debugger(when: true);
-        if (location['tasks'] != null)
-          (location['tasks'] as List<dynamic>).forEach((task) {
-            var mst_task_id = task['id'];
-            //debugger(when: true);
-            if (task['structures'] != null)
-              (task['structures'] as List<dynamic>).forEach((structure) {
-                int mst_structure_id = structure['id'];
-                // Check if structure is already present
-
-                // debugger(when: true);
-
-                bool isStructurePresent = (estimateData != null &&
-                    estimateData['structures'] != null &&
-                    estimateData['structures'].any((entry) =>
+              if (isStructurePresent) {
+                //debugger(when: true);
+                // If structure is present, increment the quantity
+                estimateData['structures']
+                    .where((entry) =>
                         entry['mst_task_id'] == task['id'] &&
-                        entry['mst_structure_id'] == structure['id']));
-
-                if (isStructurePresent) {
-                  //debugger(when: true);
-                  // If structure is present, increment the quantity
-                  estimateData['structures']
-                      .where((entry) =>
-                          entry['mst_task_id'] == task['id'] &&
-                          entry['mst_structure_id'] == structure['id'])
-                      .forEach((existingStructure) {
-                    existingStructure['quantity'] += structure['quantity'];
-                  });
-                } else {
-                  // If structure is not present, add it as a new entry
-                  Map<String, dynamic> structureData = {
-                    'mst_task_id': task['id'],
-                    'mst_structure_id': structure['id'],
-                    'mst_uom_id': structure['structureMaster']['mst_uom_id'],
-                    'structure_code': structure['structureMaster']
-                        ['structure_code'],
-                    'uom_code': structure['structureMaster']['structure_code'],
-                    'quantity': structure['quantity'],
-                  };
-
-                  //debugger(when: true);
-                  estimateData['structures'].add(structureData);
-                }
-
-                // Materials
-                (structure['materials'] as List<dynamic>).forEach((material) {
-                  Map CurMaterial = estimateData['materials'].firstWhere(
-                      (m) =>
-                          m['mst_task_id'] == task['id'] &&
-                          m['mst_structure_id'] == structure['id'] &&
-                          m['mst_material_id'] == material['mst_material_id'],
-                      orElse: () => {});
-
-                  //debugger(when: true);
-                  material['mst_task_id'] = task['id'];
-                  material['mst_structure_id'] = structure['id'];
-                  material['mst_material_id'] = material['mst_material_id'];
-
-                  material['is_return'] = false;
-
-                  material['supply_mode'] = material['supply_mode'] ?? 'KSEB';
-
-                  material['quantity'] =
-                      double.parse(material['quantity'].toString());
-                  if (CurMaterial.isEmpty) {
-                    estimateData['materials'].add(material);
-
-                    // print(material);
-
-                    //debugger(when: true);
-                  } else {
-                    CurMaterial['is_return'] = false;
-                    CurMaterial['quantity'] =
-                        double.parse(CurMaterial['quantity'].toString()) +
-                            double.parse(material['quantity'].toString());
-
-                    //debugger(when: true);
-                  }
+                        entry['mst_structure_id'] == structure['id'])
+                    .forEach((existingStructure) {
+                  existingStructure['quantity'] += structure['quantity'];
                 });
+              } else {
+                // If structure is not present, add it as a new entry
+                Map<String, dynamic> structureData = {
+                  'mst_task_id': task['id'],
+                  'mst_structure_id': structure['id'],
+                  'mst_uom_id': structure['structureMaster']['mst_uom_id'],
+                  'structure_code': structure['structureMaster']
+                      ['structure_code'],
+                  'uom_code': structure['structureMaster']['structure_code'],
+                  'quantity': structure['quantity'],
+                };
 
-                (structure['labour'] as List<dynamic>).forEach((labour) {
-                  final currentLabour = estimateData['labours']?.firstWhere(
+                //debugger(when: true);
+                estimateData['structures'].add(structureData);
+              }
+
+              // Materials
+              (structure['materials'] as List<dynamic>).forEach((material) {
+                Map CurMaterial = estimateData['materials'].firstWhere(
                     (m) =>
                         m['mst_task_id'] == task['id'] &&
                         m['mst_structure_id'] == structure['id'] &&
-                        m['mst_labour_id'] == labour['mst_labour_id'],
-                    orElse: () =>
-                        <String, dynamic>{}, // Create an empty map by default
-                  );
-
-                  if (currentLabour == null || currentLabour.isEmpty) {
-                    final newLabour = <String, dynamic>{};
-                    labour.forEach((key, value) {
-                      if (key == 'quantity') {
-                        newLabour[key] = [value];
-                      } else {
-                        newLabour[key] = value;
-                      }
-                    });
-                    newLabour['mst_task_id'] = mst_task_id;
-                    newLabour['mst_structure_id'] = mst_structure_id;
-
-                    estimateData['labours'].add(newLabour);
-                    // Add newLabour to your desired location (potentially using update logic)
-                  } else {
-                    currentLabour['quantity'] = [
-                      currentLabour['quantity'][0] +
-                          double.parse(labour['quantity'].toString()),
-                    ];
-                  }
-                });
+                        m['mst_material_id'] == material['mst_material_id'],
+                    orElse: () => {});
 
                 //debugger(when: true);
-                // Other Charges
+                material['mst_task_id'] = task['id'];
+                material['mst_structure_id'] = structure['id'];
+                material['mst_material_id'] = material['mst_material_id'];
 
-                if (task['otherCharges'] != null)
-                  (location['otherCharges'] as List<Map<String, dynamic>>)
-                      .forEach((charge) {
-                    Map<String, dynamic> parsedCharge = Map.from(charge);
-                    parsedCharge['quantity_or_rate'] =
-                        double.parse(charge['quantity_or_rate']);
-                    estimateData['otherCharges'].add(parsedCharge);
-                  });
+                material['is_return'] = false;
+
+                material['supply_mode'] = material['supply_mode'] ?? 'KSEB';
+
+                material['quantity'] =
+                    double.parse(material['quantity'].toString());
+                if (CurMaterial.isEmpty) {
+                  estimateData['materials'].add(material);
+
+                  // print(material);
+
+                  //debugger(when: true);
+                } else {
+                  CurMaterial['is_return'] = false;
+                  CurMaterial['quantity'] =
+                      double.parse(CurMaterial['quantity'].toString()) +
+                          double.parse(material['quantity'].toString());
+
+                  //debugger(when: true);
+                }
               });
-          });
-      });
 
-      // estimateData['structures'] = [];
-      materialQuantities = estimateData['materials'];
-      labourQuantities = estimateData['labours'];
-      //estimateData['otherCharges'] = other_charges;
-      setState(() {});
-      //debugger(when: true);
-      return consolidatedData;
-    } catch (e) {
+              (structure['labour'] as List<dynamic>).forEach((labour) {
+                final currentLabour = estimateData['labours']?.firstWhere(
+                  (m) =>
+                      m['mst_task_id'] == task['id'] &&
+                      m['mst_structure_id'] == structure['id'] &&
+                      m['mst_labour_id'] == labour['mst_labour_id'],
+                  orElse: () =>
+                      <String, dynamic>{}, // Create an empty map by default
+                );
+
+                if (currentLabour == null || currentLabour.isEmpty) {
+                  final newLabour = <String, dynamic>{};
+                  labour.forEach((key, value) {
+                    if (key == 'quantity') {
+                      newLabour[key] = [value];
+                    } else {
+                      newLabour[key] = value;
+                    }
+                  });
+                  newLabour['mst_task_id'] = mst_task_id;
+                  newLabour['mst_structure_id'] = mst_structure_id;
+
+                  estimateData['labours'].add(newLabour);
+                  // Add newLabour to your desired location (potentially using update logic)
+                } else {
+                  currentLabour['quantity'] = [
+                    currentLabour['quantity'][0] +
+                        double.parse(labour['quantity'].toString()),
+                  ];
+                }
+              });
+
+              //debugger(when: true);
+              // Other Charges
+
+              if (task['otherCharges'] != null)
+                (location['otherCharges'] as List<Map<String, dynamic>>)
+                    .forEach((charge) {
+                  Map<String, dynamic> parsedCharge = Map.from(charge);
+                  parsedCharge['quantity_or_rate'] =
+                      double.parse(charge['quantity_or_rate']);
+                  estimateData['otherCharges'].add(parsedCharge);
+                });
+            });
+        });
+    });
+
+    // estimateData['structures'] = [];
+    materialQuantities = estimateData['materials'];
+    labourQuantities = estimateData['labours'];
+    //estimateData['otherCharges'] = other_charges;
+    setState(() {});
+    //debugger(when: true);
+    return consolidatedData;
+    /*  } catch (e) {
       print(e);
       showDialog(
           context: context,
@@ -467,7 +477,7 @@ class _TSRevisonFormState extends State<TSRevisonForm> {
           }));
 
       return {};
-    }
+    } */
   }
 
   @override

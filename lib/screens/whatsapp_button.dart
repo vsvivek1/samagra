@@ -15,6 +15,7 @@ class WhatsAppButton extends StatelessWidget {
   void _openWhatsApp() async {
     final url =
         'https://api.whatsapp.com/send?phone=${Uri.encodeComponent(phoneNumber)}&text=${Uri.encodeComponent(message)}';
+
     try {
       await launch(url);
     } catch (e) {

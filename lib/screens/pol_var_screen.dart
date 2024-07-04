@@ -9,6 +9,7 @@ import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/centered_circular_spinner.dart';
 import 'package:samagra/screens/custom_alert_dialog.dart';
 import 'package:samagra/screens/full_estimated_materials.dart';
+import 'package:samagra/screens/photo_page.dart';
 import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/polevar_view_of_locations.dart';
@@ -2115,7 +2116,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
           ),
         ),
         SizedBox(
-          height: MediaQuery.of(context).size.height * .3,
+          height: MediaQuery.of(context).size.height * .35,
           // width: MediaQuery.of(context).size.height * .5,
           child: ListView.builder(
             itemCount: _numberOfLocations,
@@ -2219,7 +2220,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                           children: [
                             // ImageIcon(image)
                             CircleAvatar(
-                                radius: 20, // Adjust radius as needed
+                                radius: 15, // Adjust radius as needed
                                 // backgroundImage: getKsebNetWorkImageOfDay(),
                                 child: Text('L  ${(index + 1)}')),
 
@@ -2241,6 +2242,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               ),
                             ),
 
+                            ElevatedButton.icon(
+                              clipBehavior: Clip.antiAlias,
+                              label: Text('Take a pic'),
+                              icon: Icon(Icons.camera),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => PhotoPage(
+                                            workCode: widget.workCode,
+                                            locationNo:
+                                                (_selectedLocationIndex + 1)
+                                                    .toString(),
+                                          )),
+                                );
+                              },
+                            ),
                             // CustomButtonRow(
                             //     locationNumber: (index + 1), workId: widget.workId),
 

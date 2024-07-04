@@ -50,8 +50,8 @@ class _MaterialEntryState extends State<MaterialEntry> {
       builder: (context, AsyncSnapshot snapshot) {
         if (!(snapshot.hasData)) {
           return Center(
-            widthFactor: 1,
-            heightFactor: 1,
+            widthFactor: 3,
+            heightFactor: 3,
             child: SpinKitFadingCube(color: Colors.blue), // Use your color here
           );
         }

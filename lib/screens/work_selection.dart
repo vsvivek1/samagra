@@ -103,43 +103,48 @@ class _WorkSelectionState extends State<WorkSelection> {
           tag: 'Works',
           child: Theme(
             data: ThemeData(),
-            child: FutureBuilder(
-              future: _fetchWorkListList(context: context),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data != "-1") {
-                  final workListList = snapshot.data;
-
-                  // print("worklist $workListList");
-
-                  // debugger(when: true);
-
-                  // p(WorkListList);
-                  // p(workListList.runtimeType);
-
-                  // return Text(WorkListList.toString());
-
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SchGrpListWidget(workListList),
-                  );
-
-                  // return MaterialApp(
-                  //   title: 'List of Works',
-                  //   home: Scaffold(
-                  //     appBar: AppBar(
-                  //       title: Text('Square Tiles Demo'),
-                  //     ),
-                  //     body: WorkListListWidget(WorkListList),
-                  //   ),
-                  // );
-                } else if (snapshot.hasError || snapshot.data == '-1') {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Center(
-                      child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
-                  // return rotatingProgress();
-                }
+            child: RefreshIndicator(
+              onRefresh: () {
+                return refreshWorkList();
               },
+              child: FutureBuilder(
+                future: _fetchWorkListList(context: context),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data != "-1") {
+                    final workListList = snapshot.data;
+
+                    // print("worklist $workListList");
+
+                    // debugger(when: true);
+
+                    // p(WorkListList);
+                    // p(workListList.runtimeType);
+
+                    // return Text(WorkListList.toString());
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SchGrpListWidget(workListList),
+                    );
+
+                    // return MaterialApp(
+                    //   title: 'List of Works',
+                    //   home: Scaffold(
+                    //     appBar: AppBar(
+                    //       title: Text('Square Tiles Demo'),
+                    //     ),
+                    //     body: WorkListListWidget(WorkListList),
+                    //   ),
+                    // );
+                  } else if (snapshot.hasError || snapshot.data == '-1') {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Center(
+                        child: SpinKitCubeGrid(size: 100.0, color: ksebColor));
+                    // return rotatingProgress();
+                  }
+                },
+              ),
             ),
           ),
         ),
@@ -408,7 +413,7 @@ class _WorkSelectionState extends State<WorkSelection> {
   }
 
   refreshWorkList() {
-    _fetchWorkListList();
+   
   }
 }
 

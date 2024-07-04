@@ -26,6 +26,12 @@ Future<String> getAccessToken() async {
   return Future.value(accessToken);
 }
 
+Future<String> getRefreshToken() async {
+  final secureStorage = FlutterSecureStorage();
+  final refreshToken = await secureStorage.read(key: 'refresh_token');
+  return Future.value(refreshToken);
+}
+
 Future<String> getMaterialmasterDataFromSecureStorage() async {
   final secureStorage = FlutterSecureStorage();
   final data =

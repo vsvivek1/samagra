@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:samagra/environmental_config.dart';
+import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:dio/dio.dart';
 
@@ -47,6 +48,8 @@ Future<void> refreshAccessToken(refreshToken) async {
     if (response.statusCode == 200) {
       // Handle successful token refresh response
       print('Token refreshed successfully: ${response.data}');
+
+//getUserInfo( accessToken, _ssoLoginLoading);
     } else {
       // Handle other status codes
       print('Failed to refresh token: ${response.statusCode}');

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RevisedLabourList extends StatelessWidget {
-  final List<Map<String, dynamic>> labourQuantities;
+  final List<dynamic> labourQuantities;
 
   RevisedLabourList({required this.labourQuantities});
 
@@ -11,7 +11,7 @@ class RevisedLabourList extends StatelessWidget {
       itemCount: labourQuantities.length,
       itemBuilder: (BuildContext context, int index) {
         String labourName = labourQuantities[index]['labour_name'];
-        double quantity = labourQuantities[index]['quantity'];
+        int quantity = labourQuantities[index]['quantity'][0];
 
         return ListTile(
           title: Text(labourName),
