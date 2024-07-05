@@ -105,16 +105,13 @@ class _PhotoPageState extends State<PhotoPage> {
     final String base64Image = base64Encode(photo.readAsBytesSync());
     final String fileName = basename(photo.path);
 
-    //final String fileName = basename(photo.path);
+    Map<String, dynamic> data = {};
+    data['source_id'] = 1;
+    data['original_doc_name'] = fileName;
+    data['encoded_document'] = base64Image;
+    //base64Image;
 
-    FormData formData = FormData.fromMap({
-      'source_id': 1,
-      'original_doc_name': fileName,
-      'workCode': widget.workCode,
-      'locationNo': widget.locationNo,
-      'encoded_document':
-          await MultipartFile.fromFile(photo.path, filename: fileName),
-    });
+    //debugger(when: true);
 
     Dio dio = Dio();
 
@@ -123,21 +120,36 @@ class _PhotoPageState extends State<PhotoPage> {
 
     String url = "${config.liveServiceUrl}ext/fileupload/addFile";
 
+    url = "https://hris.kseb.in/ipdstest/api/erp/group2/ext/fileupload/addFile";
     //'http://erpuat.kseb.in/ext/fileupload/addFile',
 
     try {
-      final response = await dio.post(
+      var response = await dio.post(
         url,
-        data: formData,
+        data: data,
         options: Options(
-          headers: {"Content-Type": "ap"},
+          headers: {
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/json',
+          },
         ),
+        //FormData.fromMap(data),
       );
+
+      /*    final response = await dio.post(
+        url,
+        data: fileName,
+        options: Options(
+          headers: {"Content-Type": "application/json"},
+        ),
+      ); */
 
       debugger(when: true);
       return response;
     } catch (e) {
       print("Error uploading photo: $e");
+
+      debugger(when: true);
       rethrow;
     }
   }
@@ -179,32 +191,38 @@ class _PhotoPageState extends State<PhotoPage> {
         ),
         itemCount: _photos.length,
         itemBuilder: (context, index) {
-          return Stack(
-            children: [
-              Image.file(
-                _photos[index].file,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _deletePhoto(index),
+          return Container(
+            margin: EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+            ),
+            child: Stack(
+              children: [
+                Image.file(
+                  _photos[index].file,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
                 ),
-              ),
-              if (_photos[index].isSaved)
                 Positioned(
                   top: 0,
-                  left: 0,
-                  child: Icon(
-                    Icons.cloud_done,
-                    color: Colors.green,
+                  right: 0,
+                  child: IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _deletePhoto(index),
                   ),
                 ),
-            ],
+                if (_photos[index].isSaved)
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    child: Icon(
+                      Icons.cloud_done,
+                      color: Colors.green,
+                    ),
+                  ),
+              ],
+            ),
           );
         },
       ),
