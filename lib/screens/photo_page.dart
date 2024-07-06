@@ -15,8 +15,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PhotoPage extends StatefulWidget {
   final String workCode;
   final String locationNo;
+  final Function onImageSavedInSamagra;
+  var image;
 
-  PhotoPage({required this.workCode, required this.locationNo});
+  PhotoPage(
+      {required this.workCode,
+      required this.locationNo,
+      required this.onImageSavedInSamagra});
 
   @override
   _PhotoPageState createState() => _PhotoPageState();
@@ -109,6 +114,9 @@ class _PhotoPageState extends State<PhotoPage> {
     data['source_id'] = 1;
     data['original_doc_name'] = fileName;
     data['encoded_document'] = base64Image;
+
+    data['file_format'] = 'jpg';
+
     //base64Image;
 
     //debugger(when: true);
@@ -136,6 +144,22 @@ class _PhotoPageState extends State<PhotoPage> {
         //FormData.fromMap(data),
       );
 
+      if (response != null &&
+          response.data != null &&
+          response.data['result'] != null) {
+        var res = response.data['result'];
+
+        var name = res['original_doc_name'];
+        var loc = res['location'];
+
+        Map image = {};
+
+        image['name'] = name;
+        image['url'] = loc;
+
+        widget.onImageSavedInSamagra(image);
+      }
+
       /*    final response = await dio.post(
         url,
         data: fileName,
@@ -144,12 +168,12 @@ class _PhotoPageState extends State<PhotoPage> {
         ),
       ); */
 
-      debugger(when: true);
+      //debugger(when: true);
       return response;
     } catch (e) {
       print("Error uploading photo: $e");
 
-      debugger(when: true);
+      //debugger(when: true);
       rethrow;
     }
   }

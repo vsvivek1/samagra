@@ -2251,6 +2251,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => PhotoPage(
+                                            onImageSavedInSamagra:
+                                                onImageSavedInSamagra,
                                             workCode: widget.workCode,
                                             locationNo:
                                                 (_selectedLocationIndex + 1)
@@ -4150,5 +4152,19 @@ class _PolVarScreenState extends State<PolVarScreen> {
     //
     createListOfMeasuredmaterials();
     setState(() {});
+  }
+
+  onImageSavedInSamagra(image) {
+    Map loc = measurementDetails.firstWhere(
+        (loc) => loc['locationNo'] == _selectedLocationIndex + 1,
+        orElse: () => {});
+
+    if (loc.isEmpty || loc['images'] == null) {
+      loc['images'] = [];
+    }
+
+    print(image);
+    print('got imge');
+    loc['images'].push(image);
   }
 }
