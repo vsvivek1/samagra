@@ -2247,6 +2247,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               label: Text('Take a pic'),
                               icon: Icon(Icons.camera),
                               onPressed: () {
+                                _selectedLocationIndex = index;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -4155,6 +4156,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   onImageSavedInSamagra(image) {
+    print("selected index $_selectedLocationIndex");
     Map loc = measurementDetails.firstWhere(
         (loc) => loc['locationNo'] == _selectedLocationIndex + 1,
         orElse: () => {});
@@ -4165,6 +4167,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     print(image);
     print('got imge');
-    loc['images'].push(image);
+    loc['images'].add(image);
+
+    print(loc);
   }
 }

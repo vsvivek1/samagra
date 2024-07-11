@@ -19,45 +19,60 @@ Future<void> initializeConfigIfNeeded() async {
 }
 
 Future<void> refreshAccessToken(refreshToken) async {
+  return;
   await initializeConfigIfNeeded();
 
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
-  try {
-    Dio dio = Dio();
+  //try {
+  Dio dio = Dio();
 
-    var formData = {
-      'client_id': 'pkce-client3',
-      'grant_type': 'refresh_token',
-      'refresh_token': refreshToken, // Replace with your refresh token
-    };
+  var formData = {
+    'client_id': 'pkce-client3',
+    'grant_type': 'refresh_token',
+    'refresh_token': refreshToken, // Replace with your refresh token
+  };
 
-    String url = '${config.liveAccessUrl}token';
-    print(url);
-    var response = await dio.post(
-      url,
-      options: Options(
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      ),
-      data: FormData.fromMap(formData),
-    );
+/* curl --location --request POST 'https://hris.kseb.in/ssotest/auth/realms/kseb/protocol/openid-connect/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'client_id=pkce-client3' \
+--data-urlencode 'grant_type=refresh_token' \
+--data-urlencode 'refresh_token=eyJhbGciOiJI...........'
+ */
 
-    if (response.statusCode == 200) {
-      // Handle successful token refresh response
-      print('Token refreshed successfully: ${response.data}');
+  String url = '${config.liveAccessUrl}token';
+  print(url);
+  var response = await dio.post(
+    url,
+    options: Options(
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    ),
+    data: formData,
+  );
+
+  if (response.statusCode == 200) {
+    // Handle successful token refresh response
+
+    var _ssoLoginLoading = false;
+
+    String accessToken = response.data['access_token'];
+    getUserInfo(accessToken, _ssoLoginLoading);
+    print('Token refreshed successfully: ${response.data}');
+
+    return;
 
 //getUserInfo( accessToken, _ssoLoginLoading);
-    } else {
-      // Handle other status codes
-      print('Failed to refresh token: ${response.statusCode}');
-    }
-  } catch (e) {
+  } else {
+    // Handle other status codes
+    print('Failed to refresh token: ${response.statusCode}');
+  }
+  /*  } catch (e) {
     // Handle Dio errors
     print('Error refreshing token: $e');
-  }
+  } */
 }
 
 void startJwtExpiryCheck() async {
@@ -88,6 +103,17 @@ Future<String> getRefrfeshTokenFromStorage() async {
   return await _secureStorage.getSecureStorageDataByKey("refresh_token");
 }
 
+void setAccessTokenToStorage(accessToken) async {
+  await _secureStorage.writeKeyValuePairToSecureStorage(
+      'access_token', accessToken);
+}
+
+void setRefreshTokenToStorage(refresh_token) async {
+  await _secureStorage.writeKeyValuePairToSecureStorage(
+      'refresh_token', refresh_token);
+  //return await _secureStorage.getSecureStorageDataByKey("refresh_token");
+}
+
 void checkJwtExpiry(jwtToken) async {
   if (jwtToken == '' || jwtToken == null) {
     return;
@@ -109,12 +135,12 @@ void checkJwtExpiry(jwtToken) async {
 
     if (remainingSeconds <= 60 && remainingSeconds > 0) {
       String refreshToken = await getRefrfeshTokenFromStorage();
-      // refreshAccessToken(refreshToken);
+      refreshAccessToken(refreshToken);
       showExpiryToast();
     } else {
       String refreshToken = await getRefrfeshTokenFromStorage();
-      // refreshAccessToken(refreshToken);
-      // showExpiryToast();
+      refreshAccessToken(refreshToken);
+      showExpiryToast();
       print('JWT is not about to expire. ${remainingSeconds}');
     }
   } else {

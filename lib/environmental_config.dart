@@ -18,8 +18,11 @@ class EnvironmentConfig {
   String nasaApiKey;
   String deploymentMode;
 
+  var refreshTokenUrl;
+
   EnvironmentConfig({
     required this.apiKey,
+    required this.refreshTokenUrl,
     required this.erpUrl,
     required this.ssoTestServiceUrl,
     required this.ssoProductionServiceUrl,
@@ -49,6 +52,7 @@ class EnvironmentConfig {
     String liveServiceUrlLogin = '';
     String liveAccessUrl = '';
     String liveServiceUrlGroup1 = '';
+    String refreshTokenUrl1 = '';
     String apiKey = '';
 
     String MODE = dotenv.env['DEPLOYMENT_MODE'] ?? '';
@@ -68,7 +72,7 @@ class EnvironmentConfig {
         liveAccessUrl = dotenv.env['TEST_ACCESS_URL'] ?? '';
         liveServiceUrlGroup1 = dotenv.env['TEST_SERVICE_URL_GROUP1'] ?? '';
         apiKey = dotenv.env['API_KEY_TEST'] ?? '';
-
+        refreshTokenUrl1 = dotenv.env['REFRESH_TOKEN_URL_UAT'] ?? '';
         // MOD_UAT_SSO
         // Additional logic if needed
         break;
@@ -88,6 +92,7 @@ class EnvironmentConfig {
     }
 
     return EnvironmentConfig(
+      refreshTokenUrl: refreshTokenUrl1,
       iosVersionCheckUrl: dotenv.env['IOS_VERSION_CHECK_URL'] ?? '',
       androidVersionCheckUrl: dotenv.env['ANDROID_VERSION_CHECK_URL'] ?? '',
       deploymentMode: MODE,

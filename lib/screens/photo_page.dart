@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
@@ -89,20 +90,69 @@ class _PhotoPageState extends State<PhotoPage> {
     await _savePhotosToLocalStorage();
   }
 
-  Future<void> _savePhotos() async {
-    for (var photo in _photos) {
+  Future<void> _savePhotos(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible:
+          false, // Prevent dismissing the dialog by tapping outside
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 20),
+                  Text('Sending images to server...'),
+                  SizedBox(height: 20),
+                  Text('Sending image 0 of ${_photos.length}'),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    for (var i = 0; i < _photos.length; i++) {
+      var photo = _photos[i];
       if (!photo.isSaved || true) {
+        setState(() {
+          // Update the state to show the current photo being sent
+          (context as Element).reassemble();
+          Navigator.of(context).pop();
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text('Sending images to server...'),
+                    SizedBox(height: 20),
+                    Text('Sending image ${i + 1} of ${_photos.length}'),
+                  ],
+                ),
+              );
+            },
+          );
+        });
+
         final response = await _uploadPhoto(photo.file);
         if (response.statusCode == 200) {
           setState(() {
             photo.isSaved = true;
-            photo.serverUrl = response.data[0];
-            //.body; // assuming the server returns the URL as plain text
+            photo.serverUrl = response.data['result']['location'];
           });
         }
       }
     }
 
+    Navigator.of(context).pop(); // Close the dialog after the loop finishes
     await _savePhotosToLocalStorage();
   }
 
@@ -174,7 +224,9 @@ class _PhotoPageState extends State<PhotoPage> {
       print("Error uploading photo: $e");
 
       //debugger(when: true);
-      rethrow;
+      //rethrow;
+
+      return Future.value('hi' as FutureOr<Response>?);
     }
   }
 
@@ -184,7 +236,7 @@ class _PhotoPageState extends State<PhotoPage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.cloud_circle_sharp),
-        onPressed: _savePhotos,
+        onPressed: () => _savePhotos(context),
         backgroundColor: Colors.green,
       ),
       appBar: AppBar(
@@ -199,7 +251,7 @@ class _PhotoPageState extends State<PhotoPage> {
           IconButton(
             color: Colors.green,
             icon: Icon(Icons.cloud_circle),
-            onPressed: _savePhotos,
+            onPressed: () => _savePhotos(context),
           ),
           IconButton(
             icon: Icon(Icons.camera_alt),
