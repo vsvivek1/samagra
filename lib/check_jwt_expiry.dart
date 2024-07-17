@@ -141,7 +141,7 @@ void checkJwtExpiry(jwtToken) async {
       String refreshToken = await getRefrfeshTokenFromStorage();
       refreshAccessToken(refreshToken);
       showExpiryToast();
-      print('JWT is not about to expire. ${remainingSeconds}');
+      //print('JWT is not about to expire. ${remainingSeconds}');
     }
   } else {
     print('Token does not contain expiration time.');
@@ -153,11 +153,11 @@ void showExpiryToast() async {
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
-  Fluttertoast.showToast(
+  /*  Fluttertoast.showToast(
     msg: 'JWT is about to expire in less than 1 minute!',
     toastLength: Toast.LENGTH_LONG,
     gravity: ToastGravity.BOTTOM,
     backgroundColor: Colors.red,
     textColor: Colors.white,
-  );
+  ); */
 }
