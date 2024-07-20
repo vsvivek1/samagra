@@ -181,36 +181,36 @@ class _PhotoPageState extends State<PhotoPage> {
     url = "https://hris.kseb.in/ipdstest/api/erp/group2/ext/fileupload/addFile";
     //'http://erpuat.kseb.in/ext/fileupload/addFile',
 
-    try {
-      var response = await dio.post(
-        url,
-        data: data,
-        options: Options(
-          headers: {
-            // 'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Type': 'application/json',
-          },
-        ),
-        //FormData.fromMap(data),
-      );
+    // try {
+    var response = await dio.post(
+      url,
+      data: data,
+      options: Options(
+        headers: {
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
+        },
+      ),
+      //FormData.fromMap(data),
+    );
 
-      if (response != null &&
-          response.data != null &&
-          response.data['result'] != null) {
-        var res = response.data['result'];
+    if (response != null &&
+        response.data != null &&
+        response.data['result'] != null) {
+      var res = response.data['result'];
 
-        var name = res['original_doc_name'];
-        var loc = res['location'];
+      var name = res['original_doc_name'];
+      var loc = res['location'];
 
-        Map image = {};
+      Map image = {};
 
-        image['name'] = name;
-        image['url'] = loc;
+      image['name'] = name;
+      image['url'] = loc;
 
-        widget.onImageSavedInSamagra(image);
-      }
+      widget.onImageSavedInSamagra(image);
+    }
 
-      /*    final response = await dio.post(
+    /*    final response = await dio.post(
         url,
         data: fileName,
         options: Options(
@@ -218,16 +218,16 @@ class _PhotoPageState extends State<PhotoPage> {
         ),
       ); */
 
-      //debugger(when: true);
-      return response;
-    } catch (e) {
+    //debugger(when: true);
+    return response;
+    /*  } catch (e) {
       print("Error uploading photo: $e");
 
       //debugger(when: true);
       //rethrow;
 
-      return Future.value('hi' as FutureOr<Response>?);
-    }
+      //return Future.value('hi' as FutureOr<Response>?);
+    } */
   }
 
   @override

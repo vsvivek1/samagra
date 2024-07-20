@@ -49,6 +49,22 @@ Future<String> getLabourGroupMasterDataFromSecureStorage() async {
   return Future.value(outPutJson);
 }
 
+Future<Map> getUser() async {
+  var _secureStorage = SecureStorage();
+  var _loginDetails1 =
+      await _secureStorage.getSecureAllStorageDataByKey('loginDetails');
+
+  if (!_loginDetails1?.isEmpty) {
+    var ob = json.decode(_loginDetails1["loginDetails"] ?? '');
+
+    print(ob);
+
+    return Future.value(ob);
+  } else {
+    return Future.value({});
+  }
+}
+
 Map getCurrentSeatDetails(loginDeatails1) {
   Map loginDetails = json.decode(loginDeatails1);
 

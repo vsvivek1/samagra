@@ -14,6 +14,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
+import 'package:samagra/common.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
 import 'package:samagra/screens/generate_random_string.dart';
@@ -21,6 +22,7 @@ import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
 import 'package:samagra/screens/my_api.dart';
+import 'package:samagra/screens/open_whatsapp.dart';
 import 'package:samagra/screens/uat_test_display_widget.dart';
 import 'package:samagra/secure_storage/secure_storage.dart';
 import 'package:uni_links/uni_links.dart';
@@ -493,6 +495,42 @@ class _LoginScreenState extends State<LoginScreen> {
                                         title: Text('Remember me'),
                                       ),
 
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ElevatedButton.icon(
+                                                icon: Icon(Icons.message),
+                                                onPressed: () async {
+                                                  Map user1 = await getUser();
+                                                  Map user = user1['user'];
+
+                                                  List seats = user['seats'];
+
+                                                  Map office =
+                                                      seats[0]['office'];
+
+                                                  // debugger(when: true);
+
+                                                  String name = 'Hi';
+                                                  String ofc = 'hi';
+
+                                                  /*  if (user != {}) { */
+                                                  name = user["name"] ?? ' ';
+                                                  ofc = office['disp_name'];
+
+                                                  //debugger(when: true);
+                                                  /*  } else {
+                                                    name = 'user';
+                                                    ofc = 'office';
+                                                  } */
+
+                                                  openWhatsApp("+919778432300",
+                                                      "Hi this is ${name}, from ${ofc}");
+                                                },
+                                                label: Text("Chat for Help")),
+                                          ),
+                                        ],
+                                      ),
                                       SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *

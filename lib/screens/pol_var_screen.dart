@@ -2242,26 +2242,6 @@ class _PolVarScreenState extends State<PolVarScreen> {
                               ),
                             ),
 
-                            ElevatedButton.icon(
-                              clipBehavior: Clip.antiAlias,
-                              label: Text('Take a pic'),
-                              icon: Icon(Icons.camera),
-                              onPressed: () {
-                                _selectedLocationIndex = index;
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => PhotoPage(
-                                            onImageSavedInSamagra:
-                                                onImageSavedInSamagra,
-                                            workCode: widget.workCode,
-                                            locationNo:
-                                                (_selectedLocationIndex + 1)
-                                                    .toString(),
-                                          )),
-                                );
-                              },
-                            ),
                             // CustomButtonRow(
                             //     locationNumber: (index + 1), workId: widget.workId),
 
@@ -2505,6 +2485,23 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 child: taskSelectionWidget(tasklist1, counter))),
 
         DetailedMeasurementDialogButton(context),
+        ElevatedButton.icon(
+          clipBehavior: Clip.antiAlias,
+          label: Text('Take a pic'),
+          icon: Icon(Icons.camera),
+          onPressed: () {
+            _selectedLocationIndex = index;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PhotoPage(
+                        onImageSavedInSamagra: onImageSavedInSamagra,
+                        workCode: widget.workCode,
+                        locationNo: (_selectedLocationIndex + 1).toString(),
+                      )),
+            );
+          },
+        ),
       ],
     );
   }
@@ -4169,6 +4166,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
     print('got imge');
     loc['images'].add(image);
 
+    //debugger(when: true);
     print(loc);
   }
 }

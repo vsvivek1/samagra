@@ -98,6 +98,11 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
     );
 
     print('MDATA stwm 64 ${_measurementDataToWorkModule.toMap()}');
+
+    Map o = _measurementDataToWorkModule.toMap();
+
+    var j = jsonDecode(jsonDecode((o['polevar_data'])));
+    //debugger(when: true);
   }
 
   @override
