@@ -1,4 +1,3 @@
-
 class LocationProcessor {
   double parseAndAdd(String value, String quantityIn) {
     // Parsing the string value to double
@@ -17,6 +16,7 @@ class LocationProcessor {
     Map<String, double> materialTotals = {};
 
     for (var location in locations) {
+      location['materials_used'] = [];
       var tasks = location['tasks'];
 
       if (tasks != null) {
@@ -170,6 +170,8 @@ class LocationProcessor {
           }
 
           // Convert location['locationNo'] to double before using it as the key
+
+          location['locationNo']['materialAbstract'] = materialTotals;
           locationWiseMaterialTotals[
               double.parse(location['locationNo'].toString())] = materialTotals;
         }
@@ -214,6 +216,7 @@ class LocationProcessor {
             }
           }
 
+          location['locationNo']['takenBackAbstract'] = takenBackTotals;
           locationWiseTakenBackTotals[
                   double.parse(location['locationNo'].toString())] =
               takenBackTotals;
@@ -259,6 +262,7 @@ class LocationProcessor {
             }
           }
 
+          location['locationNo']['labourAbstract'] = laborTotals;
           locationWiseLaborTotals[
               double.parse(location['locationNo'].toString())] = laborTotals;
         }

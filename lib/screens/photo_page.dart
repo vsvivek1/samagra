@@ -2,16 +2,22 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
+import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'package:samagra/common.dart';
 import 'package:samagra/environmental_config.dart';
+import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+import 'package:image/image.dart' as img;
 
 class PhotoPage extends StatefulWidget {
   final String workCode;
@@ -31,6 +37,10 @@ class PhotoPage extends StatefulWidget {
 class _PhotoPageState extends State<PhotoPage> {
   final ImagePicker _picker = ImagePicker();
   List<_PhotoItem> _photos = [];
+
+  // bool _loading = false;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -65,20 +75,62 @@ class _PhotoPageState extends State<PhotoPage> {
   }
 
   Future<void> _takePhoto() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
     if (photo != null) {
       final Directory appDir = await getApplicationDocumentsDirectory();
       final String fileName = basename(photo.path);
       final String savedPath = join(appDir.path, fileName);
-      final File savedImage = await File(photo.path).copy(savedPath);
+      File savedImage = await File(photo.path).copy(savedPath);
+
+      // Compress the image
+      savedImage = await _compressImage(savedImage);
 
       setState(() {
         _photos
             .add(_PhotoItem(file: savedImage, isSaved: false, serverUrl: ''));
+        _isLoading = false;
       });
 
       await _savePhotosToLocalStorage();
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
     }
+  }
+
+  Future<File> _compressImage(File file) async {
+    Uint8List fileBytes = await file.readAsBytes();
+    img.Image image = img.decodeImage(fileBytes)!;
+
+    // Compress the image
+    int quality = 100;
+    Uint8List? compressedBytes;
+    while (true) {
+      compressedBytes =
+          Uint8List.fromList(img.encodeJpg(image, quality: quality));
+      if (compressedBytes.lengthInBytes <= 500 * 1024) {
+        break;
+      }
+      quality -= 5;
+      if (quality <= 0) {
+        break;
+      }
+    }
+
+    // Save the compressed image to a file
+    if (compressedBytes != null) {
+      File compressedFile =
+          File(file.path.replaceFirst('.jpg', '_compressed.jpg'));
+      await compressedFile.writeAsBytes(compressedBytes);
+      return compressedFile;
+    }
+
+    return file;
   }
 
   void _deletePhoto(int index) async {
@@ -178,9 +230,15 @@ class _PhotoPageState extends State<PhotoPage> {
 
     String url = "${config.liveServiceUrl}ext/fileupload/addFile";
 
-    url = "https://hris.kseb.in/ipdstest/api/erp/group2/ext/fileupload/addFile";
+    if (config.deploymentMode == 'MOD_PRODUCTION_SSO') {
+      url = "https://ws.kseb.in/resource/api/erp/group2/ext/fileupload/addFile";
+    } else {
+      url =
+          "https://hris.kseb.in/ipdstest/api/erp/group2/ext/fileupload/addFile";
+    }
     //'http://erpuat.kseb.in/ext/fileupload/addFile',
 
+    // debugger(when: true);
     // try {
     var response = await dio.post(
       url,
@@ -259,49 +317,51 @@ class _PhotoPageState extends State<PhotoPage> {
           ),
         ],
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 4.0,
-          mainAxisSpacing: 4.0,
-        ),
-        itemCount: _photos.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(5)),
-            ),
-            child: Stack(
-              children: [
-                Image.file(
-                  _photos[index].file,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () => _deletePhoto(index),
+      body: !_isLoading
+          ? GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 4.0,
+                mainAxisSpacing: 4.0,
+              ),
+              itemCount: _photos.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  margin: EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
-                ),
-                if (_photos[index].isSaved)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: Icon(
-                      Icons.cloud_done,
-                      color: Colors.green,
-                    ),
+                  child: Stack(
+                    children: [
+                      Image.file(
+                        _photos[index].file,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () => _deletePhoto(index),
+                        ),
+                      ),
+                      if (_photos[index].isSaved)
+                        Positioned(
+                          top: 0,
+                          left: 0,
+                          child: Icon(
+                            Icons.cloud_done,
+                            color: Colors.green,
+                          ),
+                        ),
+                    ],
                   ),
-              ],
-            ),
-          );
-        },
-      ),
+                );
+              },
+            )
+          : SpinKitFadingCube(color: ksebColor),
     );
   }
 }
