@@ -116,7 +116,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
           await dio.get(url, options: Options(headers: headers));
 
       //
-      //String serverVersion = '';
+      //String serverVersion = '';`
 
       if (response.statusCode == 200) {
         if (response.data != null) {

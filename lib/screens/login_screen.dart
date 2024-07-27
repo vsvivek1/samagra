@@ -21,6 +21,7 @@ import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
 import 'package:samagra/screens/launch_sso_url.dart';
+import 'package:samagra/screens/login_screen_navigator.dart';
 import 'package:samagra/screens/my_api.dart';
 import 'package:samagra/screens/open_whatsapp.dart';
 import 'package:samagra/screens/uat_test_display_widget.dart';
@@ -241,6 +242,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       return ScaffoldMessenger(
         child: Scaffold(
+          /* bottomNavigationBar: LoginScreenNavigator(), */
           body: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             initializeConfig();
@@ -362,6 +364,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     UATTestWidget(
                                                         isUATTest: true),
                                                   ksebMainEmblemAndName(),
+
+                                                  MenuAnchor(menuChildren: [
+                                                    Text('hi')
+                                                  ]),
                                                   Visibility(
                                                     visible: bytes.isEmpty,
                                                     child: RandomAvatar(
@@ -376,6 +382,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     //         'assets/images/kseb_emblem.jpeg'),
                                                     //   ),
                                                   ),
+
                                                   Visibility(
                                                     visible: bytes.isNotEmpty,
                                                     child: CircleAvatar(

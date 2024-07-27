@@ -3,12 +3,16 @@ import 'dart:io';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:samagra/TA.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
+import 'package:samagra/navigation_home_screen.dart';
+import 'package:samagra/progress_report.dart';
 import 'package:samagra/screens/login_screen.dart';
+import 'package:samagra/screens/login_screen_navigator.dart';
 import 'package:upgrader/upgrader.dart';
 
 // import 'package:samagra/spalsh_screen.dart';
@@ -175,6 +179,8 @@ class _SamagraState extends State<Samagra> {
         title: 'm-Samagra',
         initialRoute: '/',
         routes: {
+          '/ta': (context) => ProgressReportScreen(),
+          '/sso': (context) => LoginScreen(),
           // '/polevar': (context) => PolVarScreen(),
           // '/': (context) => NavigationHomeScreen(),
           // '/redirected': (context) => NavigationHomeScreen(),
@@ -184,7 +190,7 @@ class _SamagraState extends State<Samagra> {
           // '/home': (context) => UpdateCheck(),
           // '/home': (context) => NavigationHomeScreen(),
           // '/sso_screen': (context) => SSO(), // SSO screen
-          '/sso_screen': (context) => LoginScreen(), // SSO screen
+          '/sso_screen': (context) => LoginScreenNavigator(), // SSO screen
         },
         debugShowCheckedModeBanner: showDebugbanner,
         theme: ThemeData(
@@ -203,7 +209,8 @@ class _SamagraState extends State<Samagra> {
           ),
           platform: TargetPlatform.iOS,
         ),
-        home: LoginScreen(), // //SplashScreen(),
+        // home: LoginScreen(), // //SplashScreen(),
+        home: LoginScreenNavigator(), // //SplashScreen(),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:samagra/screens/kseb_webview.dart.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/screens/phone_book.dart';
+import 'package:samagra/screens/utilities_screen.dart';
 
 class LoginScreenNavigator extends StatefulWidget {
   const LoginScreenNavigator({super.key});
@@ -19,6 +20,14 @@ class _LoginScreenNavigatorState extends State<LoginScreenNavigator> {
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
+          if (index == 2) {
+            // Assuming index 2 is for the special case
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoginScreen()),
+            );
+          }
+
           setState(() {
             currentPageIndex = index;
           });
@@ -35,6 +44,11 @@ class _LoginScreenNavigatorState extends State<LoginScreenNavigator> {
             icon: Badge(child: Icon(Icons.phone)),
             label: 'Phone',
           ),
+          NavigationDestination(
+            icon: Badge(child: Icon(Icons.troubleshoot_sharp)),
+            label: 'Utilities',
+          ),
+
           /*    NavigationDestination(
             icon: Badge(child: Icon(Icons.notifications_sharp)),
             label: 'Notifications',
@@ -98,8 +112,16 @@ class _LoginScreenNavigatorState extends State<LoginScreenNavigator> {
         /// Messages page
         ///
         ///
+        ///
+        ///
+        ///
 
-        LoginScreen(),
+        UtilitiesScreen(),
+
+        Center(
+            child:
+                Container(width: 100, height: 100, child: Text('M samagra'))),
+        // LoginScreen(),
         /*   ListView.builder(
           reverse: true,
           itemCount: 2,
