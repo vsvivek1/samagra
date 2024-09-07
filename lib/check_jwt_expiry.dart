@@ -100,7 +100,11 @@ Future<String> getJwtTokenFromStorage() async {
 }
 
 Future<String> getRefrfeshTokenFromStorage() async {
-  return await _secureStorage.getSecureStorageDataByKey("refresh_token");
+  String r =
+      await _secureStorage.getSecureStorageDataByKey("refresh_token") ?? '';
+
+  return r;
+  ;
 }
 
 void setAccessTokenToStorage(accessToken) async {

@@ -1236,18 +1236,22 @@ class _LoginScreenState extends State<LoginScreen> {
         }
 
         // debugger(when: true);
+        if (mounted) {
+          setState(() {
+            _gettingUserInfo = true;
+          });
+        }
 
-        setState(() {
-          _gettingUserInfo = true;
-        });
         var result = await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
-        //  debugger(when: true);
+        //debugger(when: true);
+
         if (result is DioException) {
+          String err = result.response!.data['wsDisplayMessage'] ??
+              'Server Error . Please try after some time';
           showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(
-                  content: Text('Server Error . Please try after some time '));
+              return AlertDialog(content: Text(err));
             },
           );
 
