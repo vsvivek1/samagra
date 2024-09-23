@@ -171,7 +171,8 @@ class LocationProcessor {
 
           // Convert location['locationNo'] to double before using it as the key
 
-          location['locationNo']['materialAbstract'] = materialTotals;
+          //location['locationNo']['materialAbstract'] = materialTotals;
+          location['materialAbstract'] = materialTotals;
           locationWiseMaterialTotals[
               double.parse(location['locationNo'].toString())] = materialTotals;
         }
@@ -216,7 +217,8 @@ class LocationProcessor {
             }
           }
 
-          location['locationNo']['takenBackAbstract'] = takenBackTotals;
+          //location['locationNo']['takenBackAbstract'] = takenBackTotals;
+          location['takenBackAbstract'] = takenBackTotals;
           locationWiseTakenBackTotals[
                   double.parse(location['locationNo'].toString())] =
               takenBackTotals;
@@ -262,7 +264,8 @@ class LocationProcessor {
             }
           }
 
-          location['locationNo']['labourAbstract'] = laborTotals;
+          // location['locationNo']['labourAbstract'] = laborTotals;
+          location['labourAbstract'] = laborTotals;
           locationWiseLaborTotals[
               double.parse(location['locationNo'].toString())] = laborTotals;
         }
