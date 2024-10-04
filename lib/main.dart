@@ -209,8 +209,8 @@ class _SamagraState extends State<Samagra> {
           ),
           platform: TargetPlatform.iOS,
         ),
-        // home: LoginScreen(), // //SplashScreen(),
-        home: LoginScreenNavigator(), // //SplashScreen(),
+        home: LoginScreen(), // //SplashScreen(),
+        // home: LoginScreenNavigator(), // //SplashScreen(),
       ),
     );
   }

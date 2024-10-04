@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/kseb_webview.dart.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/utilities_screen.dart';
 
 class LoginScreenNavigator extends StatefulWidget {
-  const LoginScreenNavigator({super.key});
+  LoginScreenNavigator({super.key});
 
   @override
   State<LoginScreenNavigator> createState() => _LoginScreenNavigatorState();
 }
 
 class _LoginScreenNavigatorState extends State<LoginScreenNavigator> {
+  late EnvironmentConfig config;
+
+  initState() {
+    super.initState();
+
+    setEnvironmentalConfig();
+  }
+
+  setEnvironmentalConfig() async {
+    config = await EnvironmentConfig.fromEnvFile();
+  }
+
   int currentPageIndex = 0;
 
   @override
@@ -44,10 +57,11 @@ class _LoginScreenNavigatorState extends State<LoginScreenNavigator> {
             icon: Badge(child: Icon(Icons.phone)),
             label: 'Phone',
           ),
-          NavigationDestination(
-            icon: Badge(child: Icon(Icons.troubleshoot_sharp)),
-            label: 'Utilities',
-          ),
+          if (false)
+            NavigationDestination(
+              icon: Badge(child: Icon(Icons.troubleshoot_sharp)),
+              label: 'Utilities',
+            ),
           NavigationDestination(
             icon: Badge(child: Icon(Icons.login)),
             label: 'LOGIN',
@@ -57,7 +71,7 @@ class _LoginScreenNavigatorState extends State<LoginScreenNavigator> {
       body: <Widget>[
         KsebWebView(),
         PhoneBook(),
-        UtilitiesScreen(),
+        // UtilitiesScreen(),
         Center(
             child:
                 Container(width: 100, height: 100, child: Text('M samagra'))),

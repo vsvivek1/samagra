@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:samagra/admin/version_input.dart';
 import 'package:samagra/coming_soon.dart';
@@ -26,6 +27,9 @@ class _VersionControllerState extends State<VersionController>
   var comments;
 
   late TabController _tabController;
+
+  late TextEditingController linkFeildController = TextEditingController(
+      text: "https://ws.kseb.in/mstore/samagra/msamagra.apk");
   //TabController(length: 4, vsync: AnimatedListState());
 
   @override
@@ -141,6 +145,7 @@ class _VersionControllerState extends State<VersionController>
             ), */
             SizedBox(height: 20),
             TextField(
+              controller: linkFeildController,
               decoration: InputDecoration(labelText: 'Link'),
               onChanged: (value) {
                 setState(() {
