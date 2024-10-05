@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:samagra/samagra_home_screen/samagra_home_screen.dart';
 import 'package:samagra/screens/work_selection.dart';
+import 'package:samagra/spares_management/spares_management.dart';
 
 class HomeList {
   HomeList({
@@ -25,6 +26,12 @@ class HomeList {
     ),
     HomeList(
       imagePath: 'assets/fitness_app/fitness_app.png',
+      // navigateScreen: FitnessAppHomeScreen(),
+    ),
+    HomeList(
+      text: 'Spares Management',
+      imagePath: 'assets/images/spares_management.webp',
+      navigateScreen: SparesManagement(),
       // navigateScreen: FitnessAppHomeScreen(),
     ),
     HomeList(
