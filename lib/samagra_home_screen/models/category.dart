@@ -66,7 +66,7 @@ class Category {
     ),
   ];
 
-  static List<Category> popularCourseList = <Category>[
+  static List<Category> SamagraHomeMenuSelector = <Category>[
     Category(
       target: 'WorkSelection',
       imagePath: 'assets/samagra_home_screen/polevar1.jpeg',

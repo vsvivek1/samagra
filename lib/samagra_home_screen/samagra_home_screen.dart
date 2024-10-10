@@ -1,5 +1,5 @@
 import 'package:samagra/samagra_home_screen/category_list_view.dart';
-import 'package:samagra/samagra_home_screen/popular_course_list_view.dart';
+import 'package:samagra/samagra_home_screen/samagra_home_menu_selector.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';
 import 'design_course_app_theme.dart';
@@ -118,7 +118,7 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
             ),
           ),
           Flexible(
-            child: PopularCourseListView(
+            child: SamagraHomeMenuSelectorView(
               callBack: () {
                 moveTo();
               },

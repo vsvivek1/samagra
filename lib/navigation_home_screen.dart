@@ -11,6 +11,7 @@ import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';
 import 'package:samagra/screens/work_selection.dart';
+import 'package:samagra/spares_management/spares_management.dart';
 
 class NavigationHomeScreen extends StatefulWidget {
   @override

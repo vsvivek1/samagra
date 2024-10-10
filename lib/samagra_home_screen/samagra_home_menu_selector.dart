@@ -13,16 +13,18 @@ import 'package:samagra/ib_booking/ib_booking.dart';
 import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';
 
-class PopularCourseListView extends StatefulWidget {
-  const PopularCourseListView({Key? key, this.callBack}) : super(key: key);
+class SamagraHomeMenuSelectorView extends StatefulWidget {
+  const SamagraHomeMenuSelectorView({Key? key, this.callBack})
+      : super(key: key);
 
   final Function()? callBack;
   @override
-  _PopularCourseListViewState createState() => _PopularCourseListViewState();
+  _SamagraHomeMenuSelectorViewState createState() =>
+      _SamagraHomeMenuSelectorViewState();
 }
 
-class _PopularCourseListViewState extends State<PopularCourseListView>
-    with TickerProviderStateMixin {
+class _SamagraHomeMenuSelectorViewState
+    extends State<SamagraHomeMenuSelectorView> with TickerProviderStateMixin {
   AnimationController? animationController;
   @override
   void initState() {
@@ -68,11 +70,11 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.vertical,
               children: List<Widget>.generate(
-                Category.popularCourseList.length,
+                Category.SamagraHomeMenuSelector.length,
                 (int index) {
-                  // print(Category.popularCourseList[index].target);
+                  // print(Category.SamagraHomeMenuSelector[index].target);
                   // debugger(when: true);
-                  final int count = Category.popularCourseList.length;
+                  final int count = Category.SamagraHomeMenuSelector.length;
                   final Animation<double> animation =
                       Tween<double>(begin: 0.0, end: 1.0).animate(
                     CurvedAnimation(
@@ -84,7 +86,7 @@ class _PopularCourseListViewState extends State<PopularCourseListView>
                   animationController?.forward();
                   return CategoryView(
                     callback: widget.callBack,
-                    category: Category.popularCourseList[index],
+                    category: Category.SamagraHomeMenuSelector[index],
                     animation: animation,
                     animationController: animationController,
                   );
