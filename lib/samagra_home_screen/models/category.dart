@@ -115,5 +115,29 @@ class Category {
       money: 208,
       rating: 4.9,
     ),
+    Category(
+      imagePath: 'assets/images/spares_management.webp',
+      target: 'SparesManagement',
+      title: 'Spares Management',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
+    Category(
+      imagePath: 'assets/images/electrical_drawings.webp',
+      target: 'TechnicalDocuments',
+      title: 'Technical Documents',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
+    Category(
+      imagePath: 'assets/images/helpImage.png',
+      target: 'Ask',
+      title: 'Ask',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
   ];
 }
