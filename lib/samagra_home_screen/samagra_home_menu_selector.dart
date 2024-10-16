@@ -12,6 +12,7 @@ import 'package:samagra/frtu/frtu_inspection.dart';
 import 'package:samagra/ib_booking/ib_booking.dart';
 import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';
+import 'package:samagra/spares_management/spares_management.dart';
 
 class SamagraHomeMenuSelectorView extends StatefulWidget {
   const SamagraHomeMenuSelectorView({Key? key, this.callBack})
@@ -114,6 +115,7 @@ class CategoryView extends StatelessWidget {
     switch (target) {
       case 'WorkSelection':
         return WorkSelection();
+
       case 'PhoneBook':
         return PhoneBook(); // Assuming PhoneBook is another widget class
       case 'FrtuInspection':
@@ -127,6 +129,8 @@ class CategoryView extends StatelessWidget {
       case 'VersionController':
         return VersionController();
 
+      case 'SparesManagement':
+        return SparesManagement();
         /* else {
           return AlertDialog(
             content: Text('Dont be over smart'),

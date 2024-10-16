@@ -15,7 +15,7 @@ class _SparesManagementState extends State<SparesManagement>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this); // 3 tabs
+    _tabController = TabController(length: 4, vsync: this); // 3 tabs
   }
 
   @override
@@ -28,13 +28,16 @@ class _SparesManagementState extends State<SparesManagement>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Inventory Management'),
+        title: Text('Spare Parts Management'),
         bottom: TabBar(
+          isScrollable: true,
+          //textScaler: TextScaler.linear(.75),
           controller: _tabController,
           tabs: [
-            Tab(text: 'Inventory Requests'),
-            Tab(text: 'Inventory Available'),
+            Tab(text: 'Requests'),
+            Tab(text: 'Available'),
             Tab(text: 'Publish an Inventory Item'),
+            Tab(text: 'Spares Published from this office'),
           ],
         ),
       ),
@@ -44,8 +47,12 @@ class _SparesManagementState extends State<SparesManagement>
           InventoryRequestsTab(),
           InventoryAvailableTab(),
           PublishInventoryItemTab(),
+          PublishInventoryItemTab(),
+          // PublishedItemsFromMyOFfice(),
         ],
       ),
     );
   }
 }
+
+class PublishedItems {}
