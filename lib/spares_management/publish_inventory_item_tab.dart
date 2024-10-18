@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:samagra/common.dart';
+import 'package:samagra/screens/get_login_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
@@ -23,8 +24,10 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
   List<_SparePhotoItem> _photos = [];
+  List<String> _uploadedImageUrls = []; // Store the URLs of uploaded images
   bool _isLoading = false;
   bool _photosUploaded = false; // Control visibility of other fields
+  String _uploadStatus = ''; // Text to show upload progress
 
   // Multi-select Targeted SBUs
   List<String> _selectedSBUs = [];
@@ -48,26 +51,12 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
 
   // Additional Fields
   String _condition = 'Usable'; // Default condition
-
-  Future<void> fetchData() async {
-    try {
-      // Adjust the URL based on your Laravel API endpoint
-      String apiUrl = 'http://192.168.100.112:8000/api/test';
-      final Dio _dio = Dio();
-      Response response = await _dio.get(apiUrl);
-
-      // Print response to console
-      print('Response: ${response.data}');
-    } catch (e) {
-      // Handle error
-      print('Error: $e');
-    }
-  }
-
+  late Map user1; // = {};
   @override
   void initState() {
     super.initState();
     _loadPhotos();
+    ;
   }
 
   @override
@@ -86,6 +75,9 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
   }
 
   Future<void> _loadPhotos() async {
+    user1 = await getUser();
+
+    /// to load users
     final prefs = await SharedPreferences.getInstance();
     final photoPaths = prefs.getStringList('spare_photos') ?? [];
     setState(() {
@@ -142,6 +134,11 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
 
   Future<void> _uploadPhotos() async {
     bool allUploaded = true;
+    _uploadedImageUrls.clear(); // Clear previously uploaded image URLs
+
+    setState(() {
+      _uploadStatus = 'Uploading 0 of ${_photos.length} photos...';
+    });
 
     for (int i = 0; i < _photos.length; i++) {
       var photo = _photos[i];
@@ -152,27 +149,30 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
             photo.isSaved = true;
             photo.serverUrl = response.data['result']
                 ['location']; // URL of the uploaded image
+            _uploadedImageUrls.add(photo.serverUrl); // Store the uploaded URL
           });
         } else {
           allUploaded = false;
         }
+
+        setState(() {
+          _uploadStatus = 'Uploading ${i + 1} of ${_photos.length} photos...';
+        });
       }
     }
 
-    await _savePhotosToLocalStorage();
-
     if (allUploaded) {
       setState(() {
-        _photosUploaded = true; // Show form fields after successful upload
+        _photosUploaded = true;
+        _uploadStatus = 'All photos uploaded successfully!';
       });
-      /*   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('All photos uploaded successfully!'),
-      )); */
     } else {
-      /*   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to upload some photos. Try again.'),
-      )); */
+      setState(() {
+        _uploadStatus = 'Failed to upload some photos. Try again.';
+      });
     }
+
+    await _savePhotosToLocalStorage();
   }
 
   Future<Response> _uploadPhoto(File photo) async {
@@ -206,7 +206,6 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
       options: Options(headers: {'Content-Type': 'application/json'}),
     );
 
-    debugger(when: true);
     return response;
   }
 
@@ -216,15 +215,13 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
         _isLoading = true;
       });
 
-      // Gather all form data and image URLs
-      List<String> imageUrls = _photos.map((photo) => photo.serverUrl).toList();
-
+      // Add image URLs to form data
       Map<String, dynamic> formData = {
         'targeted_sbus': _selectedSBUs, // Use the selected SBUs
         'spare_name': _spareNameController.text,
         'spare_type': _spareTypeController.text,
         'spare_make': _spareMakeController.text,
-        'quantity_available': _quantityController.text,
+        'quantity_available': int.parse(_quantityController.text),
         'location': _locationController.text,
         'contact_person': _contactPersonController.text,
         'contact_cug': _contactCugController.text,
@@ -232,32 +229,45 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
         'test_values': _testValuesController.text,
         'description': _descriptionController.text,
         'condition': _condition,
-        'images': imageUrls, // Attach the uploaded image URLs
+        'images': _uploadedImageUrls,
+        'uploaded_by': int.parse(await getUserId()),
+
+        // Attach the uploaded image URLs
       };
 
       try {
         Dio dio = Dio();
-        String apiUrl =
-            "https://your-api-endpoint.com/published-items"; // Replace with your API URL
+        String apiUrl2 =
+            "http://192.168.1.215:8000/api/spares"; // Replace with your API URL
 
+        String apiUrl = 'http://192.168.1.215:8000/api/test';
+        String apiUrl3 = 'http://192.168.100.108:8000/api/spares';
+
+        apiUrl = apiUrl3;
+        print(apiUrl);
         Response response = await dio.post(
           apiUrl,
           data: formData,
           options: Options(headers: {'Content-Type': 'application/json'}),
         );
 
+        print(response);
+
+        debugger(when: true);
+
         if (response.statusCode == 201 || response.statusCode == 200) {
-          ScaffoldMessenger.of(context as BuildContext).showSnackBar(SnackBar(
-            content: Text('Spare published successfully!'),
-          ));
+          setState(() {
+            _uploadStatus = 'Spare published successfully!';
+          });
           _resetForm();
         } else {
           throw Exception('Failed to publish spare');
         }
       } catch (e) {
-        ScaffoldMessenger.of(context as BuildContext).showSnackBar(SnackBar(
-          content: Text('Error: $e'),
-        ));
+        setState(() {
+          print(e);
+          _uploadStatus = 'Error: $e';
+        });
       } finally {
         setState(() {
           _isLoading = false;
@@ -269,6 +279,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
   void _resetForm() {
     _formKey.currentState!.reset();
     _photos.clear();
+    _uploadedImageUrls.clear();
     _selectedSBUs.clear(); // Reset SBUs
     _spareNameController.clear();
     _spareTypeController.clear();
@@ -283,6 +294,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
     _condition = 'Usable';
     setState(() {
       _photosUploaded = false; // Hide form fields after reset
+      _uploadStatus = ''; // Clear status message
     });
   }
 
@@ -351,13 +363,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Publish Spare Item'),
-        actions: [
-          if (_photosUploaded)
-            IconButton(
-              icon: Icon(Icons.cloud_upload),
-              onPressed: _publishSpare, // Publish the spare part
-            ),
-        ],
+        actions: [],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
@@ -386,6 +392,15 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
                       ? _buildImageGrid()
                       : Text('No images captured yet'),
                   SizedBox(height: 20),
+
+                  // Status text for uploading
+                  if (_uploadStatus.isNotEmpty)
+                    Center(
+                      child: Text(
+                        _uploadStatus,
+                        style: TextStyle(color: Colors.blue, fontSize: 16),
+                      ),
+                    ),
 
                   // Only show this section after photos are uploaded
                   if (_photosUploaded)
@@ -477,8 +492,18 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
                             maxLines: 3,
                           ),
 
-                          ElevatedButton(
-                              onPressed: () => fetchData(), child: Text('test'))
+                          if (_photosUploaded)
+                            Center(
+                              child: TextButton.icon(
+                                label: Text(
+                                  "Publish the Item",
+                                  textScaleFactor: 2,
+                                ),
+                                icon: Icon(Icons.cloud_upload),
+                                onPressed: () =>
+                                    _publishSpare(), // Publish the spare part
+                              ),
+                            ),
                         ],
                       ),
                     ),
