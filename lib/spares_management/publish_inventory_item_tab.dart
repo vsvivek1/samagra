@@ -165,6 +165,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
       setState(() {
         _photosUploaded = true;
         _uploadStatus = 'All photos uploaded successfully!';
+        print(_uploadedImageUrls);
       });
     } else {
       setState(() {
@@ -242,8 +243,9 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
 
         String apiUrl = 'http://192.168.1.215:8000/api/test';
         String apiUrl3 = 'http://192.168.100.108:8000/api/spares';
+        String apiUrl4 = 'http://192.168.1.8:8000/api/spares';
 
-        apiUrl = apiUrl3;
+        apiUrl = apiUrl4;
         print(apiUrl);
         Response response = await dio.post(
           apiUrl,
@@ -253,7 +255,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
 
         print(response);
 
-        debugger(when: true);
+        //debugger(when: true);
 
         if (response.statusCode == 201 || response.statusCode == 200) {
           setState(() {
