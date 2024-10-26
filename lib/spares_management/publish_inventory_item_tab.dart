@@ -13,6 +13,7 @@ import 'package:samagra/screens/get_login_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+import 'package:fluttertoast/fluttertoast.dart'; // Add Fluttertoast package
 
 class PublishInventoryItemTab extends StatefulWidget {
   @override
@@ -23,14 +24,12 @@ class PublishInventoryItemTab extends StatefulWidget {
 class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
   final _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
-  List<_SparePhotoItem> _photos = [];
-  List<String> _uploadedImageUrls = []; // Store the URLs of uploaded images
+  List<XFile> _photos = [];
   bool _isLoading = false;
-  bool _photosUploaded = false; // Control visibility of other fields
-  String _uploadStatus = ''; // Text to show upload progress
+  Map user1 = {};
 
   // Multi-select Targeted SBUs
-  List<String> _selectedSBUs = [];
+  List<String> _selectedSBUs = ['Distribution'];
   final List<String> _sbuOptions = [
     'Distribution',
     'Transmission',
@@ -38,176 +37,60 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
   ];
 
   // Form Controllers for other fields
-  TextEditingController _spareNameController = TextEditingController();
-  TextEditingController _spareTypeController = TextEditingController();
-  TextEditingController _spareMakeController = TextEditingController();
-  TextEditingController _quantityController = TextEditingController();
+  TextEditingController _spareNameController =
+      TextEditingController(text: '110 kv ct');
+  TextEditingController _spareTypeController =
+      TextEditingController(text: 'Breaker');
+  TextEditingController _spareMakeController =
+      TextEditingController(text: 'Areva');
+  TextEditingController _quantityController = TextEditingController(text: '20');
   TextEditingController _locationController = TextEditingController();
   TextEditingController _contactPersonController = TextEditingController();
-  TextEditingController _contactCugController = TextEditingController();
+  TextEditingController _contactCugController =
+      TextEditingController(text: '9847599946');
   TextEditingController _designationController = TextEditingController();
-  TextEditingController _testValuesController = TextEditingController();
-  TextEditingController _descriptionController = TextEditingController();
+  TextEditingController _testValuesController =
+      TextEditingController(text: '100');
+  TextEditingController _descriptionController =
+      TextEditingController(text: 'very nice');
 
-  // Additional Fields
   String _condition = 'Usable'; // Default condition
-  late Map user1; // = {};
+
   @override
   void initState() {
     super.initState();
-    _loadPhotos();
-    ;
+    _initializeUser();
   }
 
-  @override
-  void dispose() {
-    _spareNameController.dispose();
-    _spareTypeController.dispose();
-    _spareMakeController.dispose();
-    _quantityController.dispose();
-    _locationController.dispose();
-    _contactPersonController.dispose();
-    _contactCugController.dispose();
-    _designationController.dispose();
-    _testValuesController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadPhotos() async {
-    user1 = await getUser();
-
-    /// to load users
-    final prefs = await SharedPreferences.getInstance();
-    final photoPaths = prefs.getStringList('spare_photos') ?? [];
+  Future<void> _initializeUser() async {
+    var user = await getUser();
+    user1 = user;
     setState(() {
-      _photos = photoPaths.map((path) {
-        final parts = path.split('|');
-        return _SparePhotoItem(
-          file: File(parts[0]),
-          isSaved: parts[1] == 'true',
-          serverUrl: parts.length > 2 ? parts[2] : '',
-        );
-      }).toList();
+      _designationController.text = user['user']['seats'].firstWhere(
+              (seat) => seat['mst_seat_id'] == user['user']['current_seat_id'],
+              orElse: () => null)?['designation']['description'] ??
+          'Designation not found';
+      _contactPersonController.text = user['user']['name'];
+      _locationController.text = user['user']['seats'].firstWhere(
+              (seat) => seat['mst_seat_id'] == user['user']['current_seat_id'],
+              orElse: () => null)?['office']['disp_name'] ??
+          'Designation not found';
     });
-  }
-
-  Future<void> _savePhotosToLocalStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final photoPaths = _photos.map((photo) {
-      return '${photo.file.path}|${photo.isSaved}|${photo.serverUrl}';
-    }).toList();
-    prefs.setStringList('spare_photos', photoPaths);
   }
 
   Future<void> _takePhoto() async {
     final XFile? photo = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 100, // Highest quality
-      maxWidth: 1024, // Restrict width
-      maxHeight: 768, // Restrict height
+      imageQuality: 100,
+      maxWidth: 1024,
+      maxHeight: 768,
     );
 
     if (photo != null) {
-      final Directory appDir = await getApplicationDocumentsDirectory();
-      final String fileName = basename(photo.path);
-      final String savedPath = join(appDir.path, fileName);
-      File savedImage = await File(photo.path).copy(savedPath);
-
       setState(() {
-        _photos.add(
-            _SparePhotoItem(file: savedImage, isSaved: false, serverUrl: ''));
-      });
-
-      await _savePhotosToLocalStorage();
-    }
-  }
-
-  void _deletePhoto(int index) async {
-    setState(() {
-      _photos[index].file.deleteSync();
-      _photos.removeAt(index);
-    });
-
-    await _savePhotosToLocalStorage();
-  }
-
-  Future<void> _uploadPhotos() async {
-    bool allUploaded = true;
-    _uploadedImageUrls.clear(); // Clear previously uploaded image URLs
-
-    setState(() {
-      _uploadStatus = 'Uploading 0 of ${_photos.length} photos...';
-    });
-
-    for (int i = 0; i < _photos.length; i++) {
-      var photo = _photos[i];
-      if (!photo.isSaved) {
-        final response = await _uploadPhoto(photo.file);
-        if (response.statusCode == 200) {
-          setState(() {
-            photo.isSaved = true;
-            photo.serverUrl = response.data['result']
-                ['location']; // URL of the uploaded image
-            _uploadedImageUrls.add(photo.serverUrl); // Store the uploaded URL
-          });
-        } else {
-          allUploaded = false;
-        }
-
-        setState(() {
-          _uploadStatus = 'Uploading ${i + 1} of ${_photos.length} photos...';
-        });
-      }
-    }
-
-    if (allUploaded) {
-      setState(() {
-        _photosUploaded = true;
-        _uploadStatus = 'All photos uploaded successfully!';
-        print(_uploadedImageUrls);
-      });
-    } else {
-      setState(() {
-        _uploadStatus = 'Failed to upload some photos. Try again.';
+        _photos.add(photo);
       });
     }
-
-    await _savePhotosToLocalStorage();
-  }
-
-  Future<Response> _uploadPhoto(File photo) async {
-    String fileName = basename(photo.path);
-    String base64Image = base64Encode(photo.readAsBytesSync());
-
-    Map<String, dynamic> data = {
-      "source_id": 1, // Use appropriate source ID if needed
-      "original_doc_name": fileName,
-      "encoded_document": base64Image,
-      "file_format": "jpg"
-    };
-
-    Dio dio = Dio();
-    String url = "";
-
-    // Load environment configuration
-    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
-    setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
-
-    if (config.deploymentMode == 'MOD_PRODUCTION_SSO') {
-      url = "https://ws.kseb.in/resource/api/erp/group2/ext/fileupload/addFile";
-    } else {
-      url =
-          "https://hris.kseb.in/ipdstest/api/erp/group2/ext/fileupload/addFile";
-    }
-
-    Response response = await dio.post(
-      url,
-      data: data,
-      options: Options(headers: {'Content-Type': 'application/json'}),
-    );
-
-    return response;
   }
 
   Future<void> _publishSpare() async {
@@ -216,73 +99,117 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
         _isLoading = true;
       });
 
-      // Add image URLs to form data
-      Map<String, dynamic> formData = {
-        'targeted_sbus': _selectedSBUs, // Use the selected SBUs
-        'spare_name': _spareNameController.text,
-        'spare_type': _spareTypeController.text,
-        'spare_make': _spareMakeController.text,
-        'quantity_available': int.parse(_quantityController.text),
-        'location': _locationController.text,
-        'contact_person': _contactPersonController.text,
-        'contact_cug': _contactCugController.text,
-        'designation': _designationController.text,
-        'test_values': _testValuesController.text,
-        'description': _descriptionController.text,
-        'condition': _condition,
-        'images': _uploadedImageUrls,
-        'uploaded_by': int.parse(await getUserId()),
-
-        // Attach the uploaded image URLs
-      };
-
       try {
         Dio dio = Dio();
-        String apiUrl2 =
-            "http://192.168.1.215:8000/api/spares"; // Replace with your API URL
 
-        String apiUrl = 'http://192.168.1.215:8000/api/test';
-        String apiUrl3 = 'http://192.168.100.108:8000/api/spares';
-        String apiUrl4 = 'http://192.168.1.8:8000/api/spares';
+        // Prepare form data with text fields
+        FormData formData = FormData.fromMap({
+          'targeted_sbus': _selectedSBUs,
+          'spare_name': _spareNameController.text,
+          'spare_type': _spareTypeController.text,
+          'spare_make': _spareMakeController.text,
+          'quantity_available': int.parse(_quantityController.text),
+          'location': _locationController.text,
+          'contact_person': _contactPersonController.text,
+          'contact_cug': _contactCugController.text,
+          'designation': _designationController.text,
+          'test_values': _testValuesController.text,
+          'description': _descriptionController.text,
+          'condition': _condition,
+          'uploaded_by': int.parse(await getUserId()),
+          'user': jsonEncode(user1),
+        });
 
-        apiUrl = apiUrl4;
-        print(apiUrl);
+        // Add image files to form data
+        for (var photo in _photos) {
+          formData.files.add(MapEntry(
+            'images[]', // Add [] to the key to indicate multiple files
+            await MultipartFile.fromFile(photo.path,
+                filename: basename(photo.path)),
+          ));
+        }
+
+        String apiUrl = 'http://192.168.100.105:8000/api/spares';
+        print('API URL: $apiUrl');
+
         Response response = await dio.post(
           apiUrl,
           data: formData,
-          options: Options(headers: {'Content-Type': 'application/json'}),
+          options: Options(headers: {
+            'Content-Type': 'multipart/form-data',
+            'Accept': 'application/json', // Ensure server accepts JSON response
+          }),
         );
 
-        print(response);
-
-        //debugger(when: true);
+        print('Response: ${response}');
 
         if (response.statusCode == 201 || response.statusCode == 200) {
           setState(() {
-            _uploadStatus = 'Spare published successfully!';
+            _isLoading = false;
           });
-          _resetForm();
+
+          Fluttertoast.showToast(
+            msg: 'Spare published successfully!',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
+        } else if (response.statusCode == 422) {
+          // Handle validation error response from server
+          final errorMessages =
+              response.data['errors'] ?? {'error': 'Validation error'};
+          _showErrorMessages(errorMessages);
+          setState(() {
+            _isLoading = false;
+          });
         } else {
-          throw Exception('Failed to publish spare');
+          throw Exception('Failed to publish spare: ${response.data}');
         }
       } catch (e) {
         setState(() {
-          print(e);
-          _uploadStatus = 'Error: $e';
-        });
-      } finally {
-        setState(() {
           _isLoading = false;
         });
+
+        print('Error: $e');
+        Fluttertoast.showToast(
+          msg: 'An error occurred: ${e.toString()}',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
       }
+    } else {
+      // If form validation failed
+      Fluttertoast.showToast(
+        msg: 'Please fix the errors in the form.',
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.orange,
+        textColor: Colors.white,
+      );
     }
   }
 
+  void _showErrorMessages(Map<String, dynamic> errors) {
+    // Collect error messages from the server's response
+    final errorList =
+        errors.entries.map((entry) => '${entry.key}: ${entry.value}').toList();
+    final errorMessage = errorList.join('\n');
+
+    Fluttertoast.showToast(
+      msg: errorMessage,
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.red,
+      textColor: Colors.white,
+    );
+  }
+
   void _resetForm() {
-    _formKey.currentState!.reset();
     _photos.clear();
-    _uploadedImageUrls.clear();
-    _selectedSBUs.clear(); // Reset SBUs
+    _selectedSBUs.clear();
     _spareNameController.clear();
     _spareTypeController.clear();
     _spareMakeController.clear();
@@ -294,10 +221,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
     _testValuesController.clear();
     _descriptionController.clear();
     _condition = 'Usable';
-    setState(() {
-      _photosUploaded = false; // Hide form fields after reset
-      _uploadStatus = ''; // Clear status message
-    });
+    setState(() {});
   }
 
   // Widget to build image grid with card view and delete button
@@ -318,7 +242,7 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
             children: [
               Positioned.fill(
                 child: Image.file(
-                  _photos[index].file,
+                  File(_photos[index].path),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -327,18 +251,13 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
                 right: 0,
                 child: IconButton(
                   icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _deletePhoto(index),
+                  onPressed: () {
+                    setState(() {
+                      _photos.removeAt(index);
+                    });
+                  },
                 ),
               ),
-              if (_photos[index].isSaved)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: Icon(
-                    Icons.cloud_done,
-                    color: Colors.green,
-                  ),
-                ),
             ],
           ),
         );
@@ -371,48 +290,40 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Image Capture and Display Section
-                  Text('Capture or Select Images'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _takePhoto,
-                        child: Text('Take Photos'),
-                      ),
-                      ElevatedButton(
-                        onPressed: _uploadPhotos,
-                        child: Text('Upload Photos'),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  _photos.isNotEmpty
-                      ? _buildImageGrid()
-                      : Text('No images captured yet'),
-                  SizedBox(height: 20),
-
-                  // Status text for uploading
-                  if (_uploadStatus.isNotEmpty)
-                    Center(
-                      child: Text(
-                        _uploadStatus,
-                        style: TextStyle(color: Colors.blue, fontSize: 16),
-                      ),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(3)),
+                    image: DecorationImage(
+                      repeat: ImageRepeat.repeatY,
+                      fit: BoxFit.contain,
+                      opacity: .1,
+                      image: AssetImage("assets/images/backgrounds/i1.webp"),
+                    )),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Capture or Select Images'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _takePhoto,
+                          child: Text('Take Photos'),
+                        ),
+                      ],
                     ),
-
-                  // Only show this section after photos are uploaded
-                  if (_photosUploaded)
+                    SizedBox(height: 10),
+                    _photos.isNotEmpty
+                        ? _buildImageGrid()
+                        : Text('No images captured yet'),
+                    SizedBox(height: 20),
                     Form(
                       key: _formKey,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Multi-select for Targeted SBUs
                           MultiSelectDialogField(
+                            initialValue: ['Generation'],
                             items: _sbuOptions
                                 .map((sbu) => MultiSelectItem(sbu, sbu))
                                 .toList(),
@@ -446,8 +357,6 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
                             },
                           ),
                           SizedBox(height: 10),
-
-                          // Other form fields
                           _buildTextField('Spare Name', _spareNameController,
                               'Please enter the spare name'),
                           _buildTextField('Spare Type', _spareTypeController,
@@ -493,37 +402,23 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
                                 InputDecoration(labelText: 'Description'),
                             maxLines: 3,
                           ),
-
-                          if (_photosUploaded)
-                            Center(
-                              child: TextButton.icon(
-                                label: Text(
-                                  "Publish the Item",
-                                  textScaleFactor: 2,
-                                ),
-                                icon: Icon(Icons.cloud_upload),
-                                onPressed: () =>
-                                    _publishSpare(), // Publish the spare part
+                          Center(
+                            child: TextButton.icon(
+                              label: Text(
+                                "Publish the Item",
+                                textScaleFactor: 2,
                               ),
+                              icon: Icon(Icons.cloud_upload),
+                              onPressed: () => _publishSpare(),
                             ),
+                          ),
                         ],
                       ),
                     ),
-                ],
+                  ],
+                ),
               ),
             ),
     );
   }
-}
-
-class _SparePhotoItem {
-  File file;
-  bool isSaved;
-  String serverUrl;
-
-  _SparePhotoItem({
-    required this.file,
-    required this.isSaved,
-    required this.serverUrl,
-  });
 }

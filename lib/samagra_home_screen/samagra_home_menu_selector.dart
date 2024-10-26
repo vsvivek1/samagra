@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
+import 'package:samagra/prepare_estimate/add_new_work_form.dart';
+import 'package:samagra/prepare_estimate/prepare_estimate.dart';
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
@@ -97,7 +99,7 @@ class _SamagraHomeMenuSelectorViewState
                 crossAxisCount: 2,
                 mainAxisSpacing: 32.0,
                 crossAxisSpacing: 32.0,
-                childAspectRatio: 0.8,
+                childAspectRatio: 1,
               ),
             );
           }
@@ -131,6 +133,10 @@ class CategoryView extends StatelessWidget {
 
       case 'SparesManagement':
         return SparesManagement();
+
+      case 'prepareEstimate':
+        return AddNewWorkForm();
+        // return PrepareEstimate();
         /* else {
           return AlertDialog(
             content: Text('Dont be over smart'),
@@ -140,6 +146,7 @@ class CategoryView extends StatelessWidget {
         break;
       // Add more cases as needed
       default:
+        return AddNewWorkForm();
         return ComingSoon();
       // return throw ArgumentError('Invalid target: $target');
     }

@@ -139,5 +139,13 @@ class Category {
       money: 208,
       rating: 4.9,
     ),
+    Category(
+      imagePath: 'assets/samagra_home_screen/prepare_estimate.webp',
+      target: 'prepareEstimate',
+      title: 'Prepare Estimate',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
   ];
 }
