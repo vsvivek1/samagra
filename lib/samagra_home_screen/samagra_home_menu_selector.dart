@@ -121,10 +121,12 @@ class CategoryView extends StatelessWidget {
       case 'PhoneBook':
         return PhoneBook(); // Assuming PhoneBook is another widget class
       case 'FrtuInspection':
+        return ComingSoon();
         return FrtuInspection();
       case 'IbBooking':
         return IbBooking();
       case 'TreeCuttingCompensation':
+        return ComingSoon();
         return TreeCuttingCompensation();
       // Add more cases as needed
 
@@ -132,9 +134,11 @@ class CategoryView extends StatelessWidget {
         return VersionController();
 
       case 'SparesManagement':
+        return ComingSoon();
         return SparesManagement();
 
       case 'prepareEstimate':
+        return ComingSoon();
         return AddNewWorkForm();
         // return PrepareEstimate();
         /* else {
@@ -146,6 +150,7 @@ class CategoryView extends StatelessWidget {
         break;
       // Add more cases as needed
       default:
+        return ComingSoon();
         return AddNewWorkForm();
         return ComingSoon();
       // return throw ArgumentError('Invalid target: $target');

@@ -107,6 +107,7 @@ class _UpdateCheckState extends State<UpdateCheck> {
     dio = setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
     // String url = "https://ws.kseb.in/resource/api/erp/group1/app_versions";
+
     String url = "${config.liveServiceUrl}app_versions";
 
     String PlatForm = Platform.isAndroid ? 'Android' : 'IOS';
@@ -125,8 +126,15 @@ class _UpdateCheckState extends State<UpdateCheck> {
           //
           serverVersion = version['version'].toString().toUpperCase();
           //
-          apkUrl = version['url'] ??
-              'https://ws.kseb.in/mstore/samagra/msamagra.apk';
+
+          if (config.deploymentMode.contains("UAT")) {
+            apkUrl = version['url'] ??
+                'https://ws.kseb.in/mstore/samagra/msamagraUAT.apk';
+          } else {
+            apkUrl = version['url'] ??
+                'https://ws.kseb.in/mstore/samagra/msamagra.apk';
+          }
+
           //
 
           //
