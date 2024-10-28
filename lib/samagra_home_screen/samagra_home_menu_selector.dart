@@ -138,7 +138,7 @@ class CategoryView extends StatelessWidget {
         return SparesManagement();
 
       case 'prepareEstimate':
-        return ComingSoon();
+        // return ComingSoon();
         return AddNewWorkForm();
         // return PrepareEstimate();
         /* else {
