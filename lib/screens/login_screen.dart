@@ -1243,6 +1243,7 @@ class _LoginScreenState extends State<LoginScreen> {
         var result = await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
         //  debugger(when: true);
         if (result is DioException) {
+          debugger(when: true);
           showDialog(
             context: context,
             builder: (context) {

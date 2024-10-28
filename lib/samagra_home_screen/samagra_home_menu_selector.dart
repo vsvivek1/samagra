@@ -134,7 +134,7 @@ class CategoryView extends StatelessWidget {
         return VersionController();
 
       case 'SparesManagement':
-        return ComingSoon();
+        // return ComingSoon();
         return SparesManagement();
 
       case 'prepareEstimate':
