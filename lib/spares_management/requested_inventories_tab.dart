@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:samagra/spares_management/spare_details.dart';
+import 'package:samagra/spares_management/requested_inventory_details.dart';
 
-class InventoryAvailableTab extends StatefulWidget {
+class RequestedInventoriesTab extends StatefulWidget {
   @override
-  _InventoryAvailableTabState createState() => _InventoryAvailableTabState();
+  _RequestedInventoriesTabState createState() =>
+      _RequestedInventoriesTabState();
 }
 
-class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
+class _RequestedInventoriesTabState extends State<RequestedInventoriesTab> {
   Dio dio = Dio();
-  List<dynamic> spares = [];
-  List<dynamic> filteredSpares = [];
+  List<dynamic> requestedInventories = [];
+  List<dynamic> filteredRequestedInventories = [];
   bool isLoading = true;
   bool hasError = false;
   TextEditingController searchController = TextEditingController();
@@ -18,29 +19,23 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
   @override
   void initState() {
     super.initState();
-    fetchSpares();
+    fetchRequestedInventories();
   }
 
-  Future<void> fetchSpares() async {
+  Future<void> fetchRequestedInventories() async {
     try {
-/*       String apiUrl3 =
-          'http://192.168.1.215:8000/api/spares'; */
-
-      //String apiUrl3 =
-      String apiUrl = ' http://192.168.100.109:8000/api/spares';
-
-      // Replace with your actual API URL
+      String apiUrl =
+          'http://192.168.100.109:8000/api/requested_inventories'; // Replace with your actual API URL
       final response = await dio.get(apiUrl);
 
       if (response.statusCode == 200) {
         setState(() {
-          spares = response.data;
-          filteredSpares =
-              spares; // Initialize the filtered list with all spares
+          requestedInventories = response.data;
+          filteredRequestedInventories = requestedInventories;
           isLoading = false;
         });
       } else {
-        throw Exception('Failed to load spares');
+        throw Exception('Failed to load requested inventories');
       }
     } catch (e) {
       setState(() {
@@ -50,10 +45,10 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
     }
   }
 
-  void filterSpares(String query) {
+  void filterRequestedInventories(String query) {
     setState(() {
-      filteredSpares = spares
-          .where((spare) => (spare['spare_name'] ?? '')
+      filteredRequestedInventories = requestedInventories
+          .where((inventory) => (inventory['inventory_name'] ?? '')
               .toLowerCase()
               .contains(query.toLowerCase()))
           .toList();
@@ -67,7 +62,7 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
     }
 
     if (hasError) {
-      return Center(child: Text('Failed to load spares'));
+      return Center(child: Text('Failed to load requested inventories'));
     }
 
     return Column(
@@ -77,10 +72,10 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
           child: TextField(
             controller: searchController,
             onChanged: (value) {
-              filterSpares(value);
+              filterRequestedInventories(value);
             },
             decoration: InputDecoration(
-              labelText: 'Search by Spare Name',
+              labelText: 'Search by Inventory Name',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.search),
             ),
@@ -88,14 +83,15 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
         ),
         Expanded(
           child: ListView.builder(
-            itemCount: filteredSpares.length,
+            itemCount: filteredRequestedInventories.length,
             itemBuilder: (context, index) {
-              final spare = filteredSpares[index];
+              final inventory = filteredRequestedInventories[index];
 
-              // Extracting spare details
-              final spareName = spare['spare_name'] ?? 'Unknown Spare';
-              final location = spare['location'] ?? 'Unknown Location';
-              final images = spare['images'] as List<dynamic>?;
+              // Extracting inventory details
+              final inventoryName =
+                  inventory['inventory_name'] ?? 'Unknown Inventory';
+              final location = inventory['location'] ?? 'Unknown Location';
+              final images = inventory['images'] as List<dynamic>?;
 
               // Get the first image URL, if available
               final imageUrl = (images != null && images.isNotEmpty)
@@ -114,14 +110,15 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
                           fit: BoxFit.cover,
                         )
                       : Icon(Icons.image, size: 50),
-                  title: Text(spareName),
+                  title: Text(inventoryName),
                   subtitle: Text('Location: $location'),
                   onTap: () {
-                    // Navigate to the details page and pass the spare data
+                    // Navigate to the details page and pass the inventory data
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SpareDetailsPage(spare: spare),
+                        builder: (context) =>
+                            RequestedInventoryDetailsPage(inventory: inventory),
                       ),
                     );
                   },

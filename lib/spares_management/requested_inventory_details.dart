@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 
-class SpareDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> spare;
+class RequestedInventoryDetailsPage extends StatefulWidget {
+  final Map<String, dynamic> inventory;
 
-  SpareDetailsPage({required this.spare});
+  RequestedInventoryDetailsPage({required this.inventory});
 
   @override
-  _SpareDetailsPageState createState() => _SpareDetailsPageState();
+  _RequestedInventoryDetailsPageState createState() =>
+      _RequestedInventoryDetailsPageState();
 }
 
-class _SpareDetailsPageState extends State<SpareDetailsPage> {
+class _RequestedInventoryDetailsPageState
+    extends State<RequestedInventoryDetailsPage> {
   final Dio dio = Dio();
   List<dynamic> interestedPeople = [];
   List<dynamic> comments = [];
@@ -29,7 +31,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
   Future<void> fetchInterestedPeople() async {
     try {
       String apiUrl =
-          'http://192.168.1.215:8000/api/spares/${widget.spare['id']}/interested';
+          'http://192.168.1.215:8000/api/requested_inventories/${widget.inventory['id']}/interested';
       final response = await dio.get(apiUrl);
 
       if (response.statusCode == 200) {
@@ -50,7 +52,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
   Future<void> fetchComments() async {
     try {
       String commentsUrl =
-          'http://192.168.1.215:8000/api/spares/${widget.spare['id']}/comments';
+          'http://192.168.1.215:8000/api/requested_inventories/${widget.inventory['id']}/comments';
       final response = await dio.get(commentsUrl);
 
       if (response.statusCode == 200) {
@@ -71,7 +73,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
   Future<void> expressInterest() async {
     try {
       String interestUrl =
-          'http://192.168.1.215:8000/api/spares/${widget.spare['id']}/express-interest';
+          'http://192.168.1.215:8000/api/requested_inventories/${widget.inventory['id']}/express-interest';
       final response = await dio.post(interestUrl);
 
       if (response.statusCode == 200) {
@@ -93,7 +95,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
     if (commentController.text.trim().isEmpty) return;
     try {
       String commentsUrl =
-          'http://192.168.1.215:8000/api/spares/${widget.spare['id']}/comments';
+          'http://192.168.1.215:8000/api/requested_inventories/${widget.inventory['id']}/comments';
       final response = await dio.post(
         commentsUrl,
         data: {'comment': commentController.text.trim()},
@@ -119,11 +121,11 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<dynamic> images = widget.spare['images'] ?? [];
+    final List<dynamic> images = widget.inventory['images'] ?? [];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.spare['spare_name'] ?? 'Spare Details'),
+        title: Text(widget.inventory['inventory_name'] ?? 'Inventory Details'),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
@@ -163,11 +165,11 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
               Icon(Icons.image, size: 100),
             SizedBox(height: 20),
             Text(
-              'Name: ${widget.spare['spare_name'] ?? 'Unknown'}',
+              'Name: ${widget.inventory['inventory_name'] ?? 'Unknown'}',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 10),
-            Text('Location: ${widget.spare['location'] ?? 'Unknown'}',
+            Text('Location: ${widget.inventory['location'] ?? 'Unknown'}',
                 style: TextStyle(fontSize: 16)),
             SizedBox(height: 20),
             ElevatedButton(
