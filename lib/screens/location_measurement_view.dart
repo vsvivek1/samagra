@@ -4,11 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/add_new_material.dart';
+import 'package:samagra/screens/add_new_labour.dart';
 
 class LocationMeasurementView extends StatefulWidget {
   List<Map<dynamic, dynamic>> tasks;
   final Function reflectQuantityDetails;
   final Function onNewMaterialAdditionFinished;
+  final Function onNewLabourAdditionFinished;
 
   final estimatedQuantityOfmaterials;
 
@@ -20,6 +22,8 @@ class LocationMeasurementView extends StatefulWidget {
 
   var mst_scheme_id;
 
+  var estimatedQuantityOfLabour;
+
   LocationMeasurementView(
       {required this.tasks,
       required this.reflectQuantityDetails,
@@ -27,6 +31,7 @@ class LocationMeasurementView extends StatefulWidget {
       required this.measurementDetails,
       required this.selectedLocationIndex,
       required this.onNewMaterialAdditionFinished,
+      required this.onNewLabourAdditionFinished,
       required this.mst_scheme_id});
 
   @override
@@ -188,7 +193,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                     endIndent: BorderSide.strokeAlignOutside,
                     thickness: 7,
                   ),
-                  LabourView(structure, structureIndex, index),
+                  LabourView(structure, structureIndex, index, taskId,
+                      structure['id']),
                   Divider(
                     color: ksebMaterialColor,
                     height: 30,
@@ -444,7 +450,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     );
   }
 
-  Builder LabourView(structure, int structureIndex, int index) {
+  Builder LabourView(
+      structure, int structureIndex, int index, taskId, strutctureId) {
     if (structure != null && structure.containsKey('labour')) {
 // structure.
 
@@ -504,15 +511,15 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   });
                 },
               ),
-              /*   ElevatedButton(
+              ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         const Color.fromARGB(255, 132, 184, 134)),
                   ),
-                  onPressed: addLabourNotInEstimate(),
+                  onPressed: addLabourNotInEstimate(taskId, strutctureId),
                   child: Text(
                       textAlign: TextAlign.center,
-                      'Add Labour Not in Estimate')), */
+                      'Add Labour Not in Estimate')),
             ],
           ),
         );
@@ -526,7 +533,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                 backgroundColor: MaterialStateProperty.all<Color>(
                     const Color.fromARGB(255, 132, 184, 134)),
               ),
-              onPressed: addLabourNotInEstimate(),
+              onPressed: addLabourNotInEstimate(taskId, strutctureId),
               child: Text(
                   textAlign: TextAlign.center, 'Add Labour Not in Estimate'))
         ]);
@@ -812,7 +819,60 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     });
   }
 
-  addLabourNotInEstimate() {}
+  addLabourNotInEstimate(taskId, structureId) {
+    Navigator.of(context)
+        .push(
+      MaterialPageRoute(
+        builder: (context) => AddNewLabour(
+            selectedLocationIndex: widget.selectedLocationIndex,
+            taskId: taskId,
+            structureId: structureId,
+            tasks: widget.tasks,
+            reflectQuantityDetails: (object) {},
+            estimatedQuantityOfLabour: widget.estimatedQuantityOfLabour,
+            measurementDetails: widget.measurementDetails,
+            mst_scheme_id: widget.mst_scheme_id),
+      ),
+    )
+        .then((result) {
+      if (result == null || !(result is Map)) {
+        return;
+      }
+
+      print(result);
+
+      if (result['selectedLabour'] == null ||
+          result['selectedLabour'].isEmpty) {
+        print('No labor selected');
+        return;
+      }
+
+      var taskId = result['taskId'];
+      var structureId = result['structureId'];
+      var selectedLabour = result['selectedLabour'];
+
+      selectedLabour.forEach((element) {
+        element['mst_labour_id'] = element['id'];
+      });
+
+      Map loc = widget.measurementDetails.firstWhere(
+          (l) => l['locationNo'] == widget.selectedLocationIndex + 1);
+
+      List tasks = loc['tasks'];
+
+      Map task = tasks.firstWhere((lc) => lc['id'] == taskId);
+
+      List structures = task['structures'];
+      Map structure = structures
+          .firstWhere((s) => s['id'].toString() == structureId.toString());
+
+      List labour = structure['labour'];
+
+      labour.addAll(selectedLabour);
+
+      widget.onNewLabourAdditionFinished();
+    });
+  }
 
   addtakenbacksNotInEstimate() {}
 

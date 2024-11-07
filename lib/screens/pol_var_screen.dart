@@ -1678,6 +1678,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
             onNewMaterialAdditionFinished: () {
               onNewMaterialAdditionFinished();
             },
+            onNewLabourAdditionFinished: () {
+              onLabourAdditionFinished();
+            },
             selectedLocationIndex: _selectedLocationIndex,
             tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
             reflectQuantityDetails: reflectQuantityDetails,
@@ -1706,14 +1709,16 @@ class _PolVarScreenState extends State<PolVarScreen> {
         return AlertDialog(
           title: Text('Location Measurement View'),
           content: LocationMeasurementView(
-              mst_scheme_id: mst_scheme_id,
-              onNewMaterialAdditionFinished: () =>
-                  {onNewMaterialAdditionFinished()},
-              selectedLocationIndex: _selectedLocationIndex,
-              tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
-              reflectQuantityDetails: reflectQuantityDetails,
-              estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
-              measurementDetails: measurementDetails),
+            mst_scheme_id: mst_scheme_id,
+            onNewMaterialAdditionFinished: () =>
+                {onNewMaterialAdditionFinished()},
+            selectedLocationIndex: _selectedLocationIndex,
+            tasks: List<Map<dynamic, dynamic>>.from(_selectedLocationTasks),
+            reflectQuantityDetails: reflectQuantityDetails,
+            estimatedQuantityOfmaterials: estimatedQuantityOfmaterials,
+            measurementDetails: measurementDetails,
+            onNewLabourAdditionFinished: onNewLabourAdditionFinished,
+          ),
           actions: [
             buttonForSaveAndProceedToNextTask(tasklist1),
             ElevatedButton(
@@ -2905,6 +2910,56 @@ class _PolVarScreenState extends State<PolVarScreen> {
     // getTasksofSelectedLocation();
   }
 
+  void checkLabour(List<Map<String, dynamic>> measuredLabour,
+      Map<int, Map<dynamic, dynamic>> estimatedLabour) {
+    // List to store any missing or excess labor items
+    List<Map<String, dynamic>> missingLabour = [];
+
+    for (Map<String, dynamic> measuredItem in measuredLabour) {
+      String labourName = measuredItem['labour_name'];
+      double measuredQuantity = measuredItem['quantity'];
+
+      // Check if the measured labour item exists in estimated labour
+      var isInEstimate = estimatedLabour.values
+          .any((element) => element['labour']['labour_name'] == labourName);
+
+      if (!isInEstimate && measuredQuantity != 0) {
+        // If the labour item is not in estimated labour and quantity is non-zero, add to missing list
+        missingLabour.add(measuredItem);
+      } else {
+        double estimatedQuantity = 0.0;
+
+        // Accumulate estimated quantities for this labour item
+        estimatedLabour.entries.forEach((element) {
+          if (element.value['labour']['labour_name'] == labourName) {
+            estimatedQuantity += element.value['quantity'];
+          }
+        });
+
+        if (measuredQuantity > estimatedQuantity) {
+          // If measured quantity exceeds estimated quantity, add to missing list
+          missingLabour.add(measuredItem);
+        }
+      }
+    }
+
+    // Update UI and log results
+    if (missingLabour.isEmpty) {
+      setState(() {
+        _requiresEstimateRevision = false;
+      });
+      print('All measured labour items are accounted for in estimated labour.');
+    } else {
+      for (Map<String, dynamic> labour in missingLabour) {
+        print(
+            'Labour missing or with greater quantity: ${labour['labour_name']}');
+      }
+      setState(() {
+        _requiresEstimateRevision = true;
+      });
+    }
+  }
+
   void checkMaterials(List<Map<String, dynamic>> measuredMaterials,
       Map<int, Map<dynamic, dynamic>> estimatedMaterials) {
     // Check if any measured material is not in estimated materials or if quantity is greater
@@ -2962,6 +3017,54 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
       //debugger(when: true);
     }
+  }
+
+  List<Map<String, dynamic>> createListOfMeasuredLabour() {
+    Map<String, double> labourQuantities = {};
+    measuredLabour = [];
+
+    // Iterate through the nested structure to accumulate labor quantities
+    measurementDetails.forEach((location) {
+      if (location['tasks'] != null) {
+        location['tasks'].forEach((task) {
+          task['structures'].forEach((structure) {
+            structure['labour'].forEach((labourInfo) {
+              String labourName = labourInfo['labour_name'];
+              double quantity = double.parse(labourInfo['quantity'] ?? '0.0');
+
+              // Accumulate quantities for each labor
+              labourQuantities.update(
+                labourName,
+                (value) => value + quantity,
+                ifAbsent: () => quantity,
+              );
+
+              // Check if the labour already exists in the measuredLabour list
+              int index = measuredLabour.indexWhere(
+                (element) => element['labour_name'] == labourName,
+              );
+
+              if (index != -1) {
+                // Update existing entry's quantity
+                measuredLabour[index]['quantity'] =
+                    (measuredLabour[index]['quantity'] ?? 0) + quantity;
+              } else {
+                // Add a new entry if labourName doesn't exist
+
+                measuredLabour.add({
+                  'labour_name': labourName,
+                  'quantity': quantity.toDouble(),
+                });
+              }
+            });
+          });
+        });
+      }
+    });
+
+    // Check if measured labour quantities match the estimated quantities
+    checkLabour(measuredLabour, estimatedQuantityOfLabour);
+    return measuredLabour;
   }
 
   List<dynamic> createListOfMeasuredmaterials() {
@@ -3373,6 +3476,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
     {'id': 2, 'name': 'Jane Smith', 'position': 'Developer'},
     {'id': 3, 'name': 'Bob Johnson', 'position': 'Designer'},
   ];
+
+  //late List<Map<String, double>> measuredLabour;
+  late List<Map<String, dynamic>> measuredLabour;
+
+  late Map<int, Map> estimatedQuantityOfLabour;
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -4140,6 +4248,20 @@ class _PolVarScreenState extends State<PolVarScreen> {
         });
   }
 
+  onNewLabourAdditionFinished() async {
+    // Save the current measurement details
+    _saveMeasurementDetails();
+
+    // Fetch updated work details
+    await _fetchWorkDetails();
+
+    // Create a list of measured labor items
+    createListOfMeasuredLabour();
+
+    // Update the UI with the new changes
+    setState(() {});
+  }
+
   onNewMaterialAdditionFinished() async {
     //
     //setState(() {});
@@ -4168,5 +4290,15 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
     //debugger(when: true);
     print(loc);
+  }
+
+  void onLabourAdditionFinished() async {
+    _saveMeasurementDetails();
+    await _fetchWorkDetails();
+    // aggregateMaterialQuantities(wrk_execution_material_schedules);
+
+    //
+    createListOfMeasuredmaterials();
+    setState(() {});
   }
 }
