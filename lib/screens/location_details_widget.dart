@@ -125,11 +125,18 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                   ],
                   // if (editMode) ...[
                   if (_gotLocation && locationName != '') ...[
-                    Text('Enter Location Name'),
+                    Container(
+                      decoration: BoxDecoration(color: Colors.white),
+                      child: Text((locationName != 'Skipped')
+                          ? 'Location Name Got from Google'
+                          : ''),
+                    ),
                     Row(
                       children: [
                         SizedBox(
-                            height: 100, width: 125, child: Text(locationName)
+                            height: 100,
+                            width: 125,
+                            child: Center(child: Text(locationName))
                             /* child: TextFormField(
                             initialValue: locationName,
                             onChanged: ((value) => updateLocationText(value)),
@@ -149,7 +156,9 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                               child: ElevatedButton(
                                   onPressed: () =>
                                       saveLocDetailsToPolVarWidget(),
-                                  child: Text('save ')),
+                                  child: Text((locationName != 'Skipped')
+                                      ? 'Save And Proceed'
+                                      : 'Next')),
                             ),
                           ),
                         )

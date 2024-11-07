@@ -39,31 +39,89 @@ class _LocationButtonState extends State<LocationButton> {
   Widget build(BuildContext context) {
     return Builder(
       builder: (context) {
-        return Row(children: [
-          Visibility(
-            visible: enableLocationButton,
-            child: _loading
-                ? Center(child: CircularProgressIndicator.adaptive())
-                : Row(
-                    children: [
-                      ShowLocationButton(context),
-                      Visibility(
-                        visible: !enableLocationButton,
-                        child: ElevatedButton(
-                          child: Text('To retry Location'),
-                          onPressed: () {
-                            setState(() {
-                              enableLocationButton = true;
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-          ),
-        ]);
+        return Column(
+          children: [
+            Row(children: [
+              Visibility(
+                visible: enableLocationButton,
+                child: _loading
+                    ? Center(child: CircularProgressIndicator.adaptive())
+                    : Row(
+                        children: [
+                          ShowLocationButton(context),
+                          Visibility(
+                            visible: !enableLocationButton,
+                            child: ElevatedButton(
+                              child: Text('To retry Location'),
+                              onPressed: () {
+                                setState(() {
+                                  enableLocationButton = true;
+                                });
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+              ),
+            ]),
+            TextButton(
+              onPressed: () => showSkipLocationDialog(context),
+              child: Text('Skip Location'),
+            ),
+          ],
+        );
       },
     );
+  }
+
+  showSkipLocationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Skip"),
+          content: Text("Are you sure you want to skip the location?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Delay the pop to ensure the navigation stack has time to settle
+                Future.delayed(Duration.zero, () {
+                  Navigator.of(context).pop();
+                });
+
+                // Call your skip location function here if needed
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                // Delay the pop to ensure the navigation stack has time to settle
+                Future.delayed(Duration.zero, () {
+                  _skipLocation();
+                  Navigator.of(context).pop();
+                });
+
+                // Call your skip location function here if needed
+                //  _skipLocation();
+              },
+              child: Text("Yes"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _skipLocation() {
+    setState(() {
+      _loading = false;
+
+      // audioCache.play('press_save_location_button.wav');
+
+      enableLocationButton = false;
+    });
+
+    widget.onLocationSelected(0, 0, 'Skipped');
   }
 
   ElevatedButton ShowLocationButton(BuildContext context) {
