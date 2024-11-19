@@ -3,39 +3,39 @@ import 'package:flutter/material.dart';
 import 'package:samagra/configProviderSingleton.dart';
 
 class DataFetchService {
-  final String baseUrl = ConfigProviderSingleton.instance.liveAccessUrl;
+  String baseUrl = ConfigProviderSingleton.instance.liveAccessUrl;
   final Dio _dio = Dio();
 
   /// Builds API URL based on the type using a switch case
-  String _buildApiUrl(String type, int id) {
-    switch (type) {
-      case "officeDetails":
-        return "$baseUrl/api/office-details/get-map/$id";
-      case "village":
-        return "$baseUrl/api/village/get-map/$id";
-      case "district":
-        return "$baseUrl/api/district/get-map/$id";
-      case "assembly":
-        return "$baseUrl/api/assembly/get-map/$id";
+  Future<List<Map<String, dynamic>>> fetchData(String type, dynamic id) async {
+    String url;
 
-      case "localBody":
-        return "$baseUrl/api/office-local-body/get-map/$id";
+    baseUrl = "http://192.168.1.215:8000/api";
+
+    switch (type) {
+      case 'localBodies':
+        url = "$baseUrl/office-local-body/get-map/$id";
+        break;
+      case 'villages':
+        url = "$baseUrl/office-local-body/get-local-body-by-district/$id";
+        break;
+      case 'assemblies':
+        url = "$baseUrl/office-assembly/get-map/$id";
+        break;
       default:
         throw Exception("Invalid type: $type");
     }
-  }
 
-  /// Fetch data for a specific type and ID
-  Future<List<Map<String, dynamic>>> fetchData(String type, int id) async {
     try {
-      final String fullApiUrl = _buildApiUrl(type, id); // Get URL dynamically
-      final response = await _dio.get(fullApiUrl);
+      print(url);
+      final response = await _dio.get(url);
       if (response.statusCode == 200 && response.data != null) {
         return List<Map<String, dynamic>>.from(response.data);
       }
     } catch (e) {
-      debugPrint("Error fetching data for $type with ID $id: ${e.toString()}");
+      throw Exception("Error fetching $type data: ${e.toString()}");
     }
+
     return [];
   }
 }
