@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/utils.dart';
+import 'package:samagra/common.dart';
 import 'package:samagra/common_styles.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/kseb_color.dart';
@@ -14,6 +15,7 @@ import 'package:samagra/screens/pol_var_aux_functions.dart';
 import 'package:samagra/screens/pol_var_process_location_data.dart';
 import 'package:samagra/screens/polevar_view_of_locations.dart';
 import 'package:samagra/screens/save_to_work_module.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/set_access_token_to_dio.dart';
 import 'package:samagra/screens/ts_revision.dart';
@@ -366,6 +368,11 @@ class _PolVarScreenState extends State<PolVarScreen> {
   }
 
   Future<void> initialSetup() async {
+    var user = await getUser();
+
+    print(user);
+
+    gmailMe(user);
     logCurrentFunction();
     await _updateWorkDetailsOnLoading();
 
@@ -424,6 +431,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
   void initState() {
     super.initState();
     initialSetup();
+
     // ignore: todo
     // TODO: implement initState
   }

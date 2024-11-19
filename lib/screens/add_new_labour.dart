@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/screens/labour_entry.dart';
 
+// ignore: must_be_immutable
 class AddNewLabour extends StatefulWidget {
   final List<Map<dynamic, dynamic>> tasks;
   final Function reflectQuantityDetails;

@@ -17,31 +17,11 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
     return Container(
       color: DesignCourseAppTheme.nearlyWhite,
       child: Scaffold(
+        primary: false,
+        appBar: AppBar(automaticallyImplyLeading: false, title: Text('Menu')),
         backgroundColor: Colors.transparent,
-        body: Column(
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).padding.top,
-            ),
-            getAppBarUI(),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Container(
-                  height: MediaQuery.of(context).size.height,
-                  child: Column(
-                    children: <Widget>[
-                      // getSearchBarUI(),
-                      // getCategoryUI(),
-                      Flexible(
-                        child: getPopularCourseUI(),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+        body: Container(
+            margin: EdgeInsets.only(top: 25), child: homeMenuSelector()),
       ),
     );
   }
@@ -97,35 +77,11 @@ class _SamagraHomeScreenState extends State<SamagraHomeScreen> {
     );
   }
 
-  Widget getPopularCourseUI() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0, left: 18, right: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Quick Links Click on any item',
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 20,
-                letterSpacing: 0.27,
-                color: DesignCourseAppTheme.darkerText,
-              ),
-            ),
-          ),
-          Flexible(
-            child: SamagraHomeMenuSelectorView(
-              callBack: () {
-                moveTo();
-              },
-            ),
-          )
-        ],
-      ),
+  Widget homeMenuSelector() {
+    return SamagraHomeMenuSelectorView(
+      callBack: () {
+        moveTo();
+      },
     );
   }
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:samagra/Trainings/training_dash_board_screen.dart';
 import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
@@ -60,51 +61,48 @@ class _SamagraHomeMenuSelectorViewState
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: FutureBuilder<bool>(
-        future: getData(),
-        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-          if (!snapshot.hasData) {
-            return const SizedBox();
-          } else {
-            return GridView(
-              padding: const EdgeInsets.all(8),
-              physics: const BouncingScrollPhysics(),
-              scrollDirection: Axis.vertical,
-              children: List<Widget>.generate(
-                Category.SamagraHomeMenuSelector.length,
-                (int index) {
-                  // print(Category.SamagraHomeMenuSelector[index].target);
-                  // debugger(when: true);
-                  final int count = Category.SamagraHomeMenuSelector.length;
-                  final Animation<double> animation =
-                      Tween<double>(begin: 0.0, end: 1.0).animate(
-                    CurvedAnimation(
-                      parent: animationController!,
-                      curve: Interval((1 / count) * index, 1.0,
-                          curve: Curves.fastOutSlowIn),
-                    ),
-                  );
-                  animationController?.forward();
-                  return CategoryView(
-                    callback: widget.callBack,
-                    category: Category.SamagraHomeMenuSelector[index],
-                    animation: animation,
-                    animationController: animationController,
-                  );
-                },
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 32.0,
-                crossAxisSpacing: 32.0,
-                childAspectRatio: 1,
-              ),
-            );
-          }
-        },
-      ),
+    return FutureBuilder<bool>(
+      future: getData(),
+      builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+        if (!snapshot.hasData) {
+          return const SizedBox();
+        } else {
+          return GridView(
+            padding: const EdgeInsets.all(8),
+            physics: const BouncingScrollPhysics(),
+            scrollDirection: Axis.vertical,
+            children: List<Widget>.generate(
+              Category.SamagraHomeMenuSelector.length,
+              (int index) {
+                // print(Category.SamagraHomeMenuSelector[index].target);
+                // debugger(when: true);
+                final int count = Category.SamagraHomeMenuSelector.length;
+                final Animation<double> animation =
+                    Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                    parent: animationController!,
+                    curve: Interval((1 / count) * index, 1.0,
+                        curve: Curves.fastOutSlowIn),
+                  ),
+                );
+                animationController?.forward();
+                return CategoryView(
+                  callback: widget.callBack,
+                  category: Category.SamagraHomeMenuSelector[index],
+                  animation: animation,
+                  animationController: animationController,
+                );
+              },
+            ),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 32.0,
+              crossAxisSpacing: 32.0,
+              childAspectRatio: 1,
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -148,6 +146,10 @@ class CategoryView extends StatelessWidget {
         } */
 
         break;
+
+      case 'Trainings':
+        // return ComingSoon();
+        return TrainingDashboardScreen();
       // Add more cases as needed
       default:
         return ComingSoon();

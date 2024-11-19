@@ -147,5 +147,21 @@ class Category {
       money: 208,
       rating: 4.9,
     ),
+    Category(
+      imagePath: 'assets/images/request.webp',
+      target: 'PrefilledSubmissions',
+      title: 'Prefilled Forms',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
+    Category(
+      imagePath: 'assets/images/request.webp',
+      target: 'Trainings',
+      title: 'Trainings',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
   ];
 }

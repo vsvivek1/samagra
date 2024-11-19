@@ -7,10 +7,12 @@ import 'package:samagra/TA.dart';
 import 'package:samagra/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:samagra/configProviderSingleton.dart';
 import 'package:samagra/environmental_config.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/navigation_home_screen.dart';
 import 'package:samagra/progress_report.dart';
+import 'package:samagra/providers/config_provider.dart';
 import 'package:samagra/screens/login_screen.dart';
 import 'package:samagra/screens/login_screen_navigator.dart';
 import 'package:upgrader/upgrader.dart';
@@ -31,6 +33,8 @@ void main() async {
 
   // .env
   WidgetsFlutterBinding.ensureInitialized();
+
+  await ConfigProviderSingleton.instance.initialize();
 
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
 
@@ -93,6 +97,7 @@ class _SamagraState extends State<Samagra> {
   @override
   void initState() {
     super.initState();
+
     initializeConfigIfNeeded();
     // startJwtExpiryCheck();
     // TODO: implement initState

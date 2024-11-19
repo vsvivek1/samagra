@@ -11,6 +11,7 @@ class SearchLabour extends StatefulWidget {
     required this.labourMaster,
     required this.selectedLabour,
     required this.onNewLabourAdded,
+    required List selectedLabourItems,
   }) : super(key: key);
 
   @override

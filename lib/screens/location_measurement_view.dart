@@ -511,7 +511,7 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   });
                 },
               ),
-              ElevatedButton(
+              /*  ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         const Color.fromARGB(255, 132, 184, 134)),
@@ -520,6 +520,8 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   child: Text(
                       textAlign: TextAlign.center,
                       'Add Labour Not in Estimate')),
+
+                      */
             ],
           ),
         );
