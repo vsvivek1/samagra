@@ -5,6 +5,7 @@ import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
 import 'package:samagra/prepare_estimate/prepare_estimate.dart';
+import 'package:samagra/prepare_estimate/screens/new_estimate_creation_landing_page.dart';
 import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
@@ -137,6 +138,9 @@ class CategoryView extends StatelessWidget {
 
       case 'prepareEstimate':
         // return ComingSoon();
+
+        return NewEstimateCreationLandingPage();
+        return NewEstimateCreationLandingPage();
         return AddNewWorkForm();
         // return PrepareEstimate();
         /* else {
