@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/prepare_estimate/models/work_details.dart';
+import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
 
 class ReviewDetailsPage extends StatelessWidget {
   final WorkDetails workDetails;
@@ -49,7 +50,7 @@ class ReviewDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Review Details'),
+        title: const Text('Review Details-rdscreen'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -59,12 +60,16 @@ class ReviewDetailsPage extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateLocation()),
+          );
           // Navigate to a location form page to add a new location
-          ScaffoldMessenger.of(context).showSnackBar(
+          /*   ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
                 content: Text('Add Location functionality coming soon!')),
-          );
+          ); */
         },
         tooltip: 'Add Location',
         child: const Icon(Icons.add),
