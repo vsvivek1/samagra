@@ -31,7 +31,7 @@ class DataFetchService {
   Future<List<Map<String, dynamic>>> fetchData(String type, dynamic id) async {
     String url;
 
-    baseUrl = "http://192.168.1.100:8000/api"; //kfon
+    baseUrl = "http://192.168.100.110:8000/api"; //kfon
     print("Base URL: $baseUrl");
 
     // debugger(when: true);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/prepare_estimate/capture_lat_long.dart';
+import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
 
 class CreateLocation extends StatefulWidget {
   final dynamic location;
@@ -55,6 +56,12 @@ class _CreateLocationState extends State<CreateLocation> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CapturePhotosWidget(),
+                    ));
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Photo Captured!'),
@@ -66,11 +73,11 @@ class _CreateLocationState extends State<CreateLocation> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
+                /*    ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Tasks Added!'),
                   ),
-                );
+                ); */
               },
               child: const Text('Add Tasks'),
             ),
