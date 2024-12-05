@@ -25,13 +25,13 @@ class ShowWorkCode extends StatelessWidget {
               offset: Offset(0, 3),
             )
           ]),
-      padding: const EdgeInsets.all(15.0),
+      padding: const EdgeInsets.all(11.0),
       child: Text(
         'WorkCode: $workCode',
         style: TextStyle(
             textBaseline: TextBaseline.ideographic,
-            fontSize: 14,
-            wordSpacing: 5,
+            fontSize: 10,
+            wordSpacing: 2,
             color: ksebColor),
       ),
     );

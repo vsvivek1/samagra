@@ -412,9 +412,7 @@ class _WorkSelectionState extends State<WorkSelection> {
     return responseEdit;
   }
 
-  refreshWorkList() {
-   
-  }
+  refreshWorkList() {}
 }
 
 class rotatingProgress extends StatelessWidget {
@@ -720,12 +718,12 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
               );
             },
             child: Container(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 border: Border.all(
                     strokeAlign: BorderSide.strokeAlignOutside,
                     color: ksebColor,
-                    width: 2,
+                    width: 1,
                     style: BorderStyle.solid),
               ),
               child: Container(
@@ -756,7 +754,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                 child: GridTile(
                   footer: ShowWorkCode(workCode: workCode),
                   header: Padding(
-                    padding: const EdgeInsets.all(6.0),
+                    padding: const EdgeInsets.all(5.0),
                     child: WorkTitle(
                         workId: workId,
                         workScheduleGroupId: workScheduleGroupId,
@@ -792,7 +790,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                         child: Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(25.0),
+                              padding: const EdgeInsets.all(13.0),
                               child: Text(
                                 item['wrk_work_detail']['work_name'],
                                 style: TextStyle(
@@ -868,12 +866,12 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
               );
             },
             child: Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(5.0),
               child: ListTile(
                 title: Text(
                   item['wrk_work_detail']['work_name'],
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 12,
                     color: const Color.fromARGB(255, 89, 76, 175),
                   ),
                 ),
@@ -882,7 +880,7 @@ class _SchGrpListWidgetState extends State<SchGrpListWidget>
                   child: Text(
                     'WorkCode: $workCode',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 8,
                       color: Color.fromARGB(255, 244, 242, 240),
                     ),
                   ),

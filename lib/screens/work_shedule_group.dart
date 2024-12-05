@@ -75,7 +75,7 @@ class _WorkScheduleGroupState extends State<WorkScheduleGroup> {
                                 item['quantity'] = (item['quantity'] ?? 0) + 1;
                               });
                             },
-                            child: Text('+'),
+                            child: Text('Add'),
                           ),
                           SizedBox(width: 5),
                           Text(

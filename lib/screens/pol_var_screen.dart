@@ -1226,7 +1226,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                                     measurementDetails)
                                               },
                                           label: Text(
-                                            '\nSave \nto\n Samagra',
+                                            'Finish',
                                             style: TextStyle(fontSize: 10),
                                           ))
                                       : ElevatedButton.icon(
@@ -1404,8 +1404,8 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                       bottomnavigationButtons(context),
 
                                       Container(
-                                        margin: EdgeInsets.only(
-                                            left: 25, right: 25),
+                                        /*   margin:
+                                            EdgeInsets.only(left: 0, right: 0), */
                                         /*  width:
                                             MediaQuery.of(context).size.width * .9, */
                                         child: geoCordinatesWidget(context),
@@ -1460,9 +1460,9 @@ class _PolVarScreenState extends State<PolVarScreen> {
           style: TextStyle(
               textBaseline: TextBaseline.alphabetic,
               overflow: TextOverflow.fade,
-              fontSize: 10,
+              fontSize: 8,
               color: ksebColor),
-          'Next\n Location',
+          'Location\nList',
           selectionColor: Colors.red,
         ),
         onPressed: () {
@@ -1681,7 +1681,14 @@ class _PolVarScreenState extends State<PolVarScreen> {
       context: context,
       builder: (BuildContext context) {
         return CustomAlertDialog(
-          title: Text('Location Measurement View'),
+          title: Text(
+            'Location Measurement View',
+            style: TextStyle(
+                decorationStyle: TextDecorationStyle.solid,
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+                fontSize: 20),
+          ),
           content: LocationMeasurementView(
             onNewMaterialAdditionFinished: () {
               onNewMaterialAdditionFinished();
@@ -2331,10 +2338,10 @@ class _PolVarScreenState extends State<PolVarScreen> {
 
                             Container(
                                 alignment: AlignmentDirectional.bottomStart,
-                                width: MediaQuery.of(context).size.width / 2.5,
+                                width: MediaQuery.of(context).size.width / 2.2,
                                 child: SizedBox(
                                     width:
-                                        MediaQuery.of(context).size.width / 1.5,
+                                        MediaQuery.of(context).size.width / 1.8,
                                     child: LocationMeasurementProgress(
                                         hasGeoLocations: hasGeoLocations,
                                         hasMeasurements: hasMeasurements)
@@ -2579,7 +2586,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                 (st) {
                   //
                   return GestureDetector(
-                    onDoubleTap: () => _showBottomSheet(context),
+                    // onDoubleTap: () => _showBottomSheet(context),
                     child: Card(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2591,7 +2598,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
                                   Text(
                                     st["structure_name"] ?? 'ERROR',
                                     style: TextStyle(
-                                        fontSize: 10,
+                                        fontSize: 8,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.blueAccent),
                                   ),

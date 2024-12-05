@@ -110,11 +110,11 @@ class _MeasurementPropertyCopierScreenState
     var p = '';
 
     List s = [
-      'latitude',
+      /*   'latitude',
       'longitude',
       'locationName',
-      'geoCordinates',
-      'tasks'
+      'geoCordinates', */
+      'Tasks'
     ];
     // return sourceDetails.keys.map((property) {
     return s.map((property) {

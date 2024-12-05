@@ -25,7 +25,7 @@ class MainScreen extends StatelessWidget {
             ];
 
             // Navigate to TaskSelectionScreen and get the selected tasks
-            final selectedTasks = await Navigator.push(
+            /*  final selectedTasks = await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => TaskSelectionScreen(tasks: tasks),
@@ -38,7 +38,7 @@ class MainScreen extends StatelessWidget {
                   content: Text('Selected Tasks: ${selectedTasks.join(", ")}'),
                 ),
               );
-            }
+            } */
           },
           child: const Text('Select Tasks'),
         ),

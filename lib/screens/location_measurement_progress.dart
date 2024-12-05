@@ -20,7 +20,7 @@ class LocationMeasurementProgress extends StatelessWidget {
                 color: hasGeoLocations ? Colors.blue : Colors.black,
               ),
             ),
-            SizedBox(width: 5),
+            SizedBox(width: 1),
             Icon(
               hasGeoLocations ? Icons.check_circle : Icons.cancel,
               color: hasGeoLocations ? Colors.blue : Colors.red,
@@ -35,7 +35,7 @@ class LocationMeasurementProgress extends StatelessWidget {
                 color: hasMeasurements ? Colors.blue : Colors.black,
               ),
             ),
-            SizedBox(width: 5),
+            SizedBox(width: 1),
             Icon(
               hasMeasurements ? Icons.check_circle : Icons.cancel,
               color: hasMeasurements ? Colors.blue : Colors.red,

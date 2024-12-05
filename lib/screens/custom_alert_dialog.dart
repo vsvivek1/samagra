@@ -16,7 +16,7 @@ class CustomAlertDialog extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Dialog(
-      insetPadding: EdgeInsets.all(10),
+      insetPadding: EdgeInsets.all(5),
       child: SingleChildScrollView(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
@@ -24,12 +24,12 @@ class CustomAlertDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(7.0),
                 child: title,
               ),
               SingleChildScrollView(
                 child: SizedBox(
-                    height: MediaQuery.of(context).size.height * .8,
+                    height: MediaQuery.of(context).size.height * .75,
                     width: 400,
                     child: content),
               ),

@@ -245,7 +245,7 @@ class _VersionControllerState extends State<VersionController>
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
-      debugger(when: true);
+      // debugger(when: true);
       // TODO
     }
   }

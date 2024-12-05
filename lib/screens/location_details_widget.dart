@@ -90,6 +90,8 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                             _gotLocation &&
                             locationName != ''),
                   ],
+
+                  Text(locationName),
                   RichText(
                     text: TextSpan(
                       text: 'Location No ',
@@ -133,10 +135,10 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                     ),
                     Row(
                       children: [
-                        SizedBox(
+                        /*  SizedBox(
                             height: 100,
-                            width: 125,
-                            child: Center(child: Text(locationName))
+                            width: 130,
+                            child: Center(child:)
                             /* child: TextFormField(
                             initialValue: locationName,
                             onChanged: ((value) => updateLocationText(value)),
@@ -146,20 +148,16 @@ class _LocationDetailsWidgetState extends State<LocationDetailsWidget>
                             //   hintText: 'Enter location name',
                             // )
                           ), */
-                            ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Visibility(
-                            visible: _gotLocation && locationName != '',
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                  onPressed: () =>
-                                      saveLocDetailsToPolVarWidget(),
-                                  child: Text((locationName != 'Skipped')
-                                      ? 'Save And Proceed'
-                                      : 'Next')),
-                            ),
+                            ) */ //,
+                        Visibility(
+                          visible: _gotLocation && locationName != '',
+                          child: Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: ElevatedButton(
+                                onPressed: () => saveLocDetailsToPolVarWidget(),
+                                child: Text((locationName != 'Skipped')
+                                    ? 'Save And Proceed'
+                                    : 'Next')),
                           ),
                         )
                       ],

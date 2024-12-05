@@ -78,7 +78,7 @@ class MeasurementOptionScreen extends StatelessWidget {
                   workName: this.workName,
                   workId: this.workId.toString(),
                 ),
-                ElevatedButton(
+                /*    ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor: MaterialStateColor.resolveWith(
                           (states) => Color.fromARGB(255, 148, 148, 148))),
@@ -90,7 +90,8 @@ class MeasurementOptionScreen extends StatelessWidget {
                     );
                   },
                   child: Text('Direct measurement'),
-                ),
+                ) */
+                // ,
                 SizedBox(height: 16.0),
                 // ElevatedButton(
                 //   onPressed: () {
