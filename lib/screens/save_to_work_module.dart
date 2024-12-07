@@ -78,12 +78,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
       workScheduleGroupId: widget.workScheduleGroupId,
       workId: widget.workId.toString(),
       is_premeasurement: false,
-      part_or_final: false,
+      part_or_final: 'final',
       measurement_set_date: DateTime.now(),
       commencement_date: DateTime.now(),
       completion_date: DateTime.now(),
       plg_work_id: widget.workId,
       taskMeasurements: [],
+      submit_to_head: '1',
     );
 
     _measurementDataToWorkModule.seat_id = await getSeatId();
@@ -130,10 +131,13 @@ class _SaveToWorkModuleState extends State<SaveToWorkModule>
               ),
               CheckboxListTile(
                 title: Text('Is This a  Part Measurement ? '),
-                value: _measurementDataToWorkModule.part_or_final,
+                value: _measurementDataToWorkModule.part_or_final == 'final'
+                    ? false
+                    : true,
                 onChanged: (newValue) {
                   setState(() {
-                    _measurementDataToWorkModule.part_or_final = newValue!;
+                    _measurementDataToWorkModule.part_or_final =
+                        newValue == false ? 'final' : 'part';
                   });
                 },
               ),
