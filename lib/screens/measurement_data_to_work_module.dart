@@ -16,7 +16,8 @@ class MeasurementDataToWorkModule {
   String? plg_work_id;
   String? wrk_schedule_group_id;
   bool? is_premeasurement;
-  bool? part_or_final;
+  String? part_or_final;
+  String? submit_to_head = '1';
   var measurement_set_date;
   var commencement_date;
   var completion_date;
@@ -31,27 +32,28 @@ class MeasurementDataToWorkModule {
 
   Map<dynamic, dynamic>? wrk_schedule_group_structures;
 
-  MeasurementDataToWorkModule({
-    this.wrk_measurement_set_id,
-    required String workId, // Pass the workId to the constructor
-    this.user_id,
-    this.seat_id,
-    required plg_work_id,
-    this.wrk_schedule_group_id,
-    this.is_premeasurement,
-    this.part_or_final,
-    this.measurement_set_date,
-    this.commencement_date,
-    this.completion_date,
-    this.polevar_data,
-    required this.taskMeasurements,
-    this.structureMeasurements,
-    this.materialMeasurements,
-    this.labourMeasurements,
-    this.materialTakenBackMeasurements,
-    required String workScheduleGroupId,
-    // this.polevar_data,
-  }) {
+  MeasurementDataToWorkModule(
+      {this.wrk_measurement_set_id,
+      required String workId, // Pass the workId to the constructor
+      this.user_id,
+      this.seat_id,
+      required plg_work_id,
+      this.wrk_schedule_group_id,
+      this.is_premeasurement,
+      this.part_or_final,
+      this.measurement_set_date,
+      this.commencement_date,
+      this.completion_date,
+      this.polevar_data,
+      required this.taskMeasurements,
+      this.structureMeasurements,
+      this.materialMeasurements,
+      this.labourMeasurements,
+      this.materialTakenBackMeasurements,
+      required String workScheduleGroupId,
+      required this.submit_to_head
+      // this.polevar_data,
+      }) {
     // Fetch the API data using Dio and set parameters from the response
     // _fetchScheduleDetailsAndSetParams(workId);
   }
