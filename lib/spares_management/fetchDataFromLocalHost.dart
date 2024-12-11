@@ -4,10 +4,10 @@ Future<void> fetchData() async {
   try {
     // Adjust the URL based on your Laravel API endpoint
     //String apiUrl = 'http://192.168.100.112:8000/api/test';
-    //String apiUrl = 'http://192.168.100.101/api/test';
+    //String apiUrl = 'http://192.168.1.215/api/test';
 
-    String apiUrl = 'http://192.168.100.101/api/test';
-    // 192.168.100.101
+    String apiUrl = 'http://192.168.1.215/api/test';
+    // 192.168.1.215
 
     final Dio _dio = Dio();
     Response response = await _dio.get(apiUrl);

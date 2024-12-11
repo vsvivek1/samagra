@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:samagra/prepare_estimate/capture_lat_long.dart';
+import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
 import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
 
 class CreateLocation extends StatefulWidget {
@@ -13,12 +14,32 @@ class CreateLocation extends StatefulWidget {
 
 class _CreateLocationState extends State<CreateLocation> {
   Map<String, double>? geoCoordinates;
+  bool isCapturingLatLong = false; // Status of capturing Lat-Long
+  double? accuracy; // Accuracy of the captured location
 
   void _getLatLong() async {
-    final coordinates = await captureLatLong(context);
-    if (coordinates.isNotEmpty) {
+    setState(() {
+      isCapturingLatLong = true; // Show capturing status
+    });
+
+    try {
+      final coordinates = await captureLatLong(context);
+      if (coordinates.isNotEmpty) {
+        setState(() {
+          geoCoordinates = coordinates;
+          accuracy = coordinates[
+              "accuracy"]; // Assuming accuracy is part of the response
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to capture Lat-Long: $e'),
+        ),
+      );
+    } finally {
       setState(() {
-        geoCoordinates = coordinates;
+        isCapturingLatLong = false; // Stop capturing status
       });
     }
   }
@@ -27,7 +48,8 @@ class _CreateLocationState extends State<CreateLocation> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.location == null ? 'Add Location' : 'Edit Location'),
+        title:
+            Text(widget.location == null ? 'Create location' : 'Edit Location'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -45,6 +67,14 @@ class _CreateLocationState extends State<CreateLocation> {
               onPressed: _getLatLong,
               child: const Text('Capture Lat-Long'),
             ),
+            if (isCapturingLatLong)
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Text(
+                  'Capturing Lat-Long...',
+                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                ),
+              ),
             if (geoCoordinates != null) ...[
               const SizedBox(height: 10),
               Text(
@@ -52,6 +82,12 @@ class _CreateLocationState extends State<CreateLocation> {
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
+              if (accuracy != null)
+                Text(
+                  'Accuracy: ±${accuracy!.toStringAsFixed(2)} meters',
+                  style: const TextStyle(
+                      fontSize: 16, fontStyle: FontStyle.italic),
+                ),
             ],
             const SizedBox(height: 10),
             ElevatedButton(
@@ -73,11 +109,19 @@ class _CreateLocationState extends State<CreateLocation> {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                /*    ScaffoldMessenger.of(context).showSnackBar(
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddTasksWidget(
+                        categoryId: '1',
+                      ),
+                    ));
+
+                ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Tasks Added!'),
+                    content: Text('Photo Captured!'),
                   ),
-                ); */
+                );
               },
               child: const Text('Add Tasks'),
             ),

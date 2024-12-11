@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 class WorkDetails {
   String? scheme;
   String? subGroup;
@@ -121,3 +123,63 @@ class TakenBackDetails {
     required this.quantity,
   });
 }
+
+// StateNotifier for WorkDetails
+class WorkDetailsNotifier extends StateNotifier<WorkDetails> {
+  WorkDetailsNotifier()
+      : super(
+          WorkDetails(
+            selectedAssemblies: [],
+            selectedVillages: [],
+            selectedLocalBodies: [],
+          ),
+        );
+
+  void updateScheme(String? scheme) {
+    state = WorkDetails(
+      scheme: scheme,
+      subGroup: state.subGroup,
+      priority: state.priority,
+      selectedAssemblies: state.selectedAssemblies,
+      selectedVillages: state.selectedVillages,
+      selectedLocalBodies: state.selectedLocalBodies,
+      workName: state.workName,
+      workRemarks: state.workRemarks,
+      locations: state.locations,
+    );
+  }
+
+  void updateWorkName(String? workName) {
+    state = WorkDetails(
+      scheme: state.scheme,
+      subGroup: state.subGroup,
+      priority: state.priority,
+      selectedAssemblies: state.selectedAssemblies,
+      selectedVillages: state.selectedVillages,
+      selectedLocalBodies: state.selectedLocalBodies,
+      workName: workName,
+      workRemarks: state.workRemarks,
+      locations: state.locations,
+    );
+  }
+
+  void updatePriority(String? priority) {
+    state = WorkDetails(
+      scheme: state.scheme,
+      subGroup: state.subGroup,
+      priority: priority,
+      selectedAssemblies: state.selectedAssemblies,
+      selectedVillages: state.selectedVillages,
+      selectedLocalBodies: state.selectedLocalBodies,
+      workName: state.workName,
+      workRemarks: state.workRemarks,
+      locations: state.locations,
+    );
+  }
+}
+
+// Define the Riverpod provider
+final workDetailsProvider =
+    StateNotifierProvider<WorkDetailsNotifier, WorkDetails>(
+  (ref) => WorkDetailsNotifier(),
+);

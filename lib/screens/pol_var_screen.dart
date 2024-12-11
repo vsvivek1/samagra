@@ -569,7 +569,7 @@ class _PolVarScreenState extends State<PolVarScreen> {
       _savedToSamagra = true;
     });
     // var url =
-    //     'http://192.168.100.101/api/send-object'; // Replace with your server endpoint
+    //     'http://192.168.1.215/api/send-object'; // Replace with your server endpoint
 
     // print(obj);
 

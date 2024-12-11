@@ -26,6 +26,8 @@ import 'package:samagra/screens/sso.dart';
 import 'kseb_color.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   // EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
   // lib/.env
@@ -161,6 +163,7 @@ class _SamagraState extends State<Samagra> {
       //   return false; // Prevent back navigation
       // },
       child: MaterialApp(
+        navigatorKey: navigatorKey,
         // showSemanticsDebugger: true,
 
         // debugShowMaterialGrid: true,
