@@ -32,41 +32,48 @@ class _MainTaskMasterWidgetState extends State<MainTaskMasterWidget> {
       } else {
         selectedTaskIds.add(taskId);
       }
+      // Emit the updated list of selected task IDs
+      widget.onTasksSelected(List.from(selectedTaskIds));
     });
-    widget.onTasksSelected(selectedTaskIds);
   }
 
   void _showMultiSelectDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Select Tasks'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView(
-              children: widget.taskList.map((task) {
-                final taskId = task['id'].toString();
-                final isSelected = selectedTaskIds.contains(taskId);
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text('Select Tasks'),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: ListView(
+                  children: widget.taskList.map((task) {
+                    final taskId = task['id'].toString();
+                    final isSelected = selectedTaskIds.contains(taskId);
 
-                return CheckboxListTile(
-                  title: Text(task['main_task_name']),
-                  value: isSelected,
-                  onChanged: (_) {
-                    _toggleSelection(taskId);
+                    return CheckboxListTile(
+                      title: Text(task['main_task_name']),
+                      value: isSelected,
+                      onChanged: (_) {
+                        setStateDialog(() {
+                          _toggleSelection(taskId);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
                   },
-                );
-              }).toList(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
         );
       },
     );

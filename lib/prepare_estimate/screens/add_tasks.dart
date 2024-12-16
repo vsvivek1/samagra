@@ -17,13 +17,17 @@ class AddTasksWidget extends StatefulWidget {
 }
 
 class _AddTasksWidgetState extends State<AddTasksWidget> {
-  String? _selectedTaskFilter = '2';
+  String? _selectedTaskFilter = '-2';
   bool _showMainTaskWidget = true;
   Map<dynamic, dynamic>? user;
   int sbuId = 4;
   String errorMessage = '';
   List<dynamic> _taskList = [];
   List<String> selectedTaskIds = [];
+  
+  bool _showMainTasksSpinner=false;
+  
+  var selectedTasks=[];
 
   @override
   void initState() {
@@ -56,13 +60,18 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
       setState(() {
         _selectedTaskFilter = taskFilter;
         _showMainTaskWidget = taskFilter != null && taskFilter.isNotEmpty;
+
+        _showMainTasksSpinner=true;
       });
 
       // Call API to fetch tasks
+
+      
       var response = await getMainTaskMaster(sbuId, 3, 2);
 
       setState(() {
         _taskList = response['result_data']['list'];
+         _showMainTasksSpinner=false;
       });
     } catch (e, stackTrace) {
       debugPrint('Error in _updateSelectedTaskFilter: $e');
@@ -76,8 +85,23 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
 
   void _onTasksSelected(List<String> value) async {
     try {
+
+     
+
+     
       for (var taskId in value) {
+
+    var a = _taskList.firstWhere(
+  (t) => t['id'].toString() == taskId,
+  orElse: () => {}, // Provide a default value or null if not found
+);
+
+
+selectedTasks.add(a);
+
         var response = await getStructureMasterForTask(int.parse(taskId));
+
+
         log('Task ID: $taskId, Structure: $response');
       }
     } catch (e) {
@@ -87,7 +111,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
 
 
  Widget _viewSelectedTasks() {
-    if (selectedTaskIds.isEmpty) {
+    if (selectedTasks.isEmpty) {
       return const Text(
         'No tasks selected.',
         style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
@@ -95,13 +119,13 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     }
 
     return ListView.builder(
-      itemCount: selectedTaskIds.length,
+      itemCount: selectedTasks.length,
       itemBuilder: (context, index) {
-        final taskId = selectedTaskIds[index];
-        final task = _taskList.firstWhere(
-          (task) => task['id'].toString() == taskId,
-          orElse: () => null,
-        );
+        final task = selectedTasks[index];
+        // final task = _taskList.firstWhere(
+        //   (task) => task['id'].toString() == taskId,
+        //   orElse: () => null,
+        // );
 
         if (task == null) {
           return const SizedBox.shrink();
@@ -113,7 +137,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
             icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: () {
               setState(() {
-                selectedTaskIds.remove(taskId);
+                selectedTaskIds.remove(task);
               });
             },
           ),
@@ -128,50 +152,61 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
         title: const Text('Add Tasks'),
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            Flexible(
-              flex: 1,
-              child: MainTaskFilterMasterWidget(
-                onTaskFilterSelected: _updateSelectedTaskFilter,
+        child: Container(
+          margin: EdgeInsets.all(15),
+          child: Column(
+            children: [
+              Flexible(
+                flex: 1,
+                child: MainTaskFilterMasterWidget(
+                  onTaskFilterSelected: _updateSelectedTaskFilter,
+                ),
               ),
-            ),
-            Flexible(
-              flex: 2,
-              child: Column(
-                children: [
-                  if (_selectedTaskFilter != null)
-                    Text(
-                      'Selected Task Filter: $_selectedTaskFilter',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  if (errorMessage.isNotEmpty)
-                    Text(
-                      'Error: $errorMessage',
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
-                    ),
-                  if (_showMainTaskWidget && _selectedTaskFilter != null)
-                    Expanded(
-                      child: MainTaskMasterWidget(
-                        taskList: _taskList,
-                        onTasksSelected: _onTasksSelected,
-                        selectedTaskIds: selectedTaskIds,
-                      ),
-                    )
-                  else
-                    const Text(
-                      'No tasks to display. Please select a valid task filter.',
-                      style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                    ),
-                ],
+              Flexible(
+                flex: 2,
+                child: Container(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      if (_selectedTaskFilter != null && _selectedTaskFilter!='-2')
+                        Text(
+                          'Selected Task Filter: $_selectedTaskFilter',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      if (errorMessage.isNotEmpty)
+                        Text(
+                          'Error: $errorMessage',
+                          style: const TextStyle(color: Colors.red, fontSize: 14),
+                        ),
+                    
+                    
+                      if (_showMainTaskWidget && _selectedTaskFilter != null && _selectedTaskFilter!='-2')
+                       
+                       
+           
+                       _showMainTasksSpinner?CircularProgressIndicator(color: Colors.orange): Expanded(
+                          child: MainTaskMasterWidget(
+                            taskList: _taskList,
+                            onTasksSelected: _onTasksSelected,
+                            selectedTaskIds: selectedTaskIds,
+                          ),
+                        )
+                      else
+                        const Text(
+                          'No tasks to display. Please select a valid task filter.',
+                          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                        ),
+                    ],
+                  ),
+                ),
               ),
-            ),
-
-            Flexible(
-              flex:4,
-              
-              child:_viewSelectedTasks() )
-          ],
+          
+              Flexible(
+                flex:4,
+                
+                child:_viewSelectedTasks() )
+            ],
+          ),
         ),
       ),
     );
