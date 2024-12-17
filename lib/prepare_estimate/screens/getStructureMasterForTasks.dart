@@ -5,9 +5,11 @@ import 'dart:convert';
 Future getStructureMasterForTask(int taskId) async {
   // Construct the full URL by affixing taskId to the base URL
 
+
+
   taskId=1403;
 
-   String baseUrl = "http://192.168.1.2:8000/api";
+   String baseUrl = "http://192.168.1.215:8000/api";
   final String url = '$baseUrl/getStructureMasterForTask/$taskId';
   
   try {

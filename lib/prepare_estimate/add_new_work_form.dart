@@ -4,6 +4,7 @@ import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:samagra/prepare_estimate/data_fetch_service.dart';
 import 'package:samagra/prepare_estimate/locations_and_tasks.dart';
 import 'package:samagra/prepare_estimate/models/work_details.dart';
+import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
 import 'package:samagra/prepare_estimate/screens/review_work_details_page.dart';
 // Replace with your actual DataFetchService import
 
@@ -250,7 +251,9 @@ class _AddNewWorkFormState extends State<AddNewWorkForm> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
-                                    ReviewDetailsPage(workDetails: workDetails),
+                                    
+                                    AddTasksWidget(categoryId: '1')
+                                    // ReviewDetailsPage(workDetails: workDetails),
                               ),
                             );
 

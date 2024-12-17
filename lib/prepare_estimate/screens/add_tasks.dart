@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/prepare_estimate/getMainTaskMaster.dart';
+import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
 import 'package:samagra/prepare_estimate/screens/getStructureMasterForTasks.dart';
 import 'package:samagra/prepare_estimate/screens/main_task_master_widget.dart';
 import 'package:samagra/prepare_estimate/screens/main_tasks_filter_master_widget.dart';
@@ -28,6 +29,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   bool _showMainTasksSpinner=false;
   
   var selectedTasks=[];
+  
+  var _updatingStructureDetails=false;
 
   @override
   void initState() {
@@ -83,31 +86,86 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     }
   }
 
-  void _onTasksSelected(List<String> value) async {
-    try {
+void _onTasksSelected(List<String> value) async {
+  try {
+    for (var taskId in value) {
+      // Check if the task already exists in selectedTasks
+      bool alreadyExists = selectedTasks.any((task) => task['id'].toString() == taskId);
 
-     
+      if (!alreadyExists) {
+        // Fetch task details
+        var task = _taskList.firstWhere(
+          (t) => t['id'].toString() == taskId,
+          orElse: () => {}, // Default to empty map if not found
+        );
 
-     
-      for (var taskId in value) {
+        if (task.isNotEmpty) {
+          // Add task to selectedTasks
+          
 
-    var a = _taskList.firstWhere(
-  (t) => t['id'].toString() == taskId,
-  orElse: () => {}, // Provide a default value or null if not found
-);
+          // Optional: Fetch additional structure details if needed
+
+          setState(() {
+  _updatingStructureDetails=true;
+});
+          var response = await getStructureMasterForTask(int.parse(taskId));
+
+                    setState(() {
+  _updatingStructureDetails=false;
+});
+   
 
 
-selectedTasks.add(a);
+          if (response['result_data'] != null &&
+      response['result_data']['structureMaster'] != null) {
+    List<dynamic> structureMaster = response['result_data']['structureMaster'];
 
-        var response = await getStructureMasterForTask(int.parse(taskId));
+    // Ensure task has a 'structures' key as a list
+    task['structures'] ??= []; // Initialize if null
 
+    for (var structure in structureMaster) {
+      // Extract details into a structure object
+      Map<String, dynamic> structureObject = {
+        'id': structure['id'],
+        'structure_code': structure['structure_code'].toString(),
+        'structure_name': structure['structure_name'],
+        'mst_uom_id': structure['mst_uom_id'],
+        'start_date': structure['start_date'],
+        'updated_at': structure['updated_at'],
+        'uom_code': structure['mst_uom']?['uom_code'] ?? 'N/A',
+        'uom_descr': structure['mst_uom']?['uom_descr'] ?? 'N/A',
+      };
 
-        log('Task ID: $taskId, Structure: $response');
-      }
-    } catch (e) {
-      debugPrint('Error fetching structure for tasks: $e');
+      // Push structureObject to task's structures
+      task['structures'].add(structureObject);
+
+      
     }
+
+    print('Updated Task with Structures: $task');
+  } else {
+    print('No structureMaster data found.');
   }
+
+                  setState(() {
+  _updatingStructureDetails=false;
+});
+
+
+selectedTasks.add(task);
+          log('Task ID: $taskId, Structure: $response');
+        }
+      }
+    }
+
+    // Update UI after tasks are added
+    setState(() {});
+
+  } catch (e) {
+    debugPrint('Error fetching structure for tasks: $e');
+  }
+}
+
 
 
  Widget _viewSelectedTasks() {
@@ -136,8 +194,10 @@ selectedTasks.add(a);
           trailing: IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
             onPressed: () {
+
+            
               setState(() {
-                selectedTaskIds.remove(task);
+                selectedTasks.remove(task);
               });
             },
           ),
@@ -156,14 +216,17 @@ selectedTasks.add(a);
           margin: EdgeInsets.all(15),
           child: Column(
             children: [
+
+
+       
               Flexible(
-                flex: 1,
+                flex: 2,
                 child: MainTaskFilterMasterWidget(
                   onTaskFilterSelected: _updateSelectedTaskFilter,
                 ),
               ),
               Flexible(
-                flex: 2,
+                flex: 3,
                 child: Container(
                   padding: EdgeInsets.all(10),
                   child: Column(
@@ -200,15 +263,36 @@ selectedTasks.add(a);
                   ),
                 ),
               ),
-          
+          Flexible(child:      Text(
+  _updatingStructureDetails? '...Updating Structure Details':''),),
               Flexible(
                 flex:4,
                 
-                child:_viewSelectedTasks() )
+                child:_viewSelectedTasks() ),
+
+                Flexible(
+                flex:1,
+                
+                child:ElevatedButton(onPressed: captureLocations, child: Text('Capture Locations')) )
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void captureLocations() {
+
+    Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    
+                                    CreateLocation(tasks: [],)
+                                    // ReviewDetailsPage(workDetails: workDetails),
+                              )
+    
+
+    
+    
     );
   }
 }

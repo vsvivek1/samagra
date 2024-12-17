@@ -4,9 +4,11 @@ import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
 import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
 
 class CreateLocation extends StatefulWidget {
+  final List<dynamic>? locationList; // Accept list of locations
   final dynamic location;
 
-  const CreateLocation({Key? key, this.location}) : super(key: key);
+  const CreateLocation({Key? key, this.locationList, this.location, required List tasks})
+      : super(key: key);
 
   @override
   _CreateLocationState createState() => _CreateLocationState();
@@ -27,8 +29,7 @@ class _CreateLocationState extends State<CreateLocation> {
       if (coordinates.isNotEmpty) {
         setState(() {
           geoCoordinates = coordinates;
-          accuracy = coordinates[
-              "accuracy"]; // Assuming accuracy is part of the response
+          accuracy = coordinates["accuracy"];
         });
       }
     } catch (e) {
@@ -39,36 +40,52 @@ class _CreateLocationState extends State<CreateLocation> {
       );
     } finally {
       setState(() {
-        isCapturingLatLong = false; // Stop capturing status
+        isCapturingLatLong = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Fetch current location number
+    int locationNumber =
+        (widget.locationList?.length ?? 0) + 1; // New location number
+
     return Scaffold(
       appBar: AppBar(
-        title:
-            Text(widget.location == null ? 'Create location' : 'Edit Location'),
+        title: Text(widget.location == null ? 'Create Location' : 'Edit Location'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.location == null
-                  ? 'Create a New Location'
-                  : 'Edit Location',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Row(
+              children: [
+                // Circular Avatar for Location Number
+                CircleAvatar(
+                  radius: 24,
+                  child: Text(
+                    '$locationNumber',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Text(
+                  widget.location == null
+                      ? 'Create a New Location'
+                      : 'Edit Location',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: _getLatLong,
               child: const Text('Capture Lat-Long'),
             ),
             if (isCapturingLatLong)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(top: 10),
                 child: Text(
                   'Capturing Lat-Long...',
@@ -76,78 +93,77 @@ class _CreateLocationState extends State<CreateLocation> {
                 ),
               ),
             if (geoCoordinates != null) ...[
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Text(
                 'Latitude: ${geoCoordinates!["latitude"]}, Longitude: ${geoCoordinates!["longitude"]}',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               if (accuracy != null)
                 Text(
                   'Accuracy: ±${accuracy!.toStringAsFixed(2)} meters',
-                  style: const TextStyle(
-                      fontSize: 16, fontStyle: FontStyle.italic),
+                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
                 ),
             ],
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CapturePhotosWidget(),
-                    ));
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Photo Captured!'),
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CapturePhotosWidget(),
                   ),
                 );
               },
               child: const Text('Capture Photos'),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddTasksWidget(
-                        categoryId: '1',
-                      ),
-                    ));
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Photo Captured!'),
-                  ),
-                );
-              },
-              child: const Text('Add Tasks'),
+            SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.locationList?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final loc = widget.locationList![index];
+                  return ListTile(
+                    leading: CircleAvatar(
+                      child: Text('${index + 1}'),
+                    ),
+                    title: Text('Location ${index + 1}'),
+                    subtitle: Text(
+                        'Lat: ${loc['latitude']}, Long: ${loc['longitude']}'),
+                  );
+                },
+              ),
             ),
-            const Spacer(),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(
-                    context,
-                    {
-                      "locationNumber": 1,
-                      "geoCoordinates": geoCoordinates ??
-                          {
-                            "latitude": 12.971598,
-                            "longitude": 77.594566,
-                          },
-                      "name": "New Location",
-                      "tasks": []
-                    },
-                  );
+                  Navigator.pop(context, {
+                    "locationNumber": locationNumber,
+                    "geoCoordinates": geoCoordinates ??
+                        {
+                          "latitude": 12.971598,
+                          "longitude": 77.594566,
+                        },
+                    "name": "New Location",
+                    "tasks": []
+                  });
                 },
                 child: const Text('Save Location'),
               ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddTasksWidget(categoryId: '1'),
+            ),
+          );
+        },
+        child: Icon(Icons.add_task),
+        tooltip: 'Add New Task',
       ),
     );
   }
