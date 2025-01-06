@@ -58,7 +58,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
               orElse: () => null)?['office']?['office_detail']?['mst_sbu_id'] ??
           4;
 
-      if (!mounted) return;
+      //if (!mounted) return;
 
       setState(() {
         _selectedTaskFilter = taskFilter;
@@ -71,6 +71,9 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
 
       
       var response = await getMainTaskMaster(sbuId, 3, 2);
+      
+
+      //debugger(when:true);
 
       setState(() {
         _taskList = response['result_data']['list'];
@@ -109,6 +112,8 @@ void _onTasksSelected(List<String> value) async {
   _updatingStructureDetails=true;
 });
           var response = await getStructureMasterForTask(int.parse(taskId));
+
+          
 
                     setState(() {
   _updatingStructureDetails=false;
@@ -214,68 +219,73 @@ selectedTasks.add(task);
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.all(15),
+          child: SingleChildScrollView(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Flexible(
+        flex: 10,
+        child: MainTaskFilterMasterWidget(
+          onTaskFilterSelected: _updateSelectedTaskFilter,
+        ),
+      ),
+      Flexible(
+        flex: 4,
+        child: Container(
+          padding: EdgeInsets.all(10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-
-       
-              Flexible(
-                flex: 2,
-                child: MainTaskFilterMasterWidget(
-                  onTaskFilterSelected: _updateSelectedTaskFilter,
+              if (_selectedTaskFilter != null && _selectedTaskFilter != '-2')
+                Text(
+                  'Selected Task Filter: $_selectedTaskFilter',
+                  style: const TextStyle(fontSize: 16),
                 ),
-              ),
-              Flexible(
-                flex: 3,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      if (_selectedTaskFilter != null && _selectedTaskFilter!='-2')
-                        Text(
-                          'Selected Task Filter: $_selectedTaskFilter',
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      if (errorMessage.isNotEmpty)
-                        Text(
-                          'Error: $errorMessage',
-                          style: const TextStyle(color: Colors.red, fontSize: 14),
-                        ),
-                    
-                    
-                      if (_showMainTaskWidget && _selectedTaskFilter != null && _selectedTaskFilter!='-2')
-                       
-                       
-           
-                       _showMainTasksSpinner?CircularProgressIndicator(color: Colors.orange): Expanded(
-                          child: MainTaskMasterWidget(
-                            taskList: _taskList,
-                            onTasksSelected: _onTasksSelected,
-                            selectedTaskIds: selectedTaskIds,
-                          ),
-                        )
-                      else
-                        const Text(
-                          'No tasks to display. Please select a valid task filter.',
-                          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                        ),
-                    ],
-                  ),
+              if (errorMessage.isNotEmpty)
+                Text(
+                  'Error: $errorMessage',
+                  style: const TextStyle(color: Colors.red, fontSize: 14),
                 ),
-              ),
-          Flexible(child:      Text(
-  _updatingStructureDetails? '...Updating Structure Details':''),),
-              Flexible(
-                flex:4,
-                
-                child:_viewSelectedTasks() ),
-
-                Flexible(
-                flex:1,
-                
-                child:ElevatedButton(onPressed: captureLocations, child: Text('Capture Locations')) )
+              if (_showMainTaskWidget && _selectedTaskFilter != null && _selectedTaskFilter != '-2')
+                _showMainTasksSpinner
+                    ? CircularProgressIndicator(color: Colors.orange)
+                    : SizedBox(
+                        height: 200, // Adjust the height based on your UI needs
+                        child: MainTaskMasterWidget(
+                          taskList: _taskList,
+                          onTasksSelected: _onTasksSelected,
+                          selectedTaskIds: selectedTaskIds,
+                        ),
+                      )
+              else
+                const Text(
+                  'No tasks to display. Please select a valid task filter.',
+                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                ),
             ],
           ),
+        ),
+      ),
+      Flexible(
+        child: Text(
+          _updatingStructureDetails ? '...Updating Structure Details' : '',
+        ),
+      ),
+      Flexible(
+        flex: 4,
+        child: _viewSelectedTasks(),
+      ),
+      Flexible(
+        flex: 4,
+        child: ElevatedButton(
+          onPressed: captureLocations,
+          child: Text('Capture Locations'),
+        ),
+      ),
+    ],
+  ),
+),
+
         ),
       ),
     );

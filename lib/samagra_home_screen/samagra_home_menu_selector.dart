@@ -141,7 +141,7 @@ class CategoryView extends StatelessWidget {
 
         return NewEstimateCreationLandingPage();
         return NewEstimateCreationLandingPage();
-        return AddNewWorkForm();
+        //return AddNewWorkForm();
         // return PrepareEstimate();
         /* else {
           return AlertDialog(
@@ -157,7 +157,7 @@ class CategoryView extends StatelessWidget {
       // Add more cases as needed
       default:
         return ComingSoon();
-        return AddNewWorkForm();
+       // return AddNewWorkForm();
         return ComingSoon();
       // return throw ArgumentError('Invalid target: $target');
     }

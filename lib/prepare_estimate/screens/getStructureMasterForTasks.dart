@@ -9,7 +9,7 @@ Future getStructureMasterForTask(int taskId) async {
 
   taskId=1403;
 
-   String baseUrl = "http://192.168.1.215:8000/api";
+   String baseUrl = "http://192.168.100.100:8000/api";
   final String url = '$baseUrl/getStructureMasterForTask/$taskId';
   
   try {

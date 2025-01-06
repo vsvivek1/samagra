@@ -65,7 +65,7 @@ class _MainTaskFilterMasterWidgetState
     if (_error != null) {
       return Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          // mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               _error!,
@@ -86,7 +86,7 @@ class _MainTaskFilterMasterWidgetState
       return const Center(
         child: Text(
           'No task filters available.',
-          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+          style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic),
         ),
       );
     }
