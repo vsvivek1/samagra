@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
@@ -191,12 +192,18 @@ class _SavedEstimateDetailsScreenState
   }
 
   List<Widget> _buildRowCells(dynamic item, dynamic fieldKeys) {
-    if (fieldKeys is String && item is Map<String, dynamic>) {
-      return [_buildTableCell(item[fieldKeys]?.toString() ?? 'N/A')];
+    if (fieldKeys is String && item is String) {
+      return [_buildTableCell(item ?? 'N/A')];
     }
-    if (fieldKeys is List && item is Map<String, dynamic>) {
-      return fieldKeys.map((key) => _buildTableCell(item[key]?.toString() ?? 'N/A')).toList();
+
+    debugger(when:true);
+    if (fieldKeys is List && item is  String //Map<String, dynamic>
+    
+    ) {
+      return fieldKeys.map((key) => _buildTableCell(item.toString() ?? 'N/A')).toList();
     }
+
+    //debugger(when:true);
     return [_buildTableCell('N/A')];
   }
 
