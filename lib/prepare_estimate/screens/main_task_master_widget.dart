@@ -13,10 +13,10 @@ class MainTaskMasterWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MainTaskMasterWidgetState createState() => _MainTaskMasterWidgetState();
+  MainTaskMasterWidgetState createState() => MainTaskMasterWidgetState();
 }
 
-class _MainTaskMasterWidgetState extends State<MainTaskMasterWidget> {
+class MainTaskMasterWidgetState extends State<MainTaskMasterWidget> {
   late List<String> selectedTaskIds;
 
   @override
@@ -25,6 +25,15 @@ class _MainTaskMasterWidgetState extends State<MainTaskMasterWidget> {
     selectedTaskIds = List.from(widget.selectedTaskIds);
   }
 
+
+void refreshState(){
+
+  print('refresh state');
+
+  setState(() {
+    
+  });
+}
   void _toggleSelection(String taskId) {
     setState(() {
       if (selectedTaskIds.contains(taskId)) {

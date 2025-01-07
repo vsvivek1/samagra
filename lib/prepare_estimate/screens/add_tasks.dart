@@ -38,6 +38,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   
   bool _savedToStorage=false;
 
+ final GlobalKey<MainTaskMasterWidgetState> taskMasterKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -117,14 +119,23 @@ selectedTasks.add(task);
 
 print(selectedTasks);
           // Optional: Fetch additional structure details if needed
+      var response = await getStructureMasterForTask(int.parse(taskId));
+
+      //return;
+
+      print(response);
+
+           debugger(when:true);
+
+
 
           setState(() {
   _updatingStructureDetails=true;
  //  _savedToStorage=false;
 });
-          var response = await getStructureMasterForTask(int.parse(taskId));
+    
 
-          
+
 
                     setState(() {
   _updatingStructureDetails=false;
@@ -154,6 +165,9 @@ print(selectedTasks);
       };
 
       // Push structureObject to task's structures
+
+      print(structureObject);
+     
       task['structures'].add(structureObject);
 
       
@@ -216,9 +230,13 @@ selectedTasks.add(task);
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
         
+          taskMasterKey.currentState?.refreshState(); // 
                 
                   setState(() {
                     selectedTasks.remove(task);
+
+                     
+
                   });
                 },
               ),
@@ -264,6 +282,7 @@ selectedTasks.add(task);
                           : SizedBox(
                               height: 200, // Adjust the height based on your UI needs
                               child: MainTaskMasterWidget(
+                                key:taskMasterKey ,
                                 taskList: _taskList,
                                 onTasksSelected: _onTasksSelected,
                                 selectedTaskIds: selectedTaskIds,

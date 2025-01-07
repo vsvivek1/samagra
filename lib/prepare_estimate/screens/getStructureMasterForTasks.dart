@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -15,6 +17,14 @@ Future getStructureMasterForTask(int taskId) async {
   try {
     // Send the GET request to the server
     final response = await http.get(Uri.parse(url));
+
+      print(response);
+
+           debugger(when:true);
+
+    print(response);
+
+    print('hi');
     
     // Check if the server response is successful (status code 200)
     if (response.statusCode == 200) {
