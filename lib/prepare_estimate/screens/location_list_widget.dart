@@ -119,7 +119,7 @@ class _LocationListWidgetState extends State<LocationListWidget> {
               final tasks = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AddTasksWidget(categoryId: '1'),
+                  builder: (context) => const AddTasksWidget(uuId: '1'),
                 ),
               );
 

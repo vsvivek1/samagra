@@ -158,7 +158,7 @@ class _CreateLocationState extends State<CreateLocation> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddTasksWidget(categoryId: '1'),
+              builder: (context) => AddTasksWidget(uuId: '1'),
             ),
           );
         },

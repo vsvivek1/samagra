@@ -129,7 +129,7 @@ class _SavedEstimateDetailsScreenState
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              AddTasksWidget(categoryId: widget.uuid),
+                              AddTasksWidget(uuId: widget.uuid),
                         ),
                       );
                     },

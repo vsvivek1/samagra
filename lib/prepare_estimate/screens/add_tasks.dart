@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -7,17 +8,20 @@ import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
 import 'package:samagra/prepare_estimate/screens/getStructureMasterForTasks.dart';
 import 'package:samagra/prepare_estimate/screens/main_task_master_widget.dart';
 import 'package:samagra/prepare_estimate/screens/main_tasks_filter_master_widget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AddTasksWidget extends StatefulWidget {
-  final String categoryId;
+  final String uuId;
 
-  const AddTasksWidget({Key? key, required this.categoryId}) : super(key: key);
+  const AddTasksWidget({Key? key, required this.uuId}) : super(key: key);
 
   @override
   _AddTasksWidgetState createState() => _AddTasksWidgetState();
 }
 
 class _AddTasksWidgetState extends State<AddTasksWidget> {
+
+    final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   String? _selectedTaskFilter = '-2';
   bool _showMainTaskWidget = true;
   Map<dynamic, dynamic>? user;
@@ -31,6 +35,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   var selectedTasks=[];
   
   var _updatingStructureDetails=false;
+  
+  bool _savedToStorage=false;
 
   @override
   void initState() {
@@ -91,6 +97,8 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
 
 void _onTasksSelected(List<String> value) async {
   try {
+
+
     for (var taskId in value) {
       // Check if the task already exists in selectedTasks
       bool alreadyExists = selectedTasks.any((task) => task['id'].toString() == taskId);
@@ -105,11 +113,14 @@ void _onTasksSelected(List<String> value) async {
         if (task.isNotEmpty) {
           // Add task to selectedTasks
           
+selectedTasks.add(task);
 
+print(selectedTasks);
           // Optional: Fetch additional structure details if needed
 
           setState(() {
   _updatingStructureDetails=true;
+ //  _savedToStorage=false;
 });
           var response = await getStructureMasterForTask(int.parse(taskId));
 
@@ -117,6 +128,7 @@ void _onTasksSelected(List<String> value) async {
 
                     setState(() {
   _updatingStructureDetails=false;
+ // _savedToStorage=false;
 });
    
 
@@ -181,33 +193,39 @@ selectedTasks.add(task);
       );
     }
 
-    return ListView.builder(
-      itemCount: selectedTasks.length,
-      itemBuilder: (context, index) {
-        final task = selectedTasks[index];
-        // final task = _taskList.firstWhere(
-        //   (task) => task['id'].toString() == taskId,
-        //   orElse: () => null,
-        // );
-
-        if (task == null) {
-          return const SizedBox.shrink();
-        }
-
-        return ListTile(
-          title: Text(task['main_task_name']),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-
-            
-              setState(() {
-                selectedTasks.remove(task);
-              });
-            },
-          ),
-        );
-      },
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(border: Border.all(color: Colors.black45),
+          color: Color(23)),
+        child: ListView.builder(
+          itemCount: selectedTasks.length,
+          itemBuilder: (context, index) {
+            final task = selectedTasks[index];
+            // final task = _taskList.firstWhere(
+            //   (task) => task['id'].toString() == taskId,
+            //   orElse: () => null,
+            // );
+        
+            if (task == null) {
+              return const SizedBox.shrink();
+            }
+        
+            return ListTile(
+              title: Text(task['main_task_name']),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+        
+                
+                  setState(() {
+                    selectedTasks.remove(task);
+                  });
+                },
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
   @override
@@ -219,72 +237,77 @@ selectedTasks.add(task);
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.all(15),
-          child: SingleChildScrollView(
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Flexible(
-        flex: 10,
-        child: MainTaskFilterMasterWidget(
-          onTaskFilterSelected: _updateSelectedTaskFilter,
-        ),
-      ),
-      Flexible(
-        flex: 4,
-        child: Container(
-          padding: EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (_selectedTaskFilter != null && _selectedTaskFilter != '-2')
-                Text(
-                  'Selected Task Filter: $_selectedTaskFilter',
-                  style: const TextStyle(fontSize: 16),
+              MainTaskFilterMasterWidget(
+                onTaskFilterSelected: _updateSelectedTaskFilter,
+              ),
+              Container(
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (_selectedTaskFilter != null && _selectedTaskFilter != '-2')
+                      Text(
+                        'Selected Task Filter: $_selectedTaskFilter',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    if (errorMessage.isNotEmpty)
+                      Text(
+                        'Error: $errorMessage',
+                        style: const TextStyle(color: Colors.red, fontSize: 14),
+                      ),
+                    if (_showMainTaskWidget && _selectedTaskFilter != null && _selectedTaskFilter != '-2')
+                      _showMainTasksSpinner
+                          ? CircularProgressIndicator(color: Colors.orange)
+                          : SizedBox(
+                              height: 200, // Adjust the height based on your UI needs
+                              child: MainTaskMasterWidget(
+                                taskList: _taskList,
+                                onTasksSelected: _onTasksSelected,
+                                selectedTaskIds: selectedTaskIds,
+                              ),
+                            )
+                    else
+                      const Text(
+                        'No tasks to display. Please select a valid task filter.',
+                        style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                      ),
+                  ],
                 ),
-              if (errorMessage.isNotEmpty)
-                Text(
-                  'Error: $errorMessage',
-                  style: const TextStyle(color: Colors.red, fontSize: 14),
-                ),
-              if (_showMainTaskWidget && _selectedTaskFilter != null && _selectedTaskFilter != '-2')
-                _showMainTasksSpinner
-                    ? CircularProgressIndicator(color: Colors.orange)
-                    : SizedBox(
-                        height: 200, // Adjust the height based on your UI needs
-                        child: MainTaskMasterWidget(
-                          taskList: _taskList,
-                          onTasksSelected: _onTasksSelected,
-                          selectedTaskIds: selectedTaskIds,
-                        ),
-                      )
-              else
-                const Text(
-                  'No tasks to display. Please select a valid task filter.',
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                ),
+              ),
+              Text(
+                _updatingStructureDetails ? '...Updating Structure Details' : '',
+              ),
+              Text('Selected Tasks',style: TextStyle(
+                
+                
+                fontSize: 20),),
+              _viewSelectedTasks(),
+
+!_savedToStorage?  ElevatedButton(
+                onPressed: saveToStorage,
+                child: Text('Save'),
+              ):
+
+_savedToStorage?  ElevatedButton(
+                onPressed: (){
+
+                  setState(() {
+                    _savedToStorage=false;
+                  });
+                },
+                child: Text('Edit'),
+              ):
+
+
+              ElevatedButton(
+                onPressed: captureLocations,
+                child: Text('Capture Locations'),
+              ),
             ],
           ),
-        ),
-      ),
-      Flexible(
-        child: Text(
-          _updatingStructureDetails ? '...Updating Structure Details' : '',
-        ),
-      ),
-      Flexible(
-        flex: 4,
-        child: _viewSelectedTasks(),
-      ),
-      Flexible(
-        flex: 4,
-        child: ElevatedButton(
-          onPressed: captureLocations,
-          child: Text('Capture Locations'),
-        ),
-      ),
-    ],
-  ),
-),
 
         ),
       ),
@@ -305,4 +328,66 @@ selectedTasks.add(task);
     
     );
   }
+
+
+
+    void saveToStorage() async {
+  try {
+    // Read the entire 'estimates' object from secure storage
+    final storedData = await _secureStorage.read(key: 'estimates');
+
+    if (storedData != null) {
+      // Parse the 'estimates' object
+      Map<String, dynamic> estimates = jsonDecode(storedData);
+
+      // Check if the specific 'uuid' exists
+      if (estimates.containsKey(widget.uuId)) {
+        // Get the specific estimate object by 'uuid'
+        Map<String, dynamic> estimate = estimates[widget.uuId];
+
+        // Modify the 'tasks' field with 'selectedTasks'
+        estimate['tasks'] = selectedTasks;
+
+        // Save the updated estimate back into 'estimates'
+        estimates[widget.uuId] = estimate;
+
+        // Write the updated 'estimates' back to storage
+        await _secureStorage.write(
+          key: 'estimates',
+          value: jsonEncode(estimates),
+        );
+
+        setState(() {
+          _savedToStorage = true;
+        });
+
+
+print(estimates);
+
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Tasks successfully saved to storage.')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No estimate found for the given UUID.')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No estimates data found in storage.')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error saving tasks to storage: ${e.toString()}')),
+    );
+  }
 }
+
+
+
+
+    
+  }
+
