@@ -9,6 +9,7 @@ import 'package:samagra/prepare_estimate/screens/getStructureMasterForTasks.dart
 import 'package:samagra/prepare_estimate/screens/main_task_master_widget.dart';
 import 'package:samagra/prepare_estimate/screens/main_tasks_filter_master_widget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:samagra/prepare_estimate/data_fetch_service.dart';
 
 class AddTasksWidget extends StatefulWidget {
   final String uuId;
@@ -20,6 +21,7 @@ class AddTasksWidget extends StatefulWidget {
 }
 
 class _AddTasksWidgetState extends State<AddTasksWidget> {
+    final DataFetchService _dataFetchService = DataFetchService();
 
     final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   String? _selectedTaskFilter = '-2';
@@ -98,7 +100,7 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   }
 
 void _onTasksSelected(List<String> value) async {
-  try {
+  //try {
 
 
     for (var taskId in value) {
@@ -119,6 +121,11 @@ selectedTasks.add(task);
 
 print(selectedTasks);
           // Optional: Fetch additional structure details if needed
+
+final fetchedStructureMasterForTask =
+          await _dataFetchService.fetchData('getStructureMasterForTask', taskId);
+
+
       var response = await getStructureMasterForTask(int.parse(taskId));
 
       //return;
@@ -192,9 +199,9 @@ selectedTasks.add(task);
     // Update UI after tasks are added
     setState(() {});
 
-  } catch (e) {
-    debugPrint('Error fetching structure for tasks: $e');
-  }
+  // } catch (e) {
+  //   debugPrint('Error fetching structure for tasks: $e');
+  // }
 }
 
 

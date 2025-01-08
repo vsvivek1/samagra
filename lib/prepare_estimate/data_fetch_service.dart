@@ -51,12 +51,19 @@ class DataFetchService {
       case 'mainTaskFilterMaster':
         url = "$baseUrl/getMainTaskFilterMaster";
         break;
+
+        case 'getStructureMasterForTask':
+        url = "$baseUrl/getStructureMasterForTask/$id";
+        break;
+
+
+
       default:
         throw Exception("Invalid type: $type");
     }
 
-    try {
-      // Show loader
+   try {
+    //  Show loader
       // GlobalLoader().show(navigatorKey.currentState!.overlay!.context);
       Fluttertoast.showToast(
         msg: "Fetching data, please wait...",
@@ -72,6 +79,8 @@ class DataFetchService {
       dio = await setAccessTockenToDio(dio);
       setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
 
+      print(url);
+
       final response = await dio.get(
         url,
         options: Options(headers: headers),
@@ -80,7 +89,7 @@ class DataFetchService {
 
 
 //debugger(when:true);
-print(response);
+//print(response);
       if (response.data != null &&
           response.data is Map<String, dynamic> &&
           response.data.containsKey('result_flag') &&
@@ -93,7 +102,17 @@ print(response);
           print(response.data['result_data']['list']);
           return List<Map<String, dynamic>>.from(
               response.data['result_data']['list']);
-        } else {
+        } 
+
+        else if (type == 'getStructureMasterForTask') {
+        //  print(response.data['result_data']['structureMaster']);
+          return List<Map<String, dynamic>>.from(
+              response.data['result_data']['structureMaster']);
+        } 
+        
+        
+        
+        else {
           print(response.data);
           return List<Map<String, dynamic>>.from(response.data);
         }
