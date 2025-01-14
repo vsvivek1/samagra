@@ -139,8 +139,8 @@ class _LocationListWidgetState extends State<LocationListWidget> {
               final newLocation = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const CreateLocation(
-                    tasks: [],
+                  builder: (context) => const CreateLocation(uuId:'1',
+                   
                   ),
                 ),
               );

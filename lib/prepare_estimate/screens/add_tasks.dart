@@ -132,7 +132,7 @@ final fetchedStructureMasterForTask =
 
       print(response);
 
-           debugger(when:true);
+           //debugger(when:true);
 
 
 
@@ -151,9 +151,8 @@ final fetchedStructureMasterForTask =
    
 
 
-          if (response['result_data'] != null &&
-      response['result_data']['structureMaster'] != null) {
-    List<dynamic> structureMaster = response['result_data']['structureMaster'];
+          if (response!=null) {
+    List<dynamic> structureMaster = response;
 
     // Ensure task has a 'structures' key as a list
     task['structures'] ??= []; // Initialize if null
@@ -317,7 +316,7 @@ selectedTasks.add(task);
                 child: Text('Save'),
               ):
 
-_savedToStorage?  ElevatedButton(
+  ElevatedButton(
                 onPressed: (){
 
                   setState(() {
@@ -325,11 +324,18 @@ _savedToStorage?  ElevatedButton(
                   });
                 },
                 child: Text('Edit'),
-              ):
+              ),
 
 
-              ElevatedButton(
-                onPressed: captureLocations,
+
+
+
+            if(_savedToStorage)   ElevatedButton(
+                onPressed:()=> {
+                  
+                  captureLocations(widget.uuId)
+                  
+                },
                 child: Text('Capture Locations'),
               ),
             ],
@@ -340,21 +346,14 @@ _savedToStorage?  ElevatedButton(
     );
   }
 
-  void captureLocations() {
-
-    Navigator.push(context, MaterialPageRoute(
-                                builder: (context) =>
-                                    
-                                    CreateLocation(tasks: [],)
-                                    // ReviewDetailsPage(workDetails: workDetails),
-                              )
-    
-
-    
-    
-    );
-  }
-
+captureLocations(String uuid) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => CreateLocation(uuId: uuid),
+    ),
+  );
+}
 
 
     void saveToStorage() async {

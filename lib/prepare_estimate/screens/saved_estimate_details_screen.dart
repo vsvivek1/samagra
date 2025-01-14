@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
@@ -31,6 +30,7 @@ class _SavedEstimateDetailsScreenState
       setState(() {
         isLoading = true;
       });
+
       final storedData = await _secureStorage.read(key: 'estimates');
       if (storedData != null) {
         final Map<String, dynamic> storedMap = jsonDecode(storedData);
@@ -70,7 +70,6 @@ class _SavedEstimateDetailsScreenState
       );
     }
 
-    // Extracting data
     final List<dynamic> sections = [
       {'title': 'Villages', 'data': estimateDetails?['villages'], 'keys': ['No.', 'Village Name'], 'field': 'village_name'},
       {'title': 'Assemblies', 'data': estimateDetails?['assemblies'], 'keys': ['No.', 'Assembly Name'], 'field': 'name'},
@@ -119,7 +118,7 @@ class _SavedEstimateDetailsScreenState
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pop(context); // Return for editing
+                      Navigator.pop(context);
                     },
                     child: Text('Edit'),
                   ),
@@ -145,12 +144,7 @@ class _SavedEstimateDetailsScreenState
   }
 
   Widget _buildTableSection(
-    BuildContext context,
-    String title,
-    List<dynamic> data,
-    List<String> headers,
-    dynamic fieldKeys,
-  ) {
+      BuildContext context, String title, List<dynamic> data, List<String> headers, dynamic fieldKeys) {
     if (data.isEmpty) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +174,7 @@ class _SavedEstimateDetailsScreenState
               final item = entry.value;
               return TableRow(
                 children: [
-                  _buildTableCell(index.toString()), // No.
+                  _buildTableCell(index.toString()),
                   ..._buildRowCells(item, fieldKeys),
                 ],
               );
@@ -191,21 +185,34 @@ class _SavedEstimateDetailsScreenState
     );
   }
 
-  List<Widget> _buildRowCells(dynamic item, dynamic fieldKeys) {
-    if (fieldKeys is String && item is String) {
-      return [_buildTableCell(item ?? 'N/A')];
-    }
-
-    debugger(when:true);
-    if (fieldKeys is List && item is  String //Map<String, dynamic>
-    
-    ) {
-      return fieldKeys.map((key) => _buildTableCell(item.toString() ?? 'N/A')).toList();
-    }
-
-    //debugger(when:true);
-    return [_buildTableCell('N/A')];
+ List<Widget> _buildRowCells(dynamic item, dynamic fieldKeys) {
+  // If the item is a String, just display it
+  if (item is String) {
+    return [_buildTableCell(item)];
   }
+
+  // If the item is a Map, access fields using keys
+  if (item is Map<String, dynamic>) {
+    if (fieldKeys is String) {
+      // Single field access
+      return [_buildTableCell(item[fieldKeys]?.toString() ?? 'N/A')];
+    } else if (fieldKeys is List) {
+      // Multiple fields access
+      return fieldKeys.map((key) {
+        return _buildTableCell(item[key]?.toString() ?? 'N/A');
+      }).toList();
+    }
+  }
+
+  // If the item is a List, join items into a string
+  if (item is List) {
+    return [_buildTableCell(item.join(', '))];
+  }
+
+  // Default fallback
+  return [_buildTableCell('N/A')];
+}
+
 
   Widget _buildTableCell(String text, {bool isHeader = false}) {
     return Padding(

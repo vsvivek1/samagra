@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:samagra/prepare_estimate/screens/saved_estimate_details_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
+import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
+import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
 import '../models/estimate_details.dart';
 
 final FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -33,56 +36,33 @@ class _NewEstimateCreationLandingPageState
       _isLoading = true;
     });
 
-   //try {
-      final storedData = await secureStorage.read(key: 'estimates');
-
-
-
-      if (storedData != null && storedData.isNotEmpty) {
-        final decodedData = jsonDecode(storedData);
-
-
-        if (decodedData is Map<String, dynamic>) {
-
-
-
-
-
-          final secureEstimates = decodedData.map(
-            (key, value) => MapEntry(
-              key, EstimateDetails.fromJson(value as Map<String, dynamic>),
-            ),
-          );
-
-
-print( secureEstimates);
-          setState(() {
-            _estimatesMap.clear();
-            _estimatesMap.addAll(secureEstimates);
-          });
-        } else {
-          // Log and handle if the stored data is not a valid map
-          print("Fetched data is not a valid Map<String, dynamic>: $decodedData");
-        }
+    final storedData = await secureStorage.read(key: 'estimates');
+    if (storedData != null && storedData.isNotEmpty) {
+      final decodedData = jsonDecode(storedData);
+      if (decodedData is Map<String, dynamic>) {
+        final secureEstimates = decodedData.map(
+          (key, value) => MapEntry(
+            key, EstimateDetails.fromJson(value as Map<String, dynamic>),
+          ),
+        );
+        setState(() {
+          _estimatesMap.clear();
+          _estimatesMap.addAll(secureEstimates);
+        });
       } else {
-        // Log if stored data is null or empty
-        print("No estimates found in secure storage.");
+        print("Fetched data is not a valid Map<String, dynamic>: $decodedData");
       }
-    // } catch (e) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text("Error fetching estimates: ${e.toString()}")),
-    //   );
-    //   print("Error decoding estimates: $e");
-    // } finally {
-       setState(() {
-        _isLoading = false;
-       });
-    // }
+    } else {
+      print("No estimates found in secure storage.");
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   /// Save a new estimate to secure storage
-  Future<void> _saveToSecureStorage(
-      String id, EstimateDetails workDetails) async {
+  Future<void> _saveToSecureStorage(String id, EstimateDetails workDetails) async {
     try {
       final storedData = await secureStorage.read(key: 'estimates');
       final Map<String, dynamic> storedMap =
@@ -102,6 +82,46 @@ print( secureEstimates);
     return _estimatesMap.entries
         .where((entry) => entry.value.status == _selectedStatus)
         .toList();
+  }
+
+  /// Navigate to the last visited screen for the estimate
+  Future<void> _navigateToLastScreen(String estimateId, EstimateDetails estimate) async {
+    Widget screenToNavigate;
+
+    // Navigate based on the last visited screen
+    switch (estimate.lastVisitedScreen) {
+
+      case 'SavedEstimateDetailsScreen':
+      screenToNavigate = SavedEstimateDetailsScreen(uuid: estimateId);
+      break;
+      case 'AddNewWorkForm':
+        screenToNavigate = AddNewWorkForm(uuid: estimateId);
+        break;
+      case 'CreateLocation':
+        screenToNavigate = CreateLocation(uuId: estimateId);
+        break;
+      case 'CapturePhotosWidget':
+        screenToNavigate = CapturePhotosWidget(uuid: estimateId,);
+        break;
+      default:
+
+      screenToNavigate = SavedEstimateDetailsScreen(uuid: estimateId);
+        //screenToNavigate = AddNewWorkForm(uuid: estimateId);
+    }
+
+
+
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => screenToNavigate),
+    );
+
+    if (result is EstimateDetails) {
+      setState(() {
+        _estimatesMap[estimateId] = result;
+      });
+      await _saveToSecureStorage(estimateId, result);
+    }
   }
 
   @override
@@ -167,7 +187,7 @@ print( secureEstimates);
                           leading: CircleAvatar(
                             backgroundColor: Colors.blueAccent,
                             child: Text(
-                              '${index + 1}', // Serial number
+                              '${index + 1}',
                               style: TextStyle(color: Colors.white),
                             ),
                           ),
@@ -175,29 +195,14 @@ print( secureEstimates);
                             estimate.name,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(
-                              'Status: ${estimate.status}\nDate: ${estimate.details['date']}'),
+                          subtitle: Text('Status: ${estimate.status}'),
                           trailing: Icon(Icons.arrow_forward_ios),
                           onTap: () async {
-                            if (_isNavigating) return; // Prevent duplicate navigation
+                            if (_isNavigating) return;
                             _isNavigating = true;
 
                             try {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddNewWorkForm(
-                                    uuid: estimateId,
-                                  ),
-                                ),
-                              );
-
-                              if (result is EstimateDetails) {
-                                setState(() {
-                                  _estimatesMap[estimateId] = result;
-                                });
-                                await _saveToSecureStorage(estimateId, result);
-                              }
+                              await _navigateToLastScreen(estimateId, estimate);
                             } finally {
                               _isNavigating = false;
                             }
@@ -210,24 +215,25 @@ print( secureEstimates);
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: Colors.blueAccent,
         onPressed: () async {
-          if (_isNavigating) return; // Prevent duplicate navigation
+          if (_isNavigating) return;
           _isNavigating = true;
 
           try {
             final newId = uuid.v4();
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddNewWorkForm(uuid: newId),
-              ),
+            final newEstimate = EstimateDetails(
+              name: 'New Estimate',
+              status: 'inProgress',
+              details: {'date': DateTime.now().toString()},
+              lastVisitedScreen: 'AddNewWorkForm',
             );
 
-            if (result is EstimateDetails) {
-              setState(() {
-                _estimatesMap[newId] = result;
-              });
-              await _saveToSecureStorage(newId, result);
-            }
+            setState(() {
+              _estimatesMap[newId] = newEstimate;
+            });
+
+            await _saveToSecureStorage(newId, newEstimate);
+
+            await _navigateToLastScreen(newId, newEstimate);
           } finally {
             _isNavigating = false;
           }

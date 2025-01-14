@@ -129,8 +129,8 @@ class _PublishInventoryItemTabState extends State<PublishInventoryItemTab> {
           ));
         }
 
-        // String apiUrl = 'http://192.168.100.100:8000/api/spares';
-        String apiUrl = 'http://192.168.100.100:8000/api/spares';
+        // String apiUrl = 'http://192.168.29.92:8000/api/spares';
+        String apiUrl = 'http://192.168.29.92:8000/api/spares';
         print('API URL: $apiUrl');
 
         Response response = await dio.post(

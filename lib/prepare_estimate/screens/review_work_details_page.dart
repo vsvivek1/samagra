@@ -63,7 +63,7 @@ class ReviewDetailsPage extends StatelessWidget {
         onPressed: () async {
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CreateLocation(tasks: [],)),
+            MaterialPageRoute(builder: (context) => CreateLocation(uuId: 'uuid',)),
           );
           // Navigate to a location form page to add a new location
           /*   ScaffoldMessenger.of(context).showSnackBar(
