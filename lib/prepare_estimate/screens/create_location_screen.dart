@@ -5,7 +5,6 @@ import 'package:samagra/prepare_estimate/capture_lat_long.dart';
 import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
 import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
 
-
 class CreateLocation extends StatefulWidget {
   final String uuId;
 
@@ -35,9 +34,12 @@ class _CreateLocationState extends State<CreateLocation> {
   /// Load data from secure storage
   Future<void> _loadEstimateData() async {
     String? storedData = await _secureStorage.read(key: widget.uuId);
+
+
     if (storedData != null) {
       setState(() {
         locationList = json.decode(storedData)["locationList"] ?? [];
+
         if (locationList.isNotEmpty) {
           _loadLocationDataByNumber(selectedLocationNumber);
         }
@@ -93,8 +95,8 @@ class _CreateLocationState extends State<CreateLocation> {
       "locationNumber": selectedLocationNumber,
       "geoCoordinates": geoCoordinates ??
           {
-            "latitude": 12.971598,
-            "longitude": 77.594566,
+            "latitude": 0,
+            "longitude": 0,
           },
       "accuracy": accuracy,
       "photos": photos,
@@ -182,11 +184,45 @@ class _CreateLocationState extends State<CreateLocation> {
             },
           ),
         ),
-        body: Row(
+        body: Column(
           children: [
+            // Scrollable Horizontal Vertical Location List
+           Expanded(
+  flex: 1,
+  child: Container(
+    color: Colors.grey[200],
+    child: ListView(
+      scrollDirection: Axis.horizontal,
+      children: [
+        // Iterate through location list and create circular avatars
+        for (int i = 0; i < locationList.length + 1; i++)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GestureDetector(
+              onTap: i < locationList.length
+                  ? () => _loadLocationDataByNumber(locationList[i]["locationNumber"])
+                  : _addNewLocation,
+              child: CircleAvatar(
+                radius: 25,
+                backgroundColor: i < locationList.length ? Colors.blue : Colors.green,
+                child: i < locationList.length
+                    ? Text(
+                        '${locationList[i]["locationNumber"]}',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      )
+                    : Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+          ),
+      ],
+    ),
+  ),
+)
+,
+
             // Main Form for Create/Edit Location
             Expanded(
-              flex: 3,
+              flex: 8,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -198,86 +234,48 @@ class _CreateLocationState extends State<CreateLocation> {
                     ),
                     SizedBox(height: 20),
 
-                    // Capture Lat-Long Button
+                    // Latitude and Longitude Section
                     ElevatedButton(
                       onPressed: _getLatLong,
-                      child: const Text('Capture Lat-Long'),
+                      child: Text((geoCoordinates == null) ? 'Capture Lat-Long':'Update Geo'),
                     ),
-
-                    if (geoCoordinates != null) ...[
-                      SizedBox(height: 10),
-                      Row(
+                    if (geoCoordinates != null)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
-                            child: Text(
-                              'Latitude: ${geoCoordinates!["latitude"]}, Longitude: ${geoCoordinates!["longitude"]}',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                          Text(
+                            'Latitude: ${geoCoordinates!["latitude"]}, Longitude: ${geoCoordinates!["longitude"]}',
                           ),
-                          IconButton(
-                            icon: Icon(Icons.edit, color: Colors.orange),
-                            onPressed: _getLatLong,
-                            tooltip: 'Edit Coordinates',
-                          ),
+                          if (accuracy != null)
+                            Text('Accuracy: ±${accuracy!.toStringAsFixed(2)} meters'),
                         ],
                       ),
-                      if (accuracy != null)
-                        Text(
-                          'Accuracy: ±${accuracy!.toStringAsFixed(2)} meters',
-                          style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                        ),
-                    ],
+                    Divider(color: Colors.blue, thickness: 2),
 
-                    SizedBox(height: 10),
-
-                    // Capture Photos Button
+                    // Photos Section
                     ElevatedButton(
                       onPressed: _navigateToCapturePhotos,
                       child: const Text('Capture Photos'),
                     ),
+                    if (photos.isNotEmpty)
+                      Text('${photos.length} Photo(s) Captured'),
+                    Divider(color: Colors.blue, thickness: 2),
 
-                    if (photos.isNotEmpty) ...[
-                      SizedBox(height: 10),
-                      Text(
-                        '${photos.length} Photo(s) Captured',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    // Placeholder for Tasks
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Expanded(child: Placeholder()),
+                        ],
                       ),
-                    ],
-
+                    ),
                     Spacer(),
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: _saveLocationData,
-                        child: const Text('Save Location'),
-                      ),
+                    ElevatedButton(
+                      onPressed: _saveLocationData,
+                      child: const Text('Save Location'),
                     ),
                   ],
                 ),
-              ),
-            ),
-
-            // Scrollable List of Locations
-            Container(
-              width: 100,
-              color: Colors.grey[200],
-              child: ListView.builder(
-                itemCount: locationList.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == locationList.length) {
-                    return ListTile(
-                      leading: Icon(Icons.add),
-                      title: Text('Add'),
-                      onTap: _addNewLocation,
-                    );
-                  }
-
-                  int locationNumber = locationList[index]["locationNumber"];
-                  return ListTile(
-                    title: Text('Loc $locationNumber'),
-                    selected: locationNumber == selectedLocationNumber,
-                    onTap: () => _loadLocationDataByNumber(locationNumber),
-                  );
-                },
               ),
             ),
           ],

@@ -24,10 +24,10 @@ class _InventoryAvailableTabState extends State<InventoryAvailableTab> {
   Future<void> fetchSpares() async {
     try {
 /*       String apiUrl3 =
-          'http://192.168.29.92:8000/api/spares'; */
+          'http://192.168.100.102:8000/api/spares'; */
 
       //String apiUrl3 =
-      String apiUrl = 'http://192.168.29.92:8000/api/spares';
+      String apiUrl = 'http://192.168.100.102:8000/api/spares';
 
       // Replace with your actual API URL
       final response = await dio.get(apiUrl);
