@@ -180,9 +180,18 @@ class _CapturePhotosWidgetState extends State<CapturePhotosWidget> {
                     'No photos selected yet.',
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
+
+                  Text('After completing capturing of photos click the below button'),
+                  IconButton.outlined( color:Colors.amber,
+                    
+                    onPressed: returnToCaptureLocation, icon: Icon(Icons.arrow_back))
           ],
         ),
       ),
     );
+  }
+
+  void returnToCaptureLocation() {
+      Navigator.pop(context);
   }
 }
