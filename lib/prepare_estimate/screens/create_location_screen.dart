@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/prepare_estimate/capture_lat_long.dart';
 import 'package:samagra/prepare_estimate/screens/add_tasks.dart';
 import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
+import 'package:samagra/prepare_estimate/screens/task_heirachy_of_structures.dart';
 
 class CreateLocation extends StatefulWidget {
   final String uuId;
@@ -265,11 +266,11 @@ class _CreateLocationState extends State<CreateLocation> {
                     Expanded(
                       child: Column(
                         children: [
-                          Expanded(child: Placeholder()),
+                          Expanded(child: TaskHierarchyOfLocation()),
                         ],
                       ),
                     ),
-                    Spacer(),
+                    //Spacer(),
                     ElevatedButton(
                       onPressed: _saveLocationData,
                       child: const Text('Save Location'),
