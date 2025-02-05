@@ -165,7 +165,7 @@ class _TaskHierarchyOfLocationState extends State<TaskHierarchyOfLocation> {
                                               ),
                                             ),
                                             SizedBox(
-                                              width: 10,
+                                              width: 50,
                                               child: TextFormField(
                                                 initialValue: structure['qty']
                                                     .toString(),
@@ -234,12 +234,22 @@ class _TaskHierarchyOfLocationState extends State<TaskHierarchyOfLocation> {
                                     // Labours Tab
                                     ListView.builder(
                                       itemCount:
-                                          selectedDetails!['labours'].length,
+                                          selectedDetails!['labours'].length+1,
                                       itemBuilder: (context, index) {
+
+
+                                          if(index==selectedDetails!['labours'].length){
+
+                                              return ElevatedButton(onPressed: saveLabour, child: Text('Save labour'));
+                                            }
                                         final labour =
                                             selectedDetails['labours'][index];
+
+
+
+                                          
                                         return ListTile(
-                                          title: Text(labour['type']),
+                                          title: Text(labour['type']+selectedDetails!['labours'].length.toString()+index.toString()),
                                           trailing: SizedBox(
                                             width: 50,
                                             child: TextFormField(
@@ -257,6 +267,7 @@ class _TaskHierarchyOfLocationState extends State<TaskHierarchyOfLocation> {
                                                       int.tryParse(value) ??
                                                           labour['quantity'];
                                                 });
+                                                
                                               },
                                             ),
                                           ),
@@ -266,14 +277,20 @@ class _TaskHierarchyOfLocationState extends State<TaskHierarchyOfLocation> {
                                     // Materials Tab
                                     ListView.builder(
                                       itemCount:
-                                          selectedDetails['materials'].length,
+                                          selectedDetails['materials'].length+1,
                                       itemBuilder: (context, index) {
+
+if(index==selectedDetails!['materials'].length){
+
+                                              return ElevatedButton(onPressed: saveMaterials, child: Text('Save Materials'));
+                                            }
+
                                         final material =
                                             selectedDetails['materials'][index];
                                         return ListTile(
                                           title: Text(material['type']),
                                           trailing: SizedBox(
-                                            width: 25,
+                                            width: 50,
                                             child: TextFormField(
                                               initialValue:
                                                   material['quantity']
@@ -299,11 +316,20 @@ class _TaskHierarchyOfLocationState extends State<TaskHierarchyOfLocation> {
                                     // Taken Backs Tab
                                     ListView.builder(
                                       itemCount:
-                                          selectedDetails['takenBacks'].length,
+                                          selectedDetails['takenBacks'].length + 1,
                                       itemBuilder: (context, index) {
+
+
+if(index==selectedDetails!['takenBacks'].length){
+
+                                              return ElevatedButton(onPressed: saveMaterials,
+                                               child: Text('Save Takenbacks'));
+                                            }
                                         final takenBack =
                                             selectedDetails['takenBacks']
                                                 [index];
+
+
                                         return ListTile(
                                           title: Text(takenBack['type']),
                                           trailing: SizedBox(
@@ -343,5 +369,11 @@ class _TaskHierarchyOfLocationState extends State<TaskHierarchyOfLocation> {
         ],
       ),
     );
+  }
+
+  void saveLabour() {
+  }
+
+  void saveMaterials() {
   }
 }
