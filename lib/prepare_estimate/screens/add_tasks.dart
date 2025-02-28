@@ -264,9 +264,9 @@ selectedTasks.add(task);
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MainTaskFilterMasterWidget(
-                onTaskFilterSelected: _updateSelectedTaskFilter,
-              ),
+              // MainTaskFilterMasterWidget(
+              //   onTaskFilterSelected: _updateSelectedTaskFilter,
+              // ),
               Container(
                 padding: EdgeInsets.all(10),
                 child: Column(

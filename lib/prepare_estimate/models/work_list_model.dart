@@ -10,3 +10,4 @@ class WorkListModel {
     required this.details,
   });
 }
+ 

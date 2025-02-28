@@ -130,6 +130,7 @@ class MeasurementDataToWorkModule {
       // 9231004321
 
       'polevar_data': jsonEncode(polevar_data),
+      'submit_to_head':submit_to_head
 
       // 'polevar_data': convertMapKeysToString(polevar_data),
       // 'taskMeasurements': convertMapKeysToString(taskMeasurements),
