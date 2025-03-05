@@ -254,10 +254,10 @@ class _CreateLocationState extends State<CreateLocation> {
                     Divider(color: Colors.blue, thickness: 2),
 
                     // Photos Section
-                    ElevatedButton(
-                      onPressed: _navigateToCapturePhotos,
-                      child: const Text('Capture Photos'),
-                    ),
+                    // ElevatedButton(
+                    //   onPressed: _navigateToCapturePhotos,
+                    //   child: const Text('Capture Photos'),
+                    // ),
                     if (photos.isNotEmpty)
                       Text('${photos.length} Photo(s) Captured'),
                     Divider(color: Colors.blue, thickness: 2),
