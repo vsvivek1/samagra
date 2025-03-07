@@ -4,12 +4,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:samagra/common.dart';
 import 'package:samagra/prepare_estimate/getMainTaskMaster.dart';
+import 'package:samagra/prepare_estimate/getTasksBySbu.dart';
+import 'package:samagra/prepare_estimate/screens/check_and_refresh_data.dart';
 import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
 import 'package:samagra/prepare_estimate/screens/getStructureMasterForTasks.dart';
 import 'package:samagra/prepare_estimate/screens/main_task_master_widget.dart';
 import 'package:samagra/prepare_estimate/screens/main_tasks_filter_master_widget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/prepare_estimate/data_fetch_service.dart';
+import 'package:samagra/prepare_estimate/screens/tasks_mult_select.dart';
 
 class AddTasksWidget extends StatefulWidget {
   final String uuId;
@@ -21,9 +24,9 @@ class AddTasksWidget extends StatefulWidget {
 }
 
 class _AddTasksWidgetState extends State<AddTasksWidget> {
-    final DataFetchService _dataFetchService = DataFetchService();
+  final DataFetchService _dataFetchService = DataFetchService();
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
 
-    final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   String? _selectedTaskFilter = '-2';
   bool _showMainTaskWidget = true;
   Map<dynamic, dynamic>? user;
@@ -31,16 +34,15 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   String errorMessage = '';
   List<dynamic> _taskList = [];
   List<String> selectedTaskIds = [];
-  
-  bool _showMainTasksSpinner=false;
-  
-  var selectedTasks=[];
-  
-  var _updatingStructureDetails=false;
-  
-  bool _savedToStorage=false;
+  bool _showMainTasksSpinner = false;
+  var selectedTasks = [];
+  var _updatingStructureDetails = false;
+  bool _savedToStorage = false;
+  bool _fetchingTasks = false;
 
- final GlobalKey<MainTaskMasterWidgetState> taskMasterKey = GlobalKey();
+  final GlobalKey<MainTaskMasterWidgetState> taskMasterKey = GlobalKey();
+  
+ List<Map<String, dynamic>> allTasks=[];
 
   @override
   void initState() {
@@ -54,158 +56,75 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
     super.dispose();
   }
 
-  Future<void> _updateSelectedTaskFilter(String? taskFilter) async {
+  /// Fetch and store all tasks in local storage
+  Future<void> fetchAndStoreTasks() async {
+    setState(() {
+      _fetchingTasks = true;
+    });
+
     try {
       user = await getUser();
-
-      if (user == null) {
-        throw Exception('Failed to fetch user data.');
-      }
+      if (user == null) throw Exception('Failed to fetch user data.');
 
       sbuId = user?['user']?['seats']?.firstWhere(
-              (seat) =>
-                  seat['mst_seat_id'] == user?['user']?['current_seat_id'],
+              (seat) => seat['mst_seat_id'] == user?['user']?['current_seat_id'],
               orElse: () => null)?['office']?['office_detail']?['mst_sbu_id'] ??
           4;
 
-      //if (!mounted) return;
+      // Fetch tasks from API
+      var response = await getMainTaskMaster(sbuId, 3, 2);
+      List<dynamic> tasks = response['result_data']['list'];
+
+      // Save tasks to local storage under key 'mst_tasks'
+      await _secureStorage.write(key: 'mst_tasks', value: jsonEncode(tasks));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tasks successfully saved to storage as mst_tasks')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching tasks: ${e.toString()}')),
+      );
+    } finally {
+      setState(() {
+        _fetchingTasks = false;
+      });
+    }
+  }
+
+  /// Fetch and update selected tasks
+  Future<void> _updateSelectedTaskFilter(String? taskFilter) async {
+    try {
+      user = await getUser();
+      if (user == null) throw Exception('Failed to fetch user data.');
+
+      sbuId = user?['user']?['seats']?.firstWhere(
+              (seat) => seat['mst_seat_id'] == user?['user']?['current_seat_id'],
+              orElse: () => null)?['office']?['office_detail']?['mst_sbu_id'] ??
+          4;
 
       setState(() {
         _selectedTaskFilter = taskFilter;
         _showMainTaskWidget = taskFilter != null && taskFilter.isNotEmpty;
-
-        _showMainTasksSpinner=true;
+        _showMainTasksSpinner = true;
       });
 
-      // Call API to fetch tasks
-
-      
       var response = await getMainTaskMaster(sbuId, 3, 2);
-      
-
-      //debugger(when:true);
-
       setState(() {
         _taskList = response['result_data']['list'];
-         _showMainTasksSpinner=false;
+        _showMainTasksSpinner = false;
       });
     } catch (e, stackTrace) {
       debugPrint('Error in _updateSelectedTaskFilter: $e');
       debugPrintStack(stackTrace: stackTrace);
-
       setState(() {
         errorMessage = e.toString();
       });
     }
   }
 
-void _onTasksSelected(List<String> value) async {
-  //try {
-
-
-    for (var taskId in value) {
-      // Check if the task already exists in selectedTasks
-      bool alreadyExists = selectedTasks.any((task) => task['id'].toString() == taskId);
-
-      if (!alreadyExists) {
-        // Fetch task details
-        var task = _taskList.firstWhere(
-          (t) => t['id'].toString() == taskId,
-          orElse: () => {}, // Default to empty map if not found
-        );
-
-        if (task.isNotEmpty) {
-          // Add task to selectedTasks
-          
-selectedTasks.add(task);
-
-print(selectedTasks);
-          // Optional: Fetch additional structure details if needed
-
-final fetchedStructureMasterForTask =
-          await _dataFetchService.fetchData('getStructureMasterForTask', taskId);
-
-
-      var response = await getStructureMasterForTask(int.parse(taskId));
-
-      //return;
-
-      print(response);
-
-           //debugger(when:true);
-
-
-
-          setState(() {
-  _updatingStructureDetails=true;
- //  _savedToStorage=false;
-});
-    
-
-
-
-                    setState(() {
-  _updatingStructureDetails=false;
- // _savedToStorage=false;
-});
-   
-
-
-          if (response!=null) {
-    List<dynamic> structureMaster = response;
-
-    // Ensure task has a 'structures' key as a list
-    task['structures'] ??= []; // Initialize if null
-
-    for (var structure in structureMaster) {
-      // Extract details into a structure object
-      Map<String, dynamic> structureObject = {
-        'id': structure['id'],
-        'structure_code': structure['structure_code'].toString(),
-        'structure_name': structure['structure_name'],
-        'mst_uom_id': structure['mst_uom_id'],
-        'start_date': structure['start_date'],
-        'updated_at': structure['updated_at'],
-        'uom_code': structure['mst_uom']?['uom_code'] ?? 'N/A',
-        'uom_descr': structure['mst_uom']?['uom_descr'] ?? 'N/A',
-      };
-
-      // Push structureObject to task's structures
-
-      print(structureObject);
-     
-      task['structures'].add(structureObject);
-
-      
-    }
-
-    print('Updated Task with Structures: $task');
-  } else {
-    print('No structureMaster data found.');
-  }
-
-                  setState(() {
-  _updatingStructureDetails=false;
-});
-
-
-selectedTasks.add(task);
-          log('Task ID: $taskId, Structure: $response');
-        }
-      }
-    }
-
-    // Update UI after tasks are added
-    setState(() {});
-
-  // } catch (e) {
-  //   debugPrint('Error fetching structure for tasks: $e');
-  // }
-}
-
-
-
- Widget _viewSelectedTasks() {
+  /// Build the selected tasks list
+  Widget _viewSelectedTasks() {
     if (selectedTasks.isEmpty) {
       return const Text(
         'No tasks selected.',
@@ -215,34 +134,24 @@ selectedTasks.add(task);
 
     return Expanded(
       child: Container(
-        decoration: BoxDecoration(border: Border.all(color: Colors.black45),
-          color: Color(23)),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.black45),
+          color: Colors.white,
+        ),
         child: ListView.builder(
           itemCount: selectedTasks.length,
           itemBuilder: (context, index) {
             final task = selectedTasks[index];
-            // final task = _taskList.firstWhere(
-            //   (task) => task['id'].toString() == taskId,
-            //   orElse: () => null,
-            // );
-        
-            if (task == null) {
-              return const SizedBox.shrink();
-            }
-        
+            if (task == null) return const SizedBox.shrink();
+
             return ListTile(
               title: Text(task['main_task_name']),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-        
-          taskMasterKey.currentState?.refreshState(); // 
-                
+                  taskMasterKey.currentState?.refreshState();
                   setState(() {
                     selectedTasks.remove(task);
-
-                     
-
                   });
                 },
               ),
@@ -252,167 +161,129 @@ selectedTasks.add(task);
       ),
     );
   }
+
+  /// Build the widget UI
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Tasks'),
-      ),
+      appBar: AppBar(title: const Text('Add Tasks')),
       body: SafeArea(
         child: Container(
           margin: EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // MainTaskFilterMasterWidget(
-              //   onTaskFilterSelected: _updateSelectedTaskFilter,
-              // ),
-              Container(
-                padding: EdgeInsets.all(10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (_selectedTaskFilter != null && _selectedTaskFilter != '-2')
-                      Text(
-                        'Selected Task Filter: $_selectedTaskFilter',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    if (errorMessage.isNotEmpty)
-                      Text(
-                        'Error: $errorMessage',
-                        style: const TextStyle(color: Colors.red, fontSize: 14),
-                      ),
-                    if (_showMainTaskWidget && _selectedTaskFilter != null && _selectedTaskFilter != '-2')
-                      _showMainTasksSpinner
-                          ? CircularProgressIndicator(color: Colors.orange)
-                          : SizedBox(
-                              height: 200, // Adjust the height based on your UI needs
-                              child: MainTaskMasterWidget(
-                                key:taskMasterKey ,
-                                taskList: _taskList,
-                                onTasksSelected: _onTasksSelected,
-                                selectedTaskIds: selectedTaskIds,
-                              ),
-                            )
-                    else
-                      const Text(
-                        'No tasks to display. Please select a valid task filter.',
-                        style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-                      ),
-                  ],
-                ),
+              // Fetch and Save Tasks Button
+              ElevatedButton(
+                onPressed: _fetchingTasks ? null :()=> fetchTasksIfNeeded(4),
+                child: _fetchingTasks
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text('Fetch and Save Tasks'),
               ),
-              Text(
-                _updatingStructureDetails ? '...Updating Structure Details' : '',
-              ),
-              Text('Selected Tasks',style: TextStyle(
-                
-                
-                fontSize: 20),),
+
+
+              Expanded(
+            child: TaskMultiSelect(
+              tasks: allTasks,
+              onSelectionChanged: _onTasksSelected,
+            ),
+          ),
+              SizedBox(height: 10),
+
+              // Show Task List
+              if (_selectedTaskFilter != null && _selectedTaskFilter != '-2')
+                Text('Selected Task Filter: $_selectedTaskFilter',
+                    style: const TextStyle(fontSize: 16)),
+
+              if (errorMessage.isNotEmpty)
+                Text('Error: $errorMessage',
+                    style: const TextStyle(color: Colors.red, fontSize: 14)),
+
+              if (_showMainTaskWidget &&
+                  _selectedTaskFilter != null &&
+                  _selectedTaskFilter != '-2')
+                _showMainTasksSpinner
+                    ? CircularProgressIndicator(color: Colors.orange)
+                    : SizedBox(
+                        height: 200,
+                        // child: 
+                        
+                        // MainTaskMasterWidget(
+                        //   key: taskMasterKey,
+                        //   taskList: _taskList,
+                        //   onTasksSelected: _onTasksSelected,
+                        //   selectedTaskIds: selectedTaskIds,
+                        // ),
+                      )
+              else
+                const Text('No tasks to display. Please select a valid task filter.',
+                    style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
+
+              // Show Selected Tasks
+              Text('Selected Tasks', style: TextStyle(fontSize: 20)),
               _viewSelectedTasks(),
 
-!_savedToStorage?  ElevatedButton(
-                onPressed: saveToStorage,
-                child: Text('Save'),
-              ):
+              !_savedToStorage
+                  ? ElevatedButton(
+                      onPressed: saveToStorage,
+                      child: Text('Save'),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _savedToStorage = false;
+                        });
+                      },
+                      child: Text('Edit'),
+                    ),
 
-  ElevatedButton(
-                onPressed: (){
-
-                  setState(() {
-                    _savedToStorage=false;
-                  });
-                },
-                child: Text('Edit'),
-              ),
-
-
-
-
-
-            if(_savedToStorage)   ElevatedButton(
-                onPressed:()=> {
-                  
-                  captureLocations(widget.uuId)
-                  
-                },
-                child: Text('Capture Locations'),
-              ),
+              if (_savedToStorage)
+                ElevatedButton(
+                  onPressed: () => captureLocations(widget.uuId),
+                  child: Text('Capture Locations'),
+                ),
             ],
           ),
-
         ),
       ),
     );
   }
 
-captureLocations(String uuid) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => CreateLocation(uuId: uuid),
-    ),
-  );
-}
-
-
-    void saveToStorage() async {
-  try {
-    // Read the entire 'estimates' object from secure storage
-    final storedData = await _secureStorage.read(key: 'estimates');
-
-    if (storedData != null) {
-      // Parse the 'estimates' object
-      Map<String, dynamic> estimates = jsonDecode(storedData);
-
-      // Check if the specific 'uuid' exists
-      if (estimates.containsKey(widget.uuId)) {
-        // Get the specific estimate object by 'uuid'
-        Map<String, dynamic> estimate = estimates[widget.uuId];
-
-        // Modify the 'tasks' field with 'selectedTasks'
-        estimate['tasks'] = selectedTasks;
-
-        // Save the updated estimate back into 'estimates'
-        estimates[widget.uuId] = estimate;
-
-        // Write the updated 'estimates' back to storage
-        await _secureStorage.write(
-          key: 'estimates',
-          value: jsonEncode(estimates),
-        );
-
-        setState(() {
-          _savedToStorage = true;
-        });
-
-
-print(estimates);
-
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Tasks successfully saved to storage.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('No estimate found for the given UUID.')),
-        );
-      }
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No estimates data found in storage.')),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error saving tasks to storage: ${e.toString()}')),
+  /// Navigate to Create Location Screen
+  void captureLocations(String uuid) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CreateLocation(uuId: uuid)),
     );
   }
+
+Future<void> fetchTasksIfNeeded(int sbuId) async {
+  String result1 = await checkAndRefreshData(
+    storageKey: 'mst_tasks_sbu',
+    timestampKey: 'mst_tasks_sbu_timestamp',
+    refreshFunction: () => getTasksBySbu(sbuId),
+  );
+
+
+
+ var result =jsonDecode(result1);
+setState(() {
+  allTasks=List<Map<String, dynamic>>.from(result['result_data']);
+});
+  print('Final Retrieved Data: $allTasks');
 }
 
+ void _onTasksSelected(List<Map<String, dynamic>> selected) {
+    setState(() {
+      selectedTasks = selected;
+    });
 
-
-
-    
+    print('Selected Tasks: $selectedTasks'); // Handle the selection change
   }
 
+  // void _onTasksSelected(List<String> value) {
+  // }
+
+  void saveToStorage() {
+  }
+}
