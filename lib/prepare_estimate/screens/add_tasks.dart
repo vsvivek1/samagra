@@ -12,6 +12,7 @@ import 'package:samagra/prepare_estimate/screens/main_task_master_widget.dart';
 import 'package:samagra/prepare_estimate/screens/main_tasks_filter_master_widget.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:samagra/prepare_estimate/data_fetch_service.dart';
+import 'package:samagra/prepare_estimate/screens/tasks_api_services.dart';
 import 'package:samagra/prepare_estimate/screens/tasks_mult_select.dart';
 
 class AddTasksWidget extends StatefulWidget {
@@ -71,8 +72,20 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
               orElse: () => null)?['office']?['office_detail']?['mst_sbu_id'] ??
           4;
 
+
+
       // Fetch tasks from API
+
+
       var response = await getMainTaskMaster(sbuId, 3, 2);
+
+
+
+
+
+
+
+
       List<dynamic> tasks = response['result_data']['list'];
 
       // Save tasks to local storage under key 'mst_tasks'
@@ -258,6 +271,14 @@ class _AddTasksWidgetState extends State<AddTasksWidget> {
   }
 
 Future<void> fetchTasksIfNeeded(int sbuId) async {
+
+final TaskService _taskService = TaskService();
+  List<dynamic> tasks = [];
+
+var tasktree=await  _taskService.getAllTaskTreesBySbu( sbuId);
+
+//debugPrint(tasktree);
+
   String result1 = await checkAndRefreshData(
     storageKey: 'mst_tasks_sbu',
     timestampKey: 'mst_tasks_sbu_timestamp',
