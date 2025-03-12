@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:samagra/prepare_estimate/screens/formatTaskResponseFromServer.dart';
+import 'package:samagra/screens/send_to_mail.dart';
 
 class TaskService {
   final Dio _dio = Dio();
@@ -49,11 +51,17 @@ class TaskService {
     
       Response response = await _dio.get(base);
 
+      
 
-      return response.data;
+     var tasks= formatTaskResponse(response.data);
+
+gmailMe(tasks);
+
+      return tasks;
     // } catch (e) {
     //   print("Error fetching task trees by SBU: $e");
     //   return {"error": "Failed to fetch tasks for SBU"};
     // }
   }
 }
+
