@@ -29,7 +29,7 @@ class HomeList {
       // navigateScreen: FitnessAppHomeScreen(),
     ),
     HomeList(
-      text: 'Spares Management',
+      text: 'Spares Management (DEMO only)',
       imagePath: 'assets/images/spares_management.webp',
       navigateScreen: SparesManagement(),
       // navigateScreen: FitnessAppHomeScreen(),

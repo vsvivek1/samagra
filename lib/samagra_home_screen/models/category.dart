@@ -118,7 +118,7 @@ class Category {
     Category(
       imagePath: 'assets/images/spares_management.webp',
       target: 'SparesManagement',
-      title: 'Spares Management',
+      title: 'Manage Spares-Demo Only',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
@@ -126,7 +126,7 @@ class Category {
     Category(
       imagePath: 'assets/images/electrical_drawings.webp',
       target: 'TechnicalDocuments',
-      title: 'Technical Documents',
+      title: 'Tech Documents  (Demo Only)',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
@@ -134,7 +134,7 @@ class Category {
     Category(
       imagePath: 'assets/images/helpImage.png',
       target: 'Ask',
-      title: 'Ask',
+      title: 'Ask(Demo Only)',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
@@ -142,7 +142,7 @@ class Category {
     Category(
       imagePath: 'assets/samagra_home_screen/prepare_estimate.webp',
       target: 'prepareEstimate',
-      title: 'Prepare Estimate',
+      title: 'Prepare Estimate (Demo Only)',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
@@ -150,7 +150,7 @@ class Category {
     Category(
       imagePath: 'assets/images/request.webp',
       target: 'PrefilledSubmissions',
-      title: 'Prefilled Forms',
+      title: 'Prefilled Forms  (Demo Only)',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
@@ -158,7 +158,7 @@ class Category {
     Category(
       imagePath: 'assets/images/request.webp',
       target: 'Trainings',
-      title: 'Trainings',
+      title: 'Trainings  (Demo Only)',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
