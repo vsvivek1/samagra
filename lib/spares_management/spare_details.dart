@@ -29,7 +29,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
   Future<void> fetchInterestedPeople() async {
     try {
       String apiUrl =
-          'http://192.168.100.101:8000/api/spares/${widget.spare['id']}/interested';
+          'http://192.168.100.100:8000/api/spares/${widget.spare['id']}/interested';
       final response = await dio.get(apiUrl);
 
       if (response.statusCode == 200) {
@@ -50,7 +50,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
   Future<void> fetchComments() async {
     try {
       String commentsUrl =
-          'http://192.168.100.101:8000/api/spares/${widget.spare['id']}/comments';
+          'http://192.168.100.100:8000/api/spares/${widget.spare['id']}/comments';
       final response = await dio.get(commentsUrl);
 
       if (response.statusCode == 200) {
@@ -71,7 +71,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
   Future<void> expressInterest() async {
     try {
       String interestUrl =
-          'http://192.168.100.101:8000/api/spares/${widget.spare['id']}/express-interest';
+          'http://192.168.100.100:8000/api/spares/${widget.spare['id']}/express-interest';
       final response = await dio.post(interestUrl);
 
       if (response.statusCode == 200) {
@@ -93,7 +93,7 @@ class _SpareDetailsPageState extends State<SpareDetailsPage> {
     if (commentController.text.trim().isEmpty) return;
     try {
       String commentsUrl =
-          'http://192.168.100.101:8000/api/spares/${widget.spare['id']}/comments';
+          'http://192.168.100.100:8000/api/spares/${widget.spare['id']}/comments';
       final response = await dio.post(
         commentsUrl,
         data: {'comment': commentController.text.trim()},

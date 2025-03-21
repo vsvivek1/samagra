@@ -47,6 +47,8 @@ class _SamagraHomeMenuSelectorViewState
   void dispose() {
     // TODO: implement dispose
     animationController?.dispose();
+  
+   
     super.dispose();
   }
 
@@ -176,6 +178,49 @@ class CategoryView extends StatelessWidget {
   final AnimationController? animationController;
   final Animation<double>? animation;
 
+
+
+
+    void _showCodeDialog(BuildContext context, String target) {
+    TextEditingController _codeController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Enter Code'),
+          content: TextField(
+            controller: _codeController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(hintText: "Enter the code"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (_codeController.text == '210882') {
+                  Navigator.pop(context); // Close the dialog
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) {
+                      return getTargetWidget(target);
+                    }),
+                  );
+                }
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -209,15 +254,21 @@ class CategoryView extends StatelessWidget {
                     // Reset the tap count
                     tapCount = 0;
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) {
-                        return getTargetWidget(category!.target);
-                      }
-                          // PhoneBook
 
-                          ),
-                    );
+                    _showCodeDialog(context, category!.target);
+
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(builder: (context) {
+                    //     return getTargetWidget(category!.target);
+                    //   }
+                    //       // PhoneBook
+
+                    //       ),
+                    // );
+
+
+
                   }
                 } else {
                   Navigator.push(
@@ -230,7 +281,9 @@ class CategoryView extends StatelessWidget {
                         ),
                   );
                 }
-              },
+              }
+              
+              ,
               // onTap: () {
               //   Widget? destinationScreen = category?.target();
               //   if (destinationScreen != null) {

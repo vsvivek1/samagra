@@ -35,7 +35,7 @@ class DataFetchService {
   /// Builds API URL based on the type using a switch case
   Future<List<Map<String, dynamic>>> fetchData(String type, dynamic id) async {
     String url;
-    baseUrl = "http://192.168.100.101:8000/api"; // kfon
+    baseUrl = "http://192.168.100.100:8000/api"; // kfon
     print("Base URL: $baseUrl");
 
     switch (type) {
