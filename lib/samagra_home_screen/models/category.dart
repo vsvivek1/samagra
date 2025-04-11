@@ -115,6 +115,18 @@ class Category {
       money: 208,
       rating: 4.9,
     ),
+
+
+ Category(
+      imagePath: 'assets/images/electrical_drawings.webp',
+      target: 'MaterialsManagement',
+      title: 'Materials Demo Only',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
+
+
     Category(
       imagePath: 'assets/images/spares_management.webp',
       target: 'SparesManagement',

@@ -10,6 +10,7 @@ import 'package:samagra/samagra_home_screen/design_course_app_theme.dart';
 import 'package:samagra/samagra_home_screen/models/category.dart';
 import 'package:samagra/main.dart';
 import 'package:flutter/material.dart';
+import 'package:samagra/screens/materials_management/materials_management.dart';
 import 'package:samagra/screens/work_selection.dart';
 
 import 'package:samagra/frtu/frtu_inspection.dart';
@@ -137,6 +138,11 @@ class CategoryView extends StatelessWidget {
       case 'SparesManagement':
         // return ComingSoon();
         return SparesManagement();
+
+
+        case 'MaterialsManagement':
+        // return ComingSoon();
+        return MaterialManagement();
 
       case 'prepareEstimate':
         // return ComingSoon();
