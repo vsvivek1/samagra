@@ -4,7 +4,7 @@ import 'package:samagra/screens/send_to_mail.dart';
 
 class TaskService {
   final Dio _dio = Dio();
-  final String url = "http://192.168.1.17:8000/api"; // kfon"; // Change this to your actual API URL
+  final String url = "http://192.168.100.101:8000/api"; // kfon"; // Change this to your actual API URL
 
   /// Fetch all tasks for a given SBU ID
   Future<Map<String, dynamic>> getTasksBySbu(int sbuId) async {

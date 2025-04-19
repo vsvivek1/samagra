@@ -6,6 +6,9 @@ adb shell setprop service.adb.tcp.port
 adb pair adb-cde43bc9-oRNuYB;
 adb connect adb-cde43bc9-oRNuYB;
 
+adb pair RZCX51QJ20B 
+adb connect RZCX51QJ20B
+
 exit;
 # Retrieve the default gateway
 gateway=$(route -n get default | grep 'gateway' | awk '{debugPrint $2}')

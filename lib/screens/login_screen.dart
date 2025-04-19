@@ -14,9 +14,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:samagra/admin/update_check.dart';
 import 'package:samagra/app_theme.dart';
+import 'package:samagra/check_jwt_expiry.dart';
 import 'package:samagra/common.dart';
+import 'package:samagra/home_screen.dart';
 import 'package:samagra/kseb_color.dart';
 import 'package:samagra/screens/authentication_bottom_sheet.dart';
+import 'package:samagra/screens/check_access_token_validity.dart';
+import 'package:samagra/screens/check_refresh_token_validity.dart';
 import 'package:samagra/screens/generate_random_string.dart';
 import 'package:samagra/screens/get_oidc_access_token.dart';
 import 'package:samagra/screens/get_user_info.dart';
@@ -1185,12 +1189,60 @@ class _LoginScreenState extends State<LoginScreen> {
 
     print('sso1');
 
-    await launchSSOUrl(codeVerifier, codeChallenge, empcode);
+    /// check expiry of token
+    /// 
+    
+
+      String jwtToken = await getJwtTokenFromStorage();
+
+    var a=  await checkAccessTokenValidity(jwtToken);
+
+    if(!a){
+
+var b=await checkRefreshTokenValidity();
+
+print('this is b $b');
+if(!b){
+
+  await launchSSOUrl(codeVerifier, codeChallenge, empcode);
     print('sso2');
 
     //debugger(when: true);
 
     _ssoLoginLoading = false;
+} else{
+
+  print('pls refresh acess toeken ');
+
+    String refreshToken = await getRefreshTokenFromStorage();
+
+ await refreshAccessToken(refreshToken );
+
+
+print('hrere');
+//refreshAccessTojken()
+
+    //   Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => MyHomePage()),
+    // ); 
+
+}
+
+    } else{
+
+
+
+      print('hi');
+
+    Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UpdateCheck()),
+          );
+    }
+
+
+  
     //return;
     /*  Navigator.push(
       context,

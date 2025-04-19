@@ -19,30 +19,41 @@ Future<void> initializeConfigIfNeeded() async {
 
 /// Refresh the access token using the refresh token
 Future<void> refreshAccessToken(String refreshToken) async {
+  
+
+
+print(refreshToken);
+
+  
   await initializeConfigIfNeeded();
 
   if (!config.deploymentMode.contains('SSO')) {
     return;
   }
 
-  try {
-    Dio dio = Dio();
-    var formData = {
-      'client_id': 'pkce-client3',
-      'grant_type': 'refresh_token',
-      'refresh_token': refreshToken,
-    };
+  //try {
+ Dio dio = Dio();
+String url = '${config.liveAccessUrl}token';
+print('Refreshing token with URL: $url');
 
-    String url = '${config.liveAccessUrl}token';
-    print('Refreshing token with URL: $url');
 
-    var response = await dio.post(
-      url,
-      options: Options(
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      ),
-      data: formData,
-    );
+
+Map<String, dynamic> formBody = {
+  'client_id': 'pkce-client3',
+  'grant_type': 'refresh_token',
+  'refresh_token': refreshToken,
+};
+
+var response = await dio.post(
+  url,
+  options: Options(
+    contentType: Headers.formUrlEncodedContentType,
+  ),
+  data: formBody,
+);
+
+print(response.data);
+
 
     if (response.statusCode == 200) {
       String accessToken = response.data['access_token'];
@@ -52,9 +63,13 @@ Future<void> refreshAccessToken(String refreshToken) async {
     } else {
       print('Failed to refresh token: ${response.statusCode}');
     }
-  } catch (e) {
-    print('Error refreshing token: $e');
-  }
+ 
+ 
+  // } catch (e) {
+  //   print('Error refreshing token: $e');
+  // }
+
+
 }
 
 /// Periodically checks for JWT token expiry and refreshes if needed
