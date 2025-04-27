@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:samagra/prepare_estimate/screens/download_database.dart';
 import 'package:samagra/prepare_estimate/screens/saved_estimate_details_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
@@ -127,6 +128,16 @@ class _NewEstimateCreationLandingPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar:BottomNavigationBar(items: [
+
+BottomNavigationBarItem(
+  label: 'Download Database',
+  icon: IconButton(onPressed:()=> downloadDatabase(), icon:Icon(Icons.abc) )),
+BottomNavigationBarItem(
+    label: 'Download Database',
+  icon: IconButton(onPressed:()=> downloadDatabase(), icon:Icon(Icons.abc) ))
+
+      ]),
       appBar: AppBar(
         title: Text('Estimate List'),
         actions: [
@@ -243,4 +254,6 @@ class _NewEstimateCreationLandingPageState
       ),
     );
   }
+
+  
 }

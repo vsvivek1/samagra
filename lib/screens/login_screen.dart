@@ -122,6 +122,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _gettingUserInfo = false;
 
+  bool      _forcedLogin=false;
+
   // get _showFirstTimePasswordField => _showFirstTimePasswordFeild;
   //  bool _showFirstTimePasswordField;
 
@@ -350,6 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           empCodeInitialValue =
                                               user["employee_code"].toString();
 
+                                      
                                           return Container(
                                             decoration: BoxDecoration(
                                                 gradient: RadialGradient(
@@ -419,7 +422,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                                   SizedBox(
                                                     height: 30,
+                                                    child:Row(
+                                                      children: [
+                                                        Text('Forced Login'),
+                                                        Checkbox(
+                                                          semanticLabel: 'Force Login',
+                                                          value: _forcedLogin,
+                                                          onChanged: (bool? newValue) {
+                                                            setState(() {
+                                                              _forcedLogin = newValue ?? false;
+                                                            });
+                                                          },
+                                                        ),
+                                                      ],
+                                                    )
                                                   ),
+SizedBox(
+  height: 20,
+),
+
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -1201,8 +1222,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
 var b=await checkRefreshTokenValidity();
 
-print('this is b $b');
-if(!b){
+//print('this is b $b');
+if(!b || _forcedLogin){
 
   await launchSSOUrl(codeVerifier, codeChallenge, empcode);
     print('sso2');
@@ -1407,7 +1428,8 @@ print('hrere');
     //   ),
     // );
   }
-}
+  
+
 
 String extractTokenFromLink(String inputString) {
   initializeConfig();
@@ -1420,4 +1442,5 @@ String extractTokenFromLink(String inputString) {
   } else {
     return '';
   }
+}
 }

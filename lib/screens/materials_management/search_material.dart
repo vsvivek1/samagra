@@ -2,6 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:samagra/common.dart';
+import 'package:samagra/environmental_config.dart';
+import 'package:samagra/screens/set_access_toke_and_api_key.dart';
+
+
 
 class SearchMaterial extends StatefulWidget {
   const SearchMaterial({Key? key}) : super(key: key);
@@ -11,7 +16,7 @@ class SearchMaterial extends StatefulWidget {
 }
 
 class _SearchMaterialState extends State<SearchMaterial> {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://192.168.100.101:8000/api'));
+
 
   List<dynamic> _materialGroups = [];
   List<dynamic> _materialSubGroups = [];
@@ -27,14 +32,46 @@ class _SearchMaterialState extends State<SearchMaterial> {
   bool _isLoadingItems = false;
   bool _isSearchingStock = false;
 
+  late EnvironmentConfig config;
+late String url;
+
+late  Dio _dio=Dio();
+
+
+Future<void> _loadConfig() async {
+  config = await EnvironmentConfig.fromEnvFile();
+  url = '${config.liveServiceUrlLogin}';
+
+    _dio.options.baseUrl='${config.liveServiceUrlLogin}';
+
+
+ // setState(() {}); // To reflect changes if UI depends on it
+}
+
   @override
-  void initState() {
-    super.initState();
-    _fetchMaterialGroups();
+  void initState()  {
+   
+    
+     _loadConfig();
+     _fetchMaterialGroups();
+
+      super.initState();
   }
 
   Future<void> _fetchMaterialGroups() async {
     setState(() => _isLoadingGroups = true);
+
+    print(_dio.options);
+
+    config = await EnvironmentConfig.fromEnvFile();
+   
+
+    setDioAccessokenAndApiKey(_dio, await getAccessToken(), config);
+
+ url=config.liveServiceUrl;
+
+ 
+
     final response = await _dio.get('/getMaterialGroups/');
     if (response.statusCode == 200) {
       setState(() {
@@ -46,7 +83,7 @@ class _SearchMaterialState extends State<SearchMaterial> {
 
   Future<void> _fetchMaterialSubGroups(String groupId) async {
     setState(() => _isLoadingSubGroups = true);
-    final response = await _dio.get('/getMaterialSubGroups/groupId/$groupId');
+    final response = await _dio.get('getMaterialSubGroups/groupId/$groupId');
     if (response.statusCode == 200) {
       setState(() {
         _materialSubGroups = [{'id': 0, 'value': '-- Select Subgroup --'}, ...response.data];
@@ -57,7 +94,7 @@ class _SearchMaterialState extends State<SearchMaterial> {
 
   Future<void> _fetchMaterialItems(String subGroupId) async {
     setState(() => _isLoadingItems = true);
-    final response = await _dio.get('/getMaterialsBySubGroupId/subGroupId/$subGroupId');
+    final response = await _dio.get('getMaterialsBySubGroupId/subGroupId/$subGroupId');
     if (response.statusCode == 200) {
       setState(() {
         _materialItems = [{'id': 0, 'value': '-- Select Item --'}, ...response.data];
@@ -80,7 +117,7 @@ class _SearchMaterialState extends State<SearchMaterial> {
     });
 
     try {
-      final response = await _dio.get('/stockReport_search_results_dash/item/$_selectedItem');
+      final response = await _dio.get('stockReport_search_results_dash/item/$_selectedItem');
 
 
       if (response.statusCode == 200) {
@@ -108,7 +145,7 @@ Future<void> _showOfficeDetails(Map<String, dynamic> item) async {
   );
 
   //try {
-    final response = await _dio.get('/stocksubdet/$officeId/$matId');
+    final response = await _dio.get('stocksubdet/$officeId/$matId');
 
     Navigator.pop(context); // Close the loading dialog
 
