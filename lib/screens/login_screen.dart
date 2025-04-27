@@ -1316,12 +1316,14 @@ print('hrere');
         var result = await getUserInfo(oIdAccessTokens[0], _ssoLoginLoading);
         //  debugger(when: true);
         if (result is DioException) {
-          debugger(when: true);
+          //debugger(when: true);
           showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                  content: Text('Server Error . Please try after some time '));
+                  content: Text(
+                    result.response?.data['wsDisplayMessage']??
+                    'Server Error . Please try after some time '));
             },
           );
 
