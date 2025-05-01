@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:samagra/ToolsHome/tools_home.dart';
 import 'package:samagra/Trainings/training_dash_board_screen.dart';
 import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
@@ -131,6 +132,10 @@ class CategoryView extends StatelessWidget {
         return ComingSoon();
         return TreeCuttingCompensation();
       // Add more cases as needed
+
+
+       case 'ToolsHome':
+        return ToolsHomeScreen();
 
       case 'VersionController':
         return VersionController();

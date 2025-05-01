@@ -14,6 +14,8 @@ class HomeList {
   String imagePath;
   String text;
 
+
+
   static List<HomeList> homeList = [
     HomeList(
       text: 'Work Measurement',

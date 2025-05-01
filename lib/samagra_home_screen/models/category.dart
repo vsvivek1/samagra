@@ -107,6 +107,16 @@ class Category {
       money: 208,
       rating: 4.9,
     ), */
+
+ Category(
+      imagePath: 'assets/samagra_home_screen/tools.jpeg',
+      target: 'ToolsHome',
+      title: 'Tools and Calculators',
+      lessonCount: 28,
+      money: 208,
+      rating: 4.9,
+    ),
+
     Category(
       imagePath: 'assets/samagra_home_screen/interFace1.png',
       target: 'VersionController',

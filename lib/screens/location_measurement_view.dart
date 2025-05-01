@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/add_labour_not_in_estimate.dart';
 import 'package:samagra/screens/add_new_material.dart';
 import 'package:samagra/screens/add_new_labour.dart';
 
@@ -511,17 +512,17 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
                   });
                 },
               ),
-              /*  ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color.fromARGB(255, 132, 184, 134)),
-                  ),
-                  onPressed: addLabourNotInEstimate(taskId, strutctureId),
-                  child: Text(
-                      textAlign: TextAlign.center,
-                      'Add Labour Not in Estimate')),
+               ElevatedButton(
+  onPressed: () {
+    addLabourNotInEstimate(context, taskId, strutctureId.toString(),widget.measurementDetails,widget.selectedLocationIndex
 
-                      */
+ ,() => setState(() {}), // parent refresh
+);
+  },
+  child: Text('Add Labour'),
+),
+
+                
             ],
           ),
         );
@@ -530,14 +531,15 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
       return Builder(builder: (context) {
         return Column(children: [
           Container(child: Text('No labour')),
-          ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                    const Color.fromARGB(255, 132, 184, 134)),
-              ),
-              onPressed: addLabourNotInEstimate(taskId, strutctureId),
-              child: Text(
-                  textAlign: TextAlign.center, 'Add Labour Not in Estimate'))
+          
+         ElevatedButton(
+  onPressed: () {
+       addLabourNotInEstimate(context, taskId, strutctureId,widget.measurementDetails,widget.selectedLocationIndex,
+        () => setState(() {}), // parent refresh
+       );
+  },
+  child: Text('Add Labour'),
+),
         ]);
       });
     }
@@ -821,7 +823,11 @@ class _LocationMeasurementViewState extends State<LocationMeasurementView> {
     });
   }
 
-  addLabourNotInEstimate(taskId, structureId) {
+  addLabourNotInEstimatex(taskId, structureId) {
+
+    print('pressed');
+
+    return;
     Navigator.of(context)
         .push(
       MaterialPageRoute(

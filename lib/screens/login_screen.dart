@@ -454,6 +454,8 @@ SizedBox(
                                                       ],
                                                       if (DEPLOYEMENT_MODE
                                                           .contains('SSO')) ...[
+
+                                                   
                                                         Center(
                                                             child:
                                                                 ssoLoginButton(
@@ -1032,6 +1034,8 @@ SizedBox(
   showUserNameForm1() {
     return Column(
       children: [
+
+        
         TextField(
             autofocus: true,
             onChanged: (value) {
@@ -1080,8 +1084,26 @@ SizedBox(
             )),
         SizedBox(
           width: 20,
-          height: 20,
+          height: 10,
         ),
+
+             SizedBox(
+                                                    height: 30,
+                                                    child:Row(
+                                                      children: [
+                                                        Text('Forced Login/Another User'),
+                                                        Checkbox(
+                                                          semanticLabel: 'Force Login',
+                                                          value: _forcedLogin,
+                                                          onChanged: (bool? newValue) {
+                                                            setState(() {
+                                                              _forcedLogin = newValue ?? false;
+                                                            });
+                                                          },
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ),
         Visibility(
             visible: _showpassWordSpinner, child: CircularProgressIndicator()),
         // firstTimeLoginPassword(),

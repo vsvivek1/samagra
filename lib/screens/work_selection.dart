@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:samagra/internet_connectivity.dart';
 import 'package:samagra/kseb_color.dart';
+import 'package:samagra/screens/master_data_status.dart';
 import 'package:samagra/screens/set_access_toke_and_api_key.dart';
 import 'package:samagra/screens/show_work_code.dart';
 import 'package:samagra/screens/warning_message.dart';
@@ -158,95 +160,79 @@ class _WorkSelectionState extends State<WorkSelection> {
     return Future.value(accessToken);
   }
 
-  Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
-    try {
-      EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
-      final dio = Dio();
-      final url = '${config.liveServiceUrl}wrk/getLabourMaster/0';
-      final url2 = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
+ Future<void> callApiAndSaveLabourGroupMasterInSecureStorage() async {
+  try {
+    EnvironmentConfig config = await EnvironmentConfig.fromEnvFile();
+    final dio = Dio();
+    final secureStorage = FlutterSecureStorage();
 
-      final headers = {'Authorization': 'Bearer ${await getAccessToken()}'};
+    final accessToken = await getAccessToken();
+    setDioAccessokenAndApiKey(dio, accessToken, config);
 
-      String accessToken = await getAccessToken();
-      setDioAccessokenAndApiKey(dio, accessToken, config);
+    final headers = {'Authorization': 'Bearer $accessToken'};
 
-      // print(url);
+    final labourUrl = '${config.liveServiceUrl}wrk/getLabourMaster/0';
+    final materialUrl = '${config.liveServiceUrl}wrk/getMaterialMaster/2/0';
 
-      // debugger(when: true);
-      final response = await dio.get(url, options: Options(headers: headers));
+    // Call Labour API
+    final labourResponse = await dio.get(labourUrl, options: Options(headers: headers));
+    final labourData = labourResponse.data['result_data']['labourMaster'] ?? [];
 
-      // print('lab  called');
+    // Call Material API
+    setDioAccessokenAndApiKey(dio, await getAccessToken(), config); // Refresh access token if needed
+    final materialResponse = await dio.get(materialUrl, options: Options(headers: headers));
+    final materialData = materialResponse.data['result_data']['materialMaster'] ?? [];
 
-      setDioAccessokenAndApiKey(dio, await getAccessToken(), config);
-      final responseMaterial =
-          await dio.get(url2, options: Options(headers: headers));
-//
-      // print('materail master called');
-      var inp = response.data['result_data']['labourMaster'];
+    // Prepare Labour Data
+    final List<Map<String, dynamic>> labourList = labourData.map<Map<String, dynamic>>((a) => {
+      'id': a['id'],
+      'key': a['code'],
+      'code': a['code'],
+      'uom': a['mst_uom']['uom_code'],
+      'rate': a['rate'],
+      'name': a['name'],
+      'mst_uom_id': a['mst_uom_id'],
+    }).toList();
 
-      var mat = responseMaterial.data['result_data']['materialMaster'];
+    // Prepare Material Data
+    final List<Map<String, dynamic>> materialList = materialData.map<Map<String, dynamic>>((a) => {
+      'id': a['id'],
+      'key': a['material_code'],
+      'code': a['material_code'],
+      'uom': a['mst_stock_uom']['uom_code'],
+      'rate': (a['mst_material_rates'] != null && a['mst_material_rates'].isNotEmpty) 
+              ? a['mst_material_rates'][0]['rate'] 
+              : 0.0,
+      'name': a['name'],
+      'mst_uom_id': a['mst_uom_id'],
+    }).toList();
 
-      // print('mat called');
+    // Save Labour Master
+    await secureStorage.write(
+      key: 'getLabourGroupMaster',
+      value: json.encode({'labours': labourList}),
+    );
+    await secureStorage.write(
+      key: 'getLabourGroupMasterUpdatedAt',
+      value: DateTime.now().toIso8601String(),
+    );
 
-      var store = inp
-          .map((a) => {
-                // print(a)
+    // Save Material Master
+    await secureStorage.write(
+      key: 'getMaterialGroupMaster',
+      value: json.encode({'materials': materialList}),
+    );
+    await secureStorage.write(
+      key: 'getMaterialGroupMasterUpdatedAt',
+      value: DateTime.now().toIso8601String(),
+    );
 
-                // ignore: unnecessary_statements
-                'id': a['id'],
-                'key': a['code'],
-                'code': a['code'],
-                'uom': a['mst_uom']['uom_code'],
-                'rate': a['rate'],
+    print('Labour and Material Master saved successfully.');
 
-                'name': a['name'], 'mst_uom_id': a['mst_uom_id']
-
-                // {a.id, a.code, a.name, a.uom}
-              })
-          .toList();
-
-      var mapStore = mat
-          .map((a) => {
-                // print(a)
-
-                // ignore: unnecessary_statements
-                'id': a['id'],
-                'key': a['material_code'],
-                'code': a['material_code'],
-                'uom': a['mst_stock_uom']['uom_code'],
-                'rate': a['mst_material_rates'][0]['rate'],
-
-                'name': a['name'], 'mst_uom_id': a['mst_uom_id'],
-
-                // {a.id, a.code, a.name, a.uom}
-              })
-          .toList();
-
-      // print(store);
-
-      // print('response data');
-
-      final secureStorage = FlutterSecureStorage();
-      await secureStorage.write(
-          key: 'getLabourGroupMaster', value: json.encode(store));
-
-      await secureStorage.write(
-          key: 'getMaterialGroupmaster', value: json.encode(mapStore));
-
-      var a1 = await secureStorage.read(key: 'getLabourGroupMaster');
-
-      // print(a1);
-
-      // print('a1');
-    } catch (e) {
-      print(e);
-
-      print('error');
-    }
-
-    return;
+  } catch (e) {
+    print('Error in saving master data: $e');
   }
-
+}
   Future<List<dynamic>> _fetchWorkListList({context = -1}) async {
     if (_loaded) {
       return measurementSetList;
@@ -341,9 +327,12 @@ class _WorkSelectionState extends State<WorkSelection> {
 
         // print("WD this is WD $wd");
 
-        // this.callApiAndSaveLabourGroupMasterInSecureStorage();
 
-        // debugger(when: true);
+       await ensureMastersAreUpToDate(context);
+
+        // await this.callApiAndSaveLabourGroupMasterInSecureStorage();
+
+     //  debugger(when: true);
 
         // setState(() {
         //   _loaded = !_loaded;
