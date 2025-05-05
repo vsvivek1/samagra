@@ -1,7 +1,8 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:samagra/prepare_estimate/screens/download_database.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:samagra/prepare_estimate/screens/saved_estimate_details_screen.dart';
 import 'package:uuid/uuid.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
@@ -22,7 +23,7 @@ class _NewEstimateCreationLandingPageState
     extends State<NewEstimateCreationLandingPage> {
   final Map<String, EstimateDetails> _estimatesMap = {};
   bool _isLoading = true;
-  String _selectedStatus = 'inProgress'; // Default filter status
+  String _selectedStatus = 'inProgress';
   bool _isNavigating = false;
 
   @override
@@ -31,7 +32,6 @@ class _NewEstimateCreationLandingPageState
     _fetchEstimates();
   }
 
-  /// Fetch estimates from secure storage
   Future<void> _fetchEstimates() async {
     setState(() {
       _isLoading = true;
@@ -43,7 +43,8 @@ class _NewEstimateCreationLandingPageState
       if (decodedData is Map<String, dynamic>) {
         final secureEstimates = decodedData.map(
           (key, value) => MapEntry(
-            key, EstimateDetails.fromJson(value as Map<String, dynamic>),
+            key,
+            EstimateDetails.fromJson(value as Map<String, dynamic>),
           ),
         );
         setState(() {
@@ -62,7 +63,6 @@ class _NewEstimateCreationLandingPageState
     });
   }
 
-  /// Save a new estimate to secure storage
   Future<void> _saveToSecureStorage(String id, EstimateDetails workDetails) async {
     try {
       final storedData = await secureStorage.read(key: 'estimates');
@@ -78,23 +78,19 @@ class _NewEstimateCreationLandingPageState
     }
   }
 
-  /// Filter estimates based on the selected status
   List<MapEntry<String, EstimateDetails>> get _filteredEstimates {
     return _estimatesMap.entries
         .where((entry) => entry.value.status == _selectedStatus)
         .toList();
   }
 
-  /// Navigate to the last visited screen for the estimate
   Future<void> _navigateToLastScreen(String estimateId, EstimateDetails estimate) async {
     Widget screenToNavigate;
 
-    // Navigate based on the last visited screen
     switch (estimate.lastVisitedScreen) {
-
       case 'SavedEstimateDetailsScreen':
-      screenToNavigate = SavedEstimateDetailsScreen(uuid: estimateId);
-      break;
+        screenToNavigate = SavedEstimateDetailsScreen(uuid: estimateId);
+        break;
       case 'AddNewWorkForm':
         screenToNavigate = AddNewWorkForm(uuid: estimateId);
         break;
@@ -102,15 +98,11 @@ class _NewEstimateCreationLandingPageState
         screenToNavigate = CreateLocation(uuId: estimateId);
         break;
       case 'CapturePhotosWidget':
-        screenToNavigate = CapturePhotosWidget(uuid: estimateId,);
+        screenToNavigate = CapturePhotosWidget(uuid: estimateId);
         break;
       default:
-
-      screenToNavigate = SavedEstimateDetailsScreen(uuid: estimateId);
-        //screenToNavigate = AddNewWorkForm(uuid: estimateId);
+        screenToNavigate = SavedEstimateDetailsScreen(uuid: estimateId);
     }
-
-
 
     final result = await Navigator.push(
       context,
@@ -125,19 +117,33 @@ class _NewEstimateCreationLandingPageState
     }
   }
 
+  Future<void> downloadDatabase() async {
+    print('Download triggered');
+
+    final dio = Dio();
+    final dir = await getApplicationDocumentsDirectory();
+    final dbPath = '${dir.path}/mst.sqlite';
+
+   // try {
+      final response = await dio.get(
+        'http://192.168.1.5:8000/api/download-sqlite-zip',
+        
+      );
+      print('Database downloaded to $dbPath');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Database downloaded to $dbPath")),
+      );
+    // } catch (e) {
+    //   print('Error downloading database: $e');
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text("Download failed: $e")),
+    //   );
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar:BottomNavigationBar(items: [
-
-BottomNavigationBarItem(
-  label: 'Download Database',
-  icon: IconButton(onPressed:()=> downloadDatabase(), icon:Icon(Icons.abc) )),
-BottomNavigationBarItem(
-    label: 'Download Database',
-  icon: IconButton(onPressed:()=> downloadDatabase(), icon:Icon(Icons.abc) ))
-
-      ]),
       appBar: AppBar(
         title: Text('Estimate List'),
         actions: [
@@ -252,8 +258,24 @@ BottomNavigationBarItem(
         label: Text('New Estimate'),
         icon: Icon(Icons.add),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0,
+        onTap: (index) {
+          if (index == 0 || index == 1) {
+            downloadDatabase();
+          }
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.download),
+            label: 'Download DB 1',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.cloud_download),
+            label: 'Download DB 2',
+          ),
+        ],
+      ),
     );
   }
-
-  
 }
