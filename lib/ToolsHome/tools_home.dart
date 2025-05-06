@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/ToolsHome/load_calculator.dart';
 
 class ToolsHomeScreen extends StatelessWidget {
   const ToolsHomeScreen({Key? key}) : super(key: key);
@@ -6,7 +7,7 @@ class ToolsHomeScreen extends StatelessWidget {
   void _navigateToLoadCalculator(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const LoadCalculatorScreen()),
+      MaterialPageRoute(builder: (context) =>  LoadCalculatorApp()),
     );
   }
 
@@ -26,18 +27,4 @@ class ToolsHomeScreen extends StatelessWidget {
   }
 }
 
-class LoadCalculatorScreen extends StatelessWidget {
-  const LoadCalculatorScreen({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Load Calculator'),
-      ),
-      body: const Center(
-        child: Text('This is the Load Calculator screen.'),
-      ),
-    );
-  }
-}
