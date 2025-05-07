@@ -1,13 +1,18 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:archive/archive_io.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:samagra/prepare_estimate/screens/saved_estimate_details_screen.dart';
-import 'package:uuid/uuid.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
-import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
 import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
+import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
+import 'package:samagra/prepare_estimate/screens/database_file_explorer.dart';
+import 'package:samagra/prepare_estimate/screens/saved_estimate_details_screen.dart';
+
+import 'package:uuid/uuid.dart';
 import '../models/estimate_details.dart';
 
 final FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -51,11 +56,7 @@ class _NewEstimateCreationLandingPageState
           _estimatesMap.clear();
           _estimatesMap.addAll(secureEstimates);
         });
-      } else {
-        print("Fetched data is not a valid Map<String, dynamic>: $decodedData");
       }
-    } else {
-      print("No estimates found in secure storage.");
     }
 
     setState(() {
@@ -74,7 +75,6 @@ class _NewEstimateCreationLandingPageState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error saving estimate: $e")),
       );
-      print("Error saving estimate: $e");
     }
   }
 
@@ -116,30 +116,50 @@ class _NewEstimateCreationLandingPageState
       await _saveToSecureStorage(estimateId, result);
     }
   }
+Future<void> downloadDatabase() async {
+  final dio = Dio();
+  final dir = await getApplicationDocumentsDirectory();
 
-  Future<void> downloadDatabase() async {
-    print('Download triggered');
+  try {
+    final response = await dio.get(
+      'http://192.168.100.100:8000/api/download-sqlite-zip',
+      options: Options(responseType: ResponseType.bytes),
+    );
 
-    final dio = Dio();
-    final dir = await getApplicationDocumentsDirectory();
-    final dbPath = '${dir.path}/mst.sqlite';
+    if (response.statusCode != 200 || response.data == null) {
+      throw Exception("Failed to download ZIP file");
+    }
 
-   // try {
-      final response = await dio.get(
-        'http://192.168.1.5:8000/api/download-sqlite-zip',
-        
-      );
-      print('Database downloaded to $dbPath');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Database downloaded to $dbPath")),
-      );
-    // } catch (e) {
-    //   print('Error downloading database: $e');
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text("Download failed: $e")),
-    //   );
-    // }
+    // Check header
+    final contentType = response.headers.map['content-type']?.first ?? '';
+    if (!contentType.contains('application/zip')) {
+      throw Exception("Expected ZIP file, got: $contentType");
+    }
+
+    // Decode ZIP
+    final archive = ZipDecoder().decodeBytes(response.data);
+
+    for (final file in archive) {
+      if (file.isFile && file.name.endsWith('.sqlite')) {
+        final output = File(p.join(dir.path, file.name));
+        await output.writeAsBytes(file.content as List<int>);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Database saved to ${output.path}")),
+        );
+        return; // exit after successful save
+      }
+    }
+
+    throw Exception("No .sqlite file found in the ZIP");
+
+  } catch (e) {
+    print("Download/unzip error: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error: $e")),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +269,6 @@ class _NewEstimateCreationLandingPageState
             });
 
             await _saveToSecureStorage(newId, newEstimate);
-
             await _navigateToLastScreen(newId, newEstimate);
           } finally {
             _isNavigating = false;
@@ -260,19 +279,35 @@ class _NewEstimateCreationLandingPageState
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
-        onTap: (index) {
-          if (index == 0 || index == 1) {
-            downloadDatabase();
+        onTap: (index) async {
+          final dir = await getApplicationDocumentsDirectory();
+          final dbPath = p.join(dir.path, 'mst.sqlite');
+
+          if (index == 0) {
+            await downloadDatabase();
+          } else if (index == 1) {
+            if (await File(dbPath).exists()) {
+              Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (context) => DatabaseExplorerScreen(dbPath: dbPath),
+  ),
+);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Database not found. Please download first.")),
+              );
+            }
           }
         },
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.download),
-            label: 'Download DB 1',
+            label: 'Download DB',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.cloud_download),
-            label: 'Download DB 2',
+            icon: Icon(Icons.table_chart),
+            label: 'View DB',
           ),
         ],
       ),
