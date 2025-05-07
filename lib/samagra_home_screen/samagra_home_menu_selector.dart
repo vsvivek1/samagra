@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:samagra/Ask/topic_screen.dart';
 import 'package:samagra/ToolsHome/tools_home.dart';
 import 'package:samagra/Trainings/training_dash_board_screen.dart';
 import 'package:samagra/admin/version_controller.dart';
@@ -120,6 +121,9 @@ class CategoryView extends StatelessWidget {
     switch (target) {
       case 'WorkSelection':
         return WorkSelection();
+
+       case 'Ask':
+        return TopicsScreen();
 
       case 'PhoneBook':
         return PhoneBook(); // Assuming PhoneBook is another widget class
