@@ -9,7 +9,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
 import 'package:samagra/prepare_estimate/screens/capture_photos_widget.dart';
 import 'package:samagra/prepare_estimate/screens/create_location_screen.dart';
+import 'package:samagra/prepare_estimate/screens/database_explorer_screen.dart';
 import 'package:samagra/prepare_estimate/screens/database_file_explorer.dart';
+import 'package:samagra/prepare_estimate/screens/read_database.dart';
 import 'package:samagra/prepare_estimate/screens/saved_estimate_details_screen.dart';
 
 import 'package:uuid/uuid.dart';
@@ -64,6 +66,22 @@ class _NewEstimateCreationLandingPageState
     });
   }
 
+
+Future<void> checkIfSqliteFileExists() async {
+  final dir = await getApplicationDocumentsDirectory(); // points to app_flutter
+  final path = '${dir.path}/mst_data.sqlite';
+
+  final file = File(path);
+
+  if (await file.exists()) {
+    print('✅ SQLite file exists at $path');
+  } else {
+    print('❌ SQLite file NOT found at $path');
+  }
+}
+
+
+
   Future<void> _saveToSecureStorage(String id, EstimateDetails workDetails) async {
     try {
       final storedData = await secureStorage.read(key: 'estimates');
@@ -117,12 +135,15 @@ class _NewEstimateCreationLandingPageState
     }
   }
 Future<void> downloadDatabase() async {
+
+
+ // return;
   final dio = Dio();
   final dir = await getApplicationDocumentsDirectory();
 
   try {
     final response = await dio.get(
-      'http://192.168.100.100:8000/api/download-sqlite-zip',
+      'http://192.168.1.102:8000/api/download-sqlite-zip',
       options: Options(responseType: ResponseType.bytes),
     );
 
@@ -146,6 +167,8 @@ Future<void> downloadDatabase() async {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Database saved to ${output.path}")),
         );
+
+        print(output.path);
         return; // exit after successful save
       }
     }
@@ -158,6 +181,8 @@ Future<void> downloadDatabase() async {
       SnackBar(content: Text("Error: $e")),
     );
   }
+
+  
 }
 
 
@@ -281,7 +306,7 @@ Future<void> downloadDatabase() async {
         currentIndex: 0,
         onTap: (index) async {
           final dir = await getApplicationDocumentsDirectory();
-          final dbPath = p.join(dir.path, 'mst.sqlite');
+          final dbPath = p.join(dir.path, 'mst_data.sqlite');
 
           if (index == 0) {
             await downloadDatabase();

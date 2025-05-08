@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 Future<String> getTasksBySbu(int sbuId) async {
-  const String baseUrl = "http://192.168.100.100:8000/api";
+  const String baseUrl = "http://192.168.1.102:8000/api";
   final String url = '$baseUrl/tasks/sbu/$sbuId';
   final FlutterSecureStorage secureStorage = FlutterSecureStorage();
   final Dio dio = Dio();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/prepare_estimate/screens/read_database.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseExplorerScreen extends StatefulWidget {
@@ -14,16 +15,23 @@ class _DatabaseExplorerScreenState extends State<DatabaseExplorerScreen> {
 
   @override
   void initState() {
+
+    print("${widget.dbPath} is path");
     super.initState();
     _loadDatabaseInfo();
+  //readFromSqlite();
+  
+  //checkIfSqliteFileExists();
   }
 
   Future<void> _loadDatabaseInfo() async {
     final db = await openDatabase(widget.dbPath);
 
+
+
     // Get all table names except system tables
     final tables = await db.rawQuery(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'",
+      "SELECT name FROM sqlite_master WHERE type='table'"// AND name NOT LIKE 's%'",
     );
 
     List<Map<String, dynamic>> allTableInfo = [];
