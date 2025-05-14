@@ -11,7 +11,7 @@ import 'dart:convert';
 Future getMainTaskMaster( int sbuId, int mainTaskFilterId, int categoryId) async {
   // Construct the URL by affixing the parameters to the baseUrl
  
- String baseUrl = "http://192.168.1.102:8000/api";
+ String baseUrl = "localUrl/api";
   final String url = '$baseUrl/getMainTaskMaster/$sbuId/$mainTaskFilterId/$categoryId';
  
   try {

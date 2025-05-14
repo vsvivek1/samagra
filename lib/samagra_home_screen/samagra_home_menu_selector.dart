@@ -5,6 +5,8 @@ import 'package:samagra/ToolsHome/tools_home.dart';
 import 'package:samagra/Trainings/training_dash_board_screen.dart';
 import 'package:samagra/admin/version_controller.dart';
 import 'package:samagra/coming_soon.dart';
+import 'package:samagra/common.dart';
+import 'package:samagra/ib_booking/ib_booking_home.dart';
 import 'package:samagra/prepare_estimate/add_new_work_form.dart';
 import 'package:samagra/prepare_estimate/prepare_estimate.dart';
 import 'package:samagra/prepare_estimate/screens/new_estimate_creation_landing_page.dart';
@@ -16,7 +18,7 @@ import 'package:samagra/screens/materials_management/materials_management.dart';
 import 'package:samagra/screens/work_selection.dart';
 
 import 'package:samagra/frtu/frtu_inspection.dart';
-import 'package:samagra/ib_booking/ib_booking.dart';
+
 import 'package:samagra/screens/phone_book.dart';
 import 'package:samagra/screens/tree_cutting_compensation.dart';
 import 'package:samagra/spares_management/spares_management.dart';
@@ -34,10 +36,24 @@ class SamagraHomeMenuSelectorView extends StatefulWidget {
 class _SamagraHomeMenuSelectorViewState
     extends State<SamagraHomeMenuSelectorView> with TickerProviderStateMixin {
   AnimationController? animationController;
+
+
+   late var user;
+
+
+loadUser()async {
+
+user=await getUser();
+}
   @override
   void initState() {
     animationController = AnimationController(
         duration: const Duration(milliseconds: 2000), vsync: this);
+
+        getData();
+        loadUser();
+
+    
     super.initState();
   }
 
@@ -125,13 +141,21 @@ class CategoryView extends StatelessWidget {
        case 'Ask':
         return TopicsScreen();
 
+        case 'ib_booking':
+
+        return IbBookingHomeScreen();
+
       case 'PhoneBook':
         return PhoneBook(); // Assuming PhoneBook is another widget class
       case 'FrtuInspection':
         return ComingSoon();
         return FrtuInspection();
+     
+     
       case 'IbBooking':
-        return IbBooking();
+        return IbBookingHomeScreen();
+
+
       case 'TreeCuttingCompensation':
         return ComingSoon();
         return TreeCuttingCompensation();
@@ -192,7 +216,8 @@ class CategoryView extends StatelessWidget {
   final Category? category;
   final AnimationController? animationController;
   final Animation<double>? animation;
-
+  
+ 
 
 
 

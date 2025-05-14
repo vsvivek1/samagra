@@ -25,7 +25,7 @@ class _RequestedInventoriesTabState extends State<RequestedInventoriesTab> {
   Future<void> fetchRequestedInventories() async {
     try {
       String apiUrl =
-          'http://192.168.1.102:8000/api/requested_inventories'; // Replace with your actual API URL
+          'localUrl/api/requested_inventories'; // Replace with your actual API URL
       final response = await dio.get(apiUrl);
 
       if (response.statusCode == 200) {

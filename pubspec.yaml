@@ -111,6 +111,8 @@ flutter:
         - assets/phone/cug.json
         - assets/audio/
         - assets/measurement_app/
+        - assets/ib_menu.json
+        - assets/ib/
         
 
     # An image asset can refer to one or more resolution-specific "variants", see

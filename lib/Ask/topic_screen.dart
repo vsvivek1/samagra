@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samagra/Ask/submit_query_forum.dart';
 import 'package:samagra/Ask/topic_details_screen.dart';
 
 class TopicsScreen extends StatefulWidget {
@@ -84,6 +85,11 @@ class _TopicsScreenState extends State<TopicsScreen> {
               icon: Icon(Icons.help_outline),
               label: Text("Ask New Doubt"),
               onPressed: () {
+
+               Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => SubmitQueryForm()),
+);
                 // TODO: Navigate to Ask Doubt screen
               },
             ),

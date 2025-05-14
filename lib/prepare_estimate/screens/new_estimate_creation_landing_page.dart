@@ -143,7 +143,7 @@ Future<void> downloadDatabase() async {
 
   try {
     final response = await dio.get(
-      'http://192.168.1.102:8000/api/download-sqlite-zip',
+      'localUrl/api/download-sqlite-zip',
       options: Options(responseType: ResponseType.bytes),
     );
 

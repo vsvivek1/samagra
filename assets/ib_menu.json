@@ -1,0 +1,66 @@
+{
+  "menu": [
+    {
+      "title": "Book IB",
+      "roles": [],
+      "icon": "book_online",
+      "route": "/book_ib"
+    },
+    {
+      "title": "My Bookings",
+      "roles": [],
+      "icon": "calendar_today",
+      "route": "/my_bookings"
+    },
+    {
+      "title": "Raise Complaint",
+      "roles": [],
+      "icon": "report_problem",
+      "route": "/raise_complaint"
+    },
+    {
+      "title": "My Complaints",
+      "roles": [],
+      "icon": "assignment",
+      "route": "/my_complaints"
+    },
+    {
+      "title": "View Food Menu",
+      "roles": [],
+      "icon": "restaurant_menu",
+      "route": "/food_menu"
+    },
+    {
+      "title": "Request Meals",
+      "roles": [],
+      "icon": "fastfood",
+      "route": "/request_meals"
+    },
+    {
+      "title": "Visitor Management",
+      "roles": [
+        "caretaker"
+      ],
+      "icon": "people_alt",
+      "route": "/visitor_management"
+    },
+    {
+      "title": "Assigned Complaints",
+      "roles": [
+        "eic"
+      ],
+      "icon": "engineering",
+      "route": "/assigned_complaints"
+    },
+    {
+      "title": "User Management",
+
+      
+      "roles": [
+       
+      ],
+      "icon": "admin_panel_settings",
+      "route": "/user_management"
+    }
+  ]
+}

@@ -91,14 +91,15 @@ class Category {
       money: 25,
       rating: 4.8,
     ), */
-    /*   Category(
+      Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
       target: 'IbBooking',
       title: 'IB Booking',
       lessonCount: 28,
       money: 208,
       rating: 4.9,
-    ), */
+    ), 
+    //*/
     /*  Category(
       imagePath: 'assets/samagra_home_screen/interFace4.png',
       target: 'TreeCuttingCompensation',
