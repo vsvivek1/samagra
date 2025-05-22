@@ -236,6 +236,10 @@ class _UpdateCheckState extends State<UpdateCheck> {
               color: Colors.blue); // Or any other loading indicator
         } else if (snapshot.hasError) {
           // If there's an error
+
+
+ return ServerError('Error: ${snapshot.error}');
+          //debugger(when:true);
           return Text('Error: ${snapshot.error}');
         } else {
           // If the Future has resolved successfully

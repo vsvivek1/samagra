@@ -4,19 +4,82 @@
       "title": "Book IB",
       "roles": [],
       "icon": "book_online",
-      "route": "/book_ib"
+      "route": "/list_ibs"
     },
+
+    {
+      "title": "Add IB",
+      "icon": "admin_panel_settings",
+      "route": "/add_ib",
+      "roles": []
+    },
+
+    {
+      "title": "Add Rooms To IB",
+      "icon": "add_rooms_to_ib",
+      "route": "/add_rooms",
+      "roles": []
+    },
+
+    {
+      "title": "View Bookings",
+      "icon": "house",
+      "route": "/view_bookings",
+      "roles": []
+    },
+
+    {
+      "title": "Admin booking Cancellations",
+      "icon": "house",
+      "route": "/admin_cancel",
+      "roles": []
+    },
+
+
+
     {
       "title": "My Bookings",
       "roles": [],
       "icon": "calendar_today",
       "route": "/my_bookings"
     },
+
+    {
+      "title": "Ibs Near me",
+      "roles": [],
+      "icon": "calendar_today",
+      "route": "/nearby_ib"
+    },
+
+    {
+      "title": "CHECK IN",
+      "icon": "check_in",
+      "route": "/check_in",
+      "roles": []  
+   
+    }, 
+    
+    {
+      "title": "Check out",
+      "icon": "check_pot",
+      "route": "/check_out",
+      "roles": []  
+   
+    },
+
+    {
+      "title": "Stay Roll Back",
+      "icon": "stay_roll_back",
+      "route": "/roll_back",
+      "roles": []  
+   
+    },
+
     {
       "title": "Raise Complaint",
       "roles": [],
       "icon": "report_problem",
-      "route": "/raise_complaint"
+      "route": "/raise_omplaint"
     },
     {
       "title": "My Complaints",
@@ -25,10 +88,20 @@
       "route": "/my_complaints"
     },
     {
-      "title": "View Food Menu",
-      "roles": [],
+      "title": "Add Food Menu",
       "icon": "restaurant_menu",
-      "route": "/food_menu"
+      "route": "/add_food_menu",
+      "roles": []  
+   
+    },
+
+   
+
+    {
+      "title": "View Food Menu",
+      "icon": "restaurant_menu",
+      "route": "/view_food_menu",
+      "roles": []
     },
     {
       "title": "Request Meals",
